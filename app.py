@@ -8,7 +8,7 @@ import json
 import os
 from io import BytesIO
 
-# --- 1. FOCUSED ELEMENTS: The list of brand elements is now reduced as requested ---
+# --- Define Brand Elements ---
 brand_elements = [
     "Electric Green", "Dark Green", "Type", "Symbol",
     "Hacek", "Wordmark", "Facets"
@@ -79,7 +79,6 @@ uploaded_files = st.file_uploader(
 )
 
 if uploaded_files:
-    # --- 2. AVERAGE SPEND OPTION: New UI for average spend ---
     st.header("2. Enter Performance Metrics")
     use_avg_spend = st.checkbox("Apply a single average spend to all creatives?")
     avg_spend = 0
@@ -90,8 +89,9 @@ if uploaded_files:
     cols = st.columns(len(uploaded_files))
     for i, uploaded_file in enumerate(uploaded_files):
         with cols[i]:
-            st.image(uploaded_file, caption=uploaded_file.name, use_column_width=True)
-            # Disable individual inputs if average spend is used
+            # ----- THIS IS THE CORRECTED LINE -----
+            st.image(uploaded_file, caption=uploaded_file.name, use_container_width=True)
+            # ------------------------------------
             spend = st.number_input(
                 f"Spend (€)", 
                 min_value=0.0, 
@@ -104,7 +104,6 @@ if uploaded_files:
     # --- Step 3: Run Analysis ---
     st.header("3. Run AI Analysis")
     if st.button("Start AI Analysis on All Ads"):
-        # The app now stores results in session_state to support potential future "lifetime" views
         if 'session_results' not in st.session_state:
             st.session_state.session_results = []
         
@@ -128,10 +127,8 @@ if uploaded_files:
                 st.error("AI analysis failed for all uploaded images.")
                 st.stop()
             
-            # Store results for this session
             st.session_state.session_results = pd.DataFrame(raw_results_list)
 
-    # --- Display results if they exist in the session ---
     if 'session_results' in st.session_state and not st.session_state.session_results.empty:
         df_raw_results = st.session_state.session_results
 
@@ -141,7 +138,6 @@ if uploaded_files:
                 detected = [el for el in brand_elements if row.get(el, False)]
                 st.success(f"**Detected Elements:** {', '.join(detected) if detected else 'None'}")
         
-        # --- CALCULATIONS for the combined table ---
         total_ads = len(df_raw_results)
         media_metrics = []
         for element in brand_elements:
@@ -149,7 +145,6 @@ if uploaded_files:
             media_metrics.append({'Element': element, '% used': (len(filtered_df) / total_ads), 'avg spend': filtered_df['Spend'].mean()})
         media_df = pd.DataFrame(media_metrics).set_index('Element')
 
-        # --- Simplified Survey Data (no avg reach, no attributable) ---
         survey_data = {
             'Element': brand_elements, 
             '% recognised': [0.80, 0.47, 0.78, 0.22, 0.52, 0.23, 0.14], 
@@ -165,7 +160,6 @@ if uploaded_files:
         st.header("4. Combined Media & Survey Analysis")
         st.markdown("This table synthesizes the AI-driven media audit with simulated survey data for the current session.")
         
-        # --- 4. TARGETED HEATMAP: Only apply heatmap from '% recognised' downwards ---
         styler = master_df.fillna(0).style
         heatmap_rows = ['% recognised', 'Positive associations', 'Negative associations', 'Uniqueness']
         styler = styler.background_gradient(cmap='RdYlGn', axis=1, subset=(pd.IndexSlice[heatmap_rows], slice(None)))
@@ -176,7 +170,6 @@ if uploaded_files:
         
         st.dataframe(styler)
 
-        # --- 5. EXPORT TO EXCEL: Added download button ---
         excel_file = to_excel(master_df.fillna(0))
         st.download_button(
             label="📥 Export Analysis to Excel",
@@ -196,6 +189,5 @@ if uploaded_files:
             color_continuous_scale='RdYlGn', 
             title="Fame vs. Uniqueness (Size by Avg Spend, Color by Positive Associations)"
         )
-        # 6. CHART LEGEND: Explicitly update the size legend title
         fig_matrix.update_layout(legend_title_text='Positive Associations')
         st.plotly_chart(fig_matrix, use_container_width=True)
