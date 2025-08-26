@@ -24,7 +24,8 @@ def to_excel(df):
     except ImportError:
         writer = pd.ExcelWriter(output, engine='openpyxl')
     
-    df.to_excel(writer, index=True, sheet_name='Analysis')
+    # Write the transposed data to Excel to match the screen display
+    df.T.to_excel(writer, index=True, sheet_name='Analysis')
     writer.close()
     processed_data = output.getvalue()
     return processed_data
@@ -47,6 +48,9 @@ if comms_audit_file:
         for col in brand_elements:
             if col in audit_df.columns:
                 audit_df[col] = audit_df[col].astype(bool)
+            else:
+                # If a brand element column is missing from the file, create it and fill with False
+                audit_df[col] = False
 
         # --- DUMMY DATA GENERATION ---
         st.info("Note: Using placeholder data for Quant Research metrics until the official Savanta file is provided.")
@@ -98,12 +102,26 @@ if comms_audit_file:
 
         # --- Display the Combined Analysis Table (Heatmap) ---
         st.markdown("#### Combined Analysis Table")
-        styler = master_df.fillna(0).style
+        
+        # ----- THIS IS THE ROBUST FIX -----
+        # 1. Transpose the DataFrame so metrics become the rows
+        df_for_display = master_df.T
+        
+        # 2. Create the Styler object from the transposed DataFrame
+        styler = df_for_display.fillna(0).style
+
+        # 3. Define the rows for each format type (these are now the index of the DataFrame)
         heatmap_rows = ['% recognised', 'Positive associations', 'Negative associations', 'Uniqueness']
+        percent_rows = ['% Total Used', '% recognised', 'Positive associations', 'Negative associations', 'Uniqueness']
+        currency_rows = ['Total Investment', 'Average Investment']
+        
+        # 4. Apply styling and formatting
         styler = styler.background_gradient(cmap='RdYlGn', axis=1, subset=(pd.IndexSlice[heatmap_rows], slice(None)))
-        styler = styler.format("{:.1%}", subset=pd.IndexSlice[['% Total Used'] + heatmap_rows, :])
-        styler = styler.format("€{:,.2f}", subset=pd.IndexSlice[['Total Investment', 'Average Investment'], :])
+        styler = styler.format("{:.1%}", subset=(pd.IndexSlice[percent_rows], slice(None)))
+        styler = styler.format("€{:,.2f}", subset=(pd.IndexSlice[currency_rows], slice(None)))
+        
         st.dataframe(styler)
+        # ---------------------------------
         
         excel_file = to_excel(master_df.fillna(0))
         st.download_button(
@@ -115,7 +133,7 @@ if comms_audit_file:
         
         # --- Display the Brand Equity Matrix ---
         st.markdown("#### Brand Equity Matrix")
-        plot_data = master_df.reset_index().rename(columns={'% recognised': 'Recognition (Fame)', 'Average Investment': 'avg_spend'})
+        plot_data = master_df.reset_index().rename(columns={'% recognised': 'Recognition (Fame)', 'Average Investment': 'avg_spend', 'index': 'Element'})
         plot_data['avg_spend'] = plot_data['avg_spend'].fillna(0)
 
         fig_matrix = px.scatter(
