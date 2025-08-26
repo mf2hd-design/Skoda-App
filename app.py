@@ -4,7 +4,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from io import BytesIO
 
-# --- Define Brand Elements based on your provided data ---
+# --- Define Brand Elements based on the Comms Audit spreadsheet ---
 brand_elements = [
     "Electric Green", "Dark Green", "Type", "Tagline", "Symbol",
     "Hacek", "Wordmark", "Facets", "Sonic"
@@ -18,29 +18,25 @@ st.markdown("This tool synthesizes your **Comms Audit** and **Quant Research** d
 # --- Helper function to create a downloadable Excel file ---
 def to_excel(df):
     output = BytesIO()
-    writer = pd.ExcelWriter(output, engine='xlsxwriter')
+    try:
+        import xlsxwriter
+        writer = pd.ExcelWriter(output, engine='xlsxwriter')
+    except ImportError:
+        writer = pd.ExcelWriter(output, engine='openpyxl')
+    
     df.to_excel(writer, index=True, sheet_name='Analysis')
     writer.close()
     processed_data = output.getvalue()
     return processed_data
 
-# --- Data Room: File Uploaders ---
-st.header("1. Data Room: Upload Your Files")
-col1, col2 = st.columns(2)
+# --- Data Room: Single File Uploader ---
+st.header("1. Data Room: Upload Your Comms Audit File")
+comms_audit_file = st.file_uploader(
+    "Upload your Comms Audit Excel File (e.g., skoda ads overview.xlsx)",
+    type=["xlsx", "csv"]
+)
 
-with col1:
-    comms_audit_file = st.file_uploader(
-        "Upload your Comms Audit Excel File",
-        type=["xlsx", "csv"]
-    )
-
-with col2:
-    quant_research_file = st.file_uploader(
-        "Upload your Savanta Quant Research Excel File",
-        type=["xlsx", "csv"]
-    )
-
-if comms_audit_file and quant_research_file:
+if comms_audit_file:
     # --- Calculation Engine: Process and merge the data ---
     try:
         # Load Comms Audit data
@@ -52,24 +48,30 @@ if comms_audit_file and quant_research_file:
             if col in audit_df.columns:
                 audit_df[col] = audit_df[col].astype(bool)
 
-        # Load Quant Research data
-        research_df = pd.read_excel(quant_research_file) if quant_research_file.name.endswith('xlsx') else pd.read_csv(quant_research_file)
-        # We'll assume the research file has a column named 'Element' and the survey metrics
-        research_df.set_index('Element', inplace=True)
+        # --- DUMMY DATA GENERATION ---
+        st.info("Note: Using placeholder data for Quant Research metrics until the official Savanta file is provided.")
+        survey_data = {
+            'Element': brand_elements, 
+            '% recognised': [0.80, 0.47, 0.78, 0.30, 0.22, 0.52, 0.59, 0.14, 0.29], 
+            'Positive associations': [0.70, 0.39, 0.29, 0.45, 0.59, 0.35, 0.76, 0.33, 0.21], 
+            'Negative associations': [0.30, 0.30, 0.51, 0.20, 0.11, 0.46, 0.15, 0.58, 0.78], 
+            'Uniqueness': [0.51, 0.29, 0.90, 0.60, 0.94, 0.73, 0.46, 0.54, 0.53]
+        }
+        research_df = pd.DataFrame(survey_data).set_index('Element')
+        # ---------------------------
 
-        st.success("Files loaded successfully! The dashboard is now active.")
+        st.success("Comms Audit file loaded successfully! The dashboard is now active.")
         st.subheader("Interactive Dashboard")
 
         # --- Interactive Dashboard ---
         # --- Global Filters ---
         st.markdown("### Global Filters")
         
-        # Get unique values for filters from the audit data
         available_markets = audit_df['Market'].unique()
         available_mediums = audit_df['Medium'].unique()
         
-        selected_market = st.selectbox("Filter by Market (select one or more)", options=['All'] + list(available_markets), index=0)
-        selected_medium = st.selectbox("Filter by Medium", options=['All'] + list(available_mediums), index=0)
+        selected_market = st.selectbox("Filter by Market", options=['All'] + sorted(list(available_markets)), index=0)
+        selected_medium = st.selectbox("Filter by Medium", options=['All'] + sorted(list(available_mediums)), index=0)
 
         # Filter the DataFrame based on selections
         filtered_audit_df = audit_df.copy()
@@ -91,7 +93,7 @@ if comms_audit_file and quant_research_file:
             })
         media_df = pd.DataFrame(media_metrics).set_index('Element')
         
-        # Merge with research data
+        # Merge with research data (now the dummy data)
         master_df = media_df.join(research_df)
 
         # --- Display the Combined Analysis Table (Heatmap) ---
@@ -127,7 +129,6 @@ if comms_audit_file and quant_research_file:
 
         # --- ROI Proxy Chart ---
         st.markdown("#### ROI Proxy: Positive Associations per €1M Invested")
-        # Calculate the ROI proxy metric, handle division by zero
         master_df['ROI_Proxy'] = (master_df['Positive associations'] / master_df['Total Investment']) * 1_000_000
         master_df['ROI_Proxy'].fillna(0, inplace=True)
         roi_df = master_df[master_df['Total Investment'] > 0]['ROI_Proxy'].sort_values(ascending=False).reset_index()
@@ -142,5 +143,5 @@ if comms_audit_file and quant_research_file:
         st.plotly_chart(fig_roi, use_container_width=True)
 
     except Exception as e:
-        st.error(f"An error occurred while processing the files: {e}")
-        st.error("Please ensure your files are in the correct format with the expected column names.")
+        st.error(f"An error occurred while processing the file: {e}")
+        st.error("Please ensure your file is a valid Excel/CSV with the expected column names (e.g., 'Market', 'Spend', etc.).")
