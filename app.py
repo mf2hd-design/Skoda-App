@@ -49,11 +49,9 @@ if comms_audit_file:
             if col in audit_df.columns:
                 audit_df[col] = audit_df[col].astype(bool)
             else:
-                # If a brand element column is missing from the file, create it and fill with False
                 audit_df[col] = False
 
-        # --- DUMMY DATA GENERATION ---
-        st.info("Note: Using placeholder data for Quant Research metrics until the official Savanta file is provided.")
+        # --- DUMMY DATA GENERATION (NOW CLICKABLE) ---
         survey_data = {
             'Element': brand_elements, 
             '% recognised': [0.80, 0.47, 0.78, 0.30, 0.22, 0.52, 0.59, 0.14, 0.29], 
@@ -62,13 +60,16 @@ if comms_audit_file:
             'Uniqueness': [0.51, 0.29, 0.90, 0.60, 0.94, 0.73, 0.46, 0.54, 0.53]
         }
         research_df = pd.DataFrame(survey_data).set_index('Element')
-        # ---------------------------
+        
+        with st.expander("Note: Using placeholder data for Quant Research metrics. Click to see the data."):
+            st.warning("The data below is for demonstration purposes until the official Savanta file is provided.")
+            st.dataframe(research_df.style.format("{:.1%}"))
+        # ----------------------------------------------------
 
         st.success("Comms Audit file loaded successfully! The dashboard is now active.")
         st.subheader("Interactive Dashboard")
 
         # --- Interactive Dashboard ---
-        # --- Global Filters ---
         st.markdown("### Global Filters")
         
         available_markets = audit_df['Market'].unique()
@@ -97,31 +98,25 @@ if comms_audit_file:
             })
         media_df = pd.DataFrame(media_metrics).set_index('Element')
         
-        # Merge with research data (now the dummy data)
+        # Merge with research data (the dummy data)
         master_df = media_df.join(research_df)
 
         # --- Display the Combined Analysis Table (Heatmap) ---
         st.markdown("#### Combined Analysis Table")
         
-        # ----- THIS IS THE ROBUST FIX -----
-        # 1. Transpose the DataFrame so metrics become the rows
         df_for_display = master_df.T
-        
-        # 2. Create the Styler object from the transposed DataFrame
         styler = df_for_display.fillna(0).style
 
-        # 3. Define the rows for each format type (these are now the index of the DataFrame)
         heatmap_rows = ['% recognised', 'Positive associations', 'Negative associations', 'Uniqueness']
+        styler = styler.background_gradient(cmap='RdYlGn', axis=1, subset=(pd.IndexSlice[heatmap_rows], slice(None)))
+        
         percent_rows = ['% Total Used', '% recognised', 'Positive associations', 'Negative associations', 'Uniqueness']
         currency_rows = ['Total Investment', 'Average Investment']
         
-        # 4. Apply styling and formatting
-        styler = styler.background_gradient(cmap='RdYlGn', axis=1, subset=(pd.IndexSlice[heatmap_rows], slice(None)))
         styler = styler.format("{:.1%}", subset=(pd.IndexSlice[percent_rows], slice(None)))
         styler = styler.format("€{:,.2f}", subset=(pd.IndexSlice[currency_rows], slice(None)))
         
         st.dataframe(styler)
-        # ---------------------------------
         
         excel_file = to_excel(master_df.fillna(0))
         st.download_button(
