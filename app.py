@@ -51,7 +51,7 @@ if comms_audit_file:
             else:
                 audit_df[col] = False
 
-        # --- DUMMY DATA GENERATION (NOW CLICKABLE) ---
+        # --- DUMMY DATA GENERATION (CLICKABLE) ---
         survey_data = {
             'Element': brand_elements, 
             '% recognised': [0.80, 0.47, 0.78, 0.30, 0.22, 0.52, 0.59, 0.14, 0.29], 
@@ -64,8 +64,7 @@ if comms_audit_file:
         with st.expander("Note: Using placeholder data for Quant Research metrics. Click to see the data."):
             st.warning("The data below is for demonstration purposes until the official Savanta file is provided.")
             st.dataframe(research_df.style.format("{:.1%}"))
-        # ----------------------------------------------------
-
+        
         st.success("Comms Audit file loaded successfully! The dashboard is now active.")
         st.subheader("Interactive Dashboard")
 
@@ -98,7 +97,6 @@ if comms_audit_file:
             })
         media_df = pd.DataFrame(media_metrics).set_index('Element')
         
-        # Merge with research data (the dummy data)
         master_df = media_df.join(research_df)
 
         # --- Display the Combined Analysis Table (Heatmap) ---
@@ -140,20 +138,52 @@ if comms_audit_file:
         )
         st.plotly_chart(fig_matrix, use_container_width=True)
 
-        # --- ROI Proxy Chart ---
-        st.markdown("#### ROI Proxy: Positive Associations per €1M Invested")
-        master_df['ROI_Proxy'] = (master_df['Positive associations'] / master_df['Total Investment']) * 1_000_000
-        master_df['ROI_Proxy'].fillna(0, inplace=True)
-        roi_df = master_df[master_df['Total Investment'] > 0]['ROI_Proxy'].sort_values(ascending=False).reset_index()
+        # --- NEW SECTION: ANSWERING KEY STRATEGIC QUESTIONS ---
+        st.header("Answering Key Strategic Questions")
 
-        fig_roi = px.bar(
-            roi_df,
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.markdown("##### Where is our investment going?")
+            investment_df = master_df[['Total Investment']].sort_values(by='Total Investment', ascending=True)
+            fig_investment = px.bar(
+                investment_df,
+                x='Total Investment',
+                y=investment_df.index,
+                orientation='h',
+                title="Total Spend by Brand Element",
+                text_auto=True
+            )
+            st.plotly_chart(fig_investment, use_container_width=True)
+
+        with col2:
+            st.markdown("##### Which assets are 'safe bets' vs. 'risky'?")
+            sentiment_df = master_df.reset_index().rename(columns={'index': 'Element'})
+            fig_sentiment = px.scatter(
+                sentiment_df,
+                x='Negative associations',
+                y='Positive associations',
+                size='Total Investment',
+                color='Element',
+                hover_name='Element',
+                title="Sentiment Analysis: Positive vs. Negative Associations"
+            )
+            st.plotly_chart(fig_sentiment, use_container_width=True)
+
+        st.markdown("##### Which assets are most efficient at driving Recognition (Fame)?")
+        master_df['Recognition_ROI'] = (master_df['% recognised'] / master_df['Total Investment']) * 1_000_000
+        master_df['Recognition_ROI'].fillna(0, inplace=True)
+        recognition_roi_df = master_df[master_df['Total Investment'] > 0]['Recognition_ROI'].sort_values(ascending=False).reset_index()
+        
+        fig_recognition_roi = px.bar(
+            recognition_roi_df,
             x='Element',
-            y='ROI_Proxy',
-            title="Which elements are most efficient at generating positive associations?",
-            labels={'ROI_Proxy': 'Positive Association Score per €1M Invested'}
+            y='Recognition_ROI',
+            title="Recognition Efficiency",
+            labels={'Recognition_ROI': 'Recognition % Points per €1M Invested'}
         )
-        st.plotly_chart(fig_roi, use_container_width=True)
+        st.plotly_chart(fig_recognition_roi, use_container_width=True)
+        # --------------------------------------------------------
 
     except Exception as e:
         st.error(f"An error occurred while processing the file: {e}")
