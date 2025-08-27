@@ -74,136 +74,153 @@ if comms_audit_file:
         
         st.success("Comms Audit file loaded successfully! The dashboard is now active.")
         st.markdown("---")
-        st.markdown("### 📊 Interactive Dashboard")
-
-        # --- Global Filters ---
-        st.markdown("Use these filters to explore the data for specific markets or media types.")
         
-        available_markets = audit_df['Market'].unique()
-        available_mediums = audit_df['Medium'].unique()
-        
-        col1, col2 = st.columns(2)
-        with col1:
-            selected_market = st.selectbox("Filter by Market", options=['All'] + sorted(list(available_markets)), index=0)
-        with col2:
-            selected_medium = st.selectbox("Filter by Medium", options=['All'] + sorted(list(available_mediums)), index=0)
+        # --- Create Tabs for a more professional UI ---
+        tab1, tab2, tab3 = st.tabs(["📊 Executive Summary", "❓ Strategic Deep Dive", "📄 Data Explorer"])
 
-        # Filter the DataFrame based on selections
-        filtered_audit_df = audit_df.copy()
-        if selected_market != 'All':
-            filtered_audit_df = filtered_audit_df[filtered_audit_df['Market'] == selected_market]
-        if selected_medium != 'All':
-            filtered_audit_df = filtered_audit_df[filtered_audit_df['Medium'] == selected_medium]
+        with tab1:
+            st.header("Executive Summary")
+            
+            # --- Global Filters ---
+            st.markdown("Use these filters to explore the data for specific markets or media types.")
+            
+            available_markets = audit_df['Market'].unique()
+            available_mediums = audit_df['Medium'].unique()
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                selected_market = st.selectbox("Filter by Market", options=['All'] + sorted(list(available_markets)), index=0)
+            with col2:
+                selected_medium = st.selectbox("Filter by Medium", options=['All'] + sorted(list(available_mediums)), index=0)
 
-        # --- Perform Calculations on the Filtered Data ---
-        total_ads = len(filtered_audit_df)
-        media_metrics = []
-        for element in brand_elements:
-            element_df = filtered_audit_df[filtered_audit_df[element] == True]
-            media_metrics.append({
-                'Element': element,
-                '% Total Used': (len(element_df) / total_ads) if total_ads > 0 else 0,
-                'Total Investment': element_df['Spend'].sum(),
-                'Average Investment': element_df['Spend'].mean()
-            })
-        media_df = pd.DataFrame(media_metrics).set_index('Element')
-        
-        master_df = media_df.join(research_df)
+            # Filter the DataFrame based on selections
+            filtered_audit_df = audit_df.copy()
+            if selected_market != 'All':
+                filtered_audit_df = filtered_audit_df[filtered_audit_df['Market'] == selected_market]
+            if selected_medium != 'All':
+                filtered_audit_df = filtered_audit_df[filtered_audit_df['Medium'] == selected_medium]
 
-        # --- Display the Combined Analysis Table (Heatmap) ---
-        st.markdown("#### Combined Analysis Table")
-        st.caption("This table synthesizes the media audit with survey data. Use the filters above to drill down into specific segments.")
-        
-        df_for_display = master_df.T
-        styler = df_for_display.fillna(0).style
+            # --- Perform Calculations on the Filtered Data ---
+            total_ads = len(filtered_audit_df)
+            media_metrics = []
+            for element in brand_elements:
+                element_df = filtered_audit_df[filtered_audit_df[element] == True]
+                media_metrics.append({
+                    'Element': element,
+                    '% Total Used': (len(element_df) / total_ads) if total_ads > 0 else 0,
+                    'Total Investment': element_df['Spend'].sum(),
+                    'Average Investment': element_df['Spend'].mean()
+                })
+            media_df = pd.DataFrame(media_metrics).set_index('Element')
+            
+            master_df = media_df.join(research_df)
 
-        heatmap_rows = ['% recognised', 'Positive associations', 'Negative associations', 'Uniqueness']
-        styler = styler.background_gradient(cmap='RdYlGn', axis=1, subset=(pd.IndexSlice[heatmap_rows], slice(None)))
-        
-        percent_rows = ['% Total Used', '% recognised', 'Positive associations', 'Negative associations', 'Uniqueness']
-        currency_rows = ['Total Investment', 'Average Investment']
-        
-        styler = styler.format("{:.1%}", subset=(pd.IndexSlice[percent_rows], slice(None)))
-        styler = styler.format("€{:,.2f}", subset=(pd.IndexSlice[currency_rows], slice(None)))
-        
-        st.dataframe(styler)
-        
-        excel_file = to_excel(master_df.fillna(0))
-        st.download_button(
-            label="📥 Export Filtered Analysis to Excel",
-            data=excel_file,
-            file_name=f"skoda_analysis_{selected_market}_{selected_medium}.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
-        
-        # --- Display the Brand Equity Matrix ---
-        st.markdown("#### Brand Equity Matrix")
-        st.caption("This chart plots each element's Fame vs. Uniqueness. The size of the bubble represents the average spend on ads containing that element.")
-        plot_data = master_df.reset_index().rename(columns={'% recognised': 'Recognition (Fame)', 'Average Investment': 'avg_spend', 'index': 'Element'})
-        plot_data['avg_spend'] = plot_data['avg_spend'].fillna(0)
+            # --- Display the Combined Analysis Table (Heatmap) ---
+            st.markdown("#### Combined Analysis Table")
+            st.caption("This table synthesizes the media audit with survey data. Use the filters above to drill down into specific segments.")
+            
+            df_for_display = master_df.T
+            styler = df_for_display.fillna(0).style
+            heatmap_rows = ['% recognised', 'Positive associations', 'Negative associations', 'Uniqueness']
+            styler = styler.background_gradient(cmap='RdYlGn', axis=1, subset=(pd.IndexSlice[heatmap_rows], slice(None)))
+            percent_rows = ['% Total Used', '% recognised', 'Positive associations', 'Negative associations', 'Uniqueness']
+            currency_rows = ['Total Investment', 'Average Investment']
+            styler = styler.format("{:.1%}", subset=(pd.IndexSlice[percent_rows], slice(None)))
+            styler = styler.format("€{:,.2f}", subset=(pd.IndexSlice[currency_rows], slice(None)))
+            st.dataframe(styler)
+            
+            excel_file = to_excel(master_df.fillna(0))
+            st.download_button(label="📥 Export Filtered Analysis to Excel", data=excel_file, file_name=f"skoda_analysis_{selected_market}_{selected_medium}.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            
+            # --- Display the Brand Equity Matrix ---
+            st.markdown("#### Brand Equity Matrix")
+            st.caption("This chart plots each element's Fame vs. Uniqueness. The size of the bubble represents the average spend on ads containing that element.")
+            plot_data = master_df.reset_index().rename(columns={'% recognised': 'Recognition (Fame)', 'Average Investment': 'avg_spend', 'index': 'Element'})
+            plot_data['avg_spend'] = plot_data['avg_spend'].fillna(0)
 
-        fig_matrix = px.scatter(
-            plot_data, x="Uniqueness", y="Recognition (Fame)", 
-            size="avg_spend", color="Positive associations", 
-            text="Element", size_max=60, hover_name="Element", 
-            color_continuous_scale='RdYlGn', 
-            title="Fame vs. Uniqueness (Size by Avg Spend)"
-        )
-        st.plotly_chart(fig_matrix, use_container_width=True)
-
-        # --- NEW SECTION: Answering Key Strategic Questions ---
-        st.markdown("---")
-        st.markdown("### ❓ Answering Key Strategic Questions")
-
-        # --- Q1 & Q2 ---
-        col3, col4 = st.columns(2)
-        with col3:
-            st.markdown("##### Where is our investment going?")
-            st.caption("This chart shows the total spend associated with each brand element across all selected ads.")
-            investment_df = master_df[['Total Investment']].sort_values(by='Total Investment', ascending=True)
-            fig_investment = px.bar(investment_df, x='Total Investment', y=investment_df.index, orientation='h', title="Total Spend by Brand Element", text_auto=True)
-            st.plotly_chart(fig_investment, use_container_width=True)
-
-        with col4:
-            st.markdown("##### Which assets are 'safe bets' vs. 'risky'?")
-            st.caption("This chart plots elements based on their positive vs. negative associations. Ideal assets are in the top-left.")
-            sentiment_df = master_df.reset_index().rename(columns={'index': 'Element'})
-            fig_sentiment = px.scatter(sentiment_df, x='Negative associations', y='Positive associations', size='Total Investment', color='Element', hover_name='Element', title="Sentiment Analysis")
-            st.plotly_chart(fig_sentiment, use_container_width=True)
-
-        # --- Q3 & Q4 (New) ---
-        col5, col6 = st.columns(2)
-        with col5:
-            st.markdown("##### Are our elements used consistently across markets?")
-            st.caption("This compares the usage frequency of each element in different markets, highlighting strategic variations.")
-            # Calculate usage per market from the original, unfiltered dataframe
-            market_usage = audit_df.groupby('Market')[brand_elements].mean().reset_index()
-            market_usage_melted = market_usage.melt(id_vars='Market', value_vars=brand_elements, var_name='Element', value_name='% Used')
-            fig_market = px.bar(
-                market_usage_melted,
-                x='Element',
-                y='% Used',
-                color='Market',
-                barmode='group',
-                title='Brand Element Usage by Market'
+            fig_matrix = px.scatter(
+                plot_data, x="Uniqueness", y="Recognition (Fame)", 
+                size="avg_spend", color="Positive associations", 
+                text="Element", size_max=60, hover_name="Element", 
+                color_continuous_scale='RdYlGn', 
+                title="Fame vs. Uniqueness (Size by Avg Spend)"
             )
-            st.plotly_chart(fig_market, use_container_width=True)
+            st.plotly_chart(fig_matrix, use_container_width=True)
 
-        with col6:
-            st.markdown("##### Are we using assets effectively across media types?")
-            st.caption("This heatmap shows which elements are most used in Images vs. Videos.")
-            # Calculate usage per media type from the original, unfiltered dataframe
-            media_usage = audit_df.groupby('Medium')[brand_elements].mean().T # Transpose to get elements as rows
-            fig_media_heatmap = px.imshow(
-                media_usage,
-                labels=dict(x="Medium Type", y="Brand Element", color="% Used"),
-                x=media_usage.columns,
-                y=media_usage.index,
-                text_auto=True,
-                aspect="auto",
-                title="Element Usage Frequency by Media Type"
-            )
-            st.plotly_chart(fig_media_heatmap, use_container_width=True)
+        with tab2:
+            st.header("Strategic Deep Dive")
+            st.caption("These charts answer key strategic questions based on the full, unfiltered dataset to provide a global overview.")
+
+            # --- Re-calculate master_df for the full dataset ---
+            total_ads_all = len(audit_df)
+            media_metrics_all = []
+            for element in brand_elements:
+                element_df_all = audit_df[audit_df[element] == True]
+                media_metrics_all.append({
+                    'Element': element,
+                    'Total Investment': element_df_all['Spend'].sum(),
+                })
+            media_df_all = pd.DataFrame(media_metrics_all).set_index('Element')
+            master_df_all = media_df_all.join(research_df)
+
+            # --- Q1 & Q2 ---
+            col3, col4 = st.columns(2)
+            with col3:
+                st.markdown("##### Where is our investment going?")
+                investment_df = master_df_all[['Total Investment']].sort_values(by='Total Investment', ascending=True)
+                fig_investment = px.bar(investment_df, x='Total Investment', y=investment_df.index, orientation='h', title="Total Spend by Brand Element", text_auto=True)
+                st.plotly_chart(fig_investment, use_container_width=True)
+
+            with col4:
+                st.markdown("##### Which assets are 'safe bets' vs. 'risky'?")
+                sentiment_df = master_df_all.reset_index().rename(columns={'index': 'Element'})
+                fig_sentiment = px.scatter(sentiment_df, x='Negative associations', y='Positive associations', size='Total Investment', color='Element', hover_name='Element', title="Sentiment Analysis")
+                st.plotly_chart(fig_sentiment, use_container_width=True)
+            
+            # --- Q3 & Q4 ---
+            col5, col6 = st.columns(2)
+            with col5:
+                st.markdown("##### Are elements used consistently across markets?")
+                market_usage = audit_df.groupby('Market')[brand_elements].mean().reset_index()
+                market_usage_melted = market_usage.melt(id_vars='Market', value_vars=brand_elements, var_name='Element', value_name='% Used')
+                fig_market = px.bar(market_usage_melted, x='Element', y='% Used', color='Market', barmode='group', title='Brand Element Usage by Market')
+                st.plotly_chart(fig_market, use_container_width=True)
+
+            with col6:
+                st.markdown("##### Are assets used effectively across media types?")
+                media_usage = audit_df.groupby('Medium')[brand_elements].mean().T
+                fig_media_heatmap = px.imshow(media_usage, labels=dict(x="Medium Type", y="Brand Element", color="% Used"), text_auto=True, aspect="auto", title="Element Usage Frequency by Media Type")
+                st.plotly_chart(fig_media_heatmap, use_container_width=True)
+
+            # --- Q5 & Q6 (New) ---
+            st.markdown("---")
+            col7, col8 = st.columns(2)
+            with col7:
+                st.markdown("##### Which assets are most efficient at driving Recognition?")
+                master_df_all['Recognition_ROI'] = (master_df_all['% recognised'] / master_df_all['Total Investment']) * 1_000_000
+                master_df_all['Recognition_ROI'].fillna(0, inplace=True)
+                recognition_roi_df = master_df_all[master_df_all['Total Investment'] > 0]['Recognition_ROI'].sort_values(ascending=False).reset_index()
+                fig_recognition_roi = px.bar(recognition_roi_df, x='Element', y='Recognition_ROI', title="Recognition Efficiency", labels={'Recognition_ROI': 'Recognition % Points per €1M Invested'})
+                st.plotly_chart(fig_recognition_roi, use_container_width=True)
+
+            with col8:
+                st.markdown("##### Are we investing in our most unique assets?")
+                uniqueness_df = master_df_all.reset_index().rename(columns={'index': 'Element'})
+                fig_uniqueness_spend = px.scatter(
+                    uniqueness_df, 
+                    x='Uniqueness', 
+                    y='Total Investment', 
+                    size='Positive associations',
+                    color='Element',
+                    hover_name='Element',
+                    title='Investment vs. Uniqueness'
+                )
+                st.plotly_chart(fig_uniqueness_spend, use_container_width=True)
+
+        with tab3:
+            st.header("Data Explorer")
+            st.caption("This section shows the raw Comms Audit data you uploaded.")
+            st.dataframe(audit_df)
 
     except Exception as e:
         st.error(f"An error occurred while processing the file: {e}")
