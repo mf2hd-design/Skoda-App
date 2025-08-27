@@ -31,6 +31,7 @@ def to_excel(df):
     except ImportError:
         writer = pd.ExcelWriter(output, engine='openpyxl')
     
+    # Write the transposed data to Excel to match the screen display
     df.T.to_excel(writer, index=True, sheet_name='Analysis')
     writer.close()
     processed_data = output.getvalue()
@@ -111,16 +112,20 @@ if comms_audit_file:
 
         # --- Display the Combined Analysis Table (Heatmap) ---
         st.markdown("#### Combined Analysis Table")
-        st.caption("This table synthesizes the AI-driven media audit with simulated survey data, providing a holistic view of brand asset performance and equity.")
+        st.caption("This table synthesizes the media audit with survey data. Use the filters above to drill down into specific segments.")
         
         df_for_display = master_df.T
         styler = df_for_display.fillna(0).style
+
         heatmap_rows = ['% recognised', 'Positive associations', 'Negative associations', 'Uniqueness']
         styler = styler.background_gradient(cmap='RdYlGn', axis=1, subset=(pd.IndexSlice[heatmap_rows], slice(None)))
+        
         percent_rows = ['% Total Used', '% recognised', 'Positive associations', 'Negative associations', 'Uniqueness']
         currency_rows = ['Total Investment', 'Average Investment']
+        
         styler = styler.format("{:.1%}", subset=(pd.IndexSlice[percent_rows], slice(None)))
         styler = styler.format("€{:,.2f}", subset=(pd.IndexSlice[currency_rows], slice(None)))
+        
         st.dataframe(styler)
         
         excel_file = to_excel(master_df.fillna(0))
@@ -171,7 +176,7 @@ if comms_audit_file:
         with col5:
             st.markdown("##### Are our elements used consistently across markets?")
             st.caption("This compares the usage frequency of each element in different markets, highlighting strategic variations.")
-            # Calculate usage per market
+            # Calculate usage per market from the original, unfiltered dataframe
             market_usage = audit_df.groupby('Market')[brand_elements].mean().reset_index()
             market_usage_melted = market_usage.melt(id_vars='Market', value_vars=brand_elements, var_name='Element', value_name='% Used')
             fig_market = px.bar(
@@ -187,6 +192,7 @@ if comms_audit_file:
         with col6:
             st.markdown("##### Are we using assets effectively across media types?")
             st.caption("This heatmap shows which elements are most used in Images vs. Videos.")
+            # Calculate usage per media type from the original, unfiltered dataframe
             media_usage = audit_df.groupby('Medium')[brand_elements].mean().T # Transpose to get elements as rows
             fig_media_heatmap = px.imshow(
                 media_usage,
