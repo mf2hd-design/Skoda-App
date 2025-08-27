@@ -82,23 +82,29 @@ if comms_audit_file:
             st.header("Executive Summary")
             
             # --- Global Filters ---
-            st.markdown("Use these filters to explore the data for specific markets or media types.")
+            st.markdown("Use these filters to explore the data for specific markets or placements.")
             
             available_markets = audit_df['Market'].unique()
-            available_mediums = audit_df['Medium'].unique()
+            # ----- THIS IS THE UPDATED FILTER -----
+            available_placements = audit_df['Placement'].unique()
+            # ------------------------------------
             
             col1, col2 = st.columns(2)
             with col1:
                 selected_market = st.selectbox("Filter by Market", options=['All'] + sorted(list(available_markets)), index=0)
             with col2:
-                selected_medium = st.selectbox("Filter by Medium", options=['All'] + sorted(list(available_mediums)), index=0)
+                # ----- THIS IS THE UPDATED FILTER -----
+                selected_placement = st.selectbox("Filter by Placement", options=['All'] + sorted(list(available_placements)), index=0)
+                # ------------------------------------
 
             # Filter the DataFrame based on selections
             filtered_audit_df = audit_df.copy()
             if selected_market != 'All':
                 filtered_audit_df = filtered_audit_df[filtered_audit_df['Market'] == selected_market]
-            if selected_medium != 'All':
-                filtered_audit_df = filtered_audit_df[filtered_audit_df['Medium'] == selected_medium]
+            # ----- THIS IS THE UPDATED FILTER LOGIC -----
+            if selected_placement != 'All':
+                filtered_audit_df = filtered_audit_df[filtered_audit_df['Placement'] == selected_placement]
+            # ------------------------------------------
 
             # --- Perform Calculations on the Filtered Data ---
             total_ads = len(filtered_audit_df)
@@ -129,8 +135,10 @@ if comms_audit_file:
             styler = styler.format("€{:,.2f}", subset=(pd.IndexSlice[currency_rows], slice(None)))
             st.dataframe(styler)
             
+            # ----- THIS IS THE UPDATED FILENAME FOR EXPORT -----
             excel_file = to_excel(master_df.fillna(0))
-            st.download_button(label="📥 Export Filtered Analysis to Excel", data=excel_file, file_name=f"skoda_analysis_{selected_market}_{selected_medium}.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            st.download_button(label="📥 Export Filtered Analysis to Excel", data=excel_file, file_name=f"skoda_analysis_{selected_market}_{selected_placement}.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            # ----------------------------------------------------
             
             # --- Display the Brand Equity Matrix ---
             st.markdown("#### Brand Equity Matrix")
@@ -151,7 +159,7 @@ if comms_audit_file:
             st.header("Strategic Deep Dive")
             st.caption("These charts answer key strategic questions based on the full, unfiltered dataset to provide a global overview.")
 
-            # --- Re-calculate master_df for the full dataset ---
+            # Re-calculate master_df for the full dataset for this tab
             total_ads_all = len(audit_df)
             media_metrics_all = []
             for element in brand_elements:
@@ -163,7 +171,7 @@ if comms_audit_file:
             media_df_all = pd.DataFrame(media_metrics_all).set_index('Element')
             master_df_all = media_df_all.join(research_df)
 
-            # --- Q1 & Q2 ---
+            # ... Rest of the charts in this tab are the same as before ...
             col3, col4 = st.columns(2)
             with col3:
                 st.markdown("##### Where is our investment going?")
@@ -177,7 +185,6 @@ if comms_audit_file:
                 fig_sentiment = px.scatter(sentiment_df, x='Negative associations', y='Positive associations', size='Total Investment', color='Element', hover_name='Element', title="Sentiment Analysis")
                 st.plotly_chart(fig_sentiment, use_container_width=True)
             
-            # --- Q3 & Q4 ---
             col5, col6 = st.columns(2)
             with col5:
                 st.markdown("##### Are elements used consistently across markets?")
@@ -192,7 +199,6 @@ if comms_audit_file:
                 fig_media_heatmap = px.imshow(media_usage, labels=dict(x="Medium Type", y="Brand Element", color="% Used"), text_auto=True, aspect="auto", title="Element Usage Frequency by Media Type")
                 st.plotly_chart(fig_media_heatmap, use_container_width=True)
 
-            # --- Q5 & Q6 (New) ---
             st.markdown("---")
             col7, col8 = st.columns(2)
             with col7:
