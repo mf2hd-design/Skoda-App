@@ -25,6 +25,8 @@ st.markdown("This strategic tool synthesizes **Comms Audit** and **Quant Researc
 # --- Helper function to create a downloadable Excel file ---
 def to_excel(df):
     output = BytesIO()
+    # Use xlsxwriter to create a more polished Excel file if available
+    # This try-except block is correctly implemented.
     try:
         import xlsxwriter
         writer = pd.ExcelWriter(output, engine='xlsxwriter')
@@ -45,7 +47,7 @@ comms_audit_file = st.file_uploader(
 )
 
 if comms_audit_file:
-    # --- Calculation Engine: Process and merge the data ---
+    # --- This is the main try-except block for file processing ---
     try:
         # Load Comms Audit data
         audit_df = pd.read_excel(comms_audit_file) if comms_audit_file.name.endswith('xlsx') else pd.read_csv(comms_audit_file)
@@ -122,15 +124,108 @@ if comms_audit_file:
             df_for_display = master_df.T
             styler = df_for_display.fillna(0).style
 
-            # ----- THIS IS THE ROBUST HEATMAP FIX -----
-            # Define which rows are "good" (high is green) and "bad" (low is green)
             good_metric_rows = ['% recognised', 'Positive associations', 'Uniqueness']
             bad_metric_rows = ['Negative associations']
-
-            # Apply the normal colormap to the "good" metrics
             styler = styler.background_gradient(cmap='RdYlGn', axis=1, subset=(pd.IndexSlice[good_metric_rows], slice(None)))
-            # Apply the REVERSED colormap to the "bad" metrics
             styler = styler.background_gradient(cmap='RdYlGn_r', axis=1, subset=(pd.IndexSlice[bad_metric_rows], slice(None)))
-            # -------------------------------------------
             
-    
+            percent_rows = ['% Total Used', '% recognised', 'Positive associations', 'Negative associations', 'Uniqueness']
+            currency_rows = ['Total Investment', 'Average Investment']
+            styler = styler.format("{:.1%}", subset=(pd.IndexSlice[percent_rows], slice(None)))
+            styler = styler.format("€{:,.2f}", subset=(pd.IndexSlice[currency_rows], slice(None)))
+            
+            st.dataframe(styler)
+            
+            excel_file = to_excel(master_df.fillna(0))
+            st.download_button(label="📥 Export Filtered Analysis to Excel", data=excel_file, file_name=f"skoda_analysis_{selected_market}_{selected_placement}.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            
+            # --- Display the Brand Equity Matrix ---
+            st.markdown("#### Brand Equity Matrix")
+            st.caption("This chart plots each element's Fame vs. Uniqueness. The size of the bubble represents the average spend on ads containing that element.")
+            plot_data = master_df.reset_index().rename(columns={'% recognised': 'Recognition (Fame)', 'Average Investment': 'avg_spend', 'index': 'Element'})
+            plot_data['avg_spend'] = plot_data['avg_spend'].fillna(0)
+
+            fig_matrix = px.scatter(
+                plot_data, x="Uniqueness", y="Recognition (Fame)", 
+                size="avg_spend", color="Positive associations", 
+                text="Element", size_max=60, hover_name="Element", 
+                color_continuous_scale='RdYlGn', 
+                title="Fame vs. Uniqueness (Size by Avg Spend)"
+            )
+            st.plotly_chart(fig_matrix, use_container_width=True)
+
+        with tab2:
+            st.header("Strategic Deep Dive")
+            st.caption("These charts answer key strategic questions based on the full, unfiltered dataset to provide a global overview.")
+
+            # Re-calculate master_df for the full dataset for this tab
+            total_ads_all = len(audit_df)
+            media_metrics_all = []
+            for element in brand_elements:
+                element_df_all = audit_df[audit_df[element] == True]
+                media_metrics_all.append({
+                    'Element': element,
+                    'Total Investment': element_df_all['Spend'].sum(),
+                })
+            media_df_all = pd.DataFrame(media_metrics_all).set_index('Element')
+            master_df_all = media_df_all.join(research_df)
+
+            col3, col4 = st.columns(2)
+            with col3:
+                st.markdown("##### Where is our investment going?")
+                investment_df = master_df_all[['Total Investment']].sort_values(by='Total Investment', ascending=True)
+                fig_investment = px.bar(investment_df, x='Total Investment', y=investment_df.index, orientation='h', title="Total Spend by Brand Element", text_auto=True)
+                st.plotly_chart(fig_investment, use_container_width=True)
+
+            with col4:
+                st.markdown("##### Which assets are 'safe bets' vs. 'risky'?")
+                sentiment_df = master_df_all.reset_index().rename(columns={'index': 'Element'})
+                fig_sentiment = px.scatter(sentiment_df, x='Negative associations', y='Positive associations', size='Total Investment', color='Element', hover_name='Element', title="Sentiment Analysis")
+                st.plotly_chart(fig_sentiment, use_container_width=True)
+            
+            col5, col6 = st.columns(2)
+            with col5:
+                st.markdown("##### Are elements used consistently across markets?")
+                market_usage = audit_df.groupby('Market')[brand_elements].mean().reset_index()
+                market_usage_melted = market_usage.melt(id_vars='Market', value_vars=brand_elements, var_name='Element', value_name='% Used')
+                fig_market = px.bar(market_usage_melted, x='Element', y='% Used', color='Market', barmode='group', title='Brand Element Usage by Market')
+                st.plotly_chart(fig_market, use_container_width=True)
+
+            with col6:
+                st.markdown("##### Are assets used effectively across media types?")
+                media_usage = audit_df.groupby('Medium')[brand_elements].mean().T
+                fig_media_heatmap = px.imshow(media_usage, labels=dict(x="Medium Type", y="Brand Element", color="% Used"), text_auto=True, aspect="auto", title="Element Usage Frequency by Media Type")
+                st.plotly_chart(fig_media_heatmap, use_container_width=True)
+
+            st.markdown("---")
+            col7, col8 = st.columns(2)
+            with col7:
+                st.markdown("##### Which assets are most efficient at driving Recognition?")
+                master_df_all['Recognition_ROI'] = (master_df_all['% recognised'] / master_df_all['Total Investment']) * 1_000_000
+                master_df_all['Recognition_ROI'].fillna(0, inplace=True)
+                recognition_roi_df = master_df_all[master_df_all['Total Investment'] > 0]['Recognition_ROI'].sort_values(ascending=False).reset_index()
+                fig_recognition_roi = px.bar(recognition_roi_df, x='Element', y='Recognition_ROI', title="Recognition Efficiency", labels={'Recognition_ROI': 'Recognition % Points per €1M Invested'})
+                st.plotly_chart(fig_recognition_roi, use_container_width=True)
+
+            with col8:
+                st.markdown("##### Are we investing in our most unique assets?")
+                uniqueness_df = master_df_all.reset_index().rename(columns={'index': 'Element'})
+                fig_uniqueness_spend = px.scatter(
+                    uniqueness_df, 
+                    x='Uniqueness', 
+                    y='Total Investment', 
+                    size='Positive associations',
+                    color='Element',
+                    hover_name='Element',
+                    title='Investment vs. Uniqueness'
+                )
+                st.plotly_chart(fig_uniqueness_spend, use_container_width=True)
+
+        with tab3:
+            st.header("Data Explorer")
+            st.caption("This section shows the raw Comms Audit data you uploaded.")
+            st.dataframe(audit_df)
+
+    except Exception as e:
+        st.error(f"An error occurred while processing the file: {e}")
+        st.error("Please ensure your file is a valid Excel/CSV with the expected column names (e.g., 'Market', 'Spend', etc.).")
