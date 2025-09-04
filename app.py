@@ -46,7 +46,7 @@ if comms_audit_file:
         audit_df = pd.read_excel(comms_audit_file) if comms_audit_file.name.endswith('xlsx') else pd.read_csv(comms_audit_file)
         
         audit_df['Spend'] = pd.to_numeric(audit_df['Spend'].astype(str).str.replace('€', '').str.replace(',', ''), errors='coerce').fillna(0)
-        # Rename survey columns to match our cleaner list
+        
         column_rename_map = {"Emerald Green": "Emerald Green", "Electric Green": "Electric Green", "Symbol": "Skoda Symbol", "Hacek": "Hacek", "Facets": "Facets", "Sonic": "Sonic tag", "Tagline": "Tagline: Let’s Explore"}
         audit_df.rename(columns=column_rename_map, inplace=True)
 
@@ -61,14 +61,12 @@ if comms_audit_file:
             'Positive associations': [0.39, 0.70, 0.59, 0.35, 0.33, 0.21, 0.45], 
             'Negative associations': [0.30, 0.30, 0.11, 0.46, 0.58, 0.78, 0.20], 
             'Uniqueness': [0.29, 0.51, 0.94, 0.73, 0.54, 0.53, 0.60],
-            # 2. NEW DUMMY DATA for Personality Profile
             'adj_bold': [0.6, 0.8, 0.7, 0.4, 0.5, 0.3, 0.6],
             'adj_stylish': [0.5, 0.7, 0.6, 0.3, 0.6, 0.2, 0.5],
             'adj_modern': [0.4, 0.9, 0.5, 0.2, 0.6, 0.1, 0.7],
             'adj_playful': [0.3, 0.6, 0.4, 0.5, 0.4, 0.4, 0.5],
             'adj_adventurous': [0.4, 0.7, 0.6, 0.6, 0.5, 0.3, 0.8],
-            # 3. NEW DUMMY DATA for Strength of Link
-            'strength_rank': [4, 2, 1, 3, 5, 7, 6] # 1 is strongest, 7 is weakest
+            'strength_rank': [4, 2, 1, 3, 5, 7, 6]
         }
         research_df = pd.DataFrame(survey_data).set_index('Element')
         
@@ -147,50 +145,55 @@ if comms_audit_file:
             media_df_all = pd.DataFrame(media_metrics_all).set_index('Element')
             master_df_all = media_df_all.join(research_df)
 
-            # --- NEW CHART 1: Asset Personality Profile ---
-            st.markdown("##### What is the perceived personality of our key assets?")
-            st.caption("Select one or more assets to compare their positive attribute scores from the survey.")
+            # --- Q1 & Q2 (Restored) ---
+            col1, col2 = st.columns(2)
+            with col1:
+                st.markdown("##### Where is our investment going?")
+                investment_df = master_df_all[['Total Investment']].sort_values(by='Total Investment', ascending=True)
+                fig_investment = px.bar(investment_df, x='Total Investment', y=investment_df.index, orientation='h', title="Total Spend by Brand Element", text_auto=True)
+                st.plotly_chart(fig_investment, use_container_width=True)
+
+            with col2:
+                st.markdown("##### Which assets are 'safe bets' vs. 'risky'?")
+                sentiment_df = master_df_all.reset_index().rename(columns={'index': 'Element'})
+                fig_sentiment = px.scatter(sentiment_df, x='Negative associations', y='Positive associations', size='Total Investment', color='Element', hover_name='Element', title="Sentiment Analysis")
+                st.plotly_chart(fig_sentiment, use_container_width=True)
             
-            adj_cols = {
-                'adj_bold': 'Bold', 'adj_stylish': 'Stylish', 'adj_modern': 'Modern', 
-                'adj_playful': 'Playful', 'adj_adventurous': 'Adventurous'
-            }
+            # --- Q3 & Q4 (Restored) ---
+            col3, col4 = st.columns(2)
+            with col3:
+                st.markdown("##### Are elements used consistently across markets?")
+                market_usage = audit_df.groupby('Market')[brand_elements].mean().reset_index()
+                market_usage_melted = market_usage.melt(id_vars='Market', value_vars=brand_elements, var_name='Element', value_name='% Used')
+                fig_market = px.bar(market_usage_melted, x='Element', y='% Used', color='Market', barmode='group', title='Brand Element Usage by Market')
+                st.plotly_chart(fig_market, use_container_width=True)
+
+            with col4:
+                st.markdown("##### Are assets used effectively across media types?")
+                media_usage = audit_df.groupby('Medium')[brand_elements].mean().T
+                fig_media_heatmap = px.imshow(media_usage, labels=dict(x="Medium Type", y="Brand Element", color="% Used"), text_auto=True, aspect="auto", title="Element Usage Frequency by Media Type")
+                st.plotly_chart(fig_media_heatmap, use_container_width=True)
+            
+            st.markdown("---")
+            # --- Q5 (New) ---
+            st.markdown("##### What is the perceived personality of our key assets?")
+            adj_cols = {'adj_bold': 'Bold', 'adj_stylish': 'Stylish', 'adj_modern': 'Modern', 'adj_playful': 'Playful', 'adj_adventurous': 'Adventurous'}
             personality_df = master_df_all[adj_cols.keys()].rename(columns=adj_cols).reset_index()
             personality_melted = personality_df.melt(id_vars='Element', var_name='Adjective', value_name='Score')
-            
-            selected_elements = st.multiselect("Select elements to compare:", options=brand_elements, default=brand_elements[:2])
+            selected_elements = st.multiselect("Select elements to compare:", options=brand_elements, default=brand_elements[:3])
             
             if selected_elements:
                 filtered_personality = personality_melted[personality_melted['Element'].isin(selected_elements)]
-                fig_personality = px.bar(
-                    filtered_personality, 
-                    x="Adjective", 
-                    y="Score", 
-                    color="Element", 
-                    barmode="group",
-                    title="Asset Personality Profile Comparison"
-                )
+                fig_personality = px.bar(filtered_personality, x="Adjective", y="Score", color="Element", barmode="group", title="Asset Personality Profile Comparison")
                 st.plotly_chart(fig_personality, use_container_width=True)
 
-            # --- NEW CHART 2: Strength of Link ---
+            # --- Q6 (New) ---
             st.markdown("##### Which assets are most strongly linked to the Škoda brand?")
-            st.caption("This chart ranks the elements based on which ones consumers feel are most strongly 'Škoda'.")
-            
             strength_df = master_df_all[['strength_rank']].sort_values(by='strength_rank', ascending=True)
-            fig_strength = px.bar(
-                strength_df,
-                y=strength_df.index,
-                x='strength_rank',
-                orientation='h',
-                title="Strength of Link to Škoda (Lower Rank is Stronger)",
-                labels={'strength_rank': 'Strength Rank (1=Most Linked)', 'y': 'Brand Element'},
-                text='strength_rank'
-            )
+            fig_strength = px.bar(strength_df, y=strength_df.index, x='strength_rank', orientation='h', title="Strength of Link to Škoda (Lower Rank is Stronger)", labels={'strength_rank': 'Strength Rank (1=Most Linked)', 'y': 'Brand Element'}, text='strength_rank')
             fig_strength.update_layout(xaxis=dict(autorange="reversed"))
             st.plotly_chart(fig_strength, use_container_width=True)
 
-            # ... Other charts from before ...
-        
         with tab3:
             st.header("Data Explorer")
             st.caption("This section shows the raw Comms Audit data you uploaded.")
