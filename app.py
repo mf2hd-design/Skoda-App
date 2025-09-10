@@ -54,19 +54,18 @@ if comms_audit_file:
         if 'Electric_Green_Area_%' not in audit_df.columns: audit_df['Electric_Green_Area_%'] = 0.0
         if 'Dark_Green_Area_%' not in audit_df.columns: audit_df['Dark_Green_Area_%'] = 0.0
 
-        # --- DUMMY DATA GENERATION (WITH CORRECTED LIST LENGTHS) ---
+        # --- DUMMY DATA GENERATION ---
         survey_data = {
-            'Element': brand_elements,
-            '% recognised': [0.80, 0.47, 0.78, 0.30, 0.22, 0.52, 0.59, 0.14, 0.29],
-            'Positive associations': [0.70, 0.39, 0.29, 0.45, 0.59, 0.35, 0.76, 0.33, 0.21],
-            'Negative associations': [0.30, 0.30, 0.51, 0.20, 0.11, 0.46, 0.15, 0.58, 0.78],
+            'Element': brand_elements, 
+            '% recognised': [0.80, 0.47, 0.78, 0.30, 0.22, 0.52, 0.59, 0.14, 0.29], 
+            'Positive associations': [0.70, 0.39, 0.29, 0.45, 0.59, 0.35, 0.76, 0.33, 0.21], 
+            'Negative associations': [0.30, 0.30, 0.51, 0.20, 0.11, 0.46, 0.15, 0.58, 0.78], 
             'Uniqueness': [0.51, 0.29, 0.90, 0.60, 0.94, 0.73, 0.46, 0.54, 0.53],
             'adj_bold': [0.6, 0.8, 0.7, 0.4, 0.5, 0.3, 0.6, 0.4, 0.2],
             'adj_stylish': [0.5, 0.7, 0.6, 0.3, 0.6, 0.2, 0.5, 0.3, 0.4],
             'adj_modern': [0.4, 0.9, 0.5, 0.2, 0.6, 0.1, 0.7, 0.2, 0.3],
         }
         research_df = pd.DataFrame(survey_data).set_index('Element')
-        # -----------------------------------------------------------
         
         with st.expander("Note: Using placeholder data for Quant Research metrics. Click to see the data."):
             st.dataframe(research_df.style.format("{:.1%}"))
@@ -101,7 +100,6 @@ if comms_audit_file:
             master_df = media_df.join(research_df)
             
             st.markdown("#### Combined Analysis Table")
-            st.caption("This table synthesizes the media audit with survey data. Use the filters above to drill down into specific segments.")
             df_for_display = master_df.drop(columns=[col for col in master_df.columns if col.startswith('adj_')])
             styler = df_for_display.T.fillna(0).style
             heatmap_rows = ['% recognised', 'Positive associations', 'Negative associations', 'Uniqueness']
@@ -117,7 +115,6 @@ if comms_audit_file:
             st.download_button(label="📥 Export Filtered Analysis to Excel", data=excel_file, file_name=f"skoda_analysis_{selected_market}_{selected_placement}.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
             st.markdown("#### Brand Equity Matrix")
-            st.caption("This chart plots each element's Fame vs. Uniqueness. The size of the bubble represents the average spend on ads containing that element.")
             plot_data = master_df.reset_index().rename(columns={'% recognised': 'Recognition (Fame)', 'Average Investment': 'avg_spend', 'index': 'Element'})
             plot_data['avg_spend'] = plot_data['avg_spend'].fillna(0)
             fig_matrix = px.scatter(plot_data, x="Uniqueness", y="Recognition (Fame)", size="avg_spend", color="Positive associations", text="Element", size_max=60, hover_name="Element", color_continuous_scale='RdYlGn', title="Fame vs. Uniqueness (Size by Avg Spend)")
@@ -135,22 +132,54 @@ if comms_audit_file:
             media_df_all = pd.DataFrame(media_metrics_all).set_index('Element')
             master_df_all = media_df_all.join(research_df)
 
+            st.markdown("##### Investment & Sentiment Analysis")
             col1, col2 = st.columns(2)
             with col1:
-                st.markdown("##### Where is our investment going?")
+                st.caption("Where is our investment going?")
                 investment_df = master_df_all[['Total Investment']].sort_values(by='Total Investment', ascending=True)
                 fig_investment = px.bar(investment_df, x='Total Investment', y=investment_df.index, orientation='h', title="Total Spend by Brand Element", text_auto=True)
                 st.plotly_chart(fig_investment, use_container_width=True)
-
             with col2:
-                st.markdown("##### Which assets are 'safe bets' vs. 'risky'?")
+                st.caption("Which assets are 'safe bets' vs. 'risky'?")
                 sentiment_df = master_df_all.reset_index().rename(columns={'index': 'Element'})
                 fig_sentiment = px.scatter(sentiment_df, x='Negative associations', y='Positive associations', size='Total Investment', color='Element', hover_name='Element', title="Sentiment Analysis")
                 st.plotly_chart(fig_sentiment, use_container_width=True)
             
             st.markdown("---")
-            st.markdown("##### What is the perceived personality of our key assets?")
-            st.caption("Select one or more assets to compare their positive attribute scores from the survey.")
+            st.markdown("##### Market & Media Analysis")
+            col3, col4 = st.columns(2)
+            with col3:
+                st.caption("Are elements used consistently across markets?")
+                market_usage = audit_df.groupby('Market')[brand_elements].mean().reset_index()
+                market_usage_melted = market_usage.melt(id_vars='Market', value_vars=brand_elements, var_name='Element', value_name='% Used')
+                fig_market = px.bar(market_usage_melted, x='Element', y='% Used', color='Market', barmode='group', title='Brand Element Usage by Market')
+                st.plotly_chart(fig_market, use_container_width=True)
+            with col4:
+                st.caption("Are assets used effectively across media types?")
+                media_usage = audit_df.groupby('Medium')[brand_elements].mean().T
+                fig_media_heatmap = px.imshow(media_usage, labels=dict(x="Medium Type", y="Brand Element", color="% Used"), text_auto=True, aspect="auto", title="Element Usage Frequency by Media Type")
+                st.plotly_chart(fig_media_heatmap, use_container_width=True)
+
+            st.markdown("---")
+            st.markdown("##### ROI & Efficiency Analysis")
+            col5, col6 = st.columns(2)
+            with col5:
+                st.caption("Which assets are most efficient at driving Recognition?")
+                master_df_all['Recognition_ROI'] = (master_df_all['% recognised'] / master_df_all['Total Investment']) * 1_000_000
+                master_df_all['Recognition_ROI'].fillna(0, inplace=True)
+                recognition_roi_df = master_df_all[master_df_all['Total Investment'] > 0]['Recognition_ROI'].sort_values(ascending=False).reset_index()
+                fig_recognition_roi = px.bar(recognition_roi_df, x='Element', y='Recognition_ROI', title="Recognition Efficiency", labels={'Recognition_ROI': 'Recognition % Points per €1M Invested'})
+                st.plotly_chart(fig_recognition_roi, use_container_width=True)
+            with col6:
+                st.caption("Are we investing in our most unique assets?")
+                uniqueness_df = master_df_all.reset_index().rename(columns={'index': 'Element'})
+                fig_uniqueness_spend = px.scatter(uniqueness_df, x='Uniqueness', y='Total Investment', size='Positive associations', color='Element', hover_name='Element', title='Investment vs. Uniqueness')
+                st.plotly_chart(fig_uniqueness_spend, use_container_width=True)
+            
+            st.markdown("---")
+            st.markdown("##### Creative & Color Analysis")
+            
+            st.caption("What is the perceived personality of our key assets?")
             adj_cols = {'adj_bold': 'Bold', 'adj_stylish': 'Stylish', 'adj_modern': 'Modern'}
             personality_df = master_df_all[adj_cols.keys()].rename(columns=adj_cols).reset_index()
             personality_melted = personality_df.melt(id_vars='Element', var_name='Adjective', value_name='Score')
@@ -161,9 +190,7 @@ if comms_audit_file:
                 fig_personality = px.bar(filtered_personality, x="Adjective", y="Score", color="Element", barmode="group", title="Asset Personality Profile Comparison")
                 st.plotly_chart(fig_personality, use_container_width=True)
             
-            st.markdown("---")
-            st.markdown("##### How much visual real estate do our brand colors occupy?")
-            st.caption("This chart shows the distribution of the percentage of ad area covered by our key brand colors (based on data in your spreadsheet).")
+            st.caption("How much visual real estate do our brand colors occupy?")
             color_area_df = audit_df[['Electric_Green_Area_%', 'Dark_Green_Area_%']].melt(var_name='Color', value_name='Area %')
             color_area_df = color_area_df[color_area_df['Area %'] > 0]
             
