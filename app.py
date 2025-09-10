@@ -17,7 +17,6 @@ st.set_page_config(
     page_icon="📊"
 )
 
-# --- A more professional title and introduction ---
 st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Škoda Brand Intelligence Dashboard</h1>", unsafe_allow_html=True)
 st.markdown("---")
 st.markdown("This strategic tool synthesizes **Comms Audit** and **Quant Research** data to provide interactive insights into the performance and equity of Škoda's key brand assets.")
@@ -37,6 +36,7 @@ def to_excel(df):
 
 # --- Data Room: Single File Uploader ---
 st.markdown("### 📥 1. Data Room: Upload Your Comms Audit File")
+st.info("For the 'Color Area Analysis' chart, please add columns to your file named `Electric_Green_Area_%` and `Dark_Green_Area_%`.")
 comms_audit_file = st.file_uploader(
     "Upload your Comms Audit Excel File (e.g., skoda ads overview.xlsx)",
     type=["xlsx", "csv"]
@@ -46,10 +46,14 @@ if comms_audit_file:
     try:
         audit_df = pd.read_excel(comms_audit_file) if comms_audit_file.name.endswith('xlsx') else pd.read_csv(comms_audit_file)
         
+        # Data Cleaning and Preparation
         audit_df['Spend'] = pd.to_numeric(audit_df['Spend'].astype(str).str.replace('€', '').str.replace(',', ''), errors='coerce').fillna(0)
         for col in brand_elements:
             if col not in audit_df.columns: audit_df[col] = False
             else: audit_df[col] = audit_df[col].astype(bool)
+        # Prepare for new color area analysis
+        if 'Electric_Green_Area_%' not in audit_df.columns: audit_df['Electric_Green_Area_%'] = 0.0
+        if 'Dark_Green_Area_%' not in audit_df.columns: audit_df['Dark_Green_Area_%'] = 0.0
 
         # --- DUMMY DATA GENERATION ---
         survey_data = {
@@ -57,7 +61,10 @@ if comms_audit_file:
             '% recognised': [0.80, 0.47, 0.78, 0.30, 0.22, 0.52, 0.59, 0.14, 0.29], 
             'Positive associations': [0.70, 0.39, 0.29, 0.45, 0.59, 0.35, 0.76, 0.33, 0.21], 
             'Negative associations': [0.30, 0.30, 0.51, 0.20, 0.11, 0.46, 0.15, 0.58, 0.78], 
-            'Uniqueness': [0.51, 0.29, 0.90, 0.60, 0.94, 0.73, 0.46, 0.54, 0.53]
+            'Uniqueness': [0.51, 0.29, 0.90, 0.60, 0.94, 0.73, 0.46, 0.54, 0.53],
+            'adj_bold': [0.6, 0.8, 0.7, 0.4, 0.5, 0.3, 0.6],
+            'adj_stylish': [0.5, 0.7, 0.6, 0.3, 0.6, 0.2, 0.5],
+            'adj_modern': [0.4, 0.9, 0.5, 0.2, 0.6, 0.1, 0.7],
         }
         research_df = pd.DataFrame(survey_data).set_index('Element')
         
@@ -91,14 +98,12 @@ if comms_audit_file:
                 element_df = filtered_audit_df[filtered_audit_df[element] == True]
                 media_metrics.append({'Element': element, '% Total Used': (len(element_df) / total_ads) if total_ads > 0 else 0, 'Total Investment': element_df['Spend'].sum(), 'Average Investment': element_df['Spend'].mean()})
             media_df = pd.DataFrame(media_metrics).set_index('Element')
-            
             master_df = media_df.join(research_df)
-
+            
             st.markdown("#### Combined Analysis Table")
             st.caption("This table synthesizes the media audit with survey data. Use the filters above to drill down into specific segments.")
-            
-            df_for_display = master_df.T
-            styler = df_for_display.fillna(0).style
+            df_for_display = master_df.drop(columns=[col for col in master_df.columns if col.startswith('adj_')])
+            styler = df_for_display.T.fillna(0).style
             heatmap_rows = ['% recognised', 'Positive associations', 'Negative associations', 'Uniqueness']
             styler = styler.background_gradient(cmap='RdYlGn', axis=1, subset=(pd.IndexSlice[heatmap_rows], slice(None)))
             styler = styler.background_gradient(cmap='RdYlGn_r', axis=1, subset=(pd.IndexSlice[['Negative associations']], slice(None)))
@@ -108,21 +113,14 @@ if comms_audit_file:
             styler = styler.format("€{:,.2f}", subset=(pd.IndexSlice[currency_rows], slice(None)))
             st.dataframe(styler)
             
-            excel_file = to_excel(master_df.fillna(0))
+            excel_file = to_excel(df_for_display.fillna(0))
             st.download_button(label="📥 Export Filtered Analysis to Excel", data=excel_file, file_name=f"skoda_analysis_{selected_market}_{selected_placement}.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-            
+
             st.markdown("#### Brand Equity Matrix")
             st.caption("This chart plots each element's Fame vs. Uniqueness. The size of the bubble represents the average spend on ads containing that element.")
             plot_data = master_df.reset_index().rename(columns={'% recognised': 'Recognition (Fame)', 'Average Investment': 'avg_spend', 'index': 'Element'})
             plot_data['avg_spend'] = plot_data['avg_spend'].fillna(0)
-
-            fig_matrix = px.scatter(
-                plot_data, x="Uniqueness", y="Recognition (Fame)", 
-                size="avg_spend", color="Positive associations", 
-                text="Element", size_max=60, hover_name="Element", 
-                color_continuous_scale='RdYlGn', 
-                title="Fame vs. Uniqueness (Size by Avg Spend)"
-            )
+            fig_matrix = px.scatter(plot_data, x="Uniqueness", y="Recognition (Fame)", size="avg_spend", color="Positive associations", text="Element", size_max=60, hover_name="Element", color_continuous_scale='RdYlGn', title="Fame vs. Uniqueness (Size by Avg Spend)")
             st.plotly_chart(fig_matrix, use_container_width=True)
 
         with tab2:
@@ -150,53 +148,30 @@ if comms_audit_file:
                 fig_sentiment = px.scatter(sentiment_df, x='Negative associations', y='Positive associations', size='Total Investment', color='Element', hover_name='Element', title="Sentiment Analysis")
                 st.plotly_chart(fig_sentiment, use_container_width=True)
             
-            col3, col4 = st.columns(2)
-            with col3:
-                st.markdown("##### Are elements used consistently across markets?")
-                market_usage = audit_df.groupby('Market')[brand_elements].mean().reset_index()
-                market_usage_melted = market_usage.melt(id_vars='Market', value_vars=brand_elements, var_name='Element', value_name='% Used')
-                fig_market = px.bar(market_usage_melted, x='Element', y='% Used', color='Market', barmode='group', title='Brand Element Usage by Market')
-                st.plotly_chart(fig_market, use_container_width=True)
-
-            with col4:
-                st.markdown("##### Are assets used effectively across media types?")
-                media_usage = audit_df.groupby('Medium')[brand_elements].mean().T
-                fig_media_heatmap = px.imshow(media_usage, labels=dict(x="Medium Type", y="Brand Element", color="% Used"), text_auto=True, aspect="auto", title="Element Usage Frequency by Media Type")
-                st.plotly_chart(fig_media_heatmap, use_container_width=True)
-
             st.markdown("---")
-            col5, col6 = st.columns(2)
-            with col5:
-                st.markdown("##### Which assets are most efficient at driving Recognition?")
-                master_df_all['Recognition_ROI'] = (master_df_all['% recognised'] / master_df_all['Total Investment']) * 1_000_000
-                master_df_all['Recognition_ROI'].fillna(0, inplace=True)
-                recognition_roi_df = master_df_all[master_df_all['Total Investment'] > 0]['Recognition_ROI'].sort_values(ascending=False).reset_index()
-                fig_recognition_roi = px.bar(recognition_roi_df, x='Element', y='Recognition_ROI', title="Recognition Efficiency", labels={'Recognition_ROI': 'Recognition % Points per €1M Invested'})
-                st.plotly_chart(fig_recognition_roi, use_container_width=True)
-
-            with col6:
-                st.markdown("##### Are we investing in our most unique assets?")
-                uniqueness_df = master_df_all.reset_index().rename(columns={'index': 'Element'})
-                fig_uniqueness_spend = px.scatter(uniqueness_df, x='Uniqueness', y='Total Investment', size='Positive associations', color='Element', hover_name='Element', title='Investment vs. Uniqueness')
-                st.plotly_chart(fig_uniqueness_spend, use_container_width=True)
+            st.markdown("##### What is the perceived personality of our key assets?")
+            st.caption("Select one or more assets to compare their positive attribute scores from the survey.")
+            adj_cols = {'adj_bold': 'Bold', 'adj_stylish': 'Stylish', 'adj_modern': 'Modern'}
+            personality_df = master_df_all[adj_cols.keys()].rename(columns=adj_cols).reset_index()
+            personality_melted = personality_df.melt(id_vars='Element', var_name='Adjective', value_name='Score')
+            selected_elements = st.multiselect("Select elements to compare:", options=brand_elements, default=brand_elements[:2])
+            
+            if selected_elements:
+                filtered_personality = personality_melted[personality_melted['Element'].isin(selected_elements)]
+                fig_personality = px.bar(filtered_personality, x="Adjective", y="Score", color="Element", barmode="group", title="Asset Personality Profile Comparison")
+                st.plotly_chart(fig_personality, use_container_width=True)
             
             st.markdown("---")
-            # --- NEW CHART: Brand Color Usage ---
-            st.markdown("##### How are our primary brand colors being used across markets?")
-            st.caption("This chart compares the usage frequency of 'Electric Green' vs. 'Dark Green' in different markets, highlighting strategic color choices.")
-            color_elements = ["Electric Green", "Dark Green"]
-            color_usage = audit_df.groupby('Market')[color_elements].mean().reset_index()
-            color_usage_melted = color_usage.melt(id_vars='Market', value_vars=color_elements, var_name='Color Element', value_name='% Used')
-            fig_color_usage = px.bar(
-                color_usage_melted,
-                x='Market',
-                y='% Used',
-                color='Color Element',
-                barmode='group',
-                title='Primary Brand Color Usage by Market',
-                color_discrete_map={"Electric Green": "#4CAF50", "Dark Green": "#004d40"}
-            )
-            st.plotly_chart(fig_color_usage, use_container_width=True)
+            st.markdown("##### How much visual real estate do our brand colors occupy?")
+            st.caption("This chart shows the distribution of the percentage of ad area covered by our key brand colors (based on data in your spreadsheet).")
+            color_area_df = audit_df[['Electric_Green_Area_%', 'Dark_Green_Area_%']].melt(var_name='Color', value_name='Area %')
+            color_area_df = color_area_df[color_area_df['Area %'] > 0]
+            
+            if not color_area_df.empty:
+                fig_color_area = px.box(color_area_df, x='Color', y='Area %', color='Color', title='Distribution of Color Area Coverage in Ads', points='all')
+                st.plotly_chart(fig_color_area, use_container_width=True)
+            else:
+                st.warning("No color area data found. Please add `Electric_Green_Area_%` and `Dark_Green_Area_%` columns to your file to enable this analysis.")
 
         with tab3:
             st.header("Data Explorer")
@@ -205,4 +180,4 @@ if comms_audit_file:
 
     except Exception as e:
         st.error(f"An error occurred while processing the file: {e}")
-        st.error("Please ensure your file is a valid Excel/CSV with the expected column names (e.g., 'Market', 'Spend', etc.).")
+        st.error("Please ensure your file is a valid Excel/CSV with the expected column names.")
