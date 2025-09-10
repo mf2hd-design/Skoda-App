@@ -100,6 +100,7 @@ if comms_audit_file:
             master_df = media_df.join(research_df)
             
             st.markdown("#### Combined Analysis Table")
+            st.caption("This table synthesizes the media audit with survey data. Use the filters above to drill down into specific segments.")
             df_for_display = master_df.drop(columns=[col for col in master_df.columns if col.startswith('adj_')])
             styler = df_for_display.T.fillna(0).style
             heatmap_rows = ['% recognised', 'Positive associations', 'Negative associations', 'Uniqueness']
@@ -115,6 +116,7 @@ if comms_audit_file:
             st.download_button(label="📥 Export Filtered Analysis to Excel", data=excel_file, file_name=f"skoda_analysis_{selected_market}_{selected_placement}.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
             st.markdown("#### Brand Equity Matrix")
+            st.caption("This chart plots each element's Fame vs. Uniqueness. The size of the bubble represents the average spend on ads containing that element.")
             plot_data = master_df.reset_index().rename(columns={'% recognised': 'Recognition (Fame)', 'Average Investment': 'avg_spend', 'index': 'Element'})
             plot_data['avg_spend'] = plot_data['avg_spend'].fillna(0)
             fig_matrix = px.scatter(plot_data, x="Uniqueness", y="Recognition (Fame)", size="avg_spend", color="Positive associations", text="Element", size_max=60, hover_name="Element", color_continuous_scale='RdYlGn', title="Fame vs. Uniqueness (Size by Avg Spend)")
@@ -147,35 +149,34 @@ if comms_audit_file:
             
             st.markdown("---")
             
-            # --- THIS CHART IS NOW FULL WIDTH ---
-            st.markdown("##### Are elements used consistently across markets?")
-            st.caption("This chart compares the usage frequency of each element in different markets, highlighting strategic variations.")
-            market_usage = audit_df.groupby('Market')[brand_elements].mean().reset_index()
-            market_usage_melted = market_usage.melt(id_vars='Market', value_vars=brand_elements, var_name='Element', value_name='% Used')
-            fig_market = px.bar(market_usage_melted, x='Element', y='% Used', color='Market', barmode='group', title='Brand Element Usage by Market')
-            st.plotly_chart(fig_market, use_container_width=True)
-            # ------------------------------------
+            st.markdown("##### Market & Media Analysis")
+            
+            # ----- THIS IS THE NEW INTERACTIVE MARKET USAGE CHART -----
+            st.caption("Are elements used consistently across markets? Select markets below to compare.")
+            all_available_markets = sorted(list(audit_df['Market'].unique()))
+            selected_markets_for_chart = st.multiselect(
+                "Select markets to compare:", 
+                options=all_available_markets, 
+                default=all_available_markets[:4] # Default to the first 4 markets
+            )
+            
+            if selected_markets_for_chart:
+                market_usage = audit_df[audit_df['Market'].isin(selected_markets_for_chart)]
+                market_usage = market_usage.groupby('Market')[brand_elements].mean().reset_index()
+                market_usage_melted = market_usage.melt(id_vars='Market', value_vars=brand_elements, var_name='Element', value_name='% Used')
+                fig_market = px.bar(market_usage_melted, x='Element', y='% Used', color='Market', barmode='group', title='Brand Element Usage by Market')
+                st.plotly_chart(fig_market, use_container_width=True)
+            else:
+                st.warning("Please select at least one market to display the chart.")
+            # --------------------------------------------------------
 
-            st.markdown("---")
-            st.markdown("##### Media & Creative Analysis")
-            col3, col4 = st.columns(2)
-            with col3:
-                st.caption("Are assets used effectively across media types?")
-                media_usage = audit_df.groupby('Medium')[brand_elements].mean().T
-                fig_media_heatmap = px.imshow(media_usage, labels=dict(x="Medium Type", y="Brand Element", color="% Used"), text_auto=True, aspect="auto", title="Element Usage Frequency by Media Type")
-                st.plotly_chart(fig_media_heatmap, use_container_width=True)
-            with col4:
-                st.caption("How much visual real estate do our brand colors occupy?")
-                color_area_df = audit_df[['Electric_Green_Area_%', 'Dark_Green_Area_%']].melt(var_name='Color', value_name='Area %')
-                color_area_df = color_area_df[color_area_df['Area %'] > 0]
-                if not color_area_df.empty:
-                    fig_color_area = px.box(color_area_df, x='Color', y='Area %', color='Color', title='Distribution of Color Area Coverage in Ads', points='all')
-                    st.plotly_chart(fig_color_area, use_container_width=True)
-                else:
-                    st.warning("No color area data found. Please add `_Area_%` columns to your file.")
+            st.caption("Are assets used effectively across media types?")
+            media_usage = audit_df.groupby('Medium')[brand_elements].mean().T
+            fig_media_heatmap = px.imshow(media_usage, labels=dict(x="Medium Type", y="Brand Element", color="% Used"), text_auto=True, aspect="auto", title="Element Usage Frequency by Media Type")
+            st.plotly_chart(fig_media_heatmap, use_container_width=True)
             
             st.markdown("---")
-            st.markdown("##### ROI & Personality Analysis")
+            st.markdown("##### ROI, Personality & Color Analysis")
             col5, col6 = st.columns(2)
             with col5:
                 st.caption("Which assets are most efficient at driving Recognition?")
@@ -191,17 +192,26 @@ if comms_audit_file:
                 fig_uniqueness_spend = px.scatter(uniqueness_df, x='Uniqueness', y='Total Investment', size='Positive associations', color='Element', hover_name='Element', title='Investment vs. Uniqueness')
                 st.plotly_chart(fig_uniqueness_spend, use_container_width=True)
             
-            st.markdown("---")
             st.caption("What is the perceived personality of our key assets?")
             adj_cols = {'adj_bold': 'Bold', 'adj_stylish': 'Stylish', 'adj_modern': 'Modern'}
             personality_df = master_df_all[adj_cols.keys()].rename(columns=adj_cols).reset_index()
             personality_melted = personality_df.melt(id_vars='Element', var_name='Adjective', value_name='Score')
-            selected_elements = st.multiselect("Select elements to compare:", options=brand_elements, default=brand_elements[:2])
+            selected_elements_personality = st.multiselect("Select elements to compare for personality:", options=brand_elements, default=brand_elements[:2])
             
-            if selected_elements:
-                filtered_personality = personality_melted[personality_melted['Element'].isin(selected_elements)]
+            if selected_elements_personality:
+                filtered_personality = personality_melted[personality_melted['Element'].isin(selected_elements_personality)]
                 fig_personality = px.bar(filtered_personality, x="Adjective", y="Score", color="Element", barmode="group", title="Asset Personality Profile Comparison")
                 st.plotly_chart(fig_personality, use_container_width=True)
+
+            st.caption("How much visual real estate do our brand colors occupy?")
+            color_area_df = audit_df[['Electric_Green_Area_%', 'Dark_Green_Area_%']].melt(var_name='Color', value_name='Area %')
+            color_area_df = color_area_df[color_area_df['Area %'] > 0]
+            
+            if not color_area_df.empty:
+                fig_color_area = px.box(color_area_df, x='Color', y='Area %', color='Color', title='Distribution of Color Area Coverage in Ads', points='all')
+                st.plotly_chart(fig_color_area, use_container_width=True)
+            else:
+                st.warning("No color area data found to display the 'Color Area Coverage' chart.")
 
         with tab3:
             st.header("Data Explorer")
