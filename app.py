@@ -51,22 +51,22 @@ if comms_audit_file:
         for col in brand_elements:
             if col not in audit_df.columns: audit_df[col] = False
             else: audit_df[col] = audit_df[col].astype(bool)
-        # Prepare for new color area analysis
         if 'Electric_Green_Area_%' not in audit_df.columns: audit_df['Electric_Green_Area_%'] = 0.0
         if 'Dark_Green_Area_%' not in audit_df.columns: audit_df['Dark_Green_Area_%'] = 0.0
 
-        # --- DUMMY DATA GENERATION ---
+        # --- DUMMY DATA GENERATION (WITH CORRECTED LIST LENGTHS) ---
         survey_data = {
-            'Element': brand_elements, 
-            '% recognised': [0.80, 0.47, 0.78, 0.30, 0.22, 0.52, 0.59, 0.14, 0.29], 
-            'Positive associations': [0.70, 0.39, 0.29, 0.45, 0.59, 0.35, 0.76, 0.33, 0.21], 
-            'Negative associations': [0.30, 0.30, 0.51, 0.20, 0.11, 0.46, 0.15, 0.58, 0.78], 
+            'Element': brand_elements,
+            '% recognised': [0.80, 0.47, 0.78, 0.30, 0.22, 0.52, 0.59, 0.14, 0.29],
+            'Positive associations': [0.70, 0.39, 0.29, 0.45, 0.59, 0.35, 0.76, 0.33, 0.21],
+            'Negative associations': [0.30, 0.30, 0.51, 0.20, 0.11, 0.46, 0.15, 0.58, 0.78],
             'Uniqueness': [0.51, 0.29, 0.90, 0.60, 0.94, 0.73, 0.46, 0.54, 0.53],
-            'adj_bold': [0.6, 0.8, 0.7, 0.4, 0.5, 0.3, 0.6],
-            'adj_stylish': [0.5, 0.7, 0.6, 0.3, 0.6, 0.2, 0.5],
-            'adj_modern': [0.4, 0.9, 0.5, 0.2, 0.6, 0.1, 0.7],
+            'adj_bold': [0.6, 0.8, 0.7, 0.4, 0.5, 0.3, 0.6, 0.4, 0.2],
+            'adj_stylish': [0.5, 0.7, 0.6, 0.3, 0.6, 0.2, 0.5, 0.3, 0.4],
+            'adj_modern': [0.4, 0.9, 0.5, 0.2, 0.6, 0.1, 0.7, 0.2, 0.3],
         }
         research_df = pd.DataFrame(survey_data).set_index('Element')
+        # -----------------------------------------------------------
         
         with st.expander("Note: Using placeholder data for Quant Research metrics. Click to see the data."):
             st.dataframe(research_df.style.format("{:.1%}"))
