@@ -19,16 +19,19 @@ brand_elements = [
 ]
 
 # --- Research Data from P045556 Study ---
+# Recognition: Q02 (Have you seen/heard this element before?)
+# Uniqueness: Q05 (Which brand do you think this belongs to? - % who said Škoda)
+# Personality traits: Q04 NET T2B (Top 2 Box scores)
 research_data = {
-    'Electric Green': {'recognition': 0.38, 'uniqueness': 0.62, 'positive': 0.47, 'negative': 0.24, 'bold': 0.49, 'stylish': 0.46, 'modern': 0.50, 'simple': 0.50, 'human': 0.45, 'exciting': 0.45, 'playful': 0.44},
-    'Dark Green': {'recognition': 0.39, 'uniqueness': 0.61, 'positive': 0.49, 'negative': 0.22, 'bold': 0.51, 'stylish': 0.49, 'modern': 0.52, 'simple': 0.53, 'human': 0.46, 'exciting': 0.49, 'playful': 0.45},
-    'Type': {'recognition': 0.37, 'uniqueness': 0.63, 'positive': 0.46, 'negative': 0.24, 'bold': 0.47, 'stylish': 0.47, 'modern': 0.49, 'simple': 0.50, 'human': 0.44, 'exciting': 0.45, 'playful': 0.41},
-    'Tagline': {'recognition': 0.36, 'uniqueness': 0.64, 'positive': 0.48, 'negative': 0.22, 'bold': 0.48, 'stylish': 0.48, 'modern': 0.51, 'simple': 0.50, 'human': 0.46, 'exciting': 0.51, 'playful': 0.45},
-    'Symbol': {'recognition': 0.64, 'uniqueness': 0.36, 'positive': 0.49, 'negative': 0.22, 'bold': 0.50, 'stylish': 0.50, 'modern': 0.55, 'simple': 0.54, 'human': 0.46, 'exciting': 0.50, 'playful': 0.46},
-    'Hacek': {'recognition': 0.38, 'uniqueness': 0.62, 'positive': 0.45, 'negative': 0.25, 'bold': 0.46, 'stylish': 0.46, 'modern': 0.49, 'simple': 0.55, 'human': 0.44, 'exciting': 0.44, 'playful': 0.42},
-    'Wordmark': {'recognition': 0.44, 'uniqueness': 0.56, 'positive': 0.48, 'negative': 0.23, 'bold': 0.49, 'stylish': 0.49, 'modern': 0.54, 'simple': 0.52, 'human': 0.45, 'exciting': 0.48, 'playful': 0.45},
-    'Facets': {'recognition': 0.38, 'uniqueness': 0.62, 'positive': 0.47, 'negative': 0.23, 'bold': 0.50, 'stylish': 0.48, 'modern': 0.51, 'simple': 0.51, 'human': 0.43, 'exciting': 0.46, 'playful': 0.46},
-    'Sonic': {'recognition': 0.40, 'uniqueness': 0.60, 'positive': 0.50, 'negative': 0.22, 'bold': 0.50, 'stylish': 0.49, 'modern': 0.55, 'simple': 0.55, 'human': 0.46, 'exciting': 0.51, 'playful': 0.48},
+    'Electric Green': {'recognition': 0.38, 'uniqueness': 0.17, 'positive': 0.47, 'negative': 0.24, 'bold': 0.49, 'stylish': 0.46, 'modern': 0.50, 'simple': 0.50, 'human': 0.45, 'exciting': 0.45, 'playful': 0.44},
+    'Dark Green': {'recognition': 0.39, 'uniqueness': 0.19, 'positive': 0.49, 'negative': 0.22, 'bold': 0.51, 'stylish': 0.49, 'modern': 0.52, 'simple': 0.53, 'human': 0.46, 'exciting': 0.49, 'playful': 0.45},
+    'Type': {'recognition': 0.37, 'uniqueness': 0.17, 'positive': 0.46, 'negative': 0.24, 'bold': 0.47, 'stylish': 0.47, 'modern': 0.49, 'simple': 0.50, 'human': 0.44, 'exciting': 0.45, 'playful': 0.41},
+    'Tagline': {'recognition': 0.36, 'uniqueness': 0.17, 'positive': 0.48, 'negative': 0.22, 'bold': 0.48, 'stylish': 0.48, 'modern': 0.51, 'simple': 0.50, 'human': 0.46, 'exciting': 0.51, 'playful': 0.45},
+    'Symbol': {'recognition': 0.64, 'uniqueness': 0.38, 'positive': 0.49, 'negative': 0.22, 'bold': 0.50, 'stylish': 0.50, 'modern': 0.55, 'simple': 0.54, 'human': 0.46, 'exciting': 0.50, 'playful': 0.46},
+    'Hacek': {'recognition': 0.38, 'uniqueness': 0.19, 'positive': 0.45, 'negative': 0.25, 'bold': 0.46, 'stylish': 0.46, 'modern': 0.49, 'simple': 0.55, 'human': 0.44, 'exciting': 0.44, 'playful': 0.42},
+    'Wordmark': {'recognition': 0.44, 'uniqueness': 0.28, 'positive': 0.48, 'negative': 0.23, 'bold': 0.49, 'stylish': 0.49, 'modern': 0.54, 'simple': 0.52, 'human': 0.45, 'exciting': 0.48, 'playful': 0.45},
+    'Facets': {'recognition': 0.38, 'uniqueness': 0.16, 'positive': 0.47, 'negative': 0.23, 'bold': 0.50, 'stylish': 0.48, 'modern': 0.51, 'simple': 0.51, 'human': 0.43, 'exciting': 0.46, 'playful': 0.46},
+    'Sonic': {'recognition': 0.40, 'uniqueness': 0.17, 'positive': 0.50, 'negative': 0.22, 'bold': 0.50, 'stylish': 0.49, 'modern': 0.55, 'simple': 0.55, 'human': 0.46, 'exciting': 0.51, 'playful': 0.48},
 }
 
 # Recognition by Country
