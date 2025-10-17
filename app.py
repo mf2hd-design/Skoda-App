@@ -96,14 +96,6 @@ master_df = calculate_metrics()
 st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Škoda Brand Intelligence Dashboard</h1>", unsafe_allow_html=True)
 st.markdown("---")
 
-st.markdown("""
-<div style='text-align: center; padding: 20px; background-color: #f0f2f6; border-radius: 10px; margin-bottom: 20px;'>
-<h3>Comprehensive Brand Asset Analysis</h3>
-<p>Combining <b>Comms Audit Data</b> (102 ads across 4 markets) with <b>Quantitative Research</b> (P045556 - Saffron Brand Assets)</p>
-<p><i>Objective: Determine which Škoda brand assets are the most iconic and build long-term recognition</i></p>
-</div>
-""", unsafe_allow_html=True)
-
 # --- Navigation Tabs ---
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "📊 Executive Summary",
