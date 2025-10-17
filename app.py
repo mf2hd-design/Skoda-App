@@ -20,15 +20,28 @@ brand_elements = [
 
 # --- Research Data from P045556 Study ---
 research_data = {
-    'Electric Green': {'recognition': 0.38, 'uniqueness': 0.62, 'positive': 0.47, 'negative': 0.24, 'bold': 0.49, 'stylish': 0.46, 'modern': 0.50},
-    'Dark Green': {'recognition': 0.39, 'uniqueness': 0.61, 'positive': 0.49, 'negative': 0.22, 'bold': 0.51, 'stylish': 0.49, 'modern': 0.52},
-    'Type': {'recognition': 0.37, 'uniqueness': 0.63, 'positive': 0.46, 'negative': 0.24, 'bold': 0.47, 'stylish': 0.47, 'modern': 0.49},
-    'Tagline': {'recognition': 0.36, 'uniqueness': 0.64, 'positive': 0.48, 'negative': 0.22, 'bold': 0.48, 'stylish': 0.48, 'modern': 0.51},
-    'Symbol': {'recognition': 0.64, 'uniqueness': 0.36, 'positive': 0.49, 'negative': 0.22, 'bold': 0.50, 'stylish': 0.50, 'modern': 0.55},
-    'Hacek': {'recognition': 0.38, 'uniqueness': 0.62, 'positive': 0.45, 'negative': 0.25, 'bold': 0.46, 'stylish': 0.46, 'modern': 0.49},
-    'Wordmark': {'recognition': 0.44, 'uniqueness': 0.56, 'positive': 0.48, 'negative': 0.23, 'bold': 0.49, 'stylish': 0.49, 'modern': 0.54},
-    'Facets': {'recognition': 0.38, 'uniqueness': 0.62, 'positive': 0.47, 'negative': 0.23, 'bold': 0.50, 'stylish': 0.48, 'modern': 0.51},
-    'Sonic': {'recognition': 0.40, 'uniqueness': 0.60, 'positive': 0.50, 'negative': 0.22, 'bold': 0.50, 'stylish': 0.49, 'modern': 0.55},
+    'Electric Green': {'recognition': 0.38, 'uniqueness': 0.62, 'positive': 0.47, 'negative': 0.24, 'bold': 0.49, 'stylish': 0.46, 'modern': 0.50, 'simple': 0.50, 'human': 0.45, 'exciting': 0.45, 'playful': 0.44},
+    'Dark Green': {'recognition': 0.39, 'uniqueness': 0.61, 'positive': 0.49, 'negative': 0.22, 'bold': 0.51, 'stylish': 0.49, 'modern': 0.52, 'simple': 0.53, 'human': 0.46, 'exciting': 0.49, 'playful': 0.45},
+    'Type': {'recognition': 0.37, 'uniqueness': 0.63, 'positive': 0.46, 'negative': 0.24, 'bold': 0.47, 'stylish': 0.47, 'modern': 0.49, 'simple': 0.50, 'human': 0.44, 'exciting': 0.45, 'playful': 0.41},
+    'Tagline': {'recognition': 0.36, 'uniqueness': 0.64, 'positive': 0.48, 'negative': 0.22, 'bold': 0.48, 'stylish': 0.48, 'modern': 0.51, 'simple': 0.50, 'human': 0.46, 'exciting': 0.51, 'playful': 0.45},
+    'Symbol': {'recognition': 0.64, 'uniqueness': 0.36, 'positive': 0.49, 'negative': 0.22, 'bold': 0.50, 'stylish': 0.50, 'modern': 0.55, 'simple': 0.54, 'human': 0.46, 'exciting': 0.50, 'playful': 0.46},
+    'Hacek': {'recognition': 0.38, 'uniqueness': 0.62, 'positive': 0.45, 'negative': 0.25, 'bold': 0.46, 'stylish': 0.46, 'modern': 0.49, 'simple': 0.55, 'human': 0.44, 'exciting': 0.44, 'playful': 0.42},
+    'Wordmark': {'recognition': 0.44, 'uniqueness': 0.56, 'positive': 0.48, 'negative': 0.23, 'bold': 0.49, 'stylish': 0.49, 'modern': 0.54, 'simple': 0.52, 'human': 0.45, 'exciting': 0.48, 'playful': 0.45},
+    'Facets': {'recognition': 0.38, 'uniqueness': 0.62, 'positive': 0.47, 'negative': 0.23, 'bold': 0.50, 'stylish': 0.48, 'modern': 0.51, 'simple': 0.51, 'human': 0.43, 'exciting': 0.46, 'playful': 0.46},
+    'Sonic': {'recognition': 0.40, 'uniqueness': 0.60, 'positive': 0.50, 'negative': 0.22, 'bold': 0.50, 'stylish': 0.49, 'modern': 0.55, 'simple': 0.55, 'human': 0.46, 'exciting': 0.51, 'playful': 0.48},
+}
+
+# Recognition by Country
+recognition_by_country = {
+    'Electric Green': {'UK': 0.41, 'Spain': 0.38, 'Germany': 0.29, 'Poland': 0.44},
+    'Dark Green': {'UK': 0.37, 'Spain': 0.38, 'Germany': 0.37, 'Poland': 0.41},
+    'Type': {'UK': 0.45, 'Spain': 0.37, 'Germany': 0.30, 'Poland': 0.38},
+    'Tagline': {'UK': 0.36, 'Spain': 0.40, 'Germany': 0.32, 'Poland': 0.36},
+    'Symbol': {'UK': 0.54, 'Spain': 0.66, 'Germany': 0.61, 'Poland': 0.76},
+    'Hacek': {'UK': 0.36, 'Spain': 0.38, 'Germany': 0.35, 'Poland': 0.41},
+    'Wordmark': {'UK': 0.45, 'Spain': 0.47, 'Germany': 0.39, 'Poland': 0.48},
+    'Facets': {'UK': 0.42, 'Spain': 0.39, 'Germany': 0.37, 'Poland': 0.35},
+    'Sonic': {'UK': 0.39, 'Spain': 0.42, 'Germany': 0.39, 'Poland': 0.39},
 }
 
 # --- Load Comms Audit Data ---
@@ -751,7 +764,13 @@ with tab5:
     st.markdown("---")
 
     # Personality attributes
-    st.markdown("### Brand Personality Comparison")
+    st.markdown("### Brand Personality Analysis")
+
+    personality_view = st.radio(
+        "Choose visualization:",
+        ["Radar Chart (7 Dimensions)", "Bar Chart Comparison"],
+        horizontal=True
+    )
 
     selected_elements = st.multiselect(
         "Select elements to compare:",
@@ -760,32 +779,134 @@ with tab5:
     )
 
     if selected_elements:
-        personality_data = []
-        for element in selected_elements:
-            research = research_data[element]
-            personality_data.append({
-                'Element': element,
-                'Bold': research['bold'],
-                'Stylish': research['stylish'],
-                'Modern': research['modern']
-            })
+        if personality_view == "Radar Chart (7 Dimensions)":
+            # Radar chart with 7 positive personality dimensions
+            fig_radar = go.Figure()
 
-        personality_df = pd.DataFrame(personality_data).melt(
-            id_vars='Element',
-            var_name='Attribute',
-            value_name='Score'
-        )
+            personality_dimensions = ['Bold', 'Stylish', 'Modern', 'Simple', 'Human', 'Exciting', 'Playful']
 
-        fig_personality = px.bar(
-            personality_df,
-            x='Attribute',
-            y='Score',
-            color='Element',
-            barmode='group',
-            text=personality_df['Score'].apply(lambda x: f'{x:.0%}'),
-            title='Brand Personality Attributes'
+            for element in selected_elements:
+                research = research_data[element]
+                values = [
+                    research['bold'], research['stylish'], research['modern'],
+                    research['simple'], research['human'], research['exciting'], research['playful']
+                ]
+                # Close the radar chart
+                values_closed = values + [values[0]]
+                dimensions_closed = personality_dimensions + [personality_dimensions[0]]
+
+                fig_radar.add_trace(go.Scatterpolar(
+                    r=values_closed,
+                    theta=dimensions_closed,
+                    name=element,
+                    fill='toself'
+                ))
+
+            fig_radar.update_layout(
+                polar=dict(
+                    radialaxis=dict(
+                        visible=True,
+                        range=[0, 0.6],
+                        tickformat='.0%'
+                    )
+                ),
+                showlegend=True,
+                title="Brand Personality Profile (7 Dimensions)",
+                height=600
+            )
+            st.plotly_chart(fig_radar, use_container_width=True)
+
+            st.info("**Extended personality profile** includes: Bold, Stylish, Modern, Simple, Human, Exciting, and Playful. " +
+                    "Higher scores indicate stronger associations with these positive attributes.")
+
+        else:
+            # Bar chart comparison
+            personality_data = []
+            for element in selected_elements:
+                research = research_data[element]
+                personality_data.append({
+                    'Element': element,
+                    'Bold': research['bold'],
+                    'Stylish': research['stylish'],
+                    'Modern': research['modern'],
+                    'Simple': research['simple'],
+                    'Human': research['human'],
+                    'Exciting': research['exciting'],
+                    'Playful': research['playful']
+                })
+
+            personality_df = pd.DataFrame(personality_data).melt(
+                id_vars='Element',
+                var_name='Attribute',
+                value_name='Score'
+            )
+
+            fig_personality = px.bar(
+                personality_df,
+                x='Attribute',
+                y='Score',
+                color='Element',
+                barmode='group',
+                text=personality_df['Score'].apply(lambda x: f'{x:.0%}'),
+                title='Brand Personality Attributes (7 Dimensions)'
+            )
+            st.plotly_chart(fig_personality, use_container_width=True)
+
+    st.markdown("---")
+
+    # Market/Country Recognition Analysis
+    st.markdown("### Recognition by Market")
+    st.caption("See how brand elements perform across different countries")
+
+    col1, col2 = st.columns([2, 1])
+
+    with col1:
+        # Heatmap of recognition by country
+        heatmap_data = []
+        for element in brand_elements:
+            row_data = {'Element': element}
+            for country in ['UK', 'Spain', 'Germany', 'Poland']:
+                row_data[country] = recognition_by_country[element][country]
+            heatmap_data.append(row_data)
+
+        heatmap_df = pd.DataFrame(heatmap_data).set_index('Element')
+
+        fig_heatmap = px.imshow(
+            heatmap_df,
+            labels=dict(x="Country", y="Brand Element", color="Recognition"),
+            text_auto='.0%',
+            aspect="auto",
+            color_continuous_scale='RdYlGn',
+            title="Brand Element Recognition by Country"
         )
-        st.plotly_chart(fig_personality, use_container_width=True)
+        fig_heatmap.update_layout(height=500)
+        st.plotly_chart(fig_heatmap, use_container_width=True)
+
+    with col2:
+        st.markdown("#### Key Findings:")
+
+        # Find strongest market per element
+        st.markdown("**Strongest Markets:**")
+        for element in brand_elements[:5]:  # Show top 5
+            countries_sorted = sorted(
+                recognition_by_country[element].items(),
+                key=lambda x: x[1],
+                reverse=True
+            )
+            best_country = countries_sorted[0]
+            st.success(f"**{element}**: {best_country[0]} ({best_country[1]:.0%})")
+
+        st.markdown("**Market Opportunities:**")
+        # Find elements with biggest market variations
+        variations = []
+        for element in brand_elements:
+            values = list(recognition_by_country[element].values())
+            variation = max(values) - min(values)
+            variations.append((element, variation))
+
+        variations_sorted = sorted(variations, key=lambda x: x[1], reverse=True)
+        for element, var in variations_sorted[:3]:
+            st.warning(f"**{element}**: {var:.0%} variation - consider market-specific strategies")
 
 # ==================== TAB 6: DATA EXPLORER ====================
 with tab6:
@@ -808,29 +929,71 @@ with tab6:
 
     with tab_b:
         st.markdown("### Research Data (P045556 - Saffron Brand Assets)")
-        research_display = []
-        for element, data in research_data.items():
-            research_display.append({
-                'Element': element,
-                'Recognition': data['recognition'],
-                'Uniqueness': data['uniqueness'],
-                'Positive Associations': data['positive'],
-                'Negative Associations': data['negative'],
-                'Bold': data['bold'],
-                'Stylish': data['stylish'],
-                'Modern': data['modern']
-            })
-        research_display_df = pd.DataFrame(research_display)
 
-        st.dataframe(research_display_df.style.format({
-            'Recognition': '{:.1%}',
-            'Uniqueness': '{:.1%}',
-            'Positive Associations': '{:.1%}',
-            'Negative Associations': '{:.1%}',
-            'Bold': '{:.1%}',
-            'Stylish': '{:.1%}',
-            'Modern': '{:.1%}'
-        }), use_container_width=True)
+        research_view = st.radio(
+            "Select view:",
+            ["Core Metrics", "Extended Personality (7 Dimensions)", "Recognition by Country"],
+            horizontal=True
+        )
+
+        if research_view == "Core Metrics":
+            research_display = []
+            for element, data in research_data.items():
+                research_display.append({
+                    'Element': element,
+                    'Recognition': data['recognition'],
+                    'Uniqueness': data['uniqueness'],
+                    'Positive Associations': data['positive'],
+                    'Negative Associations': data['negative']
+                })
+            research_display_df = pd.DataFrame(research_display)
+
+            st.dataframe(research_display_df.style.format({
+                'Recognition': '{:.1%}',
+                'Uniqueness': '{:.1%}',
+                'Positive Associations': '{:.1%}',
+                'Negative Associations': '{:.1%}'
+            }), use_container_width=True)
+
+        elif research_view == "Extended Personality (7 Dimensions)":
+            personality_display = []
+            for element, data in research_data.items():
+                personality_display.append({
+                    'Element': element,
+                    'Bold': data['bold'],
+                    'Stylish': data['stylish'],
+                    'Modern': data['modern'],
+                    'Simple': data['simple'],
+                    'Human': data['human'],
+                    'Exciting': data['exciting'],
+                    'Playful': data['playful']
+                })
+            personality_display_df = pd.DataFrame(personality_display)
+
+            st.dataframe(personality_display_df.style.format({
+                'Bold': '{:.1%}',
+                'Stylish': '{:.1%}',
+                'Modern': '{:.1%}',
+                'Simple': '{:.1%}',
+                'Human': '{:.1%}',
+                'Exciting': '{:.1%}',
+                'Playful': '{:.1%}'
+            }), use_container_width=True)
+
+        else:  # Recognition by Country
+            country_display = []
+            for element in brand_elements:
+                row_data = {'Element': element}
+                row_data.update(recognition_by_country[element])
+                country_display.append(row_data)
+            country_display_df = pd.DataFrame(country_display)
+
+            st.dataframe(country_display_df.style.format({
+                'UK': '{:.1%}',
+                'Spain': '{:.1%}',
+                'Germany': '{:.1%}',
+                'Poland': '{:.1%}'
+            }), use_container_width=True)
 
     with tab_c:
         st.markdown("### Combined Metrics")
@@ -848,7 +1011,6 @@ with tab6:
 st.markdown("---")
 st.markdown("""
 <div style='text-align: center; color: #666; padding: 20px;'>
-<p><b>Škoda Brand Intelligence Dashboard</b> | Powered by Streamlit</p>
-<p>Data Sources: 250915_SKO_Ads Overview.xlsx (Comms Audit) | P045556_ALL_Tables_20251016_Private.xlsx (Quantitative Research)</p>
+<p><b>Škoda Brand Intelligence Dashboard</b> | Powered by Saffron</p>
 </div>
 """, unsafe_allow_html=True)
