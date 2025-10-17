@@ -80,7 +80,7 @@ def calculate_metrics():
             'Uniqueness': research['uniqueness'],
             'Positive Associations': research['positive'],
             'Negative Associations': research['negative'],
-            'POS/NEG': 'POS' if research['positive'] > research['negative'] else 'NEG',
+            'Net Sentiment': 'Positive' if research['positive'] > research['negative'] else 'Negative',
             'Recognition ROI': recognition_roi,
             'Bold': research['bold'],
             'Stylish': research['stylish'],
@@ -121,12 +121,19 @@ with tab1:
 
     with col1:
         st.metric("Most Recognised Asset", most_recognized['Element'], f"{most_recognized['Recognition']:.0%}")
+        st.info(f"**{most_recognized['Recognition']:.0%}** of consumers have seen or heard this element before, making it the most familiar Škoda brand asset. Strong recognition drives immediate brand attribution.")
+
     with col2:
         st.metric("Most Unique Asset", most_unique['Element'], f"{most_unique['Uniqueness']:.0%}")
+        st.info(f"Rated **{most_unique['Uniqueness']:.0%}** for distinctiveness. High uniqueness means this element differentiates Škoda from competitors and builds long-term brand equity.")
+
     with col3:
         st.metric("Highest Investment", highest_investment['Element'], f"€{highest_investment['Total Investment']:,.0f}")
+        st.info(f"**€{highest_investment['Total Investment']:,.0f}** invested across **{int(highest_investment['Overall Usage'] * 102)}** ads. This represents **{highest_investment['Overall Usage']:.0%}** of total campaign usage.")
+
     with col4:
         st.metric("Best Recognition ROI", best_roi['Element'], f"{best_roi['Recognition ROI']:.2f}")
+        st.info(f"Delivers **{best_roi['Recognition ROI']:.2f}** recognition points per €1M spent. This asset achieves **{best_roi['Recognition']:.0%}** recognition with only **€{best_roi['Total Investment']:,.0f}** investment - the most efficient performer.")
 
     st.markdown("---")
 
@@ -137,7 +144,7 @@ with tab1:
     display_df = master_df[[
         'Element', 'Overall Usage', 'Usage Image', 'Usage Video',
         'Average Investment', 'Total Investment',
-        'Recognition', 'Uniqueness', 'Positive Associations', 'Negative Associations', 'POS/NEG'
+        'Recognition', 'Uniqueness', 'Positive Associations', 'Negative Associations', 'Net Sentiment'
     ]].set_index('Element')
 
     # Style the dataframe
@@ -407,7 +414,7 @@ with tab3:
         st.info(f"**{len(recommended)} assets show strong potential:** Good recognition or uniqueness + positive sentiment")
 
         for idx, row in recommended.iterrows():
-            st.write(f"**{row['Element']}** - Recognition: {row['Recognition']:.0%} | Uniqueness: {row['Uniqueness']:.0%} | {row['POS/NEG']}")
+            st.write(f"**{row['Element']}** - Recognition: {row['Recognition']:.0%} | Uniqueness: {row['Uniqueness']:.0%} | Sentiment: {row['Net Sentiment']}")
 
         st.markdown("---")
 
