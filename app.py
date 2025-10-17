@@ -199,36 +199,97 @@ with tab2:
     st.header("Strategic Insights Dashboard")
     st.caption("Advanced analytics to identify opportunities and optimize brand asset usage")
 
-    # Recognition ROI Analysis
-    st.markdown("### 💡 Recognition ROI: Efficiency Analysis")
-    st.info("**Insight:** Which assets deliver the best recognition per Euro spent?")
+    # Recognition ROI Analysis - Multi-Dimensional
+    st.markdown("### 💡 Recognition Efficiency: Multi-Dimensional Analysis")
+
+    # ROI metric selector
+    roi_metric = st.selectbox(
+        "Choose your efficiency perspective:",
+        [
+            "Total Investment Efficiency",
+            "Per-Ad Recognition Efficiency",
+            "Average Investment Efficiency",
+            "Brand Equity Efficiency Index"
+        ]
+    )
+
+    # Calculate different ROI metrics
+    master_df_roi = master_df.copy()
+
+    # Add number of ads per element
+    for idx, row in master_df_roi.iterrows():
+        element = row['Element']
+        num_ads = audit_df[audit_df[element] == True].shape[0]
+        master_df_roi.at[idx, 'Num Ads'] = num_ads
+
+    if roi_metric == "Total Investment Efficiency":
+        master_df_roi['Selected ROI'] = master_df_roi['Recognition ROI']
+        metric_label = "Recognition % per €1M Total Investment"
+        insight_text = "**Shows which assets achieved recognition with minimal total campaign spend.** High scorers are 'hidden gems' that punched above their weight."
+
+    elif roi_metric == "Per-Ad Recognition Efficiency":
+        master_df_roi['Selected ROI'] = master_df_roi.apply(
+            lambda x: (x['Recognition'] / x['Num Ads'] * 100) if x['Num Ads'] > 0 else 0, axis=1
+        )
+        metric_label = "Recognition % per Ad"
+        insight_text = "**Shows how many ad exposures are needed to build recognition.** High scorers build awareness faster with fewer placements."
+
+    elif roi_metric == "Average Investment Efficiency":
+        master_df_roi['Selected ROI'] = master_df_roi.apply(
+            lambda x: (x['Recognition'] / x['Average Investment'] * 1_000_000) if x['Average Investment'] > 0 else 0, axis=1
+        )
+        metric_label = "Recognition % per €1M Average Investment"
+        insight_text = "**Shows cost-effectiveness per individual ad placement.** High scorers deliver better recognition per placement budget."
+
+    else:  # Brand Equity Efficiency Index
+        master_df_roi['Selected ROI'] = master_df_roi.apply(
+            lambda x: (x['Recognition'] * x['Uniqueness'] * x['Positive Associations']) / (x['Total Investment'] / 1_000_000) if x['Total Investment'] > 0 else 0, axis=1
+        )
+        metric_label = "Brand Equity Index (Recognition × Uniqueness × Positive) per €1M"
+        insight_text = "**Holistic efficiency combining fame, differentiation, and sentiment.** High scorers deliver the most long-term brand equity per euro - ideal for identifying non-negotiables."
+
+    st.info(insight_text)
 
     col1, col2 = st.columns([2, 1])
 
     with col1:
-        roi_df = master_df.sort_values('Recognition ROI', ascending=True)
+        roi_df = master_df_roi.sort_values('Selected ROI', ascending=True)
         fig_roi = px.bar(
             roi_df,
             y='Element',
-            x='Recognition ROI',
+            x='Selected ROI',
             orientation='h',
-            title='Recognition Efficiency (Recognition % per €1M Invested)',
-            text=roi_df['Recognition ROI'].apply(lambda x: f'{x:.2f}'),
-            color='Recognition ROI',
+            title=f'Efficiency Analysis: {metric_label}',
+            text=roi_df['Selected ROI'].apply(lambda x: f'{x:.2f}'),
+            color='Selected ROI',
             color_continuous_scale='RdYlGn'
         )
         st.plotly_chart(fig_roi, use_container_width=True)
 
     with col2:
-        st.markdown("#### Key Findings:")
-        top_3_roi = roi_df.nlargest(3, 'Recognition ROI')
+        st.markdown("#### Top 3 Performers:")
+        top_3_roi = roi_df.nlargest(3, 'Selected ROI')
         for idx, row in top_3_roi.iterrows():
-            st.success(f"**{row['Element']}**: {row['Recognition ROI']:.2f} points per €1M")
+            st.success(f"**{row['Element']}**: {row['Selected ROI']:.2f}")
 
-        st.markdown("#### Recommendations:")
-        st.write("• Increase investment in high-ROI assets")
-        st.write("• Re-evaluate low-ROI assets")
-        st.write("• Balance reach with efficiency")
+        st.markdown("#### Bottom 3:")
+        bottom_3_roi = roi_df.nsmallest(3, 'Selected ROI')
+        for idx, row in bottom_3_roi.iterrows():
+            st.warning(f"**{row['Element']}**: {row['Selected ROI']:.2f}")
+
+        st.markdown("#### Strategic Implication:")
+        if roi_metric == "Total Investment Efficiency":
+            st.write("• Scale up top performers")
+            st.write("• Review bottom performers' deployment")
+        elif roi_metric == "Per-Ad Recognition Efficiency":
+            st.write("• Top assets build awareness faster")
+            st.write("• Increase frequency for top performers")
+        elif roi_metric == "Average Investment Efficiency":
+            st.write("• Optimize placement budgets")
+            st.write("• Reallocate to efficient assets")
+        else:
+            st.write("• **Top = Non-negotiables candidates**")
+            st.write("• **Bottom = Requires optimization**")
 
     st.markdown("---")
 
