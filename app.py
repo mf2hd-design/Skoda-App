@@ -19,7 +19,7 @@ st.set_page_config(
 
 st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Škoda Brand Intelligence Dashboard</h1>", unsafe_allow_html=True)
 st.markdown("---")
-st.markdown("This strategic tool synthesizes **Comms Audit** and **Quant Research** data to provide interactive insights into the performance and equity of Škoda's key brand assets.")
+st.markdown("This strategic tool synthesizes **Comms Audit** data with **Quantitative Research** insights (P045556 - Saffron Brand Assets) to provide interactive analysis of Škoda's key brand elements.")
 
 # --- Helper function to create a downloadable Excel file ---
 def to_excel(df):
@@ -36,7 +36,7 @@ def to_excel(df):
 
 # --- Data Room: Single File Uploader ---
 st.markdown("### 📥 1. Data Room: Upload Your Comms Audit File")
-st.info("For the 'Color Area Analysis' chart, please add columns to your file named `Electric_Green_Area_%` and `Dark_Green_Area_%`.")
+st.info("**Note:** Quantitative research data has been integrated from P045556 study. For the 'Color Area Analysis' chart, please add columns to your file named `Electric_Green_Area_%` and `Dark_Green_Area_%`.")
 comms_audit_file = st.file_uploader(
     "Upload your Comms Audit Excel File (e.g., skoda ads overview.xlsx)",
     type=["xlsx", "csv"]
@@ -54,20 +54,20 @@ if comms_audit_file:
         if 'Electric_Green_Area_%' not in audit_df.columns: audit_df['Electric_Green_Area_%'] = 0.0
         if 'Dark_Green_Area_%' not in audit_df.columns: audit_df['Dark_Green_Area_%'] = 0.0
 
-        # --- DUMMY DATA GENERATION ---
+        # --- RESEARCH DATA FROM P045556_ALL_Tables_20251016_Private.xlsx ---
         survey_data = {
-            'Element': brand_elements, 
-            '% recognised': [0.80, 0.47, 0.78, 0.30, 0.22, 0.52, 0.59, 0.14, 0.29], 
-            'Positive associations': [0.70, 0.39, 0.29, 0.45, 0.59, 0.35, 0.76, 0.33, 0.21], 
-            'Negative associations': [0.30, 0.30, 0.51, 0.20, 0.11, 0.46, 0.15, 0.58, 0.78], 
-            'Uniqueness': [0.51, 0.29, 0.90, 0.60, 0.94, 0.73, 0.46, 0.54, 0.53],
-            'adj_bold': [0.6, 0.8, 0.7, 0.4, 0.5, 0.3, 0.6, 0.4, 0.2],
-            'adj_stylish': [0.5, 0.7, 0.6, 0.3, 0.6, 0.2, 0.5, 0.3, 0.4],
-            'adj_modern': [0.4, 0.9, 0.5, 0.2, 0.6, 0.1, 0.7, 0.2, 0.3],
+            'Element': brand_elements,
+            '% recognised': [0.38, 0.39, 0.37, 0.36, 0.64, 0.38, 0.44, 0.38, 0.4],
+            'Positive associations': [0.47, 0.49, 0.46, 0.48, 0.49, 0.45, 0.48, 0.47, 0.5],
+            'Negative associations': [0.24, 0.22, 0.24, 0.22, 0.22, 0.25, 0.23, 0.23, 0.22],
+            'Uniqueness': [0.62, 0.61, 0.63, 0.64, 0.36, 0.62, 0.56, 0.62, 0.6],
+            'adj_bold': [0.49, 0.51, 0.47, 0.48, 0.5, 0.46, 0.49, 0.5, 0.5],
+            'adj_stylish': [0.46, 0.49, 0.47, 0.48, 0.5, 0.46, 0.49, 0.48, 0.49],
+            'adj_modern': [0.5, 0.52, 0.49, 0.51, 0.55, 0.49, 0.54, 0.51, 0.55],
         }
         research_df = pd.DataFrame(survey_data).set_index('Element')
-        
-        with st.expander("Note: Using placeholder data for Quant Research metrics. Click to see the data."):
+
+        with st.expander("View Quantitative Research Data (P045556 - Saffron Brand Assets)"):
             st.dataframe(research_df.style.format("{:.1%}"))
         
         st.success("Comms Audit file loaded successfully! The dashboard is now active.")
