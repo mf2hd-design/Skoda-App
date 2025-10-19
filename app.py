@@ -22,16 +22,17 @@ brand_elements = [
 # Recognition: Q02 (Have you seen/heard this element before?)
 # Uniqueness: Q05 (Which brand do you think this belongs to? - % who said Škoda)
 # Personality traits: Q04 NET T2B (Top 2 Box scores)
+# NOTE: No positive/negative association question exists in P045556 research
 research_data = {
-    'Electric Green': {'recognition': 0.38, 'uniqueness': 0.17, 'positive': 0.47, 'negative': 0.24, 'bold': 0.49, 'stylish': 0.46, 'modern': 0.50, 'simple': 0.50, 'human': 0.45, 'exciting': 0.45, 'playful': 0.44},
-    'Dark Green': {'recognition': 0.39, 'uniqueness': 0.19, 'positive': 0.49, 'negative': 0.22, 'bold': 0.51, 'stylish': 0.49, 'modern': 0.52, 'simple': 0.53, 'human': 0.46, 'exciting': 0.49, 'playful': 0.45},
-    'Type': {'recognition': 0.37, 'uniqueness': 0.17, 'positive': 0.46, 'negative': 0.24, 'bold': 0.47, 'stylish': 0.47, 'modern': 0.49, 'simple': 0.50, 'human': 0.44, 'exciting': 0.45, 'playful': 0.41},
-    'Tagline': {'recognition': 0.36, 'uniqueness': 0.17, 'positive': 0.48, 'negative': 0.22, 'bold': 0.48, 'stylish': 0.48, 'modern': 0.51, 'simple': 0.50, 'human': 0.46, 'exciting': 0.51, 'playful': 0.45},
-    'Symbol': {'recognition': 0.64, 'uniqueness': 0.38, 'positive': 0.49, 'negative': 0.22, 'bold': 0.50, 'stylish': 0.50, 'modern': 0.55, 'simple': 0.54, 'human': 0.46, 'exciting': 0.50, 'playful': 0.46},
-    'Hacek': {'recognition': 0.38, 'uniqueness': 0.19, 'positive': 0.45, 'negative': 0.25, 'bold': 0.46, 'stylish': 0.46, 'modern': 0.49, 'simple': 0.55, 'human': 0.44, 'exciting': 0.44, 'playful': 0.42},
-    'Wordmark': {'recognition': 0.44, 'uniqueness': 0.28, 'positive': 0.48, 'negative': 0.23, 'bold': 0.49, 'stylish': 0.49, 'modern': 0.54, 'simple': 0.52, 'human': 0.45, 'exciting': 0.48, 'playful': 0.45},
-    'Facets': {'recognition': 0.38, 'uniqueness': 0.16, 'positive': 0.47, 'negative': 0.23, 'bold': 0.50, 'stylish': 0.48, 'modern': 0.51, 'simple': 0.51, 'human': 0.43, 'exciting': 0.46, 'playful': 0.46},
-    'Sonic': {'recognition': 0.40, 'uniqueness': 0.17, 'positive': 0.50, 'negative': 0.22, 'bold': 0.50, 'stylish': 0.49, 'modern': 0.55, 'simple': 0.55, 'human': 0.46, 'exciting': 0.51, 'playful': 0.48},
+    'Electric Green': {'recognition': 0.38, 'uniqueness': 0.17, 'bold': 0.49, 'stylish': 0.46, 'modern': 0.50, 'simple': 0.50, 'human': 0.45, 'exciting': 0.45, 'playful': 0.44},
+    'Dark Green': {'recognition': 0.39, 'uniqueness': 0.19, 'bold': 0.51, 'stylish': 0.49, 'modern': 0.52, 'simple': 0.53, 'human': 0.46, 'exciting': 0.49, 'playful': 0.45},
+    'Type': {'recognition': 0.37, 'uniqueness': 0.17, 'bold': 0.47, 'stylish': 0.47, 'modern': 0.49, 'simple': 0.50, 'human': 0.44, 'exciting': 0.45, 'playful': 0.41},
+    'Tagline': {'recognition': 0.36, 'uniqueness': 0.17, 'bold': 0.48, 'stylish': 0.48, 'modern': 0.51, 'simple': 0.50, 'human': 0.46, 'exciting': 0.51, 'playful': 0.45},
+    'Symbol': {'recognition': 0.64, 'uniqueness': 0.38, 'bold': 0.50, 'stylish': 0.50, 'modern': 0.55, 'simple': 0.54, 'human': 0.46, 'exciting': 0.50, 'playful': 0.46},
+    'Hacek': {'recognition': 0.38, 'uniqueness': 0.19, 'bold': 0.46, 'stylish': 0.46, 'modern': 0.49, 'simple': 0.55, 'human': 0.44, 'exciting': 0.44, 'playful': 0.42},
+    'Wordmark': {'recognition': 0.44, 'uniqueness': 0.28, 'bold': 0.49, 'stylish': 0.49, 'modern': 0.54, 'simple': 0.52, 'human': 0.45, 'exciting': 0.48, 'playful': 0.45},
+    'Facets': {'recognition': 0.38, 'uniqueness': 0.16, 'bold': 0.50, 'stylish': 0.48, 'modern': 0.51, 'simple': 0.51, 'human': 0.43, 'exciting': 0.46, 'playful': 0.46},
+    'Sonic': {'recognition': 0.40, 'uniqueness': 0.17, 'bold': 0.50, 'stylish': 0.49, 'modern': 0.55, 'simple': 0.55, 'human': 0.46, 'exciting': 0.51, 'playful': 0.48},
 }
 
 # Recognition by Country
@@ -94,9 +95,6 @@ def calculate_metrics():
             'Total Investment': total_investment,
             'Recognition': research['recognition'],
             'Uniqueness': research['uniqueness'],
-            'Positive Associations': research['positive'],
-            'Negative Associations': research['negative'],
-            'Net Sentiment': 'Positive' if research['positive'] > research['negative'] else 'Negative',
             'Recognition ROI': recognition_roi,
             'Bold': research['bold'],
             'Stylish': research['stylish'],
@@ -160,19 +158,18 @@ with tab1:
     display_df = master_df[[
         'Element', 'Overall Usage', 'Usage Image', 'Usage Video',
         'Average Investment', 'Total Investment',
-        'Recognition', 'Uniqueness', 'Positive Associations', 'Negative Associations', 'Net Sentiment'
+        'Recognition', 'Uniqueness'
     ]].set_index('Element')
 
     # Style the dataframe
     styler = display_df.T.style
 
     # Heatmaps for research metrics
-    research_rows = ['Recognition', 'Uniqueness', 'Positive Associations', 'Negative Associations']
+    research_rows = ['Recognition', 'Uniqueness']
     styler = styler.background_gradient(cmap='RdYlGn', axis=1, subset=(pd.IndexSlice[research_rows], slice(None)))
-    styler = styler.background_gradient(cmap='RdYlGn_r', axis=1, subset=(pd.IndexSlice[['Negative Associations']], slice(None)))
 
     # Format percentages and currency
-    percent_rows = ['Overall Usage', 'Usage Image', 'Usage Video', 'Recognition', 'Uniqueness', 'Positive Associations', 'Negative Associations']
+    percent_rows = ['Overall Usage', 'Usage Image', 'Usage Video', 'Recognition', 'Uniqueness']
     currency_rows = ['Average Investment', 'Total Investment']
     styler = styler.format("{:.1%}", subset=(pd.IndexSlice[percent_rows], slice(None)))
     styler = styler.format("€{:,.2f}", subset=(pd.IndexSlice[currency_rows], slice(None)))
@@ -192,14 +189,14 @@ with tab1:
 
     # Brand Equity Matrix
     st.markdown("#### Brand Equity Matrix: Fame vs. Uniqueness")
-    st.caption("Bubble size represents total investment. Color shows positive association strength.")
+    st.caption("Bubble size represents total investment. Color intensity shows brand attribution strength.")
 
     fig_matrix = px.scatter(
         master_df,
         x="Uniqueness",
         y="Recognition",
         size="Total Investment",
-        color="Positive Associations",
+        color="Uniqueness",  # Use uniqueness for color gradient
         text="Element",
         size_max=60,
         hover_data=['Total Investment', 'Average Investment', 'Overall Usage'],
@@ -259,10 +256,10 @@ with tab2:
 
     else:  # Brand Equity Efficiency Index
         master_df_roi['Selected ROI'] = master_df_roi.apply(
-            lambda x: (x['Recognition'] * x['Uniqueness'] * x['Positive Associations']) / (x['Total Investment'] / 1_000_000) if x['Total Investment'] > 0 else 0, axis=1
+            lambda x: (x['Recognition'] * x['Uniqueness']) / (x['Total Investment'] / 1_000_000) if x['Total Investment'] > 0 else 0, axis=1
         )
-        metric_label = "Brand Equity Index (Recognition × Uniqueness × Positive) per €1M"
-        insight_text = "**Holistic efficiency combining fame, differentiation, and sentiment.** High scorers deliver the most long-term brand equity per euro - ideal for identifying non-negotiables."
+        metric_label = "Brand Equity Index (Recognition × Uniqueness) per €1M"
+        insight_text = "**Holistic efficiency combining fame and differentiation.** High scorers deliver the most long-term brand equity per euro - ideal for identifying non-negotiables."
 
     st.info(insight_text)
 
@@ -445,13 +442,12 @@ with tab3:
     # Auto-generate recommendations based on data
     must_use = master_df[
         (master_df['Recognition'] >= 0.40) &
-        (master_df['Positive Associations'] >= 0.47) &
+        (master_df['Uniqueness'] >= 0.15) &
         (master_df['Overall Usage'] >= 0.50)
     ].sort_values('Recognition', ascending=False)
 
     recommended = master_df[
-        ((master_df['Recognition'] >= 0.35) | (master_df['Uniqueness'] >= 0.60)) &
-        (master_df['Positive Associations'] > master_df['Negative Associations'])
+        ((master_df['Recognition'] >= 0.35) | (master_df['Uniqueness'] >= 0.25))
     ].sort_values(['Recognition', 'Uniqueness'], ascending=False)
     recommended = recommended[~recommended['Element'].isin(must_use['Element'])]
 
@@ -474,24 +470,26 @@ with tab3:
                     st.metric("Recognition", f"{row['Recognition']:.0%}")
                     st.metric("Uniqueness", f"{row['Uniqueness']:.0%}")
                 with col_b:
-                    st.metric("Positive", f"{row['Positive Associations']:.0%}")
-                    st.metric("Negative", f"{row['Negative Associations']:.0%}")
-                with col_c:
                     st.metric("Usage", f"{row['Overall Usage']:.0%}")
                     st.metric("Investment", f"€{row['Total Investment']:,.0f}")
+                with col_c:
+                    # Calculate Brand Equity Score
+                    equity_score = row['Recognition'] * row['Uniqueness']
+                    st.metric("Brand Equity", f"{equity_score:.3f}")
+                    st.metric("ROI", f"{row['Recognition ROI']:.2f}")
 
                 st.markdown("**Rationale:**")
                 st.write(f"• Strong consumer recognition ({row['Recognition']:.0%})")
-                st.write(f"• Positive associations outweigh negative ({row['Positive Associations']:.0%} vs {row['Negative Associations']:.0%})")
+                st.write(f"• Brand attribution of {row['Uniqueness']:.0%} (consumers correctly identify as Škoda)")
                 st.write(f"• Already widely used across campaigns ({row['Overall Usage']:.0%})")
 
         st.markdown("---")
 
         st.markdown("### ⭐ RECOMMENDED Assets (Strongly Encouraged)")
-        st.info(f"**{len(recommended)} assets show strong potential:** Good recognition or uniqueness + positive sentiment")
+        st.info(f"**{len(recommended)} assets show strong potential:** Good recognition or uniqueness")
 
         for idx, row in recommended.iterrows():
-            st.write(f"**{row['Element']}** - Recognition: {row['Recognition']:.0%} | Uniqueness: {row['Uniqueness']:.0%} | Sentiment: {row['Net Sentiment']}")
+            st.write(f"**{row['Element']}** - Recognition: {row['Recognition']:.0%} | Uniqueness: {row['Uniqueness']:.0%}")
 
         st.markdown("---")
 
@@ -550,9 +548,8 @@ with tab4:
     st.markdown("### 💎 High Potential Assets: Underutilized Opportunities")
 
     high_potential = master_df[
-        (master_df['Uniqueness'] >= 0.60) &
-        (master_df['Overall Usage'] < 0.40) &
-        (master_df['Positive Associations'] > master_df['Negative Associations'])
+        (master_df['Uniqueness'] >= 0.25) &
+        (master_df['Overall Usage'] < 0.40)
     ].sort_values('Uniqueness', ascending=False)
 
     if len(high_potential) > 0:
@@ -568,14 +565,14 @@ with tab4:
                     st.metric("Recognition", f"{row['Recognition']:.0%}")
 
                 with col2:
-                    st.metric("Positive Associations", f"{row['Positive Associations']:.0%}")
+                    st.metric("Brand Equity", f"{(row['Recognition'] * row['Uniqueness']):.3f}")
                     st.metric("Current Investment", f"€{row['Total Investment']:,.0f}")
                     st.metric("Recognition ROI", f"{row['Recognition ROI']:.2f}")
 
                 st.markdown("**💡 Opportunity:**")
-                st.write(f"• High uniqueness ({row['Uniqueness']:.0%}) suggests strong differentiation potential")
+                st.write(f"• High uniqueness ({row['Uniqueness']:.0%}) - consumers correctly attribute to Škoda")
                 st.write(f"• Currently used in only {row['Overall Usage']:.0%} of campaigns")
-                st.write(f"• Positive sentiment ({row['Positive Associations']:.0%}) indicates consumer receptivity")
+                st.write(f"• Strong differentiation potential for future brand building")
 
                 st.markdown("**📈 Recommendations:**")
                 st.write(f"• Increase usage from {row['Overall Usage']:.0%} to 50%+ of campaigns")
@@ -945,17 +942,13 @@ with tab6:
                 research_display.append({
                     'Element': element,
                     'Recognition': data['recognition'],
-                    'Uniqueness': data['uniqueness'],
-                    'Positive Associations': data['positive'],
-                    'Negative Associations': data['negative']
+                    'Uniqueness': data['uniqueness']
                 })
             research_display_df = pd.DataFrame(research_display)
 
             st.dataframe(research_display_df.style.format({
                 'Recognition': '{:.1%}',
-                'Uniqueness': '{:.1%}',
-                'Positive Associations': '{:.1%}',
-                'Negative Associations': '{:.1%}'
+                'Uniqueness': '{:.1%}'
             }), use_container_width=True)
 
         elif research_view == "Extended Personality (7 Dimensions)":
