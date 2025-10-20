@@ -22,17 +22,17 @@ brand_elements = [
 # Recognition: Q02 (Have you seen/heard this element before?)
 # Uniqueness: Q05 (Which brand do you think this belongs to? - % who said Škoda)
 # Personality traits: Q04 NET T2B (Top 2 Box scores)
-# NOTE: No positive/negative association question exists in P045556 research
+# Sentiment: Q04 NET Left (positive) vs NET Right (negative) across 7 semantic differential pairs
 research_data = {
-    'Electric Green': {'recognition': 0.38, 'uniqueness': 0.17, 'bold': 0.49, 'stylish': 0.46, 'modern': 0.50, 'simple': 0.50, 'human': 0.45, 'exciting': 0.45, 'playful': 0.44},
-    'Dark Green': {'recognition': 0.39, 'uniqueness': 0.19, 'bold': 0.51, 'stylish': 0.49, 'modern': 0.52, 'simple': 0.53, 'human': 0.46, 'exciting': 0.49, 'playful': 0.45},
-    'Type': {'recognition': 0.37, 'uniqueness': 0.17, 'bold': 0.47, 'stylish': 0.47, 'modern': 0.49, 'simple': 0.50, 'human': 0.44, 'exciting': 0.45, 'playful': 0.41},
-    'Tagline': {'recognition': 0.36, 'uniqueness': 0.17, 'bold': 0.48, 'stylish': 0.48, 'modern': 0.51, 'simple': 0.50, 'human': 0.46, 'exciting': 0.51, 'playful': 0.45},
-    'Symbol': {'recognition': 0.64, 'uniqueness': 0.38, 'bold': 0.50, 'stylish': 0.50, 'modern': 0.55, 'simple': 0.54, 'human': 0.46, 'exciting': 0.50, 'playful': 0.46},
-    'Hacek': {'recognition': 0.38, 'uniqueness': 0.19, 'bold': 0.46, 'stylish': 0.46, 'modern': 0.49, 'simple': 0.55, 'human': 0.44, 'exciting': 0.44, 'playful': 0.42},
-    'Wordmark': {'recognition': 0.44, 'uniqueness': 0.28, 'bold': 0.49, 'stylish': 0.49, 'modern': 0.54, 'simple': 0.52, 'human': 0.45, 'exciting': 0.48, 'playful': 0.45},
-    'Facets': {'recognition': 0.38, 'uniqueness': 0.16, 'bold': 0.50, 'stylish': 0.48, 'modern': 0.51, 'simple': 0.51, 'human': 0.43, 'exciting': 0.46, 'playful': 0.46},
-    'Sonic': {'recognition': 0.40, 'uniqueness': 0.17, 'bold': 0.50, 'stylish': 0.49, 'modern': 0.55, 'simple': 0.55, 'human': 0.46, 'exciting': 0.51, 'playful': 0.48},
+    'Electric Green': {'recognition': 0.38, 'uniqueness': 0.17, 'bold': 0.49, 'stylish': 0.46, 'modern': 0.50, 'simple': 0.50, 'human': 0.45, 'exciting': 0.45, 'playful': 0.44, 'positive_sentiment': 0.47, 'negative_sentiment': 0.2357, 'net_sentiment': 0.2343},
+    'Dark Green': {'recognition': 0.39, 'uniqueness': 0.19, 'bold': 0.51, 'stylish': 0.49, 'modern': 0.52, 'simple': 0.53, 'human': 0.46, 'exciting': 0.49, 'playful': 0.45, 'positive_sentiment': 0.4929, 'negative_sentiment': 0.2157, 'net_sentiment': 0.2771},
+    'Type': {'recognition': 0.37, 'uniqueness': 0.17, 'bold': 0.47, 'stylish': 0.47, 'modern': 0.49, 'simple': 0.50, 'human': 0.44, 'exciting': 0.45, 'playful': 0.41, 'positive_sentiment': 0.4614, 'negative_sentiment': 0.2386, 'net_sentiment': 0.2229},
+    'Tagline': {'recognition': 0.36, 'uniqueness': 0.17, 'bold': 0.48, 'stylish': 0.48, 'modern': 0.51, 'simple': 0.50, 'human': 0.46, 'exciting': 0.51, 'playful': 0.45, 'positive_sentiment': 0.4843, 'negative_sentiment': 0.2143, 'net_sentiment': 0.27},
+    'Symbol': {'recognition': 0.64, 'uniqueness': 0.38, 'bold': 0.50, 'stylish': 0.50, 'modern': 0.55, 'simple': 0.54, 'human': 0.46, 'exciting': 0.50, 'playful': 0.46, 'positive_sentiment': 0.5014, 'negative_sentiment': 0.2143, 'net_sentiment': 0.2871},
+    'Hacek': {'recognition': 0.38, 'uniqueness': 0.19, 'bold': 0.46, 'stylish': 0.46, 'modern': 0.49, 'simple': 0.55, 'human': 0.44, 'exciting': 0.44, 'playful': 0.42, 'positive_sentiment': 0.4657, 'negative_sentiment': 0.24, 'net_sentiment': 0.2257},
+    'Wordmark': {'recognition': 0.44, 'uniqueness': 0.28, 'bold': 0.49, 'stylish': 0.49, 'modern': 0.54, 'simple': 0.52, 'human': 0.45, 'exciting': 0.48, 'playful': 0.45, 'positive_sentiment': 0.4886, 'negative_sentiment': 0.2229, 'net_sentiment': 0.2657},
+    'Facets': {'recognition': 0.38, 'uniqueness': 0.16, 'bold': 0.50, 'stylish': 0.48, 'modern': 0.51, 'simple': 0.51, 'human': 0.43, 'exciting': 0.46, 'playful': 0.46, 'positive_sentiment': 0.4786, 'negative_sentiment': 0.2314, 'net_sentiment': 0.2471},
+    'Sonic': {'recognition': 0.40, 'uniqueness': 0.17, 'bold': 0.50, 'stylish': 0.49, 'modern': 0.55, 'simple': 0.55, 'human': 0.46, 'exciting': 0.51, 'playful': 0.48, 'positive_sentiment': 0.5057, 'negative_sentiment': 0.2114, 'net_sentiment': 0.2943},
 }
 
 # Recognition by Country
@@ -99,6 +99,9 @@ def calculate_metrics():
             'Bold': research['bold'],
             'Stylish': research['stylish'],
             'Modern': research['modern'],
+            'Positive Sentiment': research['positive_sentiment'],
+            'Negative Sentiment': research['negative_sentiment'],
+            'Net Sentiment': research['net_sentiment'],
         })
 
     return pd.DataFrame(metrics)
@@ -111,8 +114,9 @@ st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Škoda Brand Intell
 st.markdown("---")
 
 # --- Navigation Tabs ---
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
     "📊 Executive Summary",
+    "💚 Sentiment Analysis",
     "📈 Strategic Insights",
     "🎯 Non-Negotiables",
     "🔮 Future-Proofing",
@@ -158,18 +162,18 @@ with tab1:
     display_df = master_df[[
         'Element', 'Overall Usage', 'Usage Image', 'Usage Video',
         'Average Investment', 'Total Investment',
-        'Recognition', 'Uniqueness'
+        'Recognition', 'Uniqueness', 'Net Sentiment'
     ]].set_index('Element')
 
     # Style the dataframe
     styler = display_df.T.style
 
     # Heatmaps for research metrics
-    research_rows = ['Recognition', 'Uniqueness']
+    research_rows = ['Recognition', 'Uniqueness', 'Net Sentiment']
     styler = styler.background_gradient(cmap='RdYlGn', axis=1, subset=(pd.IndexSlice[research_rows], slice(None)))
 
     # Format percentages and currency
-    percent_rows = ['Overall Usage', 'Usage Image', 'Usage Video', 'Recognition', 'Uniqueness']
+    percent_rows = ['Overall Usage', 'Usage Image', 'Usage Video', 'Recognition', 'Uniqueness', 'Net Sentiment']
     currency_rows = ['Average Investment', 'Total Investment']
     styler = styler.format("{:.1%}", subset=(pd.IndexSlice[percent_rows], slice(None)))
     styler = styler.format("€{:,.2f}", subset=(pd.IndexSlice[currency_rows], slice(None)))
@@ -207,8 +211,238 @@ with tab1:
     fig_matrix.update_layout(height=600)
     st.plotly_chart(fig_matrix, use_container_width=True)
 
-# ==================== TAB 2: STRATEGIC INSIGHTS ====================
+# ==================== TAB 2: SENTIMENT ANALYSIS ====================
 with tab2:
+    st.header("💚 Sentiment Analysis")
+    st.caption("Consumer perception analysis based on Q04 semantic differential scales")
+
+    st.markdown("""
+    <div style='background-color: #e8f5e9; padding: 20px; border-radius: 10px; margin-bottom: 20px;'>
+    <h4>Understanding Sentiment Scores</h4>
+    <p><b>Positive Sentiment:</b> Average % of respondents choosing positive descriptors (Bold, Stylish, Modern, Simple, Human, Exciting, Playful)</p>
+    <p><b>Negative Sentiment:</b> Average % choosing opposite descriptors (Cautious, Plain, Old-Fashioned, Complicated, Cold, Boring, Serious)</p>
+    <p><b>Net Sentiment:</b> Positive minus Negative (higher = more positive brand perception)</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Overview Metrics Cards
+    col1, col2, col3, col4 = st.columns(4)
+
+    most_positive = master_df.loc[master_df['Net Sentiment'].idxmax()]
+    least_positive = master_df.loc[master_df['Net Sentiment'].idxmin()]
+    avg_net_sentiment = master_df['Net Sentiment'].mean()
+    sentiment_range = master_df['Net Sentiment'].max() - master_df['Net Sentiment'].min()
+
+    with col1:
+        st.metric("Most Positive Element", most_positive['Element'], f"+{most_positive['Net Sentiment']:.1%}")
+        st.success(f"**{most_positive['Net Sentiment']:.1%}** net positive perception. This element evokes the strongest positive associations across all personality dimensions.")
+
+    with col2:
+        st.metric("Least Positive Element", least_positive['Element'], f"+{least_positive['Net Sentiment']:.1%}")
+        st.info(f"**{least_positive['Net Sentiment']:.1%}** net sentiment. While still positive, this element has more room for improvement in emotional connection.")
+
+    with col3:
+        st.metric("Average Net Sentiment", "All Elements", f"+{avg_net_sentiment:.1%}")
+        st.info(f"Overall, Škoda brand elements generate **{avg_net_sentiment:.1%}** net positive sentiment. All elements perform positively.")
+
+    with col4:
+        st.metric("Sentiment Range", f"{sentiment_range:.1%}", "Max - Min")
+        st.info(f"Variation of **{sentiment_range:.1%}** across elements shows different emotional impacts of each brand asset.")
+
+    st.markdown("---")
+
+    # Positive vs Negative Bar Chart
+    st.markdown("### Positive vs Negative Sentiment Comparison")
+    st.caption("Green bars show positive associations, red bars show negative associations")
+
+    # Prepare data for grouped bar chart
+    sentiment_comparison = master_df[['Element', 'Positive Sentiment', 'Negative Sentiment']].copy()
+    sentiment_comparison_melted = sentiment_comparison.melt(
+        id_vars='Element',
+        var_name='Sentiment Type',
+        value_name='Percentage'
+    )
+
+    fig_comparison = go.Figure()
+
+    # Add positive sentiment bars (green)
+    fig_comparison.add_trace(go.Bar(
+        name='Positive Sentiment',
+        x=sentiment_comparison['Element'],
+        y=sentiment_comparison['Positive Sentiment'],
+        marker_color='#4CAF50',
+        text=sentiment_comparison['Positive Sentiment'].apply(lambda x: f'{x:.1%}'),
+        textposition='outside'
+    ))
+
+    # Add negative sentiment bars (red)
+    fig_comparison.add_trace(go.Bar(
+        name='Negative Sentiment',
+        x=sentiment_comparison['Element'],
+        y=sentiment_comparison['Negative Sentiment'],
+        marker_color='#F44336',
+        text=sentiment_comparison['Negative Sentiment'].apply(lambda x: f'{x:.1%}'),
+        textposition='outside'
+    ))
+
+    fig_comparison.update_layout(
+        barmode='group',
+        title='Positive vs Negative Sentiment by Brand Element',
+        xaxis_title='Brand Element',
+        yaxis_title='Sentiment Score',
+        yaxis_tickformat='.0%',
+        height=500,
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+    )
+
+    st.plotly_chart(fig_comparison, use_container_width=True)
+
+    st.info("**Key Insight:** All brand elements show higher positive than negative sentiment, indicating strong overall brand health. The gap between green and red bars represents net sentiment strength.")
+
+    st.markdown("---")
+
+    # Net Sentiment Ranking Chart
+    st.markdown("### Net Sentiment Ranking")
+    st.caption("Elements ranked by overall sentiment score (positive minus negative)")
+
+    sentiment_ranked = master_df.sort_values('Net Sentiment', ascending=True)
+
+    # Create color gradient based on net sentiment values
+    colors = sentiment_ranked['Net Sentiment'].apply(
+        lambda x: f'rgb({int(244 - (x * 400))}, {int(67 + (x * 400))}, {int(54 + (x * 100))})'
+    ).tolist()
+
+    fig_net = go.Figure(go.Bar(
+        x=sentiment_ranked['Net Sentiment'],
+        y=sentiment_ranked['Element'],
+        orientation='h',
+        marker=dict(
+            color=sentiment_ranked['Net Sentiment'],
+            colorscale='RdYlGn',
+            showscale=True,
+            colorbar=dict(title="Net Sentiment", tickformat='.0%')
+        ),
+        text=sentiment_ranked['Net Sentiment'].apply(lambda x: f'+{x:.1%}'),
+        textposition='outside',
+        hovertemplate='<b>%{y}</b><br>Net Sentiment: %{x:.1%}<extra></extra>'
+    ))
+
+    fig_net.update_layout(
+        title='Brand Elements Ranked by Net Sentiment',
+        xaxis_title='Net Sentiment Score',
+        yaxis_title='Brand Element',
+        xaxis_tickformat='.0%',
+        height=500,
+        showlegend=False
+    )
+
+    st.plotly_chart(fig_net, use_container_width=True)
+
+    # Top 3 and Bottom 3
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("#### 🏆 Top 3 Most Positive")
+        top_3_sentiment = sentiment_ranked.nlargest(3, 'Net Sentiment')
+        for idx, row in top_3_sentiment.iterrows():
+            st.success(f"**{row['Element']}**: +{row['Net Sentiment']:.1%} net sentiment")
+            st.write(f"   • Positive: {row['Positive Sentiment']:.1%} | Negative: {row['Negative Sentiment']:.1%}")
+
+    with col2:
+        st.markdown("#### 📊 Bottom 3 (Still Positive)")
+        bottom_3_sentiment = sentiment_ranked.nsmallest(3, 'Net Sentiment')
+        for idx, row in bottom_3_sentiment.iterrows():
+            st.info(f"**{row['Element']}**: +{row['Net Sentiment']:.1%} net sentiment")
+            st.write(f"   • Positive: {row['Positive Sentiment']:.1%} | Negative: {row['Negative Sentiment']:.1%}")
+
+    st.markdown("---")
+
+    # Detailed Sentiment Data Table
+    st.markdown("### Detailed Sentiment Data")
+    st.caption("Complete breakdown of sentiment scores with interpretations")
+
+    # Create detailed table with interpretation
+    detailed_sentiment = master_df[['Element', 'Positive Sentiment', 'Negative Sentiment', 'Net Sentiment']].copy()
+
+    # Add interpretation column
+    def interpret_sentiment(net):
+        if net >= 0.28:
+            return "🌟 Excellent - Strong positive perception"
+        elif net >= 0.25:
+            return "✅ Very Good - Solid positive associations"
+        elif net >= 0.22:
+            return "👍 Good - Positive overall sentiment"
+        else:
+            return "📈 Positive - Room for improvement"
+
+    detailed_sentiment['Interpretation'] = detailed_sentiment['Net Sentiment'].apply(interpret_sentiment)
+
+    # Style the table
+    styler_sentiment = detailed_sentiment.set_index('Element').style
+
+    # Apply heatmap to sentiment columns
+    styler_sentiment = styler_sentiment.background_gradient(
+        cmap='RdYlGn',
+        subset=['Net Sentiment'],
+        vmin=0.20,
+        vmax=0.30
+    )
+
+    styler_sentiment = styler_sentiment.background_gradient(
+        cmap='Greens',
+        subset=['Positive Sentiment'],
+        vmin=0.45,
+        vmax=0.52
+    )
+
+    styler_sentiment = styler_sentiment.background_gradient(
+        cmap='Reds_r',
+        subset=['Negative Sentiment'],
+        vmin=0.20,
+        vmax=0.25
+    )
+
+    # Format as percentages
+    styler_sentiment = styler_sentiment.format({
+        'Positive Sentiment': '{:.1%}',
+        'Negative Sentiment': '{:.1%}',
+        'Net Sentiment': '+{:.1%}'
+    })
+
+    st.dataframe(styler_sentiment, use_container_width=True)
+
+    # Download sentiment data
+    sentiment_csv = detailed_sentiment.to_csv(index=False)
+    st.download_button(
+        label="📥 Download Sentiment Analysis CSV",
+        data=sentiment_csv,
+        file_name="skoda_sentiment_analysis.csv",
+        mime="text/csv"
+    )
+
+    st.markdown("---")
+
+    # Additional Insights
+    st.markdown("### 📊 Strategic Implications")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("#### Strengths")
+        st.write("• **All elements have positive net sentiment** - strong brand foundation")
+        st.write(f"• **{most_positive['Element']}** leads with {most_positive['Net Sentiment']:.1%} - leverage in campaigns")
+        st.write(f"• Average {avg_net_sentiment:.1%} sentiment shows consistent positive perception")
+        st.write("• High positive scores (46-51%) show strong emotional connection")
+
+    with col2:
+        st.markdown("#### Opportunities")
+        st.write(f"• **{least_positive['Element']}** has room to improve emotional impact")
+        st.write("• Focus on amplifying positive associations in communications")
+        st.write("• Use top-performing elements more prominently in creative")
+        st.write("• Monitor sentiment trends over time to track improvements")
+
+# ==================== TAB 3: STRATEGIC INSIGHTS ====================
+with tab3:
     st.header("Strategic Insights Dashboard")
     st.caption("Advanced analytics to identify opportunities and optimize brand asset usage")
 
@@ -426,8 +660,8 @@ with tab2:
         with col2:
             st.warning(f"**Least Consistent:** {least_consistent} (σ={consistency_scores[least_consistent]:.3f})")
 
-# ==================== TAB 3: NON-NEGOTIABLES ====================
-with tab3:
+# ==================== TAB 4: NON-NEGOTIABLES ====================
+with tab4:
     st.header("🎯 Non-Negotiables: Asset Usage Guidelines")
     st.caption("Data-driven recommendations for mandatory and optional asset usage")
 
@@ -532,8 +766,8 @@ with tab3:
             mime="text/plain"
         )
 
-# ==================== TAB 4: FUTURE-PROOFING ====================
-with tab4:
+# ==================== TAB 5: FUTURE-PROOFING ====================
+with tab5:
     st.header("🔮 Future-Proofing Opportunities")
     st.caption("Actionable steps to improve long-term memorability and brand equity")
 
@@ -686,8 +920,8 @@ with tab4:
         st.write("   • Track recognition metrics quarterly")
         st.write("   • Adjust based on performance data")
 
-# ==================== TAB 5: DEEP DIVE ANALYSIS ====================
-with tab5:
+# ==================== TAB 6: DEEP DIVE ANALYSIS ====================
+with tab6:
     st.header("🔍 Deep Dive Analysis")
     st.caption("Detailed breakdowns and custom filtering")
 
@@ -908,8 +1142,8 @@ with tab5:
         for element, var in variations_sorted[:3]:
             st.warning(f"**{element}**: {var:.0%} variation - consider market-specific strategies")
 
-# ==================== TAB 6: DATA EXPLORER ====================
-with tab6:
+# ==================== TAB 7: DATA EXPLORER ====================
+with tab7:
     st.header("📄 Data Explorer")
     st.caption("Raw data access and detailed views")
 
