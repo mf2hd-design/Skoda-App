@@ -256,14 +256,15 @@ st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Škoda Brand Intell
 st.markdown("---")
 
 # --- Navigation Tabs ---
-tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs([
     "📊 Executive Summary",
     "💚 Sentiment Analysis",
     "📈 Strategic Insights",
     "🎯 Non-Negotiables",
     "🔮 Future-Proofing",
     "🔍 Deep Dive Analysis",
-    "📄 Data Explorer"
+    "📄 Data Explorer",
+    "🧭 Recognition Journey"
 ])
 
 # ==================== TAB 1: EXECUTIVE SUMMARY ====================
@@ -301,6 +302,23 @@ with tab1:
         This should be the centerpiece of all Škoda communications.
         """)
     
+    st.markdown("---")
+    
+    # CRITICAL FINDING ALERT
+    st.error("""
+    ### 🚨 Critical Discovery: The 56% Recognition Gap
+    
+    **56.3% of respondents NEVER recognized these brand elements as Škoda** — even after seeing 6 different assets.
+    
+    **What this means:**
+    - Only 40% achieved recognition after 6 element exposures
+    - The Symbol (48% recognition) is critically important as it outperforms 2.5x vs other elements
+    - Multiple touchpoints are essential — single elements drive only 10% recognition
+    - Brand building requires strategic focus on the strongest carriers
+    
+    👉 See the **Recognition Journey tab** for full analysis of how recognition builds element by element.
+    """)
+
     st.markdown("---")
 
     # Key Headlines
@@ -1738,6 +1756,311 @@ with tab7:
             file_name="skoda_combined_metrics.csv",
             mime="text/csv"
         )
+
+# ==================== TAB 8: RECOGNITION JOURNEY ====================
+with tab8:
+    st.header("🧭 Recognition Journey & Brand Discovery")
+    st.caption("How consumers discover and recognize Škoda through brand elements")
+
+    # Critical finding callout
+    st.error("""
+    ### ⚠️ Critical Finding
+    **56.3% of respondents NEVER recognized these elements as Škoda** — even after seeing 6 different brand assets.
+    
+    This finding underscores:
+    - The challenge of brand recognition in the automotive market
+    - The critical importance of the Symbol (48% recognition) as the primary brand carrier
+    - The need for multiple touchpoints working together
+    - The opportunity to strengthen brand identity through strategic asset deployment
+    """)
+
+    st.markdown("---")
+
+    # SECTION 1: Recognition Journey
+    st.markdown("### 📈 The Recognition Build: When Do People Identify Škoda?")
+    st.caption("Tracking how recognition accumulates as respondents see more brand elements")
+
+    col1, col2 = st.columns([2, 1])
+
+    with col1:
+        # Create waterfall-style visualization
+        journey_data = pd.DataFrame([
+            {'Stage': 'After 1 element', 'Recognition': recognition_journey['after_1_element'], 'Label': '10.3%'},
+            {'Stage': 'After 2 elements', 'Recognition': recognition_journey['after_2_elements'], 'Label': '13.3%'},
+            {'Stage': 'After 3 elements', 'Recognition': recognition_journey['after_3_elements'], 'Label': '19.7%'},
+            {'Stage': 'After 4 elements', 'Recognition': recognition_journey['after_4_elements'], 'Label': '24.7%'},
+            {'Stage': 'After 5 elements', 'Recognition': recognition_journey['after_5_elements'], 'Label': '31.3%'},
+            {'Stage': 'After all 6 elements', 'Recognition': recognition_journey['after_all_6_elements'], 'Label': '40.1%'},
+            {'Stage': 'Never recognized', 'Recognition': recognition_journey['never_recognized'], 'Label': '56.3%'},
+        ])
+
+        fig_journey = go.Figure()
+
+        # Recognition builders (green)
+        fig_journey.add_trace(go.Bar(
+            x=journey_data['Recognition'][:6],
+            y=journey_data['Stage'][:6],
+            orientation='h',
+            marker_color='#4CAF50',
+            text=journey_data['Label'][:6],
+            textposition='outside',
+            name='Recognized',
+            hovertemplate='<b>%{y}</b><br>%{x:.1%} recognized Škoda<extra></extra>'
+        ))
+
+        # Never recognized (red)
+        fig_journey.add_trace(go.Bar(
+            x=[journey_data['Recognition'].iloc[6]],
+            y=[journey_data['Stage'].iloc[6]],
+            orientation='h',
+            marker_color='#F44336',
+            text=[journey_data['Label'].iloc[6]],
+            textposition='outside',
+            name='Never Recognized',
+            hovertemplate='<b>%{y}</b><br>%{x:.1%} never identified Škoda<extra></extra>'
+        ))
+
+        fig_journey.update_layout(
+            title='Progressive Recognition: The "Aha Moment" Journey',
+            xaxis_title='% of Respondents',
+            yaxis_title='',
+            xaxis_tickformat='.0%',
+            height=500,
+            showlegend=True,
+            barmode='overlay'
+        )
+
+        st.plotly_chart(fig_journey, use_container_width=True)
+
+    with col2:
+        st.markdown("#### 🔍 Key Insights")
+        
+        st.metric("Immediate Recognition", "10.3%", "After just 1 element")
+        st.caption("Only 1 in 10 recognize Škoda from a single brand element")
+        
+        st.metric("Maximum Recognition", "40.1%", "After all 6 elements")
+        st.caption("Even with 6 touchpoints, less than half recognize the brand")
+        
+        st.metric("Never Recognized", "56.3%", delta="-56.3%", delta_color="inverse")
+        st.caption("**Critical gap:** More than half never connect elements to Škoda")
+
+        st.markdown("---")
+        
+        st.markdown("#### 💡 Strategic Implications")
+        st.markdown("""
+        **What this means:**
+        1. **Single elements are insufficient** - Recognition requires multiple exposures
+        2. **Symbol is critical** - At 48% recognition, it's the strongest individual carrier
+        3. **Cumulative effect matters** - Each additional element adds ~5-7% recognition
+        4. **56% gap is the priority** - Focus on making assets more distinctively Škoda
+        """)
+
+    st.markdown("---")
+
+    # SECTION 2: Post-Reveal Brand Familiarity
+    st.markdown("### 🎯 Post-Reveal: How Well Do People Know Škoda?")
+    st.caption("After revealing these are Škoda elements, respondents rated their familiarity with the brand")
+
+    col1, col2 = st.columns([2, 1])
+
+    with col1:
+        familiarity_data = pd.DataFrame([
+            {'Level': 'Very familiar', 'Percentage': skoda_familiarity['very_familiar'], 'Description': 'Strong brand advocates'},
+            {'Level': 'Quite familiar', 'Percentage': skoda_familiarity['quite_familiar'], 'Description': 'Active considerers'},
+            {'Level': 'Heard of, don\'t know much', 'Percentage': skoda_familiarity['heard_of_not_much'], 'Description': 'Awareness without knowledge'},
+            {'Level': 'Never heard of Škoda', 'Percentage': skoda_familiarity['never_heard'], 'Description': 'Outside consideration set'},
+            {'Level': 'Not sure', 'Percentage': skoda_familiarity['not_sure'], 'Description': 'Uncertain'},
+        ])
+
+        # Create color scale
+        colors = ['#2E7D32', '#4CAF50', '#FFC107', '#FF5722', '#9E9E9E']
+
+        fig_familiarity = go.Figure(go.Bar(
+            x=familiarity_data['Percentage'],
+            y=familiarity_data['Level'],
+            orientation='h',
+            marker_color=colors,
+            text=familiarity_data['Percentage'].apply(lambda x: f'{x:.0%}'),
+            textposition='outside',
+            hovertemplate='<b>%{y}</b><br>%{x:.1%} of respondents<br>%{customdata}<extra></extra>',
+            customdata=familiarity_data['Description']
+        ))
+
+        fig_familiarity.update_layout(
+            title='Škoda Brand Familiarity Levels',
+            xaxis_title='% of Respondents',
+            yaxis_title='',
+            xaxis_tickformat='.0%',
+            height=400,
+            showlegend=False
+        )
+
+        st.plotly_chart(fig_familiarity, use_container_width=True)
+
+    with col2:
+        st.markdown("#### 📊 Familiarity Breakdown")
+        
+        familiar_total = skoda_familiarity['very_familiar'] + skoda_familiarity['quite_familiar']
+        st.metric("Familiar with Brand", f"{familiar_total:.0%}", "Very + Quite familiar")
+        
+        st.metric("Heard Name Only", f"{skoda_familiarity['heard_of_not_much']:.0%}", "Lack deeper knowledge")
+        
+        st.metric("Completely Unaware", f"{skoda_familiarity['never_heard']:.0%}", delta=f"-{skoda_familiarity['never_heard']:.0%}", delta_color="inverse")
+
+        st.markdown("---")
+        
+        st.info("""
+        **The Familiarity Challenge:**
+        
+        Only **33% are familiar** with Škoda, while **46% have heard the name but lack knowledge**.
+        
+        This explains why recognition is low and highlights the opportunity for brand education.
+        """)
+
+    st.markdown("---")
+
+    # SECTION 3: Emotional Response to Brand Reveal
+    st.markdown("### 💚 Emotional Response: Learning It's Škoda")
+    st.caption("How respondents felt when told these elements belong to Škoda")
+
+    col1, col2 = st.columns([2, 1])
+
+    with col1:
+        response_data = pd.DataFrame([
+            {'Response': 'Positively surprised', 'Percentage': response_to_reveal['positive_surprised'], 'Sentiment': 'Positive'},
+            {'Response': 'Makes sense / Expected', 'Percentage': response_to_reveal['makes_sense'], 'Sentiment': 'Positive'},
+            {'Response': 'Neutral / No strong feeling', 'Percentage': response_to_reveal['neutral'], 'Sentiment': 'Neutral'},
+            {'Response': 'Disappointed', 'Percentage': response_to_reveal['disappointed'], 'Sentiment': 'Negative'},
+            {'Response': 'Don\'t know', 'Percentage': response_to_reveal['dont_know'], 'Sentiment': 'Neutral'},
+        ])
+
+        # Color by sentiment
+        color_map = {'Positive': '#4CAF50', 'Neutral': '#FFC107', 'Negative': '#F44336'}
+        response_data['Color'] = response_data['Sentiment'].map(color_map)
+
+        fig_response = go.Figure(go.Bar(
+            x=response_data['Percentage'],
+            y=response_data['Response'],
+            orientation='h',
+            marker_color=response_data['Color'],
+            text=response_data['Percentage'].apply(lambda x: f'{x:.0%}'),
+            textposition='outside',
+            hovertemplate='<b>%{y}</b><br>%{x:.1%} of respondents<extra></extra>'
+        ))
+
+        fig_response.update_layout(
+            title='Emotional Reaction to Brand Reveal',
+            xaxis_title='% of Respondents',
+            yaxis_title='',
+            xaxis_tickformat='.0%',
+            height=400,
+            showlegend=False
+        )
+
+        st.plotly_chart(fig_response, use_container_width=True)
+
+    with col2:
+        st.markdown("#### 🎭 Response Summary")
+        
+        positive_total = response_to_reveal['positive_surprised'] + response_to_reveal['makes_sense']
+        st.metric("Positive Reactions", f"{positive_total:.0%}", "Surprised or expected")
+        
+        st.metric("Neutral/Indifferent", f"{response_to_reveal['neutral']:.0%}", "No emotional response")
+        
+        st.metric("Disappointed", f"{response_to_reveal['disappointed']:.0%}", "Negative reaction")
+
+        st.markdown("---")
+        
+        st.warning("""
+        **The Emotional Gap:**
+        
+        **42% felt nothing** when learning these are Škoda elements.
+        
+        Combined with only 47% positive reactions, this indicates the brand lacks strong emotional connection.
+        """)
+
+    st.markdown("---")
+
+    # SECTION 4: Integrated Strategic View
+    st.markdown("### 🎯 Strategic Integration: The Complete Picture")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.markdown("#### Recognition Challenge")
+        st.markdown("""
+        - **56%** never identify elements as Škoda
+        - **10%** recognize after 1 element
+        - **40%** maximum with 6 elements
+        
+        **Implication:** Multiple touchpoints essential; Symbol must lead
+        """)
+
+    with col2:
+        st.markdown("#### Awareness Challenge")
+        st.markdown("""
+        - **33%** familiar with brand
+        - **46%** heard name only
+        - **18%** completely unaware
+        
+        **Implication:** Brand education opportunity; not just recognition issue
+        """)
+
+    with col3:
+        st.markdown("#### Engagement Challenge")
+        st.markdown("""
+        - **47%** positive reaction
+        - **42%** indifferent
+        - **3%** disappointed
+        
+        **Implication:** Strengthen emotional positioning; brand not rejected but not loved
+        """)
+
+    st.markdown("---")
+
+    # Key recommendations
+    st.success("""
+    ### 🎯 Strategic Priorities Based on This Data
+    
+    1. **Elevate the Symbol** - At 48% recognition vs 20% average, the logo is the critical brand carrier. Make it prominent in all communications.
+    
+    2. **Create Combinations** - Since single elements drive only 10% recognition, ensure multiple elements appear together. Recommended minimum: 3 elements per touchpoint.
+    
+    3. **Address the 56% Gap** - More than half never connect elements to Škoda. This requires:
+       - Bolder, more distinctive asset design
+       - More consistent usage across markets
+       - Stronger connection between elements and brand name
+    
+    4. **Build Familiarity** - 46% have heard of Škoda but know little. Use brand elements as educational tools, not just identity markers.
+    
+    5. **Strengthen Emotional Connection** - 42% feel nothing about Škoda. Move beyond functional attributes to emotional benefits in messaging.
+    """)
+
+    # Download option
+    st.markdown("---")
+    
+    journey_export = pd.DataFrame({
+        'Metric': ['After 1 element', 'After 2 elements', 'After 3 elements', 
+                   'After 4 elements', 'After 5 elements', 'After all 6 elements', 
+                   'Never recognized'],
+        'Recognition Rate': [
+            recognition_journey['after_1_element'],
+            recognition_journey['after_2_elements'],
+            recognition_journey['after_3_elements'],
+            recognition_journey['after_4_elements'],
+            recognition_journey['after_5_elements'],
+            recognition_journey['after_all_6_elements'],
+            recognition_journey['never_recognized']
+        ]
+    })
+    
+    csv_journey = journey_export.to_csv(index=False)
+    st.download_button(
+        label="📥 Download Recognition Journey Data",
+        data=csv_journey,
+        file_name="skoda_recognition_journey.csv",
+        mime="text/csv"
+    )
 
 # --- Footer ---
 st.markdown("---")
