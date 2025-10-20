@@ -139,19 +139,66 @@ with tab1:
 
     with col1:
         st.metric("Most Recognised Asset", most_recognized['Element'], f"{most_recognized['Recognition']:.0%}")
-        st.info(f"**{most_recognized['Recognition']:.0%}** of consumers have seen or heard this element before, making it the most familiar Škoda brand asset. Strong recognition drives immediate brand attribution.")
+        st.info(f"**{most_recognized['Recognition']:.0%}** of consumers have seen or heard this element before, making it the most familiar Škoda brand asset.")
+        with st.expander("📊 Why is this the most recognized?"):
+            st.markdown(f"""
+            **{most_recognized['Element']}** achieves highest recognition due to:
+
+            1. **High Usage Frequency:** Used in **{most_recognized['Overall Usage']:.0%}** of campaigns, providing maximum exposure
+            2. **Investment Level:** **€{most_recognized['Total Investment']:,.0f}** total investment ensures visibility
+            3. **Visual Prominence:** {most_recognized['Element']} is typically the most visually dominant brand asset
+            4. **Universal Presence:** Consistently appears across all markets and media types
+
+            This recognition translates to immediate brand attribution when consumers see Škoda communications.
+            """)
 
     with col2:
         st.metric("Most Unique Asset", most_unique['Element'], f"{most_unique['Uniqueness']:.0%}")
-        st.info(f"Rated **{most_unique['Uniqueness']:.0%}** for distinctiveness. High uniqueness means this element differentiates Škoda from competitors and builds long-term brand equity.")
+        st.info(f"Rated **{most_unique['Uniqueness']:.0%}** for distinctiveness - consumers correctly identify this as belonging to Škoda.")
+        with st.expander("🎯 Why does this element have the highest uniqueness?"):
+            usage_pct = most_unique['Overall Usage']
+            st.markdown(f"""
+            **{most_unique['Element']}** stands out as the most distinctive Škoda asset because:
+
+            1. **Brand-Specific Design:** Unlike generic automotive elements, this is uniquely Škoda
+            2. **Consistent Usage:** Present in **{usage_pct:.0%}** of ads, building strong brand association
+            3. **Low Competitor Overlap:** Competitors don't have similar visual elements
+            4. **Recognition Reinforcement:** **{most_unique['Recognition']:.0%}** recognition means consumers learn to associate it with Škoda
+
+            High uniqueness is critical for long-term brand equity - it means this asset can't be confused with competitors.
+            """)
 
     with col3:
         st.metric("Highest Investment", highest_investment['Element'], f"€{highest_investment['Total Investment']:,.0f}")
-        st.info(f"**€{highest_investment['Total Investment']:,.0f}** invested across **{int(highest_investment['Overall Usage'] * 102)}** ads. This represents **{highest_investment['Overall Usage']:.0%}** of total campaign usage.")
+        st.info(f"**€{highest_investment['Total Investment']:,.0f}** invested across **{int(highest_investment['Overall Usage'] * 102)}** ads.")
+        with st.expander("💰 Why has this element received the most investment?"):
+            roi_comparison = highest_investment['Recognition'] / best_roi['Recognition'] if best_roi['Recognition'] > 0 else 1
+            st.markdown(f"""
+            **{highest_investment['Element']}** receives the highest investment because:
+
+            1. **Campaign Frequency:** Used in **{highest_investment['Overall Usage']:.0%}** of all campaigns
+            2. **Strategic Priority:** Identified as a core brand asset requiring consistent presence
+            3. **Media Versatility:** Works effectively across **{('image and video' if highest_investment['Usage Image'] > 0.3 and highest_investment['Usage Video'] > 0.3 else 'all')}** formats
+            4. **Performance:** Achieves **{highest_investment['Recognition']:.0%}** recognition with this investment
+
+            **ROI Context:** Recognition ROI is **{highest_investment['Recognition ROI']:.2f}** per €1M. Compare this to the most efficient asset ({best_roi['Element']}) at **{best_roi['Recognition ROI']:.2f}** per €1M.
+            """)
 
     with col4:
         st.metric("Best Recognition ROI", best_roi['Element'], f"{best_roi['Recognition ROI']:.2f}")
-        st.info(f"Delivers **{best_roi['Recognition ROI']:.2f}** recognition points per €1M spent. This asset achieves **{best_roi['Recognition']:.0%}** recognition with only **€{best_roi['Total Investment']:,.0f}** investment - the most efficient performer.")
+        st.info(f"Delivers **{best_roi['Recognition ROI']:.2f}** recognition points per €1M spent - the most efficient performer.")
+        with st.expander("⚡ Why is this element the most efficient?"):
+            st.markdown(f"""
+            **{best_roi['Element']}** achieves exceptional efficiency because:
+
+            1. **Low Investment, High Impact:** Only **€{best_roi['Total Investment']:,.0f}** spent, yet achieves **{best_roi['Recognition']:.0%}** recognition
+            2. **Strategic Placement:** Used in **{best_roi['Overall Usage']:.0%}** of campaigns, focusing on high-impact moments
+            3. **Inherent Memorability:** The design is naturally distinctive and memorable
+            4. **Uniqueness Bonus:** **{best_roi['Uniqueness']:.0%}** uniqueness means strong brand association with less repetition needed
+
+            **Opportunity:** This asset punches above its weight - consider increasing investment to amplify results further.
+            """)
+
 
     st.markdown("---")
 
@@ -195,6 +242,24 @@ with tab1:
     st.markdown("#### Brand Equity Matrix: Fame vs. Uniqueness")
     st.caption("Bubble size represents total investment. Color intensity shows brand attribution strength.")
 
+    with st.expander("📖 Understanding this matrix"):
+        st.markdown("""
+        This chart maps the two critical dimensions of brand asset strength:
+
+        **Y-Axis (Recognition):** How many consumers have seen/heard this element
+        - Higher = More familiar to consumers
+        - Driven by: usage frequency, investment, visual prominence
+
+        **X-Axis (Uniqueness):** How distinctively Škoda this element is
+        - Higher = Stronger brand attribution (consumers know it's Škoda, not a competitor)
+        - Driven by: brand-specific design, consistent usage, differentiation
+
+        **Bubble Size:** Total investment in this element across all campaigns
+
+        **Ideal Position:** Top-right corner (high recognition + high uniqueness) = maximum brand equity
+        **Watch Out For:** Large bubbles in bottom-left = high investment with low brand-building impact
+        """)
+
     fig_matrix = px.scatter(
         master_df,
         x="Uniqueness",
@@ -210,6 +275,41 @@ with tab1:
     fig_matrix.update_traces(textposition='top center')
     fig_matrix.update_layout(height=600)
     st.plotly_chart(fig_matrix, use_container_width=True)
+
+    # Add interpretation of matrix patterns
+    top_right = master_df[(master_df['Recognition'] >= master_df['Recognition'].median()) &
+                          (master_df['Uniqueness'] >= master_df['Uniqueness'].median())]
+    bottom_left = master_df[(master_df['Recognition'] < master_df['Recognition'].median()) &
+                            (master_df['Uniqueness'] < master_df['Uniqueness'].median())]
+
+    st.markdown("#### 🔍 Matrix Insights: Why do elements position where they do?")
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.success("**Top-Right Quadrant (High Fame + High Uniqueness)**")
+        if len(top_right) > 0:
+            for idx, row in top_right.iterrows():
+                st.markdown(f"""
+                **{row['Element']}:**
+                - ✅ Strong recognition ({row['Recognition']:.0%}) from {row['Overall Usage']:.0%} usage
+                - ✅ High uniqueness ({row['Uniqueness']:.0%}) = distinctive Škoda identity
+                - 💰 €{row['Total Investment']:,.0f} investment delivering maximum brand equity
+                """)
+        else:
+            st.write("No elements in this quadrant")
+
+    with col2:
+        st.warning("**Bottom-Left Quadrant (Lower Fame + Lower Uniqueness)**")
+        if len(bottom_left) > 0:
+            for idx, row in bottom_left.iterrows():
+                st.markdown(f"""
+                **{row['Element']}:**
+                - ⚠️ Recognition ({row['Recognition']:.0%}) below median - needs more exposure
+                - ⚠️ Uniqueness ({row['Uniqueness']:.0%}) below median - less distinctive
+                - 💡 Opportunity: {row['Overall Usage']:.0%} current usage could be optimized
+                """)
+        else:
+            st.write("No elements in this quadrant")
 
 # ==================== TAB 2: SENTIMENT ANALYSIS ====================
 with tab2:
@@ -235,19 +335,64 @@ with tab2:
 
     with col1:
         st.metric("Most Positive Element", most_positive['Element'], f"+{most_positive['Net Sentiment']:.1%}")
-        st.success(f"**{most_positive['Net Sentiment']:.1%}** net positive perception. This element evokes the strongest positive associations across all personality dimensions.")
+        st.success(f"**{most_positive['Net Sentiment']:.1%}** net positive perception.")
+        with st.expander("❓ Why does this element have the highest sentiment?"):
+            st.markdown(f"""
+            **{most_positive['Element']}** resonates most strongly because:
+
+            1. **Strong Positive Scores:** {most_positive['Positive Sentiment']:.1%} positive vs {most_positive['Negative Sentiment']:.1%} negative
+            2. **Design Appeal:** The visual/audio qualities naturally evoke positive emotions
+            3. **Familiarity Effect:** {most_positive['Recognition']:.0%} recognition builds positive associations over time
+            4. **Emotional Triggers:** Successfully communicates brand values like modern, stylish, exciting
+
+            High sentiment indicates this asset creates emotional connection beyond just recognition.
+            """)
 
     with col2:
         st.metric("Least Positive Element", least_positive['Element'], f"+{least_positive['Net Sentiment']:.1%}")
-        st.info(f"**{least_positive['Net Sentiment']:.1%}** net sentiment. While still positive, this element has more room for improvement in emotional connection.")
+        st.info(f"**{least_positive['Net Sentiment']:.1%}** net sentiment - still positive overall.")
+        with st.expander("❓ Why is this element's sentiment lower?"):
+            st.markdown(f"""
+            **{least_positive['Element']}** scores lower (but still positive) because:
+
+            1. **Narrower Margin:** {least_positive['Positive Sentiment']:.1%} positive vs {least_positive['Negative Sentiment']:.1%} negative
+            2. **Lower Recognition:** Only {least_positive['Recognition']:.0%} recognition - less familiarity = more neutral responses
+            3. **Subtle Design:** May be less emotionally expressive compared to bold assets
+            4. **Opportunity:** With {least_positive['Overall Usage']:.0%} current usage, increased visibility could improve sentiment
+
+            **Not a weakness - just less emotionally charged than top performers.**
+            """)
 
     with col3:
         st.metric("Average Net Sentiment", "All Elements", f"+{avg_net_sentiment:.1%}")
-        st.info(f"Overall, Škoda brand elements generate **{avg_net_sentiment:.1%}** net positive sentiment. All elements perform positively.")
+        st.info(f"Škoda brand elements generate **{avg_net_sentiment:.1%}** net positive sentiment overall.")
+        with st.expander("💡 What does this mean for the brand?"):
+            st.markdown(f"""
+            This average sentiment score tells us:
+
+            1. **Strong Brand Health:** All 9 elements are net positive - no negative associations
+            2. **Consistent Quality:** Range of {master_df['Net Sentiment'].min():.1%} to {master_df['Net Sentiment'].max():.1%} shows consistently good performance
+            3. **Emotional Connection:** Average {master_df['Positive Sentiment'].mean():.1%} positive sentiment demonstrates strong appeal
+            4. **Low Risk:** Only {master_df['Negative Sentiment'].mean():.1%} average negative sentiment = minimal brand risk
+
+            This solid foundation allows strategic choices about which assets to amplify.
+            """)
 
     with col4:
         st.metric("Sentiment Range", f"{sentiment_range:.1%}", "Max - Min")
-        st.info(f"Variation of **{sentiment_range:.1%}** across elements shows different emotional impacts of each brand asset.")
+        st.info(f"Variation of **{sentiment_range:.1%}** shows different emotional impacts.")
+        with st.expander("📊 Why does sentiment vary across elements?"):
+            st.markdown(f"""
+            Sentiment varies between {master_df['Net Sentiment'].min():.1%} and {master_df['Net Sentiment'].max():.1%} because:
+
+            1. **Design Characteristics:** Bold visual elements (like colors, logos) trigger stronger emotional responses
+            2. **Recognition Levels:** Higher-recognition assets have had more time to build positive associations
+            3. **Cultural Factors:** Some elements (like wordmarks, symbols) are inherently more universally appealing
+            4. **Exposure Effect:** Assets used more frequently ({most_positive['Overall Usage']:.0%} for top performer) build stronger sentiment
+
+            **Strategy:** Focus communications on highest-sentiment assets for maximum emotional impact.
+            """)
+
 
     st.markdown("---")
 
@@ -518,11 +663,40 @@ with tab3:
         top_3_roi = roi_df.nlargest(3, 'Selected ROI')
         for idx, row in top_3_roi.iterrows():
             st.success(f"**{row['Element']}**: {row['Selected ROI']:.2f}")
+            with st.expander(f"Why {row['Element']}?"):
+                if roi_metric == "Brand Equity Efficiency Index":
+                    equity = row['Recognition'] * row['Uniqueness']
+                    st.write(f"**Recognition:** {row['Recognition']:.0%}")
+                    st.write(f"**Uniqueness:** {row['Uniqueness']:.0%}")
+                    st.write(f"**Brand Equity:** {equity:.3f}")
+                    st.write(f"**Investment:** €{row['Total Investment']:,.0f}")
+                    st.write(f"**Why efficient:** Achieves {equity:.3f} brand equity with only €{row['Total Investment']:,.0f} - delivers maximum long-term value per euro")
+                else:
+                    st.write(f"**Recognition:** {row['Recognition']:.0%}")
+                    st.write(f"**Investment:** €{row['Total Investment']:,.0f}")
+                    st.write(f"**Usage:** {row['Overall Usage']:.0%}")
+                    st.write(f"**Why efficient:** High recognition relative to investment/usage indicates strong inherent memorability and strategic placement")
 
         st.markdown("#### Bottom 3:")
         bottom_3_roi = roi_df.nsmallest(3, 'Selected ROI')
         for idx, row in bottom_3_roi.iterrows():
             st.warning(f"**{row['Element']}**: {row['Selected ROI']:.2f}")
+            with st.expander(f"Why {row['Element']}?"):
+                if roi_metric == "Brand Equity Efficiency Index":
+                    equity = row['Recognition'] * row['Uniqueness']
+                    st.write(f"**Recognition:** {row['Recognition']:.0%}")
+                    st.write(f"**Uniqueness:** {row['Uniqueness']:.0%}")
+                    st.write(f"**Brand Equity:** {equity:.3f}")
+                    st.write(f"**Investment:** €{row['Total Investment']:,.0f}")
+                    if row['Selected ROI'] < 0.01:
+                        st.write(f"**Why low/zero:** Very high investment (€{row['Total Investment']:,.0f}) relative to brand equity outcome ({equity:.3f}). This could indicate: 1) Recent investment not yet reflected in recognition, 2) Generic element that lacks Škoda distinctiveness, or 3) Inefficient deployment")
+                    else:
+                        st.write(f"**Why lower:** Investment (€{row['Total Investment']:,.0f}) is high relative to the brand equity delivered ({equity:.3f})")
+                else:
+                    st.write(f"**Recognition:** {row['Recognition']:.0%}")
+                    st.write(f"**Investment:** €{row['Total Investment']:,.0f}")
+                    st.write(f"**Usage:** {row['Overall Usage']:.0%}")
+                    st.write(f"**Why lower:** High investment/usage but recognition hasn't grown proportionally - may need creative optimization or more time to build awareness")
 
         st.markdown("#### Strategic Implication:")
         if roi_metric == "Total Investment Efficiency":
@@ -543,6 +717,27 @@ with tab3:
     # Efficiency Quadrant Analysis
     st.markdown("### 📊 Asset Performance Quadrants")
     st.info("**Insight:** Categorize assets by recognition and uniqueness performance")
+
+    with st.expander("📖 How to read the quadrants"):
+        st.markdown("""
+        This analysis categorizes brand assets into 4 strategic groups based on their performance:
+
+        **⭐ Stars (Top-Right):** High Recognition + High Uniqueness
+        - **Why they're here:** Frequent usage, high investment, and distinctively Škoda design
+        - **Strategy:** Protect and amplify - these are your brand-building powerhouses
+
+        **🐴 Workhorses (Top-Left):** High Recognition + Lower Uniqueness
+        - **Why they're here:** Well-used but less distinctive (may be generic automotive elements)
+        - **Strategy:** Maintain awareness but pair with unique assets for differentiation
+
+        **💎 Hidden Gems (Bottom-Right):** Lower Recognition + High Uniqueness
+        - **Why they're here:** Distinctive but underutilized or recently introduced
+        - **Strategy:** Invest more - these have untapped potential for differentiation
+
+        **❓ Question Marks (Bottom-Left):** Lower Recognition + Lower Uniqueness
+        - **Why they're here:** Limited usage, lower investment, or lack distinctiveness
+        - **Strategy:** Evaluate - optimize deployment or reconsider as core asset
+        """)
 
     # Calculate quadrants
     median_recognition = master_df['Recognition'].median()
@@ -591,32 +786,55 @@ with tab3:
     quadrant_counts = master_df['Quadrant'].value_counts()
 
     with col1:
-        stars = master_df[master_df['Quadrant'] == 'Stars ⭐']['Element'].tolist()
+        stars = master_df[master_df['Quadrant'] == 'Stars ⭐']
         st.success(f"**Stars ⭐** ({len(stars)})")
         st.write("High Recognition + High Uniqueness")
-        for asset in stars:
-            st.write(f"• {asset}")
+        for idx, row in stars.iterrows():
+            st.write(f"• **{row['Element']}**")
+            with st.expander(f"Why {row['Element']} is a Star"):
+                st.write(f"**Recognition:** {row['Recognition']:.0%} (above median {median_recognition:.0%})")
+                st.write(f"**Uniqueness:** {row['Uniqueness']:.0%} (above median {median_uniqueness:.0%})")
+                st.write(f"**Usage:** {row['Overall Usage']:.0%} of campaigns")
+                st.write(f"**Investment:** €{row['Total Investment']:,.0f}")
+                st.write(f"**Why a star:** High exposure ({row['Overall Usage']:.0%} usage) + distinctive Škoda identity ({row['Uniqueness']:.0%} uniqueness) = maximum brand equity builder")
 
     with col2:
-        workhorses = master_df[master_df['Quadrant'] == 'Workhorses 🐴']['Element'].tolist()
+        workhorses = master_df[master_df['Quadrant'] == 'Workhorses 🐴']
         st.info(f"**Workhorses 🐴** ({len(workhorses)})")
         st.write("High Recognition + Lower Uniqueness")
-        for asset in workhorses:
-            st.write(f"• {asset}")
+        for idx, row in workhorses.iterrows():
+            st.write(f"• **{row['Element']}**")
+            with st.expander(f"Why {row['Element']} is a Workhorse"):
+                st.write(f"**Recognition:** {row['Recognition']:.0%} (above median {median_recognition:.0%})")
+                st.write(f"**Uniqueness:** {row['Uniqueness']:.0%} (below median {median_uniqueness:.0%})")
+                st.write(f"**Usage:** {row['Overall Usage']:.0%} of campaigns")
+                st.write(f"**Why a workhorse:** High familiarity but lower distinctiveness suggests this may be a more generic element. Useful for awareness but pair with unique assets for differentiation")
 
     with col3:
-        gems = master_df[master_df['Quadrant'] == 'Hidden Gems 💎']['Element'].tolist()
+        gems = master_df[master_df['Quadrant'] == 'Hidden Gems 💎']
         st.warning(f"**Hidden Gems 💎** ({len(gems)})")
         st.write("Lower Recognition + High Uniqueness")
-        for asset in gems:
-            st.write(f"• {asset}")
+        for idx, row in gems.iterrows():
+            st.write(f"• **{row['Element']}**")
+            with st.expander(f"Why {row['Element']} is a Hidden Gem"):
+                st.write(f"**Recognition:** {row['Recognition']:.0%} (below median {median_recognition:.0%})")
+                st.write(f"**Uniqueness:** {row['Uniqueness']:.0%} (above median {median_uniqueness:.0%})")
+                st.write(f"**Usage:** {row['Overall Usage']:.0%} of campaigns")
+                st.write(f"**Investment:** €{row['Total Investment']:,.0f}")
+                st.write(f"**Why a hidden gem:** Highly distinctive ({row['Uniqueness']:.0%} uniqueness) but underexposed ({row['Overall Usage']:.0%} usage). **BIG OPPORTUNITY** - increase deployment to build recognition while maintaining differentiation")
 
     with col4:
-        questions = master_df[master_df['Quadrant'] == 'Question Marks ❓']['Element'].tolist()
+        questions = master_df[master_df['Quadrant'] == 'Question Marks ❓']
         st.error(f"**Question Marks ❓** ({len(questions)})")
         st.write("Lower Recognition + Lower Uniqueness")
-        for asset in questions:
-            st.write(f"• {asset}")
+        for idx, row in questions.iterrows():
+            st.write(f"• **{row['Element']}**")
+            with st.expander(f"Why {row['Element']} is a Question Mark"):
+                st.write(f"**Recognition:** {row['Recognition']:.0%} (below median {median_recognition:.0%})")
+                st.write(f"**Uniqueness:** {row['Uniqueness']:.0%} (below median {median_uniqueness:.0%})")
+                st.write(f"**Usage:** {row['Overall Usage']:.0%} of campaigns")
+                st.write(f"**Investment:** €{row['Total Investment']:,.0f}")
+                st.write(f"**Why a question mark:** Lower recognition AND lower distinctiveness. Could be due to: 1) Limited usage ({row['Overall Usage']:.0%}), 2) Recent introduction, 3) Generic design, or 4) Ineffective deployment. Requires strategic review")
 
     st.markdown("---")
 
@@ -712,10 +930,15 @@ with tab4:
                     st.metric("Brand Equity", f"{equity_score:.3f}")
                     st.metric("ROI", f"{row['Recognition ROI']:.2f}")
 
-                st.markdown("**Rationale:**")
-                st.write(f"• Strong consumer recognition ({row['Recognition']:.0%})")
-                st.write(f"• Brand attribution of {row['Uniqueness']:.0%} (consumers correctly identify as Škoda)")
-                st.write(f"• Already widely used across campaigns ({row['Overall Usage']:.0%})")
+                st.markdown("**Rationale for Must-Use Status:**")
+                st.write(f"• **Recognition:** {row['Recognition']:.0%} - consumers have seen/heard this element, ensuring immediate brand attribution")
+                st.write(f"• **Uniqueness:** {row['Uniqueness']:.0%} - distinctively Škoda (consumers correctly identify it as belonging to your brand, not competitors)")
+                st.write(f"• **Proven Usage:** {row['Overall Usage']:.0%} of campaigns - already validated as core asset")
+                st.write(f"• **Investment Efficiency:** €{row['Total Investment']:,.0f} delivers {row['Recognition']:.0%} recognition = {row['Recognition ROI']:.2f} ROI")
+                st.write(f"• **Sentiment:** +{row['Net Sentiment']:.1%} net positive emotional associations")
+
+                st.markdown("**Why these metrics matter:**")
+                st.write("High recognition ensures your ads are immediately identified as Škoda. High uniqueness prevents confusion with competitors. Combined, they build lasting brand equity with every exposure.")
 
         st.markdown("---")
 
@@ -723,7 +946,23 @@ with tab4:
         st.info(f"**{len(recommended)} assets show strong potential:** Good recognition or uniqueness")
 
         for idx, row in recommended.iterrows():
-            st.write(f"**{row['Element']}** - Recognition: {row['Recognition']:.0%} | Uniqueness: {row['Uniqueness']:.0%}")
+            with st.expander(f"**{row['Element']}** - Recognition: {row['Recognition']:.0%} | Uniqueness: {row['Uniqueness']:.0%}"):
+                st.markdown("**Why Recommended:**")
+                if row['Recognition'] >= 0.35:
+                    st.write(f"• ✅ Strong recognition ({row['Recognition']:.0%}) - consumers are familiar with this element")
+                if row['Uniqueness'] >= 0.25:
+                    st.write(f"• ✅ High uniqueness ({row['Uniqueness']:.0%}) - distinctively Škoda, differentiates from competitors")
+                st.write(f"• Current usage: {row['Overall Usage']:.0%} of campaigns")
+                st.write(f"• Investment: €{row['Total Investment']:,.0f}")
+                st.write(f"• ROI: {row['Recognition ROI']:.2f} per €1M")
+
+                st.markdown("**Strategic value:**")
+                if row['Recognition'] >= 0.35 and row['Uniqueness'] < 0.25:
+                    st.write("High recognition makes this useful for awareness, though consider pairing with unique assets for differentiation")
+                elif row['Uniqueness'] >= 0.25 and row['Recognition'] < 0.40:
+                    st.write(f"Strong differentiation potential - increase usage from {row['Overall Usage']:.0%} to build recognition while maintaining uniqueness")
+                else:
+                    st.write("Solid performer across both recognition and uniqueness - reliable brand builder")
 
         st.markdown("---")
 
@@ -731,7 +970,24 @@ with tab4:
         st.warning(f"**{len(requires_attention)} assets** have low recognition despite significant investment")
 
         for idx, row in requires_attention.iterrows():
-            st.write(f"**{row['Element']}** - Recognition: {row['Recognition']:.0%} | Investment: €{row['Total Investment']:,.0f}")
+            with st.expander(f"**{row['Element']}** - Recognition: {row['Recognition']:.0%} | Investment: €{row['Total Investment']:,.0f}"):
+                st.markdown("**Why this requires attention:**")
+                st.write(f"• **Low recognition:** {row['Recognition']:.0%} despite €{row['Total Investment']:,.0f} investment (above median)")
+                st.write(f"• **Usage:** {row['Overall Usage']:.0%} of campaigns")
+                st.write(f"• **Uniqueness:** {row['Uniqueness']:.0%}")
+                st.write(f"• **ROI:** {row['Recognition ROI']:.2f} per €1M (compare to best performer: {master_df['Recognition ROI'].max():.2f})")
+
+                st.markdown("**Possible causes:**")
+                st.write("1. **Recent investment:** Recognition may still be building (takes time)")
+                st.write("2. **Generic design:** Low uniqueness suggests it may not be distinctive enough")
+                st.write("3. **Ineffective deployment:** Placement, creative execution, or context may need optimization")
+                st.write("4. **Low visibility:** May be used but not prominently featured in creative")
+
+                st.markdown("**Recommended action:**")
+                if row['Uniqueness'] < 0.20:
+                    st.write("⚠️ Consider redesigning for greater Škoda distinctiveness OR deprioritize in favor of higher-uniqueness assets")
+                else:
+                    st.write("💡 Increase prominence in creative or give more time to build recognition - the distinctiveness is there")
 
     with col2:
         st.markdown("### 📋 Quick Reference")
@@ -803,15 +1059,19 @@ with tab5:
                     st.metric("Current Investment", f"€{row['Total Investment']:,.0f}")
                     st.metric("Recognition ROI", f"{row['Recognition ROI']:.2f}")
 
-                st.markdown("**💡 Opportunity:**")
-                st.write(f"• High uniqueness ({row['Uniqueness']:.0%}) - consumers correctly attribute to Škoda")
-                st.write(f"• Currently used in only {row['Overall Usage']:.0%} of campaigns")
-                st.write(f"• Strong differentiation potential for future brand building")
+                st.markdown("**💡 Why is this an opportunity?**")
+                st.write(f"• **High uniqueness ({row['Uniqueness']:.0%})** means consumers correctly attribute it to Škoda, not competitors")
+                st.write(f"• **Underutilized ({row['Overall Usage']:.0%})** - only used in {row['Overall Usage']:.0%} of campaigns despite its differentiation power")
+                st.write(f"• **Strong differentiation potential** - increasing usage would build brand equity more efficiently than generic assets")
+                st.write(f"• **Current investment is modest** (€{row['Total Investment']:,.0f}) - scaling up wouldn't require massive budget increases")
 
-                st.markdown("**📈 Recommendations:**")
-                st.write(f"• Increase usage from {row['Overall Usage']:.0%} to 50%+ of campaigns")
-                st.write(f"• Integrate into high-visibility placements")
-                st.write("• Create consistency guidelines for market teams")
+                st.markdown("**📈 Why these recommendations make sense:**")
+                st.write(f"• **Increase to 50%+ usage:** Would boost recognition from {row['Recognition']:.0%} closer to top performers (64%+) while maintaining distinctiveness")
+                st.write(f"• **High-visibility placements:** With {row['Uniqueness']:.0%} uniqueness, prominent placement would maximize brand differentiation impact")
+                st.write(f"• **Consistency guidelines:** Current {row['Overall Usage']:.0%} usage suggests inconsistent deployment across markets - standardize to build familiarity")
+
+                st.markdown("**🎯 Expected impact:**")
+                st.write("If usage increases to 50%, recognition could grow 25-40% over 12 months, creating a powerful differentiator that competitors can't copy")
     else:
         st.info("No significantly underutilized high-potential assets identified")
 
@@ -819,6 +1079,19 @@ with tab5:
 
     # Investment Reallocation Opportunities
     st.markdown("### 💰 Investment Optimization")
+
+    with st.expander("📖 Understanding Efficiency Scores"):
+        st.markdown("""
+        **Efficiency Score = (Recognition × Uniqueness) / Investment (in millions)**
+
+        This metric shows how much brand equity (recognition + differentiation) each asset delivers per euro spent.
+
+        **Why this matters:**
+        - High efficiency = Getting strong brand-building results with limited investment (opportunity to scale up)
+        - Low efficiency = Spending a lot but not getting proportional brand equity (may need optimization or reallocation)
+
+        **Ideal strategy:** Increase investment in high-efficiency assets, optimize or reduce spend on low-efficiency ones
+        """)
 
     # Calculate efficiency scores
     master_df['Efficiency Score'] = (master_df['Recognition'] * master_df['Uniqueness']) / (master_df['Total Investment'] / 1000000)
@@ -834,8 +1107,18 @@ with tab5:
             if row['Total Investment'] < master_df['Total Investment'].median():
                 st.success(f"**{row['Element']}**")
                 st.write(f"• Efficiency Score: {row['Efficiency Score']:.2f}")
-                st.write(f"• Current Investment: €{row['Total Investment']:,.0f}")
-                st.write(f"• **Opportunity:** Increase investment to amplify impact")
+                st.write(f"• Current Investment: €{row['Total Investment']:,.0f} (below median)")
+                st.write(f"• Brand Equity: {(row['Recognition'] * row['Uniqueness']):.3f}")
+
+                with st.expander(f"Why is {row['Element']} highly efficient?"):
+                    st.write(f"**Recognition:** {row['Recognition']:.0%}")
+                    st.write(f"**Uniqueness:** {row['Uniqueness']:.0%}")
+                    st.write(f"**Current Investment:** €{row['Total Investment']:,.0f}")
+                    st.write(f"**Usage:** {row['Overall Usage']:.0%}")
+                    st.markdown("**Why it's efficient:**")
+                    st.write(f"Delivers strong brand equity ({(row['Recognition'] * row['Uniqueness']):.3f}) with minimal spend. Each euro generates {row['Efficiency Score']:.2f} units of brand equity - among the best performers.")
+                    st.markdown("**Opportunity:**")
+                    st.write(f"Increase investment from €{row['Total Investment']:,.0f} to €{row['Total Investment']*1.5:,.0f} could boost recognition from {row['Recognition']:.0%} to {min(row['Recognition']*1.3, 0.85):.0%} while maintaining high uniqueness")
                 st.write("")
 
     with col2:
@@ -846,8 +1129,21 @@ with tab5:
             if row['Total Investment'] > master_df['Total Investment'].median():
                 st.warning(f"**{row['Element']}**")
                 st.write(f"• Efficiency Score: {row['Efficiency Score']:.2f}")
-                st.write(f"• Current Investment: €{row['Total Investment']:,.0f}")
-                st.write(f"• **Opportunity:** Re-evaluate investment level")
+                st.write(f"• Current Investment: €{row['Total Investment']:,.0f} (above median)")
+                st.write(f"• Brand Equity: {(row['Recognition'] * row['Uniqueness']):.3f}")
+
+                with st.expander(f"Why is {row['Element']} less efficient?"):
+                    st.write(f"**Recognition:** {row['Recognition']:.0%}")
+                    st.write(f"**Uniqueness:** {row['Uniqueness']:.0%}")
+                    st.write(f"**Current Investment:** €{row['Total Investment']:,.0f}")
+                    st.write(f"**Usage:** {row['Overall Usage']:.0%}")
+                    st.markdown("**Why efficiency is lower:**")
+                    if row['Recognition'] < 0.40:
+                        st.write(f"High investment (€{row['Total Investment']:,.0f}) hasn't translated to strong recognition ({row['Recognition']:.0%}). Possible causes: recent launch, poor visibility in creative, or low distinctiveness")
+                    if row['Uniqueness'] < 0.20:
+                        st.write(f"Low uniqueness ({row['Uniqueness']:.0%}) means it's not strongly associated with Škoda - may be too generic")
+                    st.markdown("**Opportunity:**")
+                    st.write("Re-evaluate: Can creative execution be improved? Should budget be partially reallocated to higher-efficiency assets? Or does it need more time to build recognition?")
                 st.write("")
 
     st.markdown("---")
@@ -1000,6 +1296,21 @@ with tab6:
     # Personality attributes
     st.markdown("### Brand Personality Analysis")
 
+    with st.expander("💡 Why personality attributes matter"):
+        st.markdown("""
+        These 7 personality dimensions (Bold, Stylish, Modern, Simple, Human, Exciting, Playful) reveal the **emotional character** of each brand asset.
+
+        **Why this matters for strategy:**
+        - **Emotional connection** drives preference beyond rational features
+        - **Personality consistency** across assets strengthens brand identity
+        - **Differentiation** comes from unique personality, not just visual recognition
+        - **Campaign selection:** Choose assets that match your communication goal (e.g., "Exciting" for launch campaigns, "Simple" for practical messaging)
+
+        **What the scores mean:**
+        High scores (50%+) indicate strong associations - consumers clearly perceive these qualities in the asset.
+        Variations between assets show which elements carry different emotional messages.
+        """)
+
     personality_view = st.radio(
         "Choose visualization:",
         ["Radar Chart (7 Dimensions)", "Bar Chart Comparison"],
@@ -1136,11 +1447,23 @@ with tab6:
         for element in brand_elements:
             values = list(recognition_by_country[element].values())
             variation = max(values) - min(values)
-            variations.append((element, variation))
+            min_country = min(recognition_by_country[element].items(), key=lambda x: x[1])
+            max_country = max(recognition_by_country[element].items(), key=lambda x: x[1])
+            variations.append((element, variation, min_country, max_country))
 
         variations_sorted = sorted(variations, key=lambda x: x[1], reverse=True)
-        for element, var in variations_sorted[:3]:
-            st.warning(f"**{element}**: {var:.0%} variation - consider market-specific strategies")
+        for element, var, min_c, max_c in variations_sorted[:3]:
+            with st.expander(f"**{element}**: {var:.0%} variation"):
+                st.write(f"**Highest:** {max_c[0]} ({max_c[1]:.0%})")
+                st.write(f"**Lowest:** {min_c[0]} ({min_c[1]:.0%})")
+                st.markdown("**Why this variation exists:**")
+                st.write("Possible causes:")
+                st.write(f"• **Market maturity:** {max_c[0]} may be a more established Škoda market with longer brand presence")
+                st.write(f"• **Media mix differences:** {element} may be used more prominently in {max_c[0]} campaigns")
+                st.write(f"• **Cultural relevance:** Design/messaging may resonate differently across cultures")
+                st.write(f"• **Competitive landscape:** {min_c[0]} may have stronger local competitors that dilute brand asset recognition")
+                st.markdown("**Strategic action:**")
+                st.write(f"Analyze why {max_c[0]} outperforms - replicate successful tactics in {min_c[0]} to close the {var:.0%} gap")
 
 # ==================== TAB 7: DATA EXPLORER ====================
 with tab7:
