@@ -22,17 +22,18 @@ brand_elements = [
 # Recognition: Q02 (Have you seen/heard this element before?)
 # Uniqueness: Q05 (Which brand do you think this belongs to? - % who said Škoda)
 # Personality traits: Q04 NET T2B (Top 2 Box scores)
-# NOTE: No positive/negative association question exists in P045556 research
+# Positive/Negative Associations: Q04 SUMMARY tables (NET: Left = Positive, NET: Right = Negative)
+# Sentiment values are averages across 7 personality dimensions from Q04 SUMMARY tables
 research_data = {
-    'Electric Green': {'recognition': 0.38, 'uniqueness': 0.17, 'bold': 0.49, 'stylish': 0.46, 'modern': 0.50, 'simple': 0.50, 'human': 0.45, 'exciting': 0.45, 'playful': 0.44},
-    'Dark Green': {'recognition': 0.39, 'uniqueness': 0.19, 'bold': 0.51, 'stylish': 0.49, 'modern': 0.52, 'simple': 0.53, 'human': 0.46, 'exciting': 0.49, 'playful': 0.45},
-    'Type': {'recognition': 0.37, 'uniqueness': 0.17, 'bold': 0.47, 'stylish': 0.47, 'modern': 0.49, 'simple': 0.50, 'human': 0.44, 'exciting': 0.45, 'playful': 0.41},
-    'Tagline': {'recognition': 0.36, 'uniqueness': 0.17, 'bold': 0.48, 'stylish': 0.48, 'modern': 0.51, 'simple': 0.50, 'human': 0.46, 'exciting': 0.51, 'playful': 0.45},
-    'Symbol': {'recognition': 0.64, 'uniqueness': 0.38, 'bold': 0.50, 'stylish': 0.50, 'modern': 0.55, 'simple': 0.54, 'human': 0.46, 'exciting': 0.50, 'playful': 0.46},
-    'Hacek': {'recognition': 0.38, 'uniqueness': 0.19, 'bold': 0.46, 'stylish': 0.46, 'modern': 0.49, 'simple': 0.55, 'human': 0.44, 'exciting': 0.44, 'playful': 0.42},
-    'Wordmark': {'recognition': 0.44, 'uniqueness': 0.28, 'bold': 0.49, 'stylish': 0.49, 'modern': 0.54, 'simple': 0.52, 'human': 0.45, 'exciting': 0.48, 'playful': 0.45},
-    'Facets': {'recognition': 0.38, 'uniqueness': 0.16, 'bold': 0.50, 'stylish': 0.48, 'modern': 0.51, 'simple': 0.51, 'human': 0.43, 'exciting': 0.46, 'playful': 0.46},
-    'Sonic': {'recognition': 0.40, 'uniqueness': 0.17, 'bold': 0.50, 'stylish': 0.49, 'modern': 0.55, 'simple': 0.55, 'human': 0.46, 'exciting': 0.51, 'playful': 0.48},
+    'Electric Green': {'recognition': 0.38, 'uniqueness': 0.17, 'bold': 0.49, 'stylish': 0.46, 'modern': 0.50, 'simple': 0.50, 'human': 0.45, 'exciting': 0.45, 'playful': 0.44, 'positive': 0.470, 'negative': 0.236},
+    'Dark Green': {'recognition': 0.39, 'uniqueness': 0.19, 'bold': 0.51, 'stylish': 0.49, 'modern': 0.52, 'simple': 0.53, 'human': 0.46, 'exciting': 0.49, 'playful': 0.45, 'positive': 0.479, 'negative': 0.231},
+    'Type': {'recognition': 0.37, 'uniqueness': 0.17, 'bold': 0.47, 'stylish': 0.47, 'modern': 0.49, 'simple': 0.50, 'human': 0.44, 'exciting': 0.45, 'playful': 0.41, 'positive': 0.461, 'negative': 0.239},
+    'Tagline': {'recognition': 0.36, 'uniqueness': 0.17, 'bold': 0.48, 'stylish': 0.48, 'modern': 0.51, 'simple': 0.50, 'human': 0.46, 'exciting': 0.51, 'playful': 0.45, 'positive': 0.501, 'negative': 0.214},
+    'Symbol': {'recognition': 0.64, 'uniqueness': 0.38, 'bold': 0.50, 'stylish': 0.50, 'modern': 0.55, 'simple': 0.54, 'human': 0.46, 'exciting': 0.50, 'playful': 0.46, 'positive': 0.506, 'negative': 0.211},
+    'Hacek': {'recognition': 0.38, 'uniqueness': 0.19, 'bold': 0.46, 'stylish': 0.46, 'modern': 0.49, 'simple': 0.55, 'human': 0.44, 'exciting': 0.44, 'playful': 0.42, 'positive': 0.489, 'negative': 0.223},
+    'Wordmark': {'recognition': 0.44, 'uniqueness': 0.28, 'bold': 0.49, 'stylish': 0.49, 'modern': 0.54, 'simple': 0.52, 'human': 0.45, 'exciting': 0.48, 'playful': 0.45, 'positive': 0.493, 'negative': 0.216},
+    'Facets': {'recognition': 0.38, 'uniqueness': 0.16, 'bold': 0.50, 'stylish': 0.48, 'modern': 0.51, 'simple': 0.51, 'human': 0.43, 'exciting': 0.46, 'playful': 0.46, 'positive': 0.466, 'negative': 0.240},
+    'Sonic': {'recognition': 0.40, 'uniqueness': 0.17, 'bold': 0.50, 'stylish': 0.49, 'modern': 0.55, 'simple': 0.55, 'human': 0.46, 'exciting': 0.51, 'playful': 0.48, 'positive': 0.484, 'negative': 0.214},
 }
 
 # Recognition by Country
@@ -85,6 +86,9 @@ def calculate_metrics():
 
         # Recognition ROI
         recognition_roi = (research['recognition'] / total_investment * 1_000_000) if total_investment > 0 else 0
+        
+        # Net Sentiment
+        net_sentiment = research['positive'] - research['negative']
 
         metrics.append({
             'Element': element,
@@ -95,6 +99,9 @@ def calculate_metrics():
             'Total Investment': total_investment,
             'Recognition': research['recognition'],
             'Uniqueness': research['uniqueness'],
+            'Positive': research['positive'],
+            'Negative': research['negative'],
+            'Net Sentiment': net_sentiment,
             'Recognition ROI': recognition_roi,
             'Bold': research['bold'],
             'Stylish': research['stylish'],
@@ -111,8 +118,9 @@ st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Škoda Brand Intell
 st.markdown("---")
 
 # --- Navigation Tabs ---
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
     "📊 Executive Summary",
+    "💚 Sentiment Analysis",
     "📈 Strategic Insights",
     "🎯 Non-Negotiables",
     "🔮 Future-Proofing",
@@ -158,18 +166,18 @@ with tab1:
     display_df = master_df[[
         'Element', 'Overall Usage', 'Usage Image', 'Usage Video',
         'Average Investment', 'Total Investment',
-        'Recognition', 'Uniqueness'
+        'Recognition', 'Uniqueness', 'Net Sentiment'
     ]].set_index('Element')
 
     # Style the dataframe
     styler = display_df.T.style
 
     # Heatmaps for research metrics
-    research_rows = ['Recognition', 'Uniqueness']
+    research_rows = ['Recognition', 'Uniqueness', 'Net Sentiment']
     styler = styler.background_gradient(cmap='RdYlGn', axis=1, subset=(pd.IndexSlice[research_rows], slice(None)))
 
     # Format percentages and currency
-    percent_rows = ['Overall Usage', 'Usage Image', 'Usage Video', 'Recognition', 'Uniqueness']
+    percent_rows = ['Overall Usage', 'Usage Image', 'Usage Video', 'Recognition', 'Uniqueness', 'Net Sentiment']
     currency_rows = ['Average Investment', 'Total Investment']
     styler = styler.format("{:.1%}", subset=(pd.IndexSlice[percent_rows], slice(None)))
     styler = styler.format("€{:,.2f}", subset=(pd.IndexSlice[currency_rows], slice(None)))
@@ -181,681 +189,867 @@ with tab1:
     st.download_button(
         label="📥 Export Analysis to Excel",
         data=excel_file,
-        file_name="skoda_combined_analysis.xlsx",
+        file_name="skoda_brand_analysis.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
 
     st.markdown("---")
 
-    # Brand Equity Matrix
-    st.markdown("#### Brand Equity Matrix: Fame vs. Uniqueness")
-    st.caption("Bubble size represents total investment. Color intensity shows brand attribution strength.")
+    # Key Insights
+    st.markdown("### 🎯 Key Strategic Findings")
 
-    fig_matrix = px.scatter(
-        master_df,
-        x="Uniqueness",
-        y="Recognition",
-        size="Total Investment",
-        color="Uniqueness",  # Use uniqueness for color gradient
-        text="Element",
-        size_max=60,
-        hover_data=['Total Investment', 'Average Investment', 'Overall Usage'],
-        color_continuous_scale='RdYlGn',
-        title="Fame vs. Uniqueness (Size by Total Investment)"
-    )
-    fig_matrix.update_traces(textposition='top center')
-    fig_matrix.update_layout(height=600)
-    st.plotly_chart(fig_matrix, use_container_width=True)
-
-# ==================== TAB 2: STRATEGIC INSIGHTS ====================
-with tab2:
-    st.header("Strategic Insights Dashboard")
-    st.caption("Advanced analytics to identify opportunities and optimize brand asset usage")
-
-    # Recognition ROI Analysis - Multi-Dimensional
-    st.markdown("### 💡 Recognition Efficiency: Multi-Dimensional Analysis")
-
-    # ROI metric selector
-    roi_metric = st.selectbox(
-        "Choose your efficiency perspective:",
-        [
-            "Total Investment Efficiency",
-            "Per-Ad Recognition Efficiency",
-            "Average Investment Efficiency",
-            "Brand Equity Efficiency Index"
-        ]
-    )
-
-    # Calculate different ROI metrics
-    master_df_roi = master_df.copy()
-
-    # Add number of ads per element
-    for idx, row in master_df_roi.iterrows():
-        element = row['Element']
-        num_ads = audit_df[audit_df[element] == True].shape[0]
-        master_df_roi.at[idx, 'Num Ads'] = num_ads
-
-    if roi_metric == "Total Investment Efficiency":
-        master_df_roi['Selected ROI'] = master_df_roi['Recognition ROI']
-        metric_label = "Recognition % per €1M Total Investment"
-        insight_text = "**Shows which assets achieved recognition with minimal total campaign spend.** High scorers are 'hidden gems' that punched above their weight."
-
-    elif roi_metric == "Per-Ad Recognition Efficiency":
-        master_df_roi['Selected ROI'] = master_df_roi.apply(
-            lambda x: (x['Recognition'] / x['Num Ads'] * 100) if x['Num Ads'] > 0 else 0, axis=1
-        )
-        metric_label = "Recognition % per Ad"
-        insight_text = "**Shows how many ad exposures are needed to build recognition.** High scorers build awareness faster with fewer placements."
-
-    elif roi_metric == "Average Investment Efficiency":
-        master_df_roi['Selected ROI'] = master_df_roi.apply(
-            lambda x: (x['Recognition'] / x['Average Investment'] * 1_000_000) if x['Average Investment'] > 0 else 0, axis=1
-        )
-        metric_label = "Recognition % per €1M Average Investment"
-        insight_text = "**Shows cost-effectiveness per individual ad placement.** High scorers deliver better recognition per placement budget."
-
-    else:  # Brand Equity Efficiency Index
-        master_df_roi['Selected ROI'] = master_df_roi.apply(
-            lambda x: (x['Recognition'] * x['Uniqueness']) / (x['Total Investment'] / 1_000_000) if x['Total Investment'] > 0 else 0, axis=1
-        )
-        metric_label = "Brand Equity Index (Recognition × Uniqueness) per €1M"
-        insight_text = "**Holistic efficiency combining fame and differentiation.** High scorers deliver the most long-term brand equity per euro - ideal for identifying non-negotiables."
-
-    st.info(insight_text)
-
-    col1, col2 = st.columns([2, 1])
+    col1, col2 = st.columns(2)
 
     with col1:
-        roi_df = master_df_roi.sort_values('Selected ROI', ascending=True)
-        fig_roi = px.bar(
-            roi_df,
-            y='Element',
-            x='Selected ROI',
-            orientation='h',
-            title=f'Efficiency Analysis: {metric_label}',
-            text=roi_df['Selected ROI'].apply(lambda x: f'{x:.2f}'),
-            color='Selected ROI',
-            color_continuous_scale='RdYlGn'
-        )
-        st.plotly_chart(fig_roi, use_container_width=True)
+        st.markdown("#### 🌟 Top Performers")
+        top_recognition = master_df.nlargest(3, 'Recognition')
+        for _, row in top_recognition.iterrows():
+            st.success(f"**{row['Element']}**: {row['Recognition']:.0%} Recognition | Net Sentiment: {row['Net Sentiment']:+.0%}")
 
     with col2:
-        st.markdown("#### Top 3 Performers:")
-        top_3_roi = roi_df.nlargest(3, 'Selected ROI')
-        for idx, row in top_3_roi.iterrows():
-            st.success(f"**{row['Element']}**: {row['Selected ROI']:.2f}")
+        st.markdown("#### ⚠️ Underutilized Assets")
+        # Find assets with high performance but low usage
+        master_df['performance_usage_gap'] = master_df['Recognition'] - master_df['Overall Usage']
+        gap_assets = master_df.nlargest(3, 'performance_usage_gap')
+        for _, row in gap_assets.iterrows():
+            gap = row['performance_usage_gap'] * 100
+            st.warning(f"**{row['Element']}**: {gap:+.0f}% gap (Recog: {row['Recognition']:.0%} vs Usage: {row['Overall Usage']:.0%})")
 
-        st.markdown("#### Bottom 3:")
-        bottom_3_roi = roi_df.nsmallest(3, 'Selected ROI')
-        for idx, row in bottom_3_roi.iterrows():
-            st.warning(f"**{row['Element']}**: {row['Selected ROI']:.2f}")
+# ==================== TAB 2: SENTIMENT ANALYSIS ====================
+with tab2:
+    st.header("💚 Brand Sentiment Analysis")
+    st.caption("Positive/Negative Associations from Q04 SUMMARY tables (NET: Left = Positive, NET: Right = Negative)")
+    
+    st.markdown("---")
+    
+    # Overview metrics
+    col1, col2, col3 = st.columns(3)
+    
+    best_sentiment = master_df.loc[master_df['Net Sentiment'].idxmax()]
+    most_positive = master_df.loc[master_df['Positive'].idxmax()]
+    least_negative = master_df.loc[master_df['Negative'].idxmin()]
+    
+    with col1:
+        st.metric("Best Net Sentiment", best_sentiment['Element'], f"{best_sentiment['Net Sentiment']:+.0%}")
+        st.success(f"**{best_sentiment['Element']}** has {best_sentiment['Positive']:.0%} positive associations and only {best_sentiment['Negative']:.0%} negative associations")
+    
+    with col2:
+        st.metric("Most Positive Asset", most_positive['Element'], f"{most_positive['Positive']:.0%}")
+        st.info(f"**{most_positive['Positive']:.0%}** of consumers associate **{most_positive['Element']}** with positive brand attributes")
+    
+    with col3:
+        st.metric("Least Negative Asset", least_negative['Element'], f"{least_negative['Negative']:.0%}")
+        st.info(f"Only **{least_negative['Negative']:.0%}** negative associations for **{least_negative['Element']}** - the most universally appreciated asset")
+    
+    st.markdown("---")
+    
+    # Sentiment Comparison Chart
+    st.markdown("### 📊 Positive vs Negative Associations")
+    
+    fig_sentiment = go.Figure()
+    
+    # Positive bars
+    fig_sentiment.add_trace(go.Bar(
+        name='Positive',
+        x=master_df['Element'],
+        y=master_df['Positive'],
+        text=master_df['Positive'].apply(lambda x: f'{x:.0%}'),
+        textposition='outside',
+        marker_color='#4CAF50'
+    ))
+    
+    # Negative bars (inverted)
+    fig_sentiment.add_trace(go.Bar(
+        name='Negative',
+        x=master_df['Element'],
+        y=-master_df['Negative'],
+        text=master_df['Negative'].apply(lambda x: f'{x:.0%}'),
+        textposition='outside',
+        marker_color='#F44336'
+    ))
+    
+    fig_sentiment.update_layout(
+        title='Positive (Green) vs Negative (Red) Brand Associations',
+        yaxis_title='Association Percentage',
+        barmode='relative',
+        height=500,
+        yaxis=dict(tickformat='.0%'),
+        hovermode='x unified'
+    )
+    
+    st.plotly_chart(fig_sentiment, use_container_width=True)
+    
+    st.markdown("---")
+    
+    # Net Sentiment Analysis
+    st.markdown("### 🎯 Net Sentiment Score (Positive - Negative)")
+    
+    # Sort by net sentiment
+    sentiment_sorted = master_df.sort_values('Net Sentiment', ascending=True)
+    
+    fig_net = go.Figure(go.Bar(
+        x=sentiment_sorted['Net Sentiment'],
+        y=sentiment_sorted['Element'],
+        orientation='h',
+        text=sentiment_sorted['Net Sentiment'].apply(lambda x: f'{x:+.0%}'),
+        textposition='outside',
+        marker=dict(
+            color=sentiment_sorted['Net Sentiment'],
+            colorscale='RdYlGn',
+            line=dict(color='rgba(0,0,0,0.3)', width=1)
+        )
+    ))
+    
+    fig_net.update_layout(
+        title='Net Sentiment Score by Brand Element',
+        xaxis_title='Net Sentiment (Positive - Negative)',
+        height=500,
+        xaxis=dict(tickformat='.0%'),
+        showlegend=False
+    )
+    
+    st.plotly_chart(fig_net, use_container_width=True)
+    
+    st.markdown("---")
+    
+    # Detailed Sentiment Table
+    st.markdown("### 📋 Detailed Sentiment Breakdown")
+    
+    sentiment_table = master_df[['Element', 'Positive', 'Negative', 'Net Sentiment']].sort_values('Net Sentiment', ascending=False)
+    
+    st.dataframe(
+        sentiment_table.style.format({
+            'Positive': '{:.1%}',
+            'Negative': '{:.1%}',
+            'Net Sentiment': '{:+.1%}'
+        }).background_gradient(cmap='RdYlGn', subset=['Net Sentiment']),
+        use_container_width=True
+    )
+    
+    st.markdown("---")
+    
+    # Strategic Insights
+    st.markdown("### 💡 Sentiment Insights & Recommendations")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("#### ✅ Sentiment Winners")
+        top_sentiment = master_df.nlargest(3, 'Net Sentiment')
+        for idx, row in top_sentiment.iterrows():
+            st.success(
+                f"**{row['Element']}**\n\n"
+                f"- Positive: {row['Positive']:.0%}\n"
+                f"- Negative: {row['Negative']:.0%}\n"
+                f"- Net: **{row['Net Sentiment']:+.0%}**\n\n"
+                f"*Recommendation: Amplify usage to leverage positive sentiment*"
+            )
+    
+    with col2:
+        st.markdown("#### ⚠️ Sentiment Challenges")
+        bottom_sentiment = master_df.nsmallest(3, 'Net Sentiment')
+        for idx, row in bottom_sentiment.iterrows():
+            st.warning(
+                f"**{row['Element']}**\n\n"
+                f"- Positive: {row['Positive']:.0%}\n"
+                f"- Negative: {row['Negative']:.0%}\n"
+                f"- Net: **{row['Net Sentiment']:+.0%}**\n\n"
+                f"*Recommendation: Review application context and consider reducing exposure*"
+            )
+    
+    st.markdown("---")
+    
+    # Sentiment vs Usage Analysis
+    st.markdown("### 🔄 Sentiment vs Current Usage")
+    st.caption("Are we using assets with the best sentiment?")
+    
+    fig_sentiment_usage = px.scatter(
+        master_df,
+        x='Net Sentiment',
+        y='Overall Usage',
+        size='Recognition',
+        color='Net Sentiment',
+        color_continuous_scale='RdYlGn',
+        text='Element',
+        title='Net Sentiment vs Current Usage (Size = Recognition)',
+        labels={
+            'Net Sentiment': 'Net Sentiment (Positive - Negative)',
+            'Overall Usage': 'Current Usage in Communications'
+        }
+    )
+    
+    fig_sentiment_usage.update_traces(textposition='top center')
+    fig_sentiment_usage.update_layout(height=600)
+    fig_sentiment_usage.update_xaxes(tickformat='.0%')
+    fig_sentiment_usage.update_yaxes(tickformat='.0%')
+    
+    st.plotly_chart(fig_sentiment_usage, use_container_width=True)
+    
+    # Identify misalignments
+    st.markdown("#### 🎯 Usage-Sentiment Alignment")
+    
+    master_df['sentiment_usage_alignment'] = master_df['Net Sentiment'] - master_df['Overall Usage']
+    misaligned = master_df[abs(master_df['sentiment_usage_alignment']) > 0.15].sort_values('sentiment_usage_alignment', ascending=False)
+    
+    if not misaligned.empty:
+        for idx, row in misaligned.iterrows():
+            if row['sentiment_usage_alignment'] > 0:
+                st.success(
+                    f"**{row['Element']}**: Strong positive sentiment ({row['Net Sentiment']:+.0%}) but low usage ({row['Overall Usage']:.0%}) "
+                    f"→ **Opportunity to increase usage by {abs(row['sentiment_usage_alignment']):.0%}**"
+                )
+            else:
+                st.warning(
+                    f"**{row['Element']}**: Lower sentiment ({row['Net Sentiment']:+.0%}) but high usage ({row['Overall Usage']:.0%}) "
+                    f"→ **Consider reducing usage by {abs(row['sentiment_usage_alignment']):.0%}**"
+                )
 
-        st.markdown("#### Strategic Implication:")
-        if roi_metric == "Total Investment Efficiency":
-            st.write("• Scale up top performers")
-            st.write("• Review bottom performers' deployment")
-        elif roi_metric == "Per-Ad Recognition Efficiency":
-            st.write("• Top assets build awareness faster")
-            st.write("• Increase frequency for top performers")
-        elif roi_metric == "Average Investment Efficiency":
-            st.write("• Optimize placement budgets")
-            st.write("• Reallocate to efficient assets")
-        else:
-            st.write("• **Top = Non-negotiables candidates**")
-            st.write("• **Bottom = Requires optimization**")
+# ==================== TAB 3: STRATEGIC INSIGHTS ====================
+with tab3:
+    st.header("📈 Strategic Insights")
+    st.caption("Performance-Usage Gap Analysis & Investment Recommendations")
+
+    # Key Metric: Performance-Usage Gap
+    st.markdown("### 🎯 Performance-Usage Gap Analysis")
+    st.caption("Identifies assets with strong performance (Recognition + Sentiment) but low usage")
+
+    # Calculate comprehensive performance score
+    master_df['performance_score'] = (
+        (master_df['Recognition'] * 0.4) +
+        (master_df['Uniqueness'] * 0.3) +
+        (master_df['Net Sentiment'] * 0.3)
+    )
+    master_df['performance_usage_gap'] = master_df['performance_score'] - master_df['Overall Usage']
+
+    # Visualize gap
+    gap_sorted = master_df.sort_values('performance_usage_gap', ascending=True)
+
+    fig_gap = go.Figure(go.Bar(
+        x=gap_sorted['performance_usage_gap'],
+        y=gap_sorted['Element'],
+        orientation='h',
+        text=gap_sorted['performance_usage_gap'].apply(lambda x: f'{x:+.0%}'),
+        textposition='outside',
+        marker=dict(
+            color=gap_sorted['performance_usage_gap'],
+            colorscale='RdYlGn',
+            line=dict(color='rgba(0,0,0,0.3)', width=1)
+        )
+    ))
+
+    fig_gap.update_layout(
+        title='Performance-Usage Gap (Positive = Underutilized Opportunity)',
+        xaxis_title='Gap (Performance Score - Current Usage)',
+        height=500,
+        xaxis=dict(tickformat='.0%', zeroline=True, zerolinewidth=2, zerolinecolor='black'),
+        showlegend=False
+    )
+
+    st.plotly_chart(fig_gap, use_container_width=True)
 
     st.markdown("---")
 
-    # Efficiency Quadrant Analysis
-    st.markdown("### 📊 Asset Performance Quadrants")
-    st.info("**Insight:** Categorize assets by recognition and uniqueness performance")
-
-    # Calculate quadrants
-    median_recognition = master_df['Recognition'].median()
-    median_uniqueness = master_df['Uniqueness'].median()
-
-    def get_quadrant(row):
-        if row['Recognition'] >= median_recognition and row['Uniqueness'] >= median_uniqueness:
-            return 'Stars ⭐'
-        elif row['Recognition'] >= median_recognition and row['Uniqueness'] < median_uniqueness:
-            return 'Workhorses 🐴'
-        elif row['Recognition'] < median_recognition and row['Uniqueness'] >= median_uniqueness:
-            return 'Hidden Gems 💎'
-        else:
-            return 'Question Marks ❓'
-
-    master_df['Quadrant'] = master_df.apply(get_quadrant, axis=1)
+    # Strategic Quadrant Analysis
+    st.markdown("### 📊 Strategic Quadrant Analysis")
+    st.caption("Positioning assets by Performance vs Investment")
 
     fig_quadrant = px.scatter(
         master_df,
-        x='Uniqueness',
-        y='Recognition',
-        color='Quadrant',
+        x='performance_score',
+        y='Total Investment',
+        size='Recognition',
+        color='Net Sentiment',
+        color_continuous_scale='RdYlGn',
         text='Element',
-        size='Total Investment',
-        size_max=50,
-        title='Asset Performance Quadrants',
-        color_discrete_map={
-            'Stars ⭐': '#4CAF50',
-            'Workhorses 🐴': '#2196F3',
-            'Hidden Gems 💎': '#FF9800',
-            'Question Marks ❓': '#F44336'
+        title='Strategic Positioning: Performance vs Investment',
+        labels={
+            'performance_score': 'Performance Score (Recognition + Uniqueness + Sentiment)',
+            'Total Investment': 'Total Media Investment (€)'
         }
     )
 
-    # Add median lines
-    fig_quadrant.add_hline(y=median_recognition, line_dash="dash", line_color="gray", annotation_text="Median Recognition")
-    fig_quadrant.add_vline(x=median_uniqueness, line_dash="dash", line_color="gray", annotation_text="Median Uniqueness")
     fig_quadrant.update_traces(textposition='top center')
     fig_quadrant.update_layout(height=600)
+    fig_quadrant.update_xaxes(tickformat='.0%')
+    fig_quadrant.update_yaxes(tickformat='€,.0f')
+
+    # Add quadrant lines
+    median_performance = master_df['performance_score'].median()
+    median_investment = master_df['Total Investment'].median()
+
+    fig_quadrant.add_hline(y=median_investment, line_dash="dash", line_color="gray", opacity=0.5)
+    fig_quadrant.add_vline(x=median_performance, line_dash="dash", line_color="gray", opacity=0.5)
 
     st.plotly_chart(fig_quadrant, use_container_width=True)
 
-    # Quadrant breakdown
-    col1, col2, col3, col4 = st.columns(4)
-
-    quadrant_counts = master_df['Quadrant'].value_counts()
-
-    with col1:
-        stars = master_df[master_df['Quadrant'] == 'Stars ⭐']['Element'].tolist()
-        st.success(f"**Stars ⭐** ({len(stars)})")
-        st.write("High Recognition + High Uniqueness")
-        for asset in stars:
-            st.write(f"• {asset}")
-
-    with col2:
-        workhorses = master_df[master_df['Quadrant'] == 'Workhorses 🐴']['Element'].tolist()
-        st.info(f"**Workhorses 🐴** ({len(workhorses)})")
-        st.write("High Recognition + Lower Uniqueness")
-        for asset in workhorses:
-            st.write(f"• {asset}")
-
-    with col3:
-        gems = master_df[master_df['Quadrant'] == 'Hidden Gems 💎']['Element'].tolist()
-        st.warning(f"**Hidden Gems 💎** ({len(gems)})")
-        st.write("Lower Recognition + High Uniqueness")
-        for asset in gems:
-            st.write(f"• {asset}")
-
-    with col4:
-        questions = master_df[master_df['Quadrant'] == 'Question Marks ❓']['Element'].tolist()
-        st.error(f"**Question Marks ❓** ({len(questions)})")
-        st.write("Lower Recognition + Lower Uniqueness")
-        for asset in questions:
-            st.write(f"• {asset}")
-
-    st.markdown("---")
-
-    # Market Consistency Analysis
-    st.markdown("### 🌍 Market Consistency Analysis")
-    st.info("**Insight:** Are assets used consistently across markets?")
-
-    markets = sorted(audit_df['Market'].unique())
-    selected_markets = st.multiselect("Select markets to compare:", markets, default=markets)
-
-    if selected_markets:
-        market_data = []
-        for market in selected_markets:
-            market_df = audit_df[audit_df['Market'] == market]
-            total_ads = len(market_df)
-            for element in brand_elements:
-                usage = market_df[element].sum() / total_ads if total_ads > 0 else 0
-                market_data.append({'Market': market, 'Element': element, 'Usage': usage})
-
-        market_comparison = pd.DataFrame(market_data)
-
-        fig_market = px.bar(
-            market_comparison,
-            x='Element',
-            y='Usage',
-            color='Market',
-            barmode='group',
-            title='Brand Element Usage by Market',
-            text=market_comparison['Usage'].apply(lambda x: f'{x:.0%}')
-        )
-        st.plotly_chart(fig_market, use_container_width=True)
-
-        # Consistency score
-        consistency_scores = market_comparison.groupby('Element')['Usage'].std()
-        most_consistent = consistency_scores.idxmin()
-        least_consistent = consistency_scores.idxmax()
-
-        col1, col2 = st.columns(2)
-        with col1:
-            st.success(f"**Most Consistent:** {most_consistent} (σ={consistency_scores[most_consistent]:.3f})")
-        with col2:
-            st.warning(f"**Least Consistent:** {least_consistent} (σ={consistency_scores[least_consistent]:.3f})")
-
-# ==================== TAB 3: NON-NEGOTIABLES ====================
-with tab3:
-    st.header("🎯 Non-Negotiables: Asset Usage Guidelines")
-    st.caption("Data-driven recommendations for mandatory and optional asset usage")
-
-    st.markdown("""
-    <div style='background-color: #e3f2fd; padding: 20px; border-radius: 10px; margin-bottom: 20px;'>
-    <h4>Objective: Create actionable guidelines for market teams</h4>
-    <p>Based on combined analysis of media usage, spend data, and consumer research,
-    we recommend the following asset usage framework:</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-    # Auto-generate recommendations based on data
-    must_use = master_df[
-        (master_df['Recognition'] >= 0.40) &
-        (master_df['Uniqueness'] >= 0.15) &
-        (master_df['Overall Usage'] >= 0.50)
-    ].sort_values('Recognition', ascending=False)
-
-    recommended = master_df[
-        ((master_df['Recognition'] >= 0.35) | (master_df['Uniqueness'] >= 0.25))
-    ].sort_values(['Recognition', 'Uniqueness'], ascending=False)
-    recommended = recommended[~recommended['Element'].isin(must_use['Element'])]
-
-    requires_attention = master_df[
-        (master_df['Recognition'] < 0.40) &
-        (master_df['Total Investment'] > master_df['Total Investment'].median())
-    ]
-
-    # Display recommendations
-    col1, col2 = st.columns([2, 1])
-
-    with col1:
-        st.markdown("### ✅ MUST-USE Assets (Non-Negotiable)")
-        st.success(f"**{len(must_use)} assets meet criteria:** High Recognition (≥40%) + Positive Sentiment + High Usage (≥50%)")
-
-        for idx, row in must_use.iterrows():
-            with st.expander(f"**{row['Element']}** - Recognition: {row['Recognition']:.0%} | Usage: {row['Overall Usage']:.0%}"):
-                col_a, col_b, col_c = st.columns(3)
-                with col_a:
-                    st.metric("Recognition", f"{row['Recognition']:.0%}")
-                    st.metric("Uniqueness", f"{row['Uniqueness']:.0%}")
-                with col_b:
-                    st.metric("Usage", f"{row['Overall Usage']:.0%}")
-                    st.metric("Investment", f"€{row['Total Investment']:,.0f}")
-                with col_c:
-                    # Calculate Brand Equity Score
-                    equity_score = row['Recognition'] * row['Uniqueness']
-                    st.metric("Brand Equity", f"{equity_score:.3f}")
-                    st.metric("ROI", f"{row['Recognition ROI']:.2f}")
-
-                st.markdown("**Rationale:**")
-                st.write(f"• Strong consumer recognition ({row['Recognition']:.0%})")
-                st.write(f"• Brand attribution of {row['Uniqueness']:.0%} (consumers correctly identify as Škoda)")
-                st.write(f"• Already widely used across campaigns ({row['Overall Usage']:.0%})")
-
-        st.markdown("---")
-
-        st.markdown("### ⭐ RECOMMENDED Assets (Strongly Encouraged)")
-        st.info(f"**{len(recommended)} assets show strong potential:** Good recognition or uniqueness")
-
-        for idx, row in recommended.iterrows():
-            st.write(f"**{row['Element']}** - Recognition: {row['Recognition']:.0%} | Uniqueness: {row['Uniqueness']:.0%}")
-
-        st.markdown("---")
-
-        st.markdown("### ⚠️ REQUIRES ATTENTION")
-        st.warning(f"**{len(requires_attention)} assets** have low recognition despite significant investment")
-
-        for idx, row in requires_attention.iterrows():
-            st.write(f"**{row['Element']}** - Recognition: {row['Recognition']:.0%} | Investment: €{row['Total Investment']:,.0f}")
-
-    with col2:
-        st.markdown("### 📋 Quick Reference")
-
-        st.markdown("#### Must-Use (Non-Negotiable)")
-        for idx, row in must_use.iterrows():
-            st.success(f"✓ {row['Element']}")
-
-        st.markdown("#### Recommended")
-        for idx, row in recommended.head(5).iterrows():
-            st.info(f"⭐ {row['Element']}")
-
-        st.markdown("#### Review Needed")
-        for idx, row in requires_attention.iterrows():
-            st.warning(f"⚠️ {row['Element']}")
-
-        st.markdown("---")
-
-        # Download guidelines
-        guidelines_text = "# Škoda Brand Asset Usage Guidelines\n\n"
-        guidelines_text += "## MUST-USE Assets (Non-Negotiable)\n"
-        for idx, row in must_use.iterrows():
-            guidelines_text += f"- {row['Element']}: {row['Recognition']:.0%} recognition\n"
-        guidelines_text += "\n## RECOMMENDED Assets\n"
-        for idx, row in recommended.iterrows():
-            guidelines_text += f"- {row['Element']}: {row['Recognition']:.0%} recognition, {row['Uniqueness']:.0%} uniqueness\n"
-
-        st.download_button(
-            label="📥 Download Guidelines (TXT)",
-            data=guidelines_text,
-            file_name="skoda_brand_guidelines.txt",
-            mime="text/plain"
-        )
-
-# ==================== TAB 4: FUTURE-PROOFING ====================
-with tab4:
-    st.header("🔮 Future-Proofing Opportunities")
-    st.caption("Actionable steps to improve long-term memorability and brand equity")
-
-    st.markdown("""
-    <div style='background-color: #fff3e0; padding: 20px; border-radius: 10px; margin-bottom: 20px;'>
-    <h4>Objective: Identify opportunities to strengthen brand assets over time</h4>
-    <p>Analysis of underutilized assets, investment optimization, and consistency improvements</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-    # High Potential Assets (underutilized)
-    st.markdown("### 💎 High Potential Assets: Underutilized Opportunities")
-
-    high_potential = master_df[
-        (master_df['Uniqueness'] >= 0.25) &
-        (master_df['Overall Usage'] < 0.40)
-    ].sort_values('Uniqueness', ascending=False)
-
-    if len(high_potential) > 0:
-        st.success(f"**{len(high_potential)} assets identified** with high uniqueness but low current usage")
-
-        for idx, row in high_potential.iterrows():
-            with st.expander(f"**{row['Element']}** - Uniqueness: {row['Uniqueness']:.0%} | Current Usage: {row['Overall Usage']:.0%}"):
-                col1, col2 = st.columns(2)
-
-                with col1:
-                    st.metric("Uniqueness Score", f"{row['Uniqueness']:.0%}", "High differentiator")
-                    st.metric("Current Usage", f"{row['Overall Usage']:.0%}", "Underutilized")
-                    st.metric("Recognition", f"{row['Recognition']:.0%}")
-
-                with col2:
-                    st.metric("Brand Equity", f"{(row['Recognition'] * row['Uniqueness']):.3f}")
-                    st.metric("Current Investment", f"€{row['Total Investment']:,.0f}")
-                    st.metric("Recognition ROI", f"{row['Recognition ROI']:.2f}")
-
-                st.markdown("**💡 Opportunity:**")
-                st.write(f"• High uniqueness ({row['Uniqueness']:.0%}) - consumers correctly attribute to Škoda")
-                st.write(f"• Currently used in only {row['Overall Usage']:.0%} of campaigns")
-                st.write(f"• Strong differentiation potential for future brand building")
-
-                st.markdown("**📈 Recommendations:**")
-                st.write(f"• Increase usage from {row['Overall Usage']:.0%} to 50%+ of campaigns")
-                st.write(f"• Integrate into high-visibility placements")
-                st.write("• Create consistency guidelines for market teams")
-    else:
-        st.info("No significantly underutilized high-potential assets identified")
-
-    st.markdown("---")
-
-    # Investment Reallocation Opportunities
-    st.markdown("### 💰 Investment Optimization")
-
-    # Calculate efficiency scores
-    master_df['Efficiency Score'] = (master_df['Recognition'] * master_df['Uniqueness']) / (master_df['Total Investment'] / 1000000)
-    master_df['Efficiency Score'] = master_df['Efficiency Score'].fillna(0)
-
+    # Quadrant Interpretations
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown("#### 📈 High Efficiency (Underfunded)")
-        high_efficiency = master_df.nlargest(3, 'Efficiency Score')
+        st.markdown("#### 🌟 Stars (High Performance, High Investment)")
+        stars = master_df[
+            (master_df['performance_score'] >= median_performance) &
+            (master_df['Total Investment'] >= median_investment)
+        ]
+        for _, row in stars.iterrows():
+            st.success(f"**{row['Element']}** - Performing well, investment justified")
 
-        for idx, row in high_efficiency.iterrows():
-            if row['Total Investment'] < master_df['Total Investment'].median():
-                st.success(f"**{row['Element']}**")
-                st.write(f"• Efficiency Score: {row['Efficiency Score']:.2f}")
-                st.write(f"• Current Investment: €{row['Total Investment']:,.0f}")
-                st.write(f"• **Opportunity:** Increase investment to amplify impact")
-                st.write("")
+        st.markdown("#### 💡 Rising Stars (High Performance, Low Investment)")
+        rising = master_df[
+            (master_df['performance_score'] >= median_performance) &
+            (master_df['Total Investment'] < median_investment)
+        ]
+        for _, row in rising.iterrows():
+            st.info(f"**{row['Element']}** - **OPPORTUNITY: Increase investment**")
 
     with col2:
-        st.markdown("#### 📉 Low Efficiency (Overfunded)")
-        low_efficiency = master_df.nsmallest(3, 'Efficiency Score')
+        st.markdown("#### ⚠️ Question Marks (Low Performance, High Investment)")
+        questions = master_df[
+            (master_df['performance_score'] < median_performance) &
+            (master_df['Total Investment'] >= median_investment)
+        ]
+        for _, row in questions.iterrows():
+            st.warning(f"**{row['Element']}** - **CONCERN: Reduce investment**")
 
-        for idx, row in low_efficiency.iterrows():
-            if row['Total Investment'] > master_df['Total Investment'].median():
-                st.warning(f"**{row['Element']}**")
-                st.write(f"• Efficiency Score: {row['Efficiency Score']:.2f}")
-                st.write(f"• Current Investment: €{row['Total Investment']:,.0f}")
-                st.write(f"• **Opportunity:** Re-evaluate investment level")
-                st.write("")
+        st.markdown("#### 📉 Underperformers (Low Performance, Low Investment)")
+        under = master_df[
+            (master_df['performance_score'] < median_performance) &
+            (master_df['Total Investment'] < median_investment)
+        ]
+        for _, row in under.iterrows():
+            st.error(f"**{row['Element']}** - Low priority, maintain minimal usage")
 
     st.markdown("---")
 
-    # Consistency Improvements
-    st.markdown("### 🎯 Consistency Improvement Opportunities")
-
-    # Calculate consistency across markets
-    consistency_data = []
-    for element in brand_elements:
-        usage_by_market = []
-        for market in audit_df['Market'].unique():
-            market_df = audit_df[audit_df['Market'] == market]
-            usage = market_df[element].sum() / len(market_df) if len(market_df) > 0 else 0
-            usage_by_market.append(usage)
-
-        std_dev = pd.Series(usage_by_market).std()
-        avg_usage = pd.Series(usage_by_market).mean()
-
-        consistency_data.append({
-            'Element': element,
-            'Std Dev': std_dev,
-            'Avg Usage': avg_usage,
-            'Consistency Score': 1 - std_dev  # Higher is more consistent
-        })
-
-    consistency_df = pd.DataFrame(consistency_data).sort_values('Consistency Score')
-
-    st.info("**Assets requiring consistency guidelines:** High usage variation across markets")
-
-    for idx, row in consistency_df.head(5).iterrows():
-        col1, col2, col3 = st.columns([2, 1, 2])
-        with col1:
-            st.write(f"**{row['Element']}**")
-        with col2:
-            st.metric("Variation", f"{row['Std Dev']:.2f}")
-        with col3:
-            st.write(f"Avg usage: {row['Avg Usage']:.0%} - Create standardized usage guidelines")
+    # Investment Efficiency
+    st.markdown("### 💰 Investment Efficiency Analysis")
+    
+    # ROI table
+    roi_data = master_df[['Element', 'Total Investment', 'Recognition', 'Recognition ROI', 'Net Sentiment']].sort_values('Recognition ROI', ascending=False)
+    
+    st.dataframe(
+        roi_data.style.format({
+            'Total Investment': '€{:,.0f}',
+            'Recognition': '{:.1%}',
+            'Recognition ROI': '{:.2f}',
+            'Net Sentiment': '{:+.1%}'
+        }).background_gradient(cmap='RdYlGn', subset=['Recognition ROI', 'Net Sentiment']),
+        use_container_width=True
+    )
 
     st.markdown("---")
 
-    # Action Plan Summary
-    st.markdown("### 📋 Future-Proofing Action Plan")
+    # Recommendations Summary
+    st.markdown("### 🎯 Strategic Recommendations")
 
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.markdown("#### Short-term (0-6 months)")
-        st.write("1. **Increase must-use asset deployment**")
-        for idx, row in must_use.head(3).iterrows():
-            st.write(f"   • Ensure {row['Element']} in 80%+ of campaigns")
-
-        st.write("2. **Test high-potential assets**")
-        for idx, row in high_potential.head(2).iterrows():
-            st.write(f"   • Pilot {row['Element']} in 50% more campaigns")
-
-        st.write("3. **Standardize market guidelines**")
-        st.write(f"   • Create usage frameworks for inconsistent assets")
-
-    with col2:
-        st.markdown("#### Long-term (6-18 months)")
-        st.write("1. **Investment reallocation**")
-        st.write("   • Shift budget from low-ROI to high-ROI assets")
-
-        st.write("2. **Build uniqueness equity**")
-        for idx, row in high_potential.head(2).iterrows():
-            st.write(f"   • Amplify {row['Element']} for differentiation")
-
-        st.write("3. **Continuous monitoring**")
-        st.write("   • Track recognition metrics quarterly")
-        st.write("   • Adjust based on performance data")
-
-# ==================== TAB 5: DEEP DIVE ANALYSIS ====================
-with tab5:
-    st.header("🔍 Deep Dive Analysis")
-    st.caption("Detailed breakdowns and custom filtering")
-
-    # Filters
-    st.markdown("### Filters")
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        selected_market = st.selectbox("Market", ['All'] + sorted(audit_df['Market'].unique().tolist()))
+        st.markdown("#### ✅ INCREASE USAGE")
+        increase = master_df[master_df['performance_usage_gap'] > 0.15].sort_values('performance_usage_gap', ascending=False)
+        for _, row in increase.iterrows():
+            st.success(
+                f"**{row['Element']}**\n\n"
+                f"- Performance: {row['performance_score']:.0%}\n"
+                f"- Current Usage: {row['Overall Usage']:.0%}\n"
+                f"- Gap: {row['performance_usage_gap']:+.0%}\n"
+                f"- Net Sentiment: {row['Net Sentiment']:+.0%}"
+            )
+
     with col2:
-        selected_medium = st.selectbox("Medium", ['All'] + sorted(audit_df['Medium'].unique().tolist()))
+        st.markdown("#### 🔄 MAINTAIN CURRENT")
+        maintain = master_df[abs(master_df['performance_usage_gap']) <= 0.15]
+        for _, row in maintain.iterrows():
+            st.info(
+                f"**{row['Element']}**\n\n"
+                f"- Well balanced\n"
+                f"- Usage: {row['Overall Usage']:.0%}\n"
+                f"- Performance: {row['performance_score']:.0%}"
+            )
+
     with col3:
-        selected_placement = st.selectbox("Placement", ['All'] + sorted(audit_df['Placement'].unique().tolist()))
+        st.markdown("#### ⚠️ REDUCE USAGE")
+        reduce = master_df[master_df['performance_usage_gap'] < -0.15].sort_values('performance_usage_gap')
+        for _, row in reduce.iterrows():
+            st.warning(
+                f"**{row['Element']}**\n\n"
+                f"- Performance: {row['performance_score']:.0%}\n"
+                f"- Current Usage: {row['Overall Usage']:.0%}\n"
+                f"- Overused by: {abs(row['performance_usage_gap']):.0%}\n"
+                f"- Net Sentiment: {row['Net Sentiment']:+.0%}"
+            )
 
-    # Apply filters
-    filtered_df = audit_df.copy()
-    if selected_market != 'All':
-        filtered_df = filtered_df[filtered_df['Market'] == selected_market]
-    if selected_medium != 'All':
-        filtered_df = filtered_df[filtered_df['Medium'] == selected_medium]
-    if selected_placement != 'All':
-        filtered_df = filtered_df[filtered_df['Placement'] == selected_placement]
-
-    st.info(f"Showing {len(filtered_df)} of {len(audit_df)} ads")
+# ==================== TAB 4: NON-NEGOTIABLES ====================
+with tab4:
+    st.header("🎯 Non-Negotiable Brand Assets")
+    st.caption("Must-use elements for 100% brand consistency")
 
     st.markdown("---")
 
-    # Investment breakdown
+    # Define non-negotiables based on criteria
+    non_negotiable_criteria = (
+        (master_df['Recognition'] >= 0.45) &
+        (master_df['Uniqueness'] >= 0.25) &
+        (master_df['Net Sentiment'] >= 0.20)
+    )
+
+    non_negotiables = master_df[non_negotiable_criteria].sort_values('Recognition', ascending=False)
+
+    if not non_negotiables.empty:
+        st.markdown("### ✅ Mandatory Assets")
+        st.success(f"**{len(non_negotiables)}** brand elements meet the criteria for non-negotiable status")
+
+        for _, row in non_negotiables.iterrows():
+            with st.expander(f"**{row['Element']}** - Must appear in 100% of communications", expanded=True):
+                col1, col2, col3, col4 = st.columns(4)
+
+                with col1:
+                    st.metric("Recognition", f"{row['Recognition']:.0%}")
+                with col2:
+                    st.metric("Uniqueness", f"{row['Uniqueness']:.0%}")
+                with col3:
+                    st.metric("Net Sentiment", f"{row['Net Sentiment']:+.0%}")
+                with col4:
+                    st.metric("Current Usage", f"{row['Overall Usage']:.0%}")
+
+                # Usage recommendation
+                if row['Overall Usage'] < 0.90:
+                    st.warning(f"⚠️ **Action Required**: Currently only used in {row['Overall Usage']:.0%} of communications. Must increase to 100%.")
+                else:
+                    st.success(f"✅ **On Track**: Currently used in {row['Overall Usage']:.0%} of communications.")
+
+                # Performance summary
+                st.markdown("**Why this is non-negotiable:**")
+                reasons = []
+                if row['Recognition'] >= 0.60:
+                    reasons.append(f"✓ Exceptional recognition ({row['Recognition']:.0%})")
+                elif row['Recognition'] >= 0.45:
+                    reasons.append(f"✓ Strong recognition ({row['Recognition']:.0%})")
+
+                if row['Uniqueness'] >= 0.35:
+                    reasons.append(f"✓ Highly unique ({row['Uniqueness']:.0%})")
+                elif row['Uniqueness'] >= 0.25:
+                    reasons.append(f"✓ Good uniqueness ({row['Uniqueness']:.0%})")
+
+                if row['Net Sentiment'] >= 0.25:
+                    reasons.append(f"✓ Very positive sentiment ({row['Net Sentiment']:+.0%})")
+                elif row['Net Sentiment'] >= 0.20:
+                    reasons.append(f"✓ Positive sentiment ({row['Net Sentiment']:+.0%})")
+
+                for reason in reasons:
+                    st.markdown(reason)
+
+    st.markdown("---")
+
+    # Strategic amplifiers
+    st.markdown("### 🎨 Strategic Amplifiers")
+    st.caption("High-value assets to use frequently (target: 60-80% of communications)")
+
+    amplifier_criteria = (
+        (master_df['Recognition'] >= 0.35) &
+        (master_df['Uniqueness'] >= 0.15) &
+        (master_df['Net Sentiment'] >= 0.15) &
+        (~non_negotiable_criteria)
+    )
+
+    amplifiers = master_df[amplifier_criteria].sort_values('performance_score', ascending=False)
+
+    if not amplifiers.empty:
+        for _, row in amplifiers.iterrows():
+            with st.expander(f"**{row['Element']}** - Target 60-80% usage"):
+                col1, col2, col3, col4 = st.columns(4)
+
+                with col1:
+                    st.metric("Recognition", f"{row['Recognition']:.0%}")
+                with col2:
+                    st.metric("Performance Score", f"{row['performance_score']:.0%}")
+                with col3:
+                    st.metric("Net Sentiment", f"{row['Net Sentiment']:+.0%}")
+                with col4:
+                    current_usage = row['Overall Usage']
+                    target_min = 0.60
+                    target_max = 0.80
+                    if current_usage < target_min:
+                        delta = f"+{target_min - current_usage:.0%}"
+                        delta_color = "off"
+                    elif current_usage > target_max:
+                        delta = f"-{current_usage - target_max:.0%}"
+                        delta_color = "inverse"
+                    else:
+                        delta = "On target"
+                        delta_color = "normal"
+                    st.metric("Current Usage", f"{current_usage:.0%}", delta)
+
+    st.markdown("---")
+
+    # Assets to reduce
+    st.markdown("### ⚠️ Assets to Reduce")
+    st.caption("Lower-performing elements to use sparingly (<40% of communications)")
+
+    reduce_criteria = (
+        (master_df['performance_score'] < 0.35) |
+        (master_df['Net Sentiment'] < 0.15)
+    )
+
+    reduce_assets = master_df[reduce_criteria].sort_values('Overall Usage', ascending=False)
+
+    if not reduce_assets.empty:
+        for _, row in reduce_assets.iterrows():
+            with st.expander(f"**{row['Element']}** - Reduce to <40% usage"):
+                col1, col2, col3, col4 = st.columns(4)
+
+                with col1:
+                    st.metric("Current Usage", f"{row['Overall Usage']:.0%}")
+                with col2:
+                    st.metric("Performance Score", f"{row['performance_score']:.0%}")
+                with col3:
+                    st.metric("Net Sentiment", f"{row['Net Sentiment']:+.0%}")
+                with col4:
+                    if row['Overall Usage'] > 0.40:
+                        st.metric("Reduce By", f"{row['Overall Usage'] - 0.40:.0%}", delta=f"-{row['Overall Usage'] - 0.40:.0%}", delta_color="inverse")
+                    else:
+                        st.metric("Status", "✅ Within target")
+
+                # Explanation
+                st.markdown("**Reasons for reduction:**")
+                if row['performance_score'] < 0.35:
+                    st.markdown(f"• Lower overall performance score ({row['performance_score']:.0%})")
+                if row['Recognition'] < 0.35:
+                    st.markdown(f"• Lower recognition ({row['Recognition']:.0%})")
+                if row['Net Sentiment'] < 0.15:
+                    st.markdown(f"• Weaker sentiment ({row['Net Sentiment']:+.0%})")
+                if row['Overall Usage'] > 0.60:
+                    st.markdown(f"• Currently overused ({row['Overall Usage']:.0%})")
+
+# ==================== TAB 5: FUTURE-PROOFING ====================
+with tab5:
+    st.header("🔮 Future-Proofing Strategy")
+    st.caption("Investment priorities and market-specific recommendations")
+
+    st.markdown("---")
+
+    # Investment Priority Matrix
+    st.markdown("### 💰 Investment Priority Matrix")
+    st.caption("Based on Recognition ROI and Net Sentiment")
+
+    fig_priority = px.scatter(
+        master_df,
+        x='Recognition ROI',
+        y='Net Sentiment',
+        size='Recognition',
+        color='Overall Usage',
+        color_continuous_scale='Blues',
+        text='Element',
+        title='Investment Priorities: ROI vs Sentiment (Size = Recognition, Color = Current Usage)',
+        labels={
+            'Recognition ROI': 'Recognition ROI (Recognition per €1M)',
+            'Net Sentiment': 'Net Brand Sentiment',
+            'Overall Usage': 'Current Usage'
+        }
+    )
+
+    fig_priority.update_traces(textposition='top center')
+    fig_priority.update_layout(height=600)
+    fig_priority.update_yaxes(tickformat='.0%')
+
+    st.plotly_chart(fig_priority, use_container_width=True)
+
+    # Priority recommendations
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown("#### Investment by Element")
-        invest_data = []
-        for element in brand_elements:
-            element_df = filtered_df[filtered_df[element] == True]
-            invest_data.append({
-                'Element': element,
-                'Investment': element_df['Spend'].sum()
-            })
-        invest_df = pd.DataFrame(invest_data).sort_values('Investment', ascending=True)
+        st.markdown("#### 🎯 High Priority Investments")
+        st.caption("High ROI + High Sentiment + Low Usage")
 
-        fig_invest = px.bar(
-            invest_df,
-            y='Element',
-            x='Investment',
-            orientation='h',
-            text=invest_df['Investment'].apply(lambda x: f'€{x:,.0f}'),
-            title='Total Investment by Element'
-        )
-        st.plotly_chart(fig_invest, use_container_width=True)
+        high_priority = master_df[
+            (master_df['Recognition ROI'] > master_df['Recognition ROI'].median()) &
+            (master_df['Net Sentiment'] > 0.20) &
+            (master_df['Overall Usage'] < 0.50)
+        ].sort_values('Recognition ROI', ascending=False)
+
+        for _, row in high_priority.iterrows():
+            st.success(
+                f"**{row['Element']}**\n\n"
+                f"- ROI: {row['Recognition ROI']:.2f}\n"
+                f"- Sentiment: {row['Net Sentiment']:+.0%}\n"
+                f"- Current Usage: {row['Overall Usage']:.0%}\n\n"
+                f"*Recommended Action: Increase investment and usage*"
+            )
 
     with col2:
-        st.markdown("#### Usage Frequency")
-        usage_data = []
-        total = len(filtered_df)
-        for element in brand_elements:
-            count = filtered_df[element].sum()
-            usage_data.append({
-                'Element': element,
-                'Usage': count / total if total > 0 else 0
-            })
-        usage_df = pd.DataFrame(usage_data).sort_values('Usage', ascending=True)
+        st.markdown("#### ⚠️ Optimize or Reduce")
+        st.caption("Lower ROI or Negative Sentiment")
 
-        fig_usage = px.bar(
-            usage_df,
-            y='Element',
-            x='Usage',
-            orientation='h',
-            text=usage_df['Usage'].apply(lambda x: f'{x:.0%}'),
-            title='Element Usage Frequency'
-        )
-        st.plotly_chart(fig_usage, use_container_width=True)
+        low_priority = master_df[
+            (master_df['Recognition ROI'] <= master_df['Recognition ROI'].median()) |
+            (master_df['Net Sentiment'] < 0.20)
+        ].sort_values('Recognition ROI')
+
+        for _, row in low_priority.iterrows():
+            st.warning(
+                f"**{row['Element']}**\n\n"
+                f"- ROI: {row['Recognition ROI']:.2f}\n"
+                f"- Sentiment: {row['Net Sentiment']:+.0%}\n"
+                f"- Current Usage: {row['Overall Usage']:.0%}\n\n"
+                f"*Recommended Action: Review application or reduce investment*"
+            )
 
     st.markdown("---")
 
-    # Personality attributes
-    st.markdown("### Brand Personality Analysis")
+    # Market-Specific Opportunities
+    st.markdown("### 🌍 Market-Specific Strategies")
 
-    personality_view = st.radio(
-        "Choose visualization:",
-        ["Radar Chart (7 Dimensions)", "Bar Chart Comparison"],
-        horizontal=True
+    tab_uk, tab_spain, tab_germany, tab_poland = st.tabs(["🇬🇧 UK", "🇪🇸 Spain", "🇩🇪 Germany", "🇵🇱 Poland"])
+
+    for tab, country in [(tab_uk, 'UK'), (tab_spain, 'Spain'), (tab_germany, 'Germany'), (tab_poland, 'Poland')]:
+        with tab:
+            st.markdown(f"### {country} Market Analysis")
+
+            # Create country-specific data
+            country_data = []
+            for element in brand_elements:
+                country_recognition = recognition_by_country[element][country]
+                overall_recognition = research_data[element]['recognition']
+                country_data.append({
+                    'Element': element,
+                    'Country Recognition': country_recognition,
+                    'Overall Recognition': overall_recognition,
+                    'Country vs Overall': country_recognition - overall_recognition,
+                    'Net Sentiment': research_data[element]['positive'] - research_data[element]['negative']
+                })
+
+            country_df = pd.DataFrame(country_data)
+
+            # Strongest performers
+            col1, col2 = st.columns(2)
+
+            with col1:
+                st.markdown("#### 🌟 Strongest Assets")
+                top_country = country_df.nlargest(3, 'Country Recognition')
+                for _, row in top_country.iterrows():
+                    st.success(
+                        f"**{row['Element']}**: {row['Country Recognition']:.0%}\n\n"
+                        f"vs Overall: {row['Country vs Overall']:+.0%} | Sentiment: {row['Net Sentiment']:+.0%}"
+                    )
+
+            with col2:
+                st.markdown("#### 📈 Growth Opportunities")
+                growth = country_df.sort_values('Country vs Overall').head(3)
+                for _, row in growth.iterrows():
+                    st.info(
+                        f"**{row['Element']}**: {row['Country Recognition']:.0%}\n\n"
+                        f"Below avg by: {abs(row['Country vs Overall']):.0%} | Opportunity to strengthen"
+                    )
+
+    st.markdown("---")
+
+    # Timeline & Phasing
+    st.markdown("### 📅 Implementation Timeline")
+
+    st.markdown("""
+    #### Phase 1: Immediate (0-3 months)
+    - Audit all current communications for non-negotiable assets
+    - Establish brand asset approval checklist
+    - Brief creative teams on new guidelines
+
+    #### Phase 2: Short-term (3-6 months)
+    - Increase usage of high-ROI, high-sentiment assets
+    - Reduce reliance on overused, lower-performing elements
+    - Implement market-specific strategies
+
+    #### Phase 3: Medium-term (6-12 months)
+    - Monitor performance metrics and adjust
+    - Conduct mid-year brand health check
+    - Refine guidelines based on results
+
+    #### Phase 4: Long-term (12+ months)
+    - Annual comprehensive review
+    - Update research and benchmark against competitors
+    - Evolve strategy based on market changes
+    """)
+
+# ==================== TAB 6: DEEP DIVE ANALYSIS ====================
+with tab6:
+    st.header("🔍 Deep Dive Analysis")
+    st.caption("Detailed charts and visualizations")
+
+    # Recognition Deep Dive
+    st.markdown("### 📊 Recognition Analysis")
+
+    col1, col2 = st.columns([2, 1])
+
+    with col1:
+        # Recognition bar chart
+        recognition_sorted = master_df.sort_values('Recognition', ascending=True)
+
+        fig_recognition = go.Figure(go.Bar(
+            x=recognition_sorted['Recognition'],
+            y=recognition_sorted['Element'],
+            orientation='h',
+            text=recognition_sorted['Recognition'].apply(lambda x: f'{x:.0%}'),
+            textposition='outside',
+            marker=dict(
+                color=recognition_sorted['Recognition'],
+                colorscale='Greens',
+                line=dict(color='rgba(0,0,0,0.3)', width=1)
+            )
+        ))
+
+        fig_recognition.update_layout(
+            title='Brand Element Recognition',
+            xaxis_title='Recognition %',
+            height=500,
+            xaxis=dict(tickformat='.0%'),
+            showlegend=False
+        )
+
+        st.plotly_chart(fig_recognition, use_container_width=True)
+
+    with col2:
+        st.markdown("#### Key Insights:")
+
+        # Highest recognition
+        highest = master_df.loc[master_df['Recognition'].idxmax()]
+        st.success(f"**Highest**: {highest['Element']} at {highest['Recognition']:.0%}")
+
+        # Lowest recognition
+        lowest = master_df.loc[master_df['Recognition'].idxmin()]
+        st.error(f"**Lowest**: {lowest['Element']} at {lowest['Recognition']:.0%}")
+
+        # Average
+        avg_recognition = master_df['Recognition'].mean()
+        st.info(f"**Average**: {avg_recognition:.0%}")
+
+        # Recognition distribution
+        above_avg = len(master_df[master_df['Recognition'] >= avg_recognition])
+        st.metric("Above Average", f"{above_avg} of {len(master_df)}")
+
+    st.markdown("---")
+
+    # Uniqueness Analysis
+    st.markdown("### 🎯 Uniqueness Analysis")
+
+    fig_uniqueness = px.bar(
+        master_df.sort_values('Uniqueness'),
+        x='Uniqueness',
+        y='Element',
+        orientation='h',
+        text=master_df.sort_values('Uniqueness')['Uniqueness'].apply(lambda x: f'{x:.0%}'),
+        title='Brand Element Uniqueness',
+        color='Uniqueness',
+        color_continuous_scale='Blues'
     )
 
-    selected_elements = st.multiselect(
+    fig_uniqueness.update_traces(textposition='outside')
+    fig_uniqueness.update_layout(height=500)
+    fig_uniqueness.update_xaxes(tickformat='.0%')
+
+    st.plotly_chart(fig_uniqueness, use_container_width=True)
+
+    st.markdown("---")
+
+    # Usage Analysis
+    st.markdown("### 📺 Usage Analysis")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        fig_usage = px.bar(
+            master_df.sort_values('Overall Usage'),
+            x='Overall Usage',
+            y='Element',
+            orientation='h',
+            text=master_df.sort_values('Overall Usage')['Overall Usage'].apply(lambda x: f'{x:.0%}'),
+            title='Overall Usage in Communications',
+            color='Overall Usage',
+            color_continuous_scale='Oranges'
+        )
+        fig_usage.update_traces(textposition='outside')
+        fig_usage.update_layout(height=500)
+        fig_usage.update_xaxes(tickformat='.0%')
+        st.plotly_chart(fig_usage, use_container_width=True)
+
+    with col2:
+        # Usage by medium
+        medium_data = []
+        for element in brand_elements:
+            element_df = audit_df[audit_df[element] == True]
+            image_usage = len(element_df[element_df['Medium'] == 'Image'])
+            video_usage = len(element_df[element_df['Medium'] == 'Video'])
+
+            medium_data.append({
+                'Element': element,
+                'Image': image_usage,
+                'Video': video_usage
+            })
+
+        medium_df = pd.DataFrame(medium_data)
+
+        fig_medium = go.Figure()
+        fig_medium.add_trace(go.Bar(name='Image', x=medium_df['Element'], y=medium_df['Image'], marker_color='#90CAF9'))
+        fig_medium.add_trace(go.Bar(name='Video', x=medium_df['Element'], y=medium_df['Video'], marker_color='#4CAF50'))
+
+        fig_medium.update_layout(
+            barmode='stack',
+            title='Usage by Medium',
+            xaxis_title='Brand Element',
+            yaxis_title='Number of Ads',
+            height=500
+        )
+
+        st.plotly_chart(fig_medium, use_container_width=True)
+
+    st.markdown("---")
+
+    # Personality Deep Dive
+    st.markdown("### 🎨 Brand Personality Deep Dive")
+
+    # Allow comparison of elements
+    comparison_elements = st.multiselect(
         "Select elements to compare:",
         brand_elements,
         default=brand_elements[:3]
     )
 
-    if selected_elements:
-        if personality_view == "Radar Chart (7 Dimensions)":
-            # Radar chart with 7 positive personality dimensions
-            fig_radar = go.Figure()
+    if comparison_elements:
+        personality_data = []
+        for element in comparison_elements:
+            research = research_data[element]
+            personality_data.append({
+                'Element': element,
+                'Bold': research['bold'],
+                'Stylish': research['stylish'],
+                'Modern': research['modern'],
+                'Simple': research['simple'],
+                'Human': research['human'],
+                'Exciting': research['exciting'],
+                'Playful': research['playful']
+            })
 
-            personality_dimensions = ['Bold', 'Stylish', 'Modern', 'Simple', 'Human', 'Exciting', 'Playful']
+        personality_df = pd.DataFrame(personality_data).melt(
+            id_vars='Element',
+            var_name='Attribute',
+            value_name='Score'
+        )
 
-            for element in selected_elements:
-                research = research_data[element]
-                values = [
-                    research['bold'], research['stylish'], research['modern'],
-                    research['simple'], research['human'], research['exciting'], research['playful']
-                ]
-                # Close the radar chart
-                values_closed = values + [values[0]]
-                dimensions_closed = personality_dimensions + [personality_dimensions[0]]
+        fig_personality = px.bar(
+            personality_df,
+            x='Attribute',
+            y='Score',
+            color='Element',
+            barmode='group',
+            text=personality_df['Score'].apply(lambda x: f'{x:.0%}'),
+            title='Brand Personality Attributes (7 Dimensions)'
+        )
 
-                fig_radar.add_trace(go.Scatterpolar(
-                    r=values_closed,
-                    theta=dimensions_closed,
-                    name=element,
-                    fill='toself'
-                ))
-
-            fig_radar.update_layout(
-                polar=dict(
-                    radialaxis=dict(
-                        visible=True,
-                        range=[0, 0.6],
-                        tickformat='.0%'
-                    )
-                ),
-                showlegend=True,
-                title="Brand Personality Profile (7 Dimensions)",
-                height=600
-            )
-            st.plotly_chart(fig_radar, use_container_width=True)
-
-            st.info("**Extended personality profile** includes: Bold, Stylish, Modern, Simple, Human, Exciting, and Playful. " +
-                    "Higher scores indicate stronger associations with these positive attributes.")
-
-        else:
-            # Bar chart comparison
-            personality_data = []
-            for element in selected_elements:
-                research = research_data[element]
-                personality_data.append({
-                    'Element': element,
-                    'Bold': research['bold'],
-                    'Stylish': research['stylish'],
-                    'Modern': research['modern'],
-                    'Simple': research['simple'],
-                    'Human': research['human'],
-                    'Exciting': research['exciting'],
-                    'Playful': research['playful']
-                })
-
-            personality_df = pd.DataFrame(personality_data).melt(
-                id_vars='Element',
-                var_name='Attribute',
-                value_name='Score'
-            )
-
-            fig_personality = px.bar(
-                personality_df,
-                x='Attribute',
-                y='Score',
-                color='Element',
-                barmode='group',
-                text=personality_df['Score'].apply(lambda x: f'{x:.0%}'),
-                title='Brand Personality Attributes (7 Dimensions)'
-            )
-            st.plotly_chart(fig_personality, use_container_width=True)
+        fig_personality.update_layout(height=500)
+        fig_personality.update_yaxes(tickformat='.0%')
+        st.plotly_chart(fig_personality, use_container_width=True)
 
     st.markdown("---")
 
     # Market/Country Recognition Analysis
-    st.markdown("### Recognition by Market")
+    st.markdown("### 🌍 Recognition by Market")
     st.caption("See how brand elements perform across different countries")
 
     col1, col2 = st.columns([2, 1])
@@ -908,8 +1102,8 @@ with tab5:
         for element, var in variations_sorted[:3]:
             st.warning(f"**{element}**: {var:.0%} variation - consider market-specific strategies")
 
-# ==================== TAB 6: DATA EXPLORER ====================
-with tab6:
+# ==================== TAB 7: DATA EXPLORER ====================
+with tab7:
     st.header("📄 Data Explorer")
     st.caption("Raw data access and detailed views")
 
@@ -932,7 +1126,7 @@ with tab6:
 
         research_view = st.radio(
             "Select view:",
-            ["Core Metrics", "Extended Personality (7 Dimensions)", "Recognition by Country"],
+            ["Core Metrics", "Sentiment Analysis", "Extended Personality (7 Dimensions)", "Recognition by Country"],
             horizontal=True
         )
 
@@ -942,14 +1136,33 @@ with tab6:
                 research_display.append({
                     'Element': element,
                     'Recognition': data['recognition'],
-                    'Uniqueness': data['uniqueness']
+                    'Uniqueness': data['uniqueness'],
+                    'Net Sentiment': data['positive'] - data['negative']
                 })
             research_display_df = pd.DataFrame(research_display)
 
             st.dataframe(research_display_df.style.format({
                 'Recognition': '{:.1%}',
-                'Uniqueness': '{:.1%}'
-            }), use_container_width=True)
+                'Uniqueness': '{:.1%}',
+                'Net Sentiment': '{:+.1%}'
+            }).background_gradient(cmap='RdYlGn', subset=['Net Sentiment']), use_container_width=True)
+
+        elif research_view == "Sentiment Analysis":
+            sentiment_display = []
+            for element, data in research_data.items():
+                sentiment_display.append({
+                    'Element': element,
+                    'Positive Associations': data['positive'],
+                    'Negative Associations': data['negative'],
+                    'Net Sentiment': data['positive'] - data['negative']
+                })
+            sentiment_display_df = pd.DataFrame(sentiment_display)
+
+            st.dataframe(sentiment_display_df.style.format({
+                'Positive Associations': '{:.1%}',
+                'Negative Associations': '{:.1%}',
+                'Net Sentiment': '{:+.1%}'
+            }).background_gradient(cmap='RdYlGn', subset=['Net Sentiment']), use_container_width=True)
 
         elif research_view == "Extended Personality (7 Dimensions)":
             personality_display = []
@@ -993,9 +1206,22 @@ with tab6:
 
     with tab_c:
         st.markdown("### Combined Metrics")
-        st.dataframe(master_df, use_container_width=True)
+        
+        # Add filter options
+        col1, col2 = st.columns(2)
+        with col1:
+            min_recognition = st.slider("Minimum Recognition", 0.0, 1.0, 0.0, 0.05)
+        with col2:
+            min_sentiment = st.slider("Minimum Net Sentiment", -0.5, 0.5, -0.5, 0.05)
+        
+        filtered_df = master_df[
+            (master_df['Recognition'] >= min_recognition) &
+            (master_df['Net Sentiment'] >= min_sentiment)
+        ]
+        
+        st.dataframe(filtered_df, use_container_width=True)
 
-        csv = master_df.to_csv(index=False)
+        csv = filtered_df.to_csv(index=False)
         st.download_button(
             label="📥 Download Combined Metrics CSV",
             data=csv,
@@ -1007,6 +1233,9 @@ with tab6:
 st.markdown("---")
 st.markdown("""
 <div style='text-align: center; color: #666; padding: 20px;'>
-<p><b>Škoda Brand Intelligence Dashboard</b> | Powered by Saffron</p>
+<p><b>Škoda Brand Intelligence Dashboard</b> | Enhanced with Sentiment Analysis | Powered by Saffron</p>
+<p style='font-size: 0.9em; margin-top: 10px;'>
+Data Sources: P045556 Brand Assets Study | Q04 SUMMARY Tables (Positive/Negative Associations) | Comms Audit (102 Ads)
+</p>
 </div>
 """, unsafe_allow_html=True)
