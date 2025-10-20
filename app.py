@@ -135,13 +135,20 @@ with tab2:
     col1, col2, col3 = st.columns(3)
     
     best_sentiment = master_df.loc[master_df['Net Sentiment'].idxmax()]
-    most_positive = master_df.loc[master_df[master_df.columns[master_df.columns.str.contains('Element')]].map(lambda x: research_data.get(x, {}).get('positive', 0) if x in research_data else 0).idxmax()]
+    
+    # Find element with highest positive score
+    max_positive = 0
+    most_positive_element = ""
+    for element in brand_elements:
+        if research_data[element]['positive'] > max_positive:
+            max_positive = research_data[element]['positive']
+            most_positive_element = element
     
     with col1:
         st.metric("Best Net Sentiment", best_sentiment['Element'], f"{best_sentiment['Net Sentiment']:+.1%}")
     
     with col2:
-        st.metric("Highest Positive", most_positive['Element'], f"{research_data[most_positive['Element']]['positive']:.1%}")
+        st.metric("Highest Positive", most_positive_element, f"{max_positive:.1%}")
     
     with col3:
         worst_sentiment = master_df.loc[master_df['Net Sentiment'].idxmin()]
