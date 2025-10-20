@@ -523,48 +523,48 @@ with tab2:
             """)
 
     with col2:
-        st.metric("Least Positive Element", least_positive['Element'], f"+{least_positive['Net Sentiment']:.1%}")
-        st.info(f"**{least_positive['Net Sentiment']:.1%}** net sentiment - still positive overall.")
-        with st.expander("❓ Why is this element's sentiment lower?"):
+        st.metric("Least Positive Element", least_positive['Element'], f"{least_positive['Net Sentiment']:+.1%}")
+        st.warning(f"**{least_positive['Net Sentiment']:+.1%}** net sentiment - needs improvement.")
+        with st.expander("❓ Why is this element's sentiment negative?"):
             st.markdown(f"""
-            **{least_positive['Element']}** scores lower (but still positive) because:
+            **{least_positive['Element']}** has negative net sentiment because:
 
-            1. **Narrower Margin:** {least_positive['Positive Sentiment']:.1%} positive vs {least_positive['Negative Sentiment']:.1%} negative
-            2. **Lower Recognition:** Only {least_positive['Recognition']:.0%} recognition - less familiarity = more neutral responses
-            3. **Subtle Design:** May be less emotionally expressive compared to bold assets
-            4. **Opportunity:** With {least_positive['Overall Usage']:.0%} current usage, increased visibility could improve sentiment
+            1. **More Negative Associations:** {least_positive['Negative Sentiment']:.1%} negative vs {least_positive['Positive Sentiment']:.1%} positive
+            2. **Lower Recognition:** Only {least_positive['Recognition']:.0%} recognition - less familiarity may lead to weaker emotional connection
+            3. **Design Challenge:** The element may not resonate emotionally or appears generic
+            4. **Opportunity:** With {least_positive['Overall Usage']:.0%} current usage, this asset needs redesign or stronger positioning
 
-            **Not a weakness - just less emotionally charged than top performers.**
+            **This is a brand concern that requires strategic attention.**
             """)
 
     with col3:
-        st.metric("Average Net Sentiment", "All Elements", f"+{avg_net_sentiment:.1%}")
-        st.info(f"Škoda brand elements generate **{avg_net_sentiment:.1%}** net positive sentiment overall.")
+        st.metric("Average Net Sentiment", "All Elements", f"{avg_net_sentiment:+.1%}")
+        st.warning(f"Škoda brand elements generate **{avg_net_sentiment:+.1%}** net sentiment - slightly negative overall.")
         with st.expander("💡 What does this mean for the brand?"):
             st.markdown(f"""
             This average sentiment score tells us:
 
-            1. **Strong Brand Health:** All 9 elements are net positive - no negative associations
-            2. **Consistent Quality:** Range of {master_df['Net Sentiment'].min():.1%} to {master_df['Net Sentiment'].max():.1%} shows consistently good performance
-            3. **Emotional Connection:** Average {master_df['Positive Sentiment'].mean():.1%} positive sentiment demonstrates strong appeal
-            4. **Low Risk:** Only {master_df['Negative Sentiment'].mean():.1%} average negative sentiment = minimal brand risk
+            1. **Brand Health Concern:** 7 out of 9 elements have net negative sentiment - needs attention
+            2. **Mixed Performance:** Range of {master_df['Net Sentiment'].min():+.1%} to {master_df['Net Sentiment'].max():+.1%} shows inconsistent performance
+            3. **Emotional Disconnect:** Only {master_df['Positive Sentiment'].mean():.1%} average positive sentiment vs {master_df['Negative Sentiment'].mean():.1%} negative
+            4. **Action Required:** The negative overall sentiment indicates brand perception needs strengthening
 
-            This solid foundation allows strategic choices about which assets to amplify.
+            **Strategic Priority:** Focus on improving emotional connection and positive associations, especially for the 7 underperforming elements.
             """)
 
     with col4:
         st.metric("Sentiment Range", f"{sentiment_range:.1%}", "Max - Min")
-        st.info(f"Variation of **{sentiment_range:.1%}** shows different emotional impacts.")
+        st.info(f"Variation of **{sentiment_range:.1%}** shows significant differences in emotional impact.")
         with st.expander("📊 Why does sentiment vary across elements?"):
             st.markdown(f"""
-            Sentiment varies between {master_df['Net Sentiment'].min():.1%} and {master_df['Net Sentiment'].max():.1%} because:
+            Sentiment varies between {master_df['Net Sentiment'].min():+.1%} and {master_df['Net Sentiment'].max():+.1%} because:
 
-            1. **Design Characteristics:** Bold visual elements (like colors, logos) trigger stronger emotional responses
-            2. **Recognition Levels:** Higher-recognition assets have had more time to build positive associations
-            3. **Cultural Factors:** Some elements (like wordmarks, symbols) are inherently more universally appealing
-            4. **Exposure Effect:** Assets used more frequently ({most_positive['Overall Usage']:.0%} for top performer) build stronger sentiment
+            1. **Design Characteristics:** Some elements (Sonic, Symbol) trigger more positive emotional responses
+            2. **Recognition Impact:** Higher-recognition assets don't automatically have better sentiment (e.g., Electric Green has 20% recognition but negative sentiment)
+            3. **Cultural Factors:** Elements like typography and colors may not resonate across all markets
+            4. **Functional vs Emotional:** Logo/sonic elements perform better than color/type elements
 
-            **Strategy:** Focus communications on highest-sentiment assets for maximum emotional impact.
+            **Strategy:** Prioritize Sonic and Symbol in communications; redesign or phase out weakest performers.
             """)
 
 
@@ -616,7 +616,7 @@ with tab2:
 
     st.plotly_chart(fig_comparison, use_container_width=True)
 
-    st.info("**Key Insight:** All brand elements show higher positive than negative sentiment, indicating strong overall brand health. The gap between green and red bars represents net sentiment strength.")
+    st.warning("**Key Insight:** Only 2 out of 9 brand elements (Symbol and Sonic) show net positive sentiment. The majority have slightly more negative than positive associations, with an average net sentiment of -3.4%. This indicates opportunities for improvement in brand perception.")
 
     st.markdown("---")
 
@@ -641,7 +641,7 @@ with tab2:
             showscale=True,
             colorbar=dict(title="Net Sentiment", tickformat='.0%')
         ),
-        text=sentiment_ranked['Net Sentiment'].apply(lambda x: f'+{x:.1%}'),
+        text=sentiment_ranked['Net Sentiment'].apply(lambda x: f'{x:+.1%}'),
         textposition='outside',
         hovertemplate='<b>%{y}</b><br>Net Sentiment: %{x:.1%}<extra></extra>'
     ))
@@ -661,17 +661,21 @@ with tab2:
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown("#### 🏆 Top 3 Most Positive")
+        st.markdown("#### 🏆 Top 3 Best Performing")
         top_3_sentiment = sentiment_ranked.nlargest(3, 'Net Sentiment')
         for idx, row in top_3_sentiment.iterrows():
-            st.success(f"**{row['Element']}**: +{row['Net Sentiment']:.1%} net sentiment")
+            sentiment_color = "success" if row['Net Sentiment'] > 0 else "info"
+            if sentiment_color == "success":
+                st.success(f"**{row['Element']}**: {row['Net Sentiment']:+.1%} net sentiment")
+            else:
+                st.info(f"**{row['Element']}**: {row['Net Sentiment']:+.1%} net sentiment")
             st.write(f"   • Positive: {row['Positive Sentiment']:.1%} | Negative: {row['Negative Sentiment']:.1%}")
 
     with col2:
-        st.markdown("#### 📊 Bottom 3 (Still Positive)")
+        st.markdown("#### ⚠️ Bottom 3 (Need Improvement)")
         bottom_3_sentiment = sentiment_ranked.nsmallest(3, 'Net Sentiment')
         for idx, row in bottom_3_sentiment.iterrows():
-            st.info(f"**{row['Element']}**: +{row['Net Sentiment']:.1%} net sentiment")
+            st.warning(f"**{row['Element']}**: {row['Net Sentiment']:.1%} net sentiment")
             st.write(f"   • Positive: {row['Positive Sentiment']:.1%} | Negative: {row['Negative Sentiment']:.1%}")
 
     st.markdown("---")
@@ -685,14 +689,14 @@ with tab2:
 
     # Add interpretation column
     def interpret_sentiment(net):
-        if net >= 0.28:
-            return "🌟 Excellent - Strong positive perception"
-        elif net >= 0.25:
-            return "✅ Very Good - Solid positive associations"
-        elif net >= 0.22:
-            return "👍 Good - Positive overall sentiment"
+        if net >= 0.01:
+            return "✅ Net Positive - Good emotional connection"
+        elif net >= -0.02:
+            return "⚖️ Near Neutral - Balanced perception"
+        elif net >= -0.05:
+            return "⚠️ Slightly Negative - Needs attention"
         else:
-            return "📈 Positive - Room for improvement"
+            return "🔴 Negative - Requires improvement"
 
     detailed_sentiment['Interpretation'] = detailed_sentiment['Net Sentiment'].apply(interpret_sentiment)
 
@@ -703,29 +707,29 @@ with tab2:
     styler_sentiment = styler_sentiment.background_gradient(
         cmap='RdYlGn',
         subset=['Net Sentiment'],
-        vmin=0.20,
-        vmax=0.30
+        vmin=-0.08,
+        vmax=0.02
     )
 
     styler_sentiment = styler_sentiment.background_gradient(
         cmap='Greens',
         subset=['Positive Sentiment'],
-        vmin=0.45,
-        vmax=0.52
+        vmin=0.46,
+        vmax=0.51
     )
 
     styler_sentiment = styler_sentiment.background_gradient(
         cmap='Reds_r',
         subset=['Negative Sentiment'],
-        vmin=0.20,
-        vmax=0.25
+        vmin=0.49,
+        vmax=0.54
     )
 
     # Format as percentages
     styler_sentiment = styler_sentiment.format({
         'Positive Sentiment': '{:.1%}',
         'Negative Sentiment': '{:.1%}',
-        'Net Sentiment': '+{:.1%}'
+        'Net Sentiment': '{:+.1%}'
     })
 
     st.dataframe(styler_sentiment, use_container_width=True)
@@ -748,17 +752,18 @@ with tab2:
 
     with col1:
         st.markdown("#### Strengths")
-        st.write("• **All elements have positive net sentiment** - strong brand foundation")
-        st.write(f"• **{most_positive['Element']}** leads with {most_positive['Net Sentiment']:.1%} - leverage in campaigns")
-        st.write(f"• Average {avg_net_sentiment:.1%} sentiment shows consistent positive perception")
-        st.write("• High positive scores (46-51%) show strong emotional connection")
+        st.write(f"• **{most_positive['Element']}** leads with {most_positive['Net Sentiment']:+.1%} net sentiment")
+        st.write(f"• **Symbol** (+0.3%) shows the brand mark itself has balanced perception")
+        st.write("• Average 48.3% positive associations shows baseline appeal")
+        st.write("• No element is severely negative - all have ~46-51% positive scores")
 
     with col2:
-        st.markdown("#### Opportunities")
-        st.write(f"• **{least_positive['Element']}** has room to improve emotional impact")
-        st.write("• Focus on amplifying positive associations in communications")
-        st.write("• Use top-performing elements more prominently in creative")
-        st.write("• Monitor sentiment trends over time to track improvements")
+        st.markdown("#### ⚠️ Areas for Improvement")
+        st.write(f"• **7 out of 9 elements have net negative sentiment** - concern for brand health")
+        st.write(f"• **{least_positive['Element']}** needs most work with {least_positive['Net Sentiment']:+.1%} net sentiment")
+        st.write(f"• Average net sentiment is **-3.4%** - slightly more negative than positive overall")
+        st.write(f"• Focus on strengthening emotional connection for bottom performers")
+        st.write("• Consider design/messaging updates for weakest elements")
 
 # ==================== TAB 3: STRATEGIC INSIGHTS ====================
 with tab3:
