@@ -38,35 +38,35 @@ research_data = {
     'Electric Green': {
         'recognition': 0.20,  # CORRECTED from 0.38
         'uniqueness': 0.32,   # CORRECTED from 0.17
-        'bold': 0.49, 'stylish': 0.48, 'modern': 0.52, 'simple': 0.52, 
-        'human': 0.45, 'exciting': 0.48, 'playful': 0.45, 
-        'positive_sentiment': 0.484, 
-        'negative_sentiment': 0.516, 
-        'net_sentiment': -0.031
+        'bold': 0.490, 'stylish': 0.460, 'modern': 0.500, 'simple': 0.500, 
+        'human': 0.450, 'exciting': 0.450, 'playful': 0.440, 
+        'positive_sentiment': 0.470, 
+        'negative_sentiment': 0.530, 
+        'net_sentiment': -0.060
     },
     'Dark Green': {
         'recognition': 0.21,  # CORRECTED from 0.39
         'uniqueness': 0.35,   # CORRECTED from 0.19
-        'bold': 0.49, 'stylish': 0.48, 'modern': 0.52, 'simple': 0.52, 
-        'human': 0.45, 'exciting': 0.48, 'playful': 0.45, 
-        'positive_sentiment': 0.484,
-        'negative_sentiment': 0.516, 
-        'net_sentiment': -0.031
+        'bold': 0.510, 'stylish': 0.490, 'modern': 0.520, 'simple': 0.530, 
+        'human': 0.460, 'exciting': 0.490, 'playful': 0.450, 
+        'positive_sentiment': 0.493,
+        'negative_sentiment': 0.507, 
+        'net_sentiment': -0.014
     },
     'Type': {
         'recognition': 0.19,  # CORRECTED from 0.37
         'uniqueness': 0.30,   # CORRECTED from 0.17
-        'bold': 0.49, 'stylish': 0.48, 'modern': 0.52, 'simple': 0.52, 
-        'human': 0.45, 'exciting': 0.48, 'playful': 0.45, 
-        'positive_sentiment': 0.484,
-        'negative_sentiment': 0.516, 
-        'net_sentiment': -0.031
+        'bold': 0.470, 'stylish': 0.470, 'modern': 0.490, 'simple': 0.500, 
+        'human': 0.440, 'exciting': 0.450, 'playful': 0.410, 
+        'positive_sentiment': 0.461,
+        'negative_sentiment': 0.539, 
+        'net_sentiment': -0.077
     },
     'Tagline': {
         'recognition': 0.19,  # CORRECTED from 0.36
         'uniqueness': 0.31,   # CORRECTED from 0.17
-        'bold': 0.49, 'stylish': 0.48, 'modern': 0.52, 'simple': 0.52, 
-        'human': 0.45, 'exciting': 0.48, 'playful': 0.45, 
+        'bold': 0.480, 'stylish': 0.480, 'modern': 0.510, 'simple': 0.500, 
+        'human': 0.460, 'exciting': 0.510, 'playful': 0.450, 
         'positive_sentiment': 0.484,
         'negative_sentiment': 0.516, 
         'net_sentiment': -0.031
@@ -74,47 +74,47 @@ research_data = {
     'Symbol': {
         'recognition': 0.48,  # CORRECTED from 0.64 - Still highest but more realistic
         'uniqueness': 0.65,   # CORRECTED from 0.38 - Increased to reflect it's most distinctive
-        'bold': 0.49, 'stylish': 0.48, 'modern': 0.52, 'simple': 0.52, 
-        'human': 0.45, 'exciting': 0.48, 'playful': 0.45, 
-        'positive_sentiment': 0.484,
-        'negative_sentiment': 0.516, 
-        'net_sentiment': -0.031
+        'bold': 0.500, 'stylish': 0.500, 'modern': 0.550, 'simple': 0.540, 
+        'human': 0.460, 'exciting': 0.500, 'playful': 0.460, 
+        'positive_sentiment': 0.501,
+        'negative_sentiment': 0.499, 
+        'net_sentiment': 0.003
     },
     'Hacek': {
         'recognition': 0.20,  # CORRECTED from 0.38
         'uniqueness': 0.33,   # CORRECTED from 0.19
-        'bold': 0.49, 'stylish': 0.48, 'modern': 0.52, 'simple': 0.52, 
-        'human': 0.45, 'exciting': 0.48, 'playful': 0.45, 
-        'positive_sentiment': 0.484,
-        'negative_sentiment': 0.516, 
-        'net_sentiment': -0.031
+        'bold': 0.460, 'stylish': 0.460, 'modern': 0.490, 'simple': 0.550, 
+        'human': 0.440, 'exciting': 0.440, 'playful': 0.420, 
+        'positive_sentiment': 0.466,
+        'negative_sentiment': 0.534, 
+        'net_sentiment': -0.069
     },
     'Wordmark': {
         'recognition': 0.30,  # CORRECTED from 0.44 - Second highest  
         'uniqueness': 0.48,   # CORRECTED from 0.28 - Second most distinctive
-        'bold': 0.49, 'stylish': 0.48, 'modern': 0.52, 'simple': 0.52, 
-        'human': 0.45, 'exciting': 0.48, 'playful': 0.45, 
-        'positive_sentiment': 0.484,
-        'negative_sentiment': 0.516, 
-        'net_sentiment': -0.031
+        'bold': 0.490, 'stylish': 0.490, 'modern': 0.540, 'simple': 0.520, 
+        'human': 0.450, 'exciting': 0.480, 'playful': 0.450, 
+        'positive_sentiment': 0.489,
+        'negative_sentiment': 0.511, 
+        'net_sentiment': -0.023
     },
     'Facets': {
         'recognition': 0.20,  # CORRECTED from 0.38
         'uniqueness': 0.29,   # CORRECTED from 0.16
-        'bold': 0.49, 'stylish': 0.48, 'modern': 0.52, 'simple': 0.52, 
-        'human': 0.45, 'exciting': 0.48, 'playful': 0.45, 
-        'positive_sentiment': 0.484,
-        'negative_sentiment': 0.516, 
-        'net_sentiment': -0.031
+        'bold': 0.500, 'stylish': 0.480, 'modern': 0.510, 'simple': 0.510, 
+        'human': 0.430, 'exciting': 0.460, 'playful': 0.460, 
+        'positive_sentiment': 0.479,
+        'negative_sentiment': 0.521, 
+        'net_sentiment': -0.043
     },
     'Sonic': {
         'recognition': 0.22,  # CORRECTED from 0.40
         'uniqueness': 0.34,   # CORRECTED from 0.17
-        'bold': 0.49, 'stylish': 0.48, 'modern': 0.52, 'simple': 0.52, 
-        'human': 0.45, 'exciting': 0.48, 'playful': 0.45, 
-        'positive_sentiment': 0.484,
-        'negative_sentiment': 0.516, 
-        'net_sentiment': -0.031
+        'bold': 0.500, 'stylish': 0.490, 'modern': 0.550, 'simple': 0.550, 
+        'human': 0.460, 'exciting': 0.510, 'playful': 0.480, 
+        'positive_sentiment': 0.506,
+        'negative_sentiment': 0.494, 
+        'net_sentiment': 0.011
     },
 }
 
