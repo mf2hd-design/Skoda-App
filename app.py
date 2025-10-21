@@ -1898,10 +1898,10 @@ with tab4:
         (master_df['Overall Usage'] >= 0.50)
     ].sort_values('Recognition', ascending=False)
 
-    Moderate Performance = master_df[
+    Moderate_Performance = master_df[
         ((master_df['Recognition'] >= 0.35) | (master_df['Uniqueness'] >= 0.25))
     ].sort_values(['Recognition', 'Uniqueness'], ascending=False)
-    Moderate Performance = Moderate Performance[~Moderate Performance['Element'].isin(must_use['Element'])]
+    Moderate_Performance = Moderate Performance[~Moderate Performance['Element'].isin(must_use['Element'])]
 
     requires_attention = master_df[
         (master_df['Recognition'] < 0.40) &
