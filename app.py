@@ -357,6 +357,112 @@ with tab1:
     st.header("Executive Summary")
     st.caption("Combined view replicating Excel 'NEW Calculations ALL' sheet")
 
+    # Executive Scorecard
+    st.markdown("### 📊 Executive Scorecard - Brand Health KPIs")
+    
+    # Calculate KPIs
+    avg_recognition = master_df['Recognition'].mean()
+    recognition_gap = recognition_journey['never_recognized']
+    avg_uniqueness = master_df['Uniqueness'].mean()
+    avg_net_sentiment = master_df['Net Sentiment'].mean()
+    portfolio_roi = master_df['Recognition ROI'].mean()
+    
+    # Elements above/below thresholds
+    elements_above_threshold = len(master_df[master_df['Recognition'] >= 0.30])
+    elements_below_threshold = len(master_df[master_df['Recognition'] < 0.30])
+    
+    # Brand Health Score (weighted average)
+    brand_health_score = (
+        (avg_recognition * 40) +  # Recognition weighted 40%
+        (avg_uniqueness * 30) +   # Uniqueness weighted 30%
+        ((avg_net_sentiment + 0.1) * 0.5 * 20) +  # Sentiment weighted 20% (normalized)
+        (min(portfolio_roi / 20, 1) * 10)  # ROI weighted 10%
+    ) * 100
+    
+    # Scorecard display
+    col1, col2, col3, col4, col5 = st.columns(5)
+    
+    with col1:
+        st.metric("Brand Health Score", f"{brand_health_score:.0f}/100", 
+                  help="Weighted score: Recognition (40%), Uniqueness (30%), Sentiment (20%), ROI (10%)")
+        status = "🟢 Good" if brand_health_score >= 70 else "🟡 Fair" if brand_health_score >= 50 else "🔴 Poor"
+        st.caption(status)
+    
+    with col2:
+        st.metric("Avg Recognition", f"{avg_recognition:.1%}", f"{avg_recognition - 0.30:.1%}",
+                  help="Target: 30%. Current portfolio average across 9 elements")
+        st.caption("Target: 30%")
+    
+    with col3:
+        st.metric("Recognition Gap", f"{recognition_gap:.1%}", f"{recognition_gap - 0.40:.1%}",
+                  delta_color="inverse",
+                  help="% who never recognized elements as Škoda. Target: <40%")
+        st.caption("🔴 Critical")
+    
+    with col4:
+        st.metric("Portfolio ROI", f"{portfolio_roi:.1f}", f"{portfolio_roi - 20:.1f}",
+                  help="Average recognition points per €1M spent. Target: 20")
+        st.caption("Target: 20")
+    
+    with col5:
+        st.metric("Elements Above Target", f"{elements_above_threshold}/9",
+                  help="Elements with ≥30% recognition. Goal: 6/9")
+        st.caption(f"{elements_below_threshold} need work")
+    
+    # Detailed scorecard table
+    st.markdown("#### Detailed KPI Status")
+    
+    scorecard_data = pd.DataFrame({
+        'KPI': [
+            'Brand Health Score',
+            'Average Recognition',
+            'Average Uniqueness', 
+            'Recognition Gap',
+            'Net Sentiment',
+            'Portfolio ROI',
+            'Elements Above Threshold'
+        ],
+        'Current': [
+            f"{brand_health_score:.0f}/100",
+            f"{avg_recognition:.1%}",
+            f"{avg_uniqueness:.1%}",
+            f"{recognition_gap:.1%}",
+            f"{avg_net_sentiment:+.1%}",
+            f"{portfolio_roi:.1f}",
+            f"{elements_above_threshold}/9"
+        ],
+        'Target': [
+            "75/100",
+            "30%",
+            "50%",
+            "<40%",
+            ">+5%",
+            "20",
+            "6/9"
+        ],
+        'Status': [
+            "🟡 Below Target" if brand_health_score < 75 else "🟢 On Target",
+            "🔴 Below Target" if avg_recognition < 0.30 else "🟢 On Target",
+            "🟢 On Target" if avg_uniqueness >= 0.35 else "🟡 Close",
+            "🔴 Critical" if recognition_gap > 0.50 else "🟡 Needs Work",
+            "🔴 Negative" if avg_net_sentiment < 0 else "🟢 Positive",
+            "🟡 Below Target" if portfolio_roi < 20 else "🟢 On Target",
+            "🟡 Needs Work" if elements_above_threshold < 6 else "🟢 On Target"
+        ]
+    })
+    
+    st.dataframe(scorecard_data, use_container_width=True, hide_index=True)
+    
+    st.info("""
+    **Key Priorities Based on Scorecard:**
+    1. **Address Recognition Gap** (56.3% never recognize - most critical issue)
+    2. **Improve Average Recognition** (20% → 30% target)
+    3. **Fix Negative Sentiment** (-3.4% → +5% target)
+    4. **Increase Portfolio ROI** (14.2 → 20 target)
+    """)
+
+    st.markdown("---")
+
     # Key Takeaways Box
     st.success("""
     ### 🎯 Key Takeaways
@@ -1032,6 +1138,243 @@ with tab3:
     - Focus budget on proven high-ROI combinations
     - Symbol should anchor all communications (48% recognition vs 20% average)
     """)
+
+    st.markdown("---")
+
+    # Portfolio Optimization Matrices
+    st.markdown("### 📊 Portfolio Optimization Matrices")
+    st.caption("BCG-style strategic analysis - where to invest, hold, or cut")
+
+    # Prepare data for matrices
+    matrix_df = master_df.copy()
+    
+    # Calculate medians for quadrant splits
+    median_recognition = matrix_df['Recognition'].median()
+    median_investment = matrix_df['Total Investment'].median()
+    median_uniqueness = matrix_df['Uniqueness'].median()
+    median_usage = matrix_df['Overall Usage'].median()
+    median_roi = matrix_df['Recognition ROI'].median()
+
+    # Matrix 1: Recognition vs Investment (BCG Matrix)
+    st.markdown("#### 1️⃣ Recognition vs Investment Matrix")
+    st.caption("Strategic positioning: Stars, Cash Cows, Question Marks, Dogs")
+    
+    col1, col2 = st.columns([3, 1])
+    
+    with col1:
+        fig_bcg = px.scatter(
+            matrix_df,
+            x='Total Investment',
+            y='Recognition',
+            size='Uniqueness',
+            color='Net Sentiment',
+            hover_name='Element',
+            text='Element',
+            title='Recognition vs Investment (BCG Matrix)',
+            color_continuous_scale='RdYlGn',
+            size_max=30
+        )
+        
+        # Add quadrant lines
+        fig_bcg.add_hline(y=median_recognition, line_dash="dash", line_color="gray", opacity=0.5)
+        fig_bcg.add_vline(x=median_investment, line_dash="dash", line_color="gray", opacity=0.5)
+        
+        # Add quadrant labels
+        fig_bcg.add_annotation(x=matrix_df['Total Investment'].max() * 0.75, y=matrix_df['Recognition'].max() * 0.95,
+                               text="STARS<br>(High Rec, High Inv)", showarrow=False, font=dict(size=10, color="green"))
+        fig_bcg.add_annotation(x=matrix_df['Total Investment'].min() * 1.5, y=matrix_df['Recognition'].max() * 0.95,
+                               text="HIDDEN GEMS<br>(High Rec, Low Inv)", showarrow=False, font=dict(size=10, color="darkgreen"))
+        fig_bcg.add_annotation(x=matrix_df['Total Investment'].max() * 0.75, y=matrix_df['Recognition'].min() * 1.5,
+                               text="DOGS<br>(Low Rec, High Inv)<br>⚠️ CUT", showarrow=False, font=dict(size=10, color="red"))
+        fig_bcg.add_annotation(x=matrix_df['Total Investment'].min() * 1.5, y=matrix_df['Recognition'].min() * 1.5,
+                               text="QUESTION MARKS<br>(Low Rec, Low Inv)", showarrow=False, font=dict(size=10, color="orange"))
+        
+        fig_bcg.update_traces(textposition='top center')
+        fig_bcg.update_layout(height=500, xaxis_title="Total Investment (€)", yaxis_title="Recognition %")
+        fig_bcg.update_yaxes(tickformat='.0%')
+        st.plotly_chart(fig_bcg, use_container_width=True)
+    
+    with col2:
+        st.markdown("#### Quadrant Analysis")
+        
+        # Categorize elements
+        stars = matrix_df[(matrix_df['Recognition'] >= median_recognition) & (matrix_df['Total Investment'] >= median_investment)]
+        gems = matrix_df[(matrix_df['Recognition'] >= median_recognition) & (matrix_df['Total Investment'] < median_investment)]
+        dogs = matrix_df[(matrix_df['Recognition'] < median_recognition) & (matrix_df['Total Investment'] >= median_investment)]
+        questions = matrix_df[(matrix_df['Recognition'] < median_recognition) & (matrix_df['Total Investment'] < median_investment)]
+        
+        if len(stars) > 0:
+            st.success(f"**STARS ({len(stars)}):**")
+            for _, row in stars.iterrows():
+                st.write(f"• {row['Element']}")
+            st.caption("Maintain investment")
+        
+        if len(gems) > 0:
+            st.success(f"**HIDDEN GEMS ({len(gems)}):**")
+            for _, row in gems.iterrows():
+                st.write(f"• {row['Element']}")
+            st.caption("⬆️ Increase investment")
+        
+        if len(dogs) > 0:
+            st.error(f"**DOGS ({len(dogs)}):**")
+            for _, row in dogs.iterrows():
+                st.write(f"• {row['Element']}")
+            st.caption("⚠️ Cut or redesign")
+        
+        if len(questions) > 0:
+            st.warning(f"**QUESTION MARKS ({len(questions)}):**")
+            for _, row in questions.iterrows():
+                st.write(f"• {row['Element']}")
+            st.caption("Test or hold")
+
+    st.markdown("---")
+
+    # Matrix 2: Recognition vs Uniqueness (Brand Equity Matrix)
+    st.markdown("#### 2️⃣ Recognition vs Uniqueness Matrix")
+    st.caption("Brand equity positioning: Icons, Famous Generics, Hidden Gems, Weak")
+    
+    col1, col2 = st.columns([3, 1])
+    
+    with col1:
+        fig_equity = px.scatter(
+            matrix_df,
+            x='Uniqueness',
+            y='Recognition',
+            size='Total Investment',
+            color='Recognition ROI',
+            hover_name='Element',
+            text='Element',
+            title='Recognition vs Uniqueness (Brand Equity Matrix)',
+            color_continuous_scale='RdYlGn',
+            size_max=30
+        )
+        
+        # Add quadrant lines
+        fig_equity.add_hline(y=median_recognition, line_dash="dash", line_color="gray", opacity=0.5)
+        fig_equity.add_vline(x=median_uniqueness, line_dash="dash", line_color="gray", opacity=0.5)
+        
+        # Add quadrant labels
+        fig_equity.add_annotation(x=matrix_df['Uniqueness'].max() * 0.9, y=matrix_df['Recognition'].max() * 0.95,
+                                  text="BRAND ICONS<br>(High Rec, High Uniq)<br>🏆 PROTECT", showarrow=False, font=dict(size=10, color="darkgreen"))
+        fig_equity.add_annotation(x=matrix_df['Uniqueness'].min() * 1.2, y=matrix_df['Recognition'].max() * 0.95,
+                                  text="FAMOUS GENERICS<br>(High Rec, Low Uniq)<br>⚠️ Risk", showarrow=False, font=dict(size=10, color="orange"))
+        fig_equity.add_annotation(x=matrix_df['Uniqueness'].max() * 0.9, y=matrix_df['Recognition'].min() * 1.5,
+                                  text="HIDDEN GEMS<br>(Low Rec, High Uniq)<br>💎 Invest", showarrow=False, font=dict(size=10, color="blue"))
+        fig_equity.add_annotation(x=matrix_df['Uniqueness'].min() * 1.2, y=matrix_df['Recognition'].min() * 1.5,
+                                  text="WEAK<br>(Low Rec, Low Uniq)<br>🔴 Fix", showarrow=False, font=dict(size=10, color="red"))
+        
+        fig_equity.update_traces(textposition='top center')
+        fig_equity.update_layout(height=500, xaxis_title="Uniqueness %", yaxis_title="Recognition %")
+        fig_equity.update_xaxes(tickformat='.0%')
+        fig_equity.update_yaxes(tickformat='.0%')
+        st.plotly_chart(fig_equity, use_container_width=True)
+    
+    with col2:
+        st.markdown("#### Strategic Actions")
+        
+        # Categorize elements
+        icons = matrix_df[(matrix_df['Recognition'] >= median_recognition) & (matrix_df['Uniqueness'] >= median_uniqueness)]
+        generics = matrix_df[(matrix_df['Recognition'] >= median_recognition) & (matrix_df['Uniqueness'] < median_uniqueness)]
+        hidden = matrix_df[(matrix_df['Recognition'] < median_recognition) & (matrix_df['Uniqueness'] >= median_uniqueness)]
+        weak = matrix_df[(matrix_df['Recognition'] < median_recognition) & (matrix_df['Uniqueness'] < median_uniqueness)]
+        
+        if len(icons) > 0:
+            st.success(f"**BRAND ICONS ({len(icons)}):**")
+            for _, row in icons.iterrows():
+                st.write(f"• {row['Element']}")
+            st.caption("🏆 Core assets - protect")
+        
+        if len(generics) > 0:
+            st.warning(f"**FAMOUS GENERICS ({len(generics)}):**")
+            for _, row in generics.iterrows():
+                st.write(f"• {row['Element']}")
+            st.caption("⚠️ Increase distinctiveness")
+        
+        if len(hidden) > 0:
+            st.info(f"**HIDDEN GEMS ({len(hidden)}):**")
+            for _, row in hidden.iterrows():
+                st.write(f"• {row['Element']}")
+            st.caption("💎 Build awareness")
+        
+        if len(weak) > 0:
+            st.error(f"**WEAK ({len(weak)}):**")
+            for _, row in weak.iterrows():
+                st.write(f"• {row['Element']}")
+            st.caption("🔴 Redesign urgently")
+
+    st.markdown("---")
+
+    # Matrix 3: Usage vs ROI (Efficiency Matrix)
+    st.markdown("#### 3️⃣ Usage vs ROI Matrix")
+    st.caption("Investment efficiency: Workhorses, Overused, Untapped Potential, Underperformers")
+    
+    col1, col2 = st.columns([3, 1])
+    
+    with col1:
+        fig_efficiency = px.scatter(
+            matrix_df,
+            x='Overall Usage',
+            y='Recognition ROI',
+            size='Recognition',
+            color='Net Sentiment',
+            hover_name='Element',
+            text='Element',
+            title='Usage vs ROI (Efficiency Matrix)',
+            color_continuous_scale='RdYlGn',
+            size_max=30
+        )
+        
+        # Add quadrant lines
+        fig_efficiency.add_hline(y=median_roi, line_dash="dash", line_color="gray", opacity=0.5)
+        fig_efficiency.add_vline(x=median_usage, line_dash="dash", line_color="gray", opacity=0.5)
+        
+        # Add quadrant labels
+        fig_efficiency.add_annotation(x=matrix_df['Overall Usage'].max() * 0.85, y=matrix_df['Recognition ROI'].max() * 0.95,
+                                      text="WORKHORSES<br>(High Use, High ROI)<br>✅ Perfect", showarrow=False, font=dict(size=10, color="darkgreen"))
+        fig_efficiency.add_annotation(x=matrix_df['Overall Usage'].min() * 1.5, y=matrix_df['Recognition ROI'].max() * 0.95,
+                                      text="UNTAPPED<br>(Low Use, High ROI)<br>⬆️ Use More", showarrow=False, font=dict(size=10, color="blue"))
+        fig_efficiency.add_annotation(x=matrix_df['Overall Usage'].max() * 0.85, y=matrix_df['Recognition ROI'].min() * 1.5,
+                                      text="OVERUSED<br>(High Use, Low ROI)<br>⬇️ Cut Back", showarrow=False, font=dict(size=10, color="red"))
+        fig_efficiency.add_annotation(x=matrix_df['Overall Usage'].min() * 1.5, y=matrix_df['Recognition ROI'].min() * 1.5,
+                                      text="UNDERPERFORMERS<br>(Low Use, Low ROI)", showarrow=False, font=dict(size=10, color="orange"))
+        
+        fig_efficiency.update_traces(textposition='top center')
+        fig_efficiency.update_layout(height=500, xaxis_title="Usage %", yaxis_title="Recognition ROI")
+        fig_efficiency.update_xaxes(tickformat='.0%')
+        st.plotly_chart(fig_efficiency, use_container_width=True)
+    
+    with col2:
+        st.markdown("#### Optimization Actions")
+        
+        # Categorize elements
+        workhorses = matrix_df[(matrix_df['Overall Usage'] >= median_usage) & (matrix_df['Recognition ROI'] >= median_roi)]
+        untapped = matrix_df[(matrix_df['Overall Usage'] < median_usage) & (matrix_df['Recognition ROI'] >= median_roi)]
+        overused = matrix_df[(matrix_df['Overall Usage'] >= median_usage) & (matrix_df['Recognition ROI'] < median_roi)]
+        underperf = matrix_df[(matrix_df['Overall Usage'] < median_usage) & (matrix_df['Recognition ROI'] < median_roi)]
+        
+        if len(workhorses) > 0:
+            st.success(f"**WORKHORSES ({len(workhorses)}):**")
+            for _, row in workhorses.iterrows():
+                st.write(f"• {row['Element']}")
+            st.caption("✅ Maintain strategy")
+        
+        if len(untapped) > 0:
+            st.info(f"**UNTAPPED ({len(untapped)}):**")
+            for _, row in untapped.iterrows():
+                st.write(f"• {row['Element']}")
+            st.caption("⬆️ Increase usage")
+        
+        if len(overused) > 0:
+            st.error(f"**OVERUSED ({len(overused)}):**")
+            for _, row in overused.iterrows():
+                st.write(f"• {row['Element']}")
+            st.caption("⬇️ Reduce investment")
+        
+        if len(underperf) > 0:
+            st.warning(f"**UNDERPERFORMERS ({len(underperf)}):**")
+            for _, row in underperf.iterrows():
+                st.write(f"• {row['Element']}")
+            st.caption("Monitor or retire")
 
     st.markdown("---")
 
