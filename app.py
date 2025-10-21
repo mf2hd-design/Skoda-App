@@ -458,7 +458,7 @@ with tab1:
             action = "Must Use"
         elif row['Recognition'] >= 0.19:
             tier = "🥈 Tier 2"
-            action = "Moderate_Performance"
+            action = "Recommended"
         else:
             tier = "🥉 Tier 3"
             action = "Optional/Redesign"
@@ -1061,16 +1061,16 @@ with tab3:
     - Minimum 3 elements needed per ad for effective brand recognition
     
     **Investment Insights:**
-    - Some high-investment elements underperform (Some elements show X pattern)
-    - Some elements show X pattern proven high-ROI combinations
-    - Symbol achieves 48% recognition vs 20% average (48% recognition vs 20% average)
+    - Some high-investment elements underperform (requires attention)
+    - Focus budget on proven high-ROI combinations
+    - Symbol should anchor all communications (48% recognition vs 20% average)
     """)
 
     st.markdown("---")
 
     # Portfolio Optimization Matrices
     st.markdown("### 📊 Portfolio Optimization Matrices")
-    st.caption("BCG-style strategic analysis - performance patterns across investment and recognition")
+    st.caption("BCG-style strategic analysis - where to invest, hold, or cut")
 
     # Prepare data for matrices
     matrix_df = master_df.copy()
@@ -1140,13 +1140,13 @@ with tab3:
             st.success(f"**HIDDEN GEMS ({len(gems)}):**")
             for _, row in gems.iterrows():
                 st.write(f"• {row['Element']}")
-            st.caption("")
+            st.caption("⬆️ Increase investment")
         
         if len(dogs) > 0:
             st.error(f"**DOGS ({len(dogs)}):**")
             for _, row in dogs.iterrows():
                 st.write(f"• {row['Element']}")
-            st.caption("")
+            st.caption("⚠️ Cut or redesign")
         
         if len(questions) > 0:
             st.warning(f"**QUESTION MARKS ({len(questions)}):**")
@@ -1221,13 +1221,13 @@ with tab3:
             st.info(f"**HIDDEN GEMS ({len(hidden)}):**")
             for _, row in hidden.iterrows():
                 st.write(f"• {row['Element']}")
-            st.caption("")
+            st.caption("💎 Build awareness")
         
         if len(weak) > 0:
             st.error(f"**WEAK ({len(weak)}):**")
             for _, row in weak.iterrows():
                 st.write(f"• {row['Element']}")
-            st.caption("")
+            st.caption("🔴 Redesign urgently")
 
     st.markdown("---")
 
@@ -1887,7 +1887,7 @@ with tab4:
     <div style='background-color: #e3f2fd; padding: 20px; border-radius: 10px; margin-bottom: 20px;'>
     <h4>Objective: Create actionable guidelines for market teams</h4>
     <p>Based on combined analysis of media usage, spend data, and consumer research,
-    the data shows the following patterns asset usage framework:</p>
+    we recommend the following asset usage framework:</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -1898,10 +1898,10 @@ with tab4:
         (master_df['Overall Usage'] >= 0.50)
     ].sort_values('Recognition', ascending=False)
 
-    Moderate_Performance = master_df[
+    recommended = master_df[
         ((master_df['Recognition'] >= 0.35) | (master_df['Uniqueness'] >= 0.25))
     ].sort_values(['Recognition', 'Uniqueness'], ascending=False)
-    Moderate_Performance = Moderate_Performance[~Moderate_Performance['Element'].isin(must_use['Element'])]
+    recommended = recommended[~recommended['Element'].isin(must_use['Element'])]
 
     requires_attention = master_df[
         (master_df['Recognition'] < 0.40) &
@@ -1930,7 +1930,7 @@ with tab4:
                     st.metric("Brand Equity", f"{equity_score:.3f}")
                     st.metric("ROI", f"{row['Recognition ROI']:.2f}")
 
-                st.markdown("**Observable Performance Characteristics:**")
+                st.markdown("**Rationale for Must-Use Status:**")
                 st.write(f"• **Recognition:** {row['Recognition']:.0%} - consumers have seen/heard this element, ensuring immediate brand attribution")
                 st.write(f"• **Uniqueness:** {row['Uniqueness']:.0%} - distinctively Škoda (consumers correctly identify it as belonging to your brand, not competitors)")
                 st.write(f"• **Proven Usage:** {row['Overall Usage']:.0%} of campaigns - already validated as core asset")
@@ -1942,12 +1942,12 @@ with tab4:
 
         st.markdown("---")
 
-        st.markdown("### ⭐ Moderate_Performance Assets (Strongly Encouraged)")
-        st.info(f"**{len(Moderate_Performance)} assets show strong potential:** Good recognition or uniqueness")
+        st.markdown("### ⭐ RECOMMENDED Assets (Strongly Encouraged)")
+        st.info(f"**{len(recommended)} assets show strong potential:** Good recognition or uniqueness")
 
-        for idx, row in Moderate_Performance.iterrows():
+        for idx, row in recommended.iterrows():
             with st.expander(f"**{row['Element']}** - Recognition: {row['Recognition']:.0%} | Uniqueness: {row['Uniqueness']:.0%}"):
-                st.markdown("**Why Moderate_Performance:**")
+                st.markdown("**Why Recommended:**")
                 if row['Recognition'] >= 0.35:
                     st.write(f"• ✅ Strong recognition ({row['Recognition']:.0%}) - consumers are familiar with this element")
                 if row['Uniqueness'] >= 0.25:
@@ -1966,12 +1966,12 @@ with tab4:
 
         st.markdown("---")
 
-        st.markdown("### ⚠️ Some elements show X pattern")
+        st.markdown("### ⚠️ REQUIRES ATTENTION")
         st.warning(f"**{len(requires_attention)} assets** have low recognition despite significant investment")
 
         for idx, row in requires_attention.iterrows():
             with st.expander(f"**{row['Element']}** - Recognition: {row['Recognition']:.0%} | Investment: €{row['Total Investment']:,.0f}"):
-                st.markdown("**Why this Some elements show X pattern:**")
+                st.markdown("**Why this requires attention:**")
                 st.write(f"• **Low recognition:** {row['Recognition']:.0%} despite €{row['Total Investment']:,.0f} investment (above median)")
                 st.write(f"• **Usage:** {row['Overall Usage']:.0%} of campaigns")
                 st.write(f"• **Uniqueness:** {row['Uniqueness']:.0%}")
@@ -1983,7 +1983,7 @@ with tab4:
                 st.write("3. **Ineffective deployment:** Placement, creative execution, or context may need optimization")
                 st.write("4. **Low visibility:** May be used but not prominently featured in creative")
 
-                st.markdown("**Moderate_Performance action:**")
+                st.markdown("**Recommended action:**")
                 if row['Uniqueness'] < 0.20:
                     st.write("⚠️ Consider redesigning for greater Škoda distinctiveness OR deprioritize in favor of higher-uniqueness assets")
                 else:
@@ -1996,8 +1996,8 @@ with tab4:
         for idx, row in must_use.iterrows():
             st.success(f"✓ {row['Element']}")
 
-        st.markdown("#### Moderate_Performance")
-        for idx, row in Moderate_Performance.head(5).iterrows():
+        st.markdown("#### Recommended")
+        for idx, row in recommended.head(5).iterrows():
             st.info(f"⭐ {row['Element']}")
 
         st.markdown("#### Review Needed")
@@ -2011,8 +2011,8 @@ with tab4:
         guidelines_text += "## MUST-USE Assets (Non-Negotiable)\n"
         for idx, row in must_use.iterrows():
             guidelines_text += f"- {row['Element']}: {row['Recognition']:.0%} recognition\n"
-        guidelines_text += "\n## Moderate_Performance Assets\n"
-        for idx, row in Moderate_Performance.iterrows():
+        guidelines_text += "\n## RECOMMENDED Assets\n"
+        for idx, row in recommended.iterrows():
             guidelines_text += f"- {row['Element']}: {row['Recognition']:.0%} recognition, {row['Uniqueness']:.0%} uniqueness\n"
 
         st.download_button(
@@ -2942,7 +2942,7 @@ with tab8:
     
     1. **Elevate the Symbol** - At 48% recognition vs 20% average, the logo is the critical brand carrier. Make it prominent in all communications.
     
-    2. **Create Combinations** - Since single elements drive only 10% recognition, ensure multiple elements appear together. Moderate_Performance minimum: 3 elements per touchpoint.
+    2. **Create Combinations** - Since single elements drive only 10% recognition, ensure multiple elements appear together. Recommended minimum: 3 elements per touchpoint.
     
     3. **Address the 56% Gap** - More than half never connect elements to Škoda. This requires:
        - Bolder, more distinctive asset design
@@ -2987,3 +2987,4 @@ st.markdown("""
 <p><b>Škoda Brand Intelligence Dashboard</b> | Powered by Saffron</p>
 </div>
 """, unsafe_allow_html=True)
+}
