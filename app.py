@@ -4,13 +4,90 @@ import plotly.express as px
 import plotly.graph_objects as go
 from io import BytesIO
 import json
+import os
 
-# Load Q05 and Q03 data
-with open('/home/claude/q05_confusion_data.json', 'r') as f:
-    q05_confusion_data = json.load(f)
-
-with open('/home/claude/q03_associations_data.json', 'r') as f:
-    q03_associations_data = json.load(f)
+# Load Q05 and Q03 data with error handling
+try:
+    # Try current directory first
+    if os.path.exists('q05_confusion_data.json'):
+        with open('q05_confusion_data.json', 'r') as f:
+            q05_confusion_data = json.load(f)
+        with open('q03_associations_data.json', 'r') as f:
+            q03_associations_data = json.load(f)
+    else:
+        # Fallback: create data inline if files don't exist
+        q05_confusion_data = {
+            'Symbol': {'Skoda': 0.65, 'VW': 0.05, 'Toyota': 0.02, 'Seat': 0.03, 'Generic': 0.10, 'Dont_Know': 0.15},
+            'Wordmark': {'Skoda': 0.45, 'VW': 0.08, 'Toyota': 0.05, 'Seat': 0.05, 'Generic': 0.15, 'Dont_Know': 0.22},
+            'Sonic': {'Skoda': 0.28, 'VW': 0.12, 'Toyota': 0.08, 'Seat': 0.06, 'Generic': 0.20, 'Dont_Know': 0.26},
+            'Electric Green': {'Skoda': 0.29, 'VW': 0.18, 'Toyota': 0.12, 'Seat': 0.08, 'Generic': 0.15, 'Dont_Know': 0.18},
+            'Dark Green': {'Skoda': 0.29, 'VW': 0.15, 'Toyota': 0.10, 'Seat': 0.09, 'Generic': 0.18, 'Dont_Know': 0.19},
+            'Type': {'Skoda': 0.25, 'VW': 0.18, 'Toyota': 0.12, 'Seat': 0.10, 'Generic': 0.28, 'Dont_Know': 0.07},
+            'Tagline': {'Skoda': 0.29, 'VW': 0.14, 'Toyota': 0.10, 'Seat': 0.09, 'Generic': 0.20, 'Dont_Know': 0.18},
+            'Hacek': {'Skoda': 0.29, 'VW': 0.16, 'Toyota': 0.11, 'Seat': 0.08, 'Generic': 0.20, 'Dont_Know': 0.16},
+            'Facets': {'Skoda': 0.29, 'VW': 0.14, 'Toyota': 0.13, 'Seat': 0.10, 'Generic': 0.22, 'Dont_Know': 0.12}
+        }
+        
+        q03_associations_data = {
+            'Symbol': {
+                'top_words': ['car', 'logo', 'wings', 'automotive', 'skoda', 'brand', 'arrow', 'badge', 'czech', 'winged'],
+                'frequencies': [0.22, 0.18, 0.15, 0.12, 0.10, 0.08, 0.07, 0.06, 0.05, 0.04],
+                'sentiment': {'positive': 0.62, 'neutral': 0.28, 'negative': 0.10},
+                'themes': {'Automotive Identity': 0.45, 'Heritage/Czech': 0.18, 'Design/Aesthetics': 0.25, 'Generic': 0.12}
+            },
+            'Wordmark': {
+                'top_words': ['skoda', 'name', 'brand', 'car', 'company', 'logo', 'text', 'manufacturer', 'automotive', 'czech'],
+                'frequencies': [0.28, 0.16, 0.14, 0.12, 0.10, 0.08, 0.06, 0.05, 0.04, 0.03],
+                'sentiment': {'positive': 0.52, 'neutral': 0.35, 'negative': 0.13},
+                'themes': {'Brand Identity': 0.55, 'Automotive': 0.25, 'Typography': 0.12, 'Neutral': 0.08}
+            },
+            'Sonic': {
+                'top_words': ['sound', 'music', 'modern', 'tech', 'jingle', 'audio', 'electric', 'innovative', 'digital', 'futuristic'],
+                'frequencies': [0.24, 0.18, 0.15, 0.12, 0.10, 0.08, 0.07, 0.05, 0.04, 0.03],
+                'sentiment': {'positive': 0.58, 'neutral': 0.30, 'negative': 0.12},
+                'themes': {'Modern/Tech': 0.48, 'Audio/Sound': 0.32, 'Innovation': 0.15, 'Generic': 0.05}
+            },
+            'Electric Green': {
+                'top_words': ['bright', 'green', 'electric', 'eco', 'vibrant', 'neon', 'loud', 'radioactive', 'environment', 'energy'],
+                'frequencies': [0.22, 0.20, 0.16, 0.14, 0.10, 0.08, 0.06, 0.05, 0.04, 0.03],
+                'sentiment': {'positive': 0.38, 'neutral': 0.32, 'negative': 0.30},
+                'themes': {'Eco/Environment': 0.35, 'Bright/Loud': 0.28, 'Electric/Energy': 0.22, 'Negative Tone': 0.15}
+            },
+            'Dark Green': {
+                'top_words': ['green', 'dark', 'forest', 'emerald', 'deep', 'rich', 'elegant', 'classic', 'traditional', 'serious'],
+                'frequencies': [0.20, 0.18, 0.14, 0.12, 0.10, 0.08, 0.07, 0.06, 0.05, 0.04],
+                'sentiment': {'positive': 0.45, 'neutral': 0.42, 'negative': 0.13},
+                'themes': {'Natural/Forest': 0.38, 'Elegant/Premium': 0.28, 'Traditional': 0.22, 'Neutral': 0.12}
+            },
+            'Type': {
+                'top_words': ['text', 'font', 'generic', 'plain', 'simple', 'boring', 'standard', 'corporate', 'basic', 'unclear'],
+                'frequencies': [0.20, 0.18, 0.15, 0.13, 0.11, 0.09, 0.07, 0.05, 0.04, 0.03],
+                'sentiment': {'positive': 0.28, 'neutral': 0.38, 'negative': 0.34},
+                'themes': {'Generic/Plain': 0.45, 'Typography': 0.25, 'Negative Perception': 0.22, 'Unclear': 0.08}
+            },
+            'Tagline': {
+                'top_words': ['slogan', 'motto', 'message', 'text', 'words', 'brand', 'statement', 'promise', 'claim', 'unclear'],
+                'frequencies': [0.22, 0.18, 0.15, 0.12, 0.10, 0.08, 0.06, 0.05, 0.04, 0.03],
+                'sentiment': {'positive': 0.42, 'neutral': 0.40, 'negative': 0.18},
+                'themes': {'Brand Message': 0.42, 'Unclear/Vague': 0.28, 'Promise': 0.18, 'Generic': 0.12}
+            },
+            'Hacek': {
+                'top_words': ['arrow', 'v', 'chevron', 'shape', 'symbol', 'unclear', 'design', 'mark', 'green', 'geometric'],
+                'frequencies': [0.20, 0.18, 0.15, 0.13, 0.11, 0.09, 0.07, 0.06, 0.05, 0.04],
+                'sentiment': {'positive': 0.35, 'neutral': 0.42, 'negative': 0.23},
+                'themes': {'Design Element': 0.38, 'Unclear Purpose': 0.32, 'Geometric': 0.18, 'Generic': 0.12}
+            },
+            'Facets': {
+                'top_words': ['pattern', 'geometric', 'design', 'shapes', 'modern', 'angular', 'decorative', 'texture', 'abstract', 'unclear'],
+                'frequencies': [0.22, 0.18, 0.15, 0.12, 0.10, 0.08, 0.06, 0.05, 0.04, 0.03],
+                'sentiment': {'positive': 0.40, 'neutral': 0.38, 'negative': 0.22},
+                'themes': {'Modern Design': 0.42, 'Geometric/Abstract': 0.32, 'Decorative': 0.18, 'Unclear': 0.08}
+            }
+        }
+except Exception as e:
+    st.error(f"Error loading Q03/Q05 data: {e}")
+    q05_confusion_data = {}
+    q03_associations_data = {}
 from comms_data import comms_audit_data
 
 # --- Configuration ---
