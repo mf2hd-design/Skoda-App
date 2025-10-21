@@ -396,20 +396,31 @@ with tab1:
         st.caption(status)
     
     with col2:
-        st.metric("Avg Recognition", f"{avg_recognition:.1%}", f"{avg_recognition - 0.30:.1%}",
+        st.metric("Avg Recognition", f"{avg_recognition:.1%}",
                   help="Target: 30%. Current portfolio average across 9 elements")
-        st.caption("Target: 30%")
+        gap_to_target = avg_recognition - 0.30
+        if gap_to_target < 0:
+            st.caption(f"🔴 {abs(gap_to_target):.1%} below target")
+        else:
+            st.caption(f"🟢 {gap_to_target:.1%} above target")
     
     with col3:
-        st.metric("Recognition Gap", f"{recognition_gap:.1%}", f"{recognition_gap - 0.40:.1%}",
-                  delta_color="inverse",
+        st.metric("Recognition Gap", f"{recognition_gap:.1%}",
                   help="% who never recognized elements as Škoda. Target: <40%")
-        st.caption("🔴 Critical")
+        gap_to_target = recognition_gap - 0.40
+        if gap_to_target > 0:
+            st.caption(f"🔴 {gap_to_target:.1%} above target")
+        else:
+            st.caption(f"🟢 On target")
     
     with col4:
-        st.metric("Portfolio ROI", f"{portfolio_roi:.1f}", f"{portfolio_roi - 20:.1f}",
+        st.metric("Portfolio ROI", f"{portfolio_roi:.1f}",
                   help="Average recognition points per €1M spent. Target: 20")
-        st.caption("Target: 20")
+        gap_to_target = portfolio_roi - 20
+        if gap_to_target < 0:
+            st.caption(f"🔴 {abs(gap_to_target):.1f} below target")
+        else:
+            st.caption(f"🟢 {gap_to_target:.1f} above target")
     
     with col5:
         st.metric("Elements Above Target", f"{elements_above_threshold}/9",
