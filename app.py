@@ -16,17 +16,17 @@ try:
             q03_associations_data = json.load(f)
     else:
         # Fallback: create data inline if files don't exist
-        q05_confusion_data = {
-            'Symbol': {'Skoda': 0.65, 'VW': 0.05, 'Toyota': 0.02, 'Seat': 0.03, 'Generic': 0.10, 'Dont_Know': 0.15},
-            'Wordmark': {'Skoda': 0.45, 'VW': 0.08, 'Toyota': 0.05, 'Seat': 0.05, 'Generic': 0.15, 'Dont_Know': 0.22},
-            'Sonic': {'Skoda': 0.28, 'VW': 0.12, 'Toyota': 0.08, 'Seat': 0.06, 'Generic': 0.20, 'Dont_Know': 0.26},
-            'Electric Green': {'Skoda': 0.29, 'VW': 0.18, 'Toyota': 0.12, 'Seat': 0.08, 'Generic': 0.15, 'Dont_Know': 0.18},
-            'Dark Green': {'Skoda': 0.29, 'VW': 0.15, 'Toyota': 0.10, 'Seat': 0.09, 'Generic': 0.18, 'Dont_Know': 0.19},
-            'Type': {'Skoda': 0.25, 'VW': 0.18, 'Toyota': 0.12, 'Seat': 0.10, 'Generic': 0.28, 'Dont_Know': 0.07},
-            'Tagline': {'Skoda': 0.29, 'VW': 0.14, 'Toyota': 0.10, 'Seat': 0.09, 'Generic': 0.20, 'Dont_Know': 0.18},
-            'Hacek': {'Skoda': 0.29, 'VW': 0.16, 'Toyota': 0.11, 'Seat': 0.08, 'Generic': 0.20, 'Dont_Know': 0.16},
+        q05_confusion_data = {{
+            'Symbol': {{'Skoda': 0.65, 'VW': 0.05, 'Toyota': 0.02, 'Seat': 0.03, 'Generic': 0.10, 'Dont_Know': 0.15}},
+            'Wordmark': {{'Skoda': 0.45, 'VW': 0.08, 'Toyota': 0.05, 'Seat': 0.05, 'Generic': 0.15, 'Dont_Know': 0.22}},
+            'Sonic': {{'Skoda': 0.28, 'VW': 0.12, 'Toyota': 0.08, 'Seat': 0.06, 'Generic': 0.20, 'Dont_Know': 0.26}},
+            'Electric Green': {{'Skoda': 0.29, 'VW': 0.18, 'Toyota': 0.12, 'Seat': 0.08, 'Generic': 0.15, 'Dont_Know': 0.18}},
+            'Dark Green': {{'Skoda': 0.29, 'VW': 0.15, 'Toyota': 0.10, 'Seat': 0.09, 'Generic': 0.18, 'Dont_Know': 0.19}},
+            'Type': {{'Skoda': 0.25, 'VW': 0.18, 'Toyota': 0.12, 'Seat': 0.10, 'Generic': 0.28, 'Dont_Know': 0.07}},
+            'Tagline': {{'Skoda': 0.29, 'VW': 0.14, 'Toyota': 0.10, 'Seat': 0.09, 'Generic': 0.20, 'Dont_Know': 0.18}},
+            'Hacek': {{'Skoda': 0.29, 'VW': 0.16, 'Toyota': 0.11, 'Seat': 0.08, 'Generic': 0.20, 'Dont_Know': 0.16}},
             'Facets': {'Skoda': 0.29, 'VW': 0.14, 'Toyota': 0.13, 'Seat': 0.10, 'Generic': 0.22, 'Dont_Know': 0.12}
-        }
+        }}
         
         q03_associations_data = {
             'Symbol': {
