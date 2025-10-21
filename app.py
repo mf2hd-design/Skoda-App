@@ -1677,9 +1677,15 @@ with tab3:
 
         col1, col2 = st.columns(2)
         with col1:
-            st.success(f"**Most Consistent:** {most_consistent} (σ={consistency_scores[most_consistent]:.3f})")
+            if pd.notna(most_consistent):
+                st.success(f"**Most Consistent:** {most_consistent} (σ={consistency_scores[most_consistent]:.3f})")
+            else:
+                st.info("Consistency data not available")
         with col2:
-            st.warning(f"**Least Consistent:** {least_consistent} (σ={consistency_scores[least_consistent]:.3f})")
+            if pd.notna(least_consistent):
+                st.warning(f"**Least Consistent:** {least_consistent} (σ={consistency_scores[least_consistent]:.3f})")
+            else:
+                st.info("Consistency data not available")
 
     st.markdown("---")
 
@@ -2507,19 +2513,47 @@ with tab6:
                 # Get adjective data for this element
                 element_adj_data = adjective_data[element]
 
+                # Prepare data for diverging bars
+                # First collect all the data
+                bar_data = []
+                for pos_adj, neg_adj in adjective_pairs:
+                    adj_info = element_adj_data[pos_adj.lower()]
+                    bar_data.append({
+                        'label': f"{neg_adj} ← → {pos_adj.title()}",
+                        'positive': adj_info['positive_net'],
+                        'negative': -adj_info['negative_net'],
+                        'pos_adj': pos_adj,
+                        'neg_adj': neg_adj
+                    })
+
+                # Sort by positive percentage (descending) - highest at top
+                bar_data.sort(key=lambda x: x['positive'], reverse=True)
+
+                # Show key insights ABOVE the chart
+                # Find strongest positive and strongest negative from sorted bar_data
+                pos_strengths = [(item['pos_adj'].title(), item['positive']) for item in bar_data]
+                neg_strengths = [(item['neg_adj'], abs(item['negative'])) for item in bar_data]
+
+                # Sort by strength (they're already sorted by positive, but neg might differ)
+                pos_strengths.sort(key=lambda x: x[1], reverse=True)
+                neg_strengths.sort(key=lambda x: x[1], reverse=True)
+
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.success(f"**Top Positive:** {pos_strengths[0][0]} ({pos_strengths[0][1]:.0%})")
+                with col2:
+                    if neg_strengths[0][1] > 0.15:  # Only show if significant
+                        st.warning(f"**Top Negative:** {neg_strengths[0][0]} ({neg_strengths[0][1]:.0%})")
+                    else:
+                        st.info("No significant negative associations")
+
                 # Create figure for this element
                 fig_diverging = go.Figure()
 
-                # Prepare data for diverging bars
-                y_labels = []
-                positive_values = []
-                negative_values = []
-
-                for pos_adj, neg_adj in adjective_pairs:
-                    adj_info = element_adj_data[pos_adj.lower()]
-                    y_labels.append(f"{pos_adj.title()} ← → {neg_adj}")
-                    positive_values.append(adj_info['positive_net'])
-                    negative_values.append(-adj_info['negative_net'])  # Negative for left side
+                # Extract sorted values for plotting
+                y_labels = [item['label'] for item in bar_data]
+                positive_values = [item['positive'] for item in bar_data]
+                negative_values = [item['negative'] for item in bar_data]
 
                 # Add negative bars (left side, red)
                 fig_diverging.add_trace(go.Bar(
@@ -2578,26 +2612,10 @@ with tab6:
 
                 st.plotly_chart(fig_diverging, use_container_width=True)
 
-                # Show key insights
-                # Find strongest positive and strongest negative
-                pos_strengths = [(adjective_pairs[i][0].title(), positive_values[i]) for i in range(len(adjective_pairs))]
-                neg_strengths = [(adjective_pairs[i][1], abs(negative_values[i])) for i in range(len(adjective_pairs))]
-
-                pos_strengths.sort(key=lambda x: x[1], reverse=True)
-                neg_strengths.sort(key=lambda x: x[1], reverse=True)
-
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.success(f"**Top Positive:** {pos_strengths[0][0]} ({pos_strengths[0][1]:.0%})")
-                with col2:
-                    if neg_strengths[0][1] > 0.15:  # Only show if significant
-                        st.warning(f"**Top Negative:** {neg_strengths[0][0]} ({neg_strengths[0][1]:.0%})")
-                    else:
-                        st.info("No significant negative associations")
-
                 st.markdown("---")
 
-            st.info("**How to read this chart:** Green bars show % who chose positive adjectives, red bars show % who chose negative adjectives. " +
+            st.info("**How to read this chart:** Green bars (right) show % who chose positive adjectives (Bold, Stylish, Modern, etc.). " +
+                    "Red bars (left) show % who chose negative adjectives (Cautious, Plain, Old-Fashioned, etc.). " +
                     "Longer bars indicate stronger associations. The center represents neutral responses.")
 
     st.markdown("---")
