@@ -371,13 +371,20 @@ with tab1:
     elements_above_threshold = len(master_df[master_df['Recognition'] >= 0.30])
     elements_below_threshold = len(master_df[master_df['Recognition'] < 0.30])
     
-    # Brand Health Score (weighted average)
+    # Brand Health Score (weighted average, normalized to 0-100)
+    # All inputs normalized to 0-1 scale, then weighted and converted to 0-100
+    recognition_score = avg_recognition  # Already 0-1
+    uniqueness_score = avg_uniqueness    # Already 0-1
+    sentiment_score = (avg_net_sentiment + 0.15) / 0.30  # Normalize from [-0.15, +0.15] to [0, 1]
+    sentiment_score = max(0, min(1, sentiment_score))  # Clamp to [0, 1]
+    roi_score = min(portfolio_roi / 25, 1)  # Normalize: 25+ ROI = perfect score
+    
     brand_health_score = (
-        (avg_recognition * 40) +  # Recognition weighted 40%
-        (avg_uniqueness * 30) +   # Uniqueness weighted 30%
-        ((avg_net_sentiment + 0.1) * 0.5 * 20) +  # Sentiment weighted 20% (normalized)
-        (min(portfolio_roi / 20, 1) * 10)  # ROI weighted 10%
-    ) * 100
+        (recognition_score * 0.40) +  # Recognition weighted 40%
+        (uniqueness_score * 0.30) +   # Uniqueness weighted 30%
+        (sentiment_score * 0.20) +    # Sentiment weighted 20%
+        (roi_score * 0.10)            # ROI weighted 10%
+    ) * 100  # Convert to 0-100 scale
     
     # Scorecard display
     col1, col2, col3, col4, col5 = st.columns(5)
