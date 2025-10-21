@@ -344,88 +344,6 @@ with tab1:
 
 
     st.markdown("---")
-    
-    # Country Performance Scorecard
-    st.markdown("#### 🌍 Market Performance Scorecard")
-    st.caption("Recognition performance across UK, Spain, Germany, and Poland")
-
-    # Calculate country-level metrics
-    country_performance = []
-    for country in ['Poland', 'Spain', 'UK', 'Germany']:
-        # Calculate average recognition across all elements for this country
-        country_recognitions = [recognition_by_country[element][country] for element in brand_elements]
-        avg_recognition = sum(country_recognitions) / len(country_recognitions)
-        
-        # Find top element for this country
-        top_element = max(brand_elements, key=lambda e: recognition_by_country[e][country])
-        top_element_recognition = recognition_by_country[top_element][country]
-        
-        # Determine status
-        if avg_recognition >= 0.215:
-            status = "✅ Best"
-            status_color = "#4CAF50"
-        elif avg_recognition >= 0.195:
-            status = "👍 Good"
-            status_color = "#66BB6A"
-        elif avg_recognition >= 0.185:
-            status = "⚖️ Average"
-            status_color = "#FFC107"
-        else:
-            status = "⚠️ Weak"
-            status_color = "#FF9800"
-        
-        country_performance.append({
-            'Country': country,
-            'Avg Recognition': avg_recognition,
-            'Top Element': f"{top_element} ({top_element_recognition:.0%})",
-            'Status': status,
-            'Status_Color': status_color
-        })
-    
-    # Create dataframe
-    country_df = pd.DataFrame(country_performance)
-    
-    # Display as formatted table
-    col1, col2 = st.columns([3, 1])
-    
-    with col1:
-        # Custom HTML table with colors
-        html_table = "<table style='width:100%; border-collapse: collapse;'>"
-        html_table += "<tr style='background-color: #f0f0f0; font-weight: bold;'>"
-        html_table += "<th style='padding: 12px; text-align: left; border-bottom: 2px solid #ddd;'>Country</th>"
-        html_table += "<th style='padding: 12px; text-align: center; border-bottom: 2px solid #ddd;'>Avg Recognition</th>"
-        html_table += "<th style='padding: 12px; text-align: left; border-bottom: 2px solid #ddd;'>Top Element</th>"
-        html_table += "<th style='padding: 12px; text-align: center; border-bottom: 2px solid #ddd;'>Status</th>"
-        html_table += "</tr>"
-        
-        for _, row in country_df.iterrows():
-            html_table += "<tr style='border-bottom: 1px solid #eee;'>"
-            html_table += f"<td style='padding: 12px;'><b>{row['Country']}</b></td>"
-            html_table += f"<td style='padding: 12px; text-align: center;'>{row['Avg Recognition']:.1%}</td>"
-            html_table += f"<td style='padding: 12px;'>{row['Top Element']}</td>"
-            html_table += f"<td style='padding: 12px; text-align: center;'><span style='background-color: {row['Status_Color']}; color: white; padding: 4px 12px; border-radius: 12px;'>{row['Status']}</span></td>"
-            html_table += "</tr>"
-        
-        html_table += "</table>"
-        st.markdown(html_table, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("#### Key Insights")
-        
-        best_country = country_df.iloc[0]
-        worst_country = country_df.iloc[-1]
-        
-        st.metric("Best Market", best_country['Country'], f"{best_country['Avg Recognition']:.1%}")
-        st.metric("Weakest Market", worst_country['Country'], f"{worst_country['Avg Recognition']:.1%}")
-        
-        gap = best_country['Avg Recognition'] - worst_country['Avg Recognition']
-        st.metric("Market Gap", f"{gap:.1%}", "Poland vs Germany")
-        
-        st.caption("""
-        **Symbol dominates** in all markets, but Poland shows strongest overall performance (+6% vs Germany).
-        """)
-
-    st.markdown("---")
 
     # Combined Analysis Table (matching Excel structure)
     st.markdown("#### Combined Analysis Table")
@@ -1112,87 +1030,89 @@ with tab3:
 
     # Element Combinations Analysis
     st.markdown("### 🔗 Element Combinations: What Works Together?")
-    st.caption("Analyzing which brand elements appear together and their combined impact")
+    st.caption("Analyzing recognition levels when brand elements appear together")
 
-    # Calculate co-occurrence matrix
-    st.markdown("#### Co-Occurrence Matrix")
-    st.info("Shows how often element pairs appear together in the same ad. Higher percentages indicate elements that are frequently combined.")
+    # Calculate recognition when elements co-occur
+    st.markdown("#### Recognition When Elements Appear Together")
+    st.info("Shows the average recognition level when element pairs appear together in ads. Green indicates high recognition, red indicates low recognition.")
 
-    # Create co-occurrence matrix
-    co_occurrence = pd.DataFrame(0, index=brand_elements, columns=brand_elements, dtype=float)
+    # Create recognition matrix for co-occurring elements
+    recognition_matrix = pd.DataFrame(0.0, index=brand_elements, columns=brand_elements, dtype=float)
     
     for element1 in brand_elements:
         for element2 in brand_elements:
             if element1 != element2:
-                # Count ads where both elements appear
-                both_present = audit_df[audit_df[element1] & audit_df[element2]].shape[0]
-                element1_present = audit_df[audit_df[element1]].shape[0]
+                # Find ads where both elements appear
+                both_present = audit_df[audit_df[element1] & audit_df[element2]]
                 
-                # Calculate percentage: of ads with element1, what % also have element2
-                if element1_present > 0:
-                    co_occurrence.loc[element1, element2] = both_present / element1_present
+                if len(both_present) > 0:
+                    # Calculate average recognition across all countries when both appear
+                    rec1 = recognition_by_country[element1]
+                    rec2 = recognition_by_country[element2]
+                    
+                    # Average recognition of both elements
+                    avg_recognition = (sum(rec1.values()) + sum(rec2.values())) / (2 * len(rec1))
+                    recognition_matrix.loc[element1, element2] = avg_recognition
 
-    # Display as heatmap
-    fig_cooccur = px.imshow(
-        co_occurrence,
-        labels=dict(x="Also appears with", y="When using", color="Co-occurrence %"),
-        x=co_occurrence.columns,
-        y=co_occurrence.index,
-        color_continuous_scale='Blues',
+    # Display as heatmap with red-yellow-green scale
+    fig_recognition = px.imshow(
+        recognition_matrix,
+        labels=dict(x="Combined with", y="Element", color="Recognition Level"),
+        x=recognition_matrix.columns,
+        y=recognition_matrix.index,
+        color_continuous_scale='RdYlGn',  # Red to Yellow to Green
         text_auto='.0%',
         aspect="auto",
-        title="Element Co-Occurrence Matrix"
+        title="Recognition Heatmap: Element Combinations"
     )
-    fig_cooccur.update_layout(height=600)
-    st.plotly_chart(fig_cooccur, use_container_width=True)
+    fig_recognition.update_layout(height=600)
+    st.plotly_chart(fig_recognition, use_container_width=True)
 
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown("#### 🤝 Strongest Combinations")
+        st.markdown("#### 🏆 Highest Recognition Combinations")
         
-        # Find top combinations
+        # Find top combinations by recognition
         combinations = []
         for element1 in brand_elements:
             for element2 in brand_elements:
                 if element1 < element2:  # Avoid duplicates
-                    cooccur_rate = min(co_occurrence.loc[element1, element2], co_occurrence.loc[element2, element1])
-                    if cooccur_rate > 0:
-                        # Get combined recognition boost
-                        rec1 = recognition_by_country[element1]
-                        rec2 = recognition_by_country[element2]
-                        avg_combined_rec = (sum(rec1.values()) + sum(rec2.values())) / (2 * len(rec1))
+                    combined_recognition = recognition_matrix.loc[element1, element2]
+                    if combined_recognition > 0:
+                        # Count how often they appear together
+                        both_present = audit_df[audit_df[element1] & audit_df[element2]].shape[0]
                         
                         combinations.append({
                             'Pair': f"{element1} + {element2}",
-                            'Co-occurrence': cooccur_rate,
-                            'Avg Recognition': avg_combined_rec
+                            'Recognition': combined_recognition,
+                            'Appearances': both_present
                         })
         
-        combinations_df = pd.DataFrame(combinations).sort_values('Co-occurrence', ascending=False).head(5)
+        combinations_df = pd.DataFrame(combinations).sort_values('Recognition', ascending=False).head(5)
         
         for _, row in combinations_df.iterrows():
             st.success(f"**{row['Pair']}**")
-            st.write(f"   Co-occur: {row['Co-occurrence']:.0%} | Combined Recognition: {row['Avg Recognition']:.0%}")
+            st.write(f"   Recognition: {row['Recognition']:.0%} | Appears together: {row['Appearances']} ads")
 
     with col2:
         st.markdown("#### 💡 Strategic Recommendations")
         
-        # Find Symbol combinations
-        symbol_combos = co_occurrence.loc['Symbol'].sort_values(ascending=False)
-        top_symbol_partner = symbol_combos.index[0]
+        # Find Symbol's best recognition partners
+        symbol_recognition = recognition_matrix.loc['Symbol'].sort_values(ascending=False)
+        top_symbol_partner = symbol_recognition.index[0]
         
         st.markdown(f"""
         **Key Findings:**
         
-        1. **Symbol as anchor:** Symbol appears with {top_symbol_partner} {symbol_combos.iloc[0]:.0%} of the time
+        1. **Symbol combinations perform best:** Highest recognition when Symbol pairs with {top_symbol_partner} ({symbol_recognition.iloc[0]:.0%})
         
         2. **Minimum combinations:** Use at least 3 elements together (recognition builds from 10% with 1 element to 40% with 6)
         
-        3. **Recommended pairings:**
-           - Symbol + Wordmark (strongest duo)
-           - Symbol + Color elements
-           - Symbol + Sonic (for video)
+        3. **Top performing pairings:**
+           - Look for green cells in the heatmap
+           - Symbol-based combinations consistently score higher
+           - Avoid red combinations (low recognition)
         
         4. **Avoid:** Single element use (only 10% recognition)
         """)
@@ -2063,41 +1983,41 @@ with tab8:
     col1, col2 = st.columns([2, 1])
 
     with col1:
-        # Create waterfall-style visualization
+        # Create waterfall-style visualization - FLIPPED ORDER (1 element at top)
         journey_data = pd.DataFrame([
-            {'Stage': 'After 1 element', 'Recognition': recognition_journey['after_1_element'], 'Label': '10.3%'},
-            {'Stage': 'After 2 elements', 'Recognition': recognition_journey['after_2_elements'], 'Label': '13.3%'},
-            {'Stage': 'After 3 elements', 'Recognition': recognition_journey['after_3_elements'], 'Label': '19.7%'},
-            {'Stage': 'After 4 elements', 'Recognition': recognition_journey['after_4_elements'], 'Label': '24.7%'},
-            {'Stage': 'After 5 elements', 'Recognition': recognition_journey['after_5_elements'], 'Label': '31.3%'},
-            {'Stage': 'After all 6 elements', 'Recognition': recognition_journey['after_all_6_elements'], 'Label': '40.1%'},
             {'Stage': 'Never recognized', 'Recognition': recognition_journey['never_recognized'], 'Label': '56.3%'},
+            {'Stage': 'After all 6 elements', 'Recognition': recognition_journey['after_all_6_elements'], 'Label': '40.1%'},
+            {'Stage': 'After 5 elements', 'Recognition': recognition_journey['after_5_elements'], 'Label': '31.3%'},
+            {'Stage': 'After 4 elements', 'Recognition': recognition_journey['after_4_elements'], 'Label': '24.7%'},
+            {'Stage': 'After 3 elements', 'Recognition': recognition_journey['after_3_elements'], 'Label': '19.7%'},
+            {'Stage': 'After 2 elements', 'Recognition': recognition_journey['after_2_elements'], 'Label': '13.3%'},
+            {'Stage': 'After 1 element', 'Recognition': recognition_journey['after_1_element'], 'Label': '10.3%'},
         ])
 
         fig_journey = go.Figure()
 
-        # Recognition builders (green)
+        # Never recognized (red) - now at top
         fig_journey.add_trace(go.Bar(
-            x=journey_data['Recognition'][:6],
-            y=journey_data['Stage'][:6],
-            orientation='h',
-            marker_color='#4CAF50',
-            text=journey_data['Label'][:6],
-            textposition='outside',
-            name='Recognized',
-            hovertemplate='<b>%{y}</b><br>%{x:.1%} recognized Škoda<extra></extra>'
-        ))
-
-        # Never recognized (red)
-        fig_journey.add_trace(go.Bar(
-            x=[journey_data['Recognition'].iloc[6]],
-            y=[journey_data['Stage'].iloc[6]],
+            x=[journey_data['Recognition'].iloc[0]],
+            y=[journey_data['Stage'].iloc[0]],
             orientation='h',
             marker_color='#F44336',
-            text=[journey_data['Label'].iloc[6]],
+            text=[journey_data['Label'].iloc[0]],
             textposition='outside',
             name='Never Recognized',
             hovertemplate='<b>%{y}</b><br>%{x:.1%} never identified Škoda<extra></extra>'
+        ))
+
+        # Recognition builders (green) - now below
+        fig_journey.add_trace(go.Bar(
+            x=journey_data['Recognition'][1:],
+            y=journey_data['Stage'][1:],
+            orientation='h',
+            marker_color='#4CAF50',
+            text=journey_data['Label'][1:],
+            textposition='outside',
+            name='Recognized',
+            hovertemplate='<b>%{y}</b><br>%{x:.1%} recognized Škoda<extra></extra>'
         ))
 
         fig_journey.update_layout(
