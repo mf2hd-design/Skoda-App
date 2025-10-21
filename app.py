@@ -1711,6 +1711,76 @@ with tab4:
     
     st.caption("Export includes all metrics for offline analysis and workshop preparation")
 
+# ==================== TAB 5: DETAILED ANALYTICS ====================
+with tab5:
+    st.header("📈 Detailed Analytics & Strategic Insights")
+    st.caption("Advanced analytics to identify opportunities and optimize brand asset usage")
+    
+    st.write("")  # Breathing room
+    
+    # Educational context
+    with st.expander("📊 Understanding Portfolio Analysis", expanded=False):
+        st.markdown("""
+        **Purpose of This Section:**
+        
+        This tab provides advanced analytical frameworks for understanding brand asset performance patterns.
+        These matrices help visualize strategic trade-offs and opportunities.
+        
+        **Three Key Frameworks:**
+        
+        1. **BCG Matrix (Recognition vs Investment):** Identifies Stars, Cash Cows, Question Marks, Dogs
+        2. **Brand Equity Matrix (Recognition vs Uniqueness):** Maps Icons, Famous Generics, Hidden Gems, Weak elements
+        3. **Efficiency Matrix (Usage vs ROI):** Reveals Workhorses, Overused, Untapped Potential, Underperformers
+        
+        **How to Use:**
+        - Each matrix reveals different strategic insights
+        - Combine perspectives for comprehensive understanding
+        - Use for workshop discussions, not algorithmic decisions
+        - Consider factors beyond what data shows (brand vision, competitive moves, etc.)
+        
+        **Important Caveat:**
+        Quadrant labels (Stars, Dogs, etc.) are analytical frameworks, not prescriptions. 
+        Strategic decisions require judgment beyond classification.
+        """)
+    
+    st.write("")
+    
+    # Key observations
+    st.info("""
+    ### 🎯 Key Observations from Advanced Analysis
+    
+    **ROI Patterns:**
+    - Sonic delivers best efficiency (low investment, strong recognition)
+    - Symbol provides best overall value (high recognition + high uniqueness)
+    
+    **Investment-Performance Relationship:**
+    - Not all high-investment elements achieve proportional recognition
+    - Some lower-investment elements punch above their weight
+    - Efficiency varies significantly across the portfolio
+    
+    **Portfolio Balance:**
+    - Heavy concentration in certain elements vs light usage of others
+    - Opportunity to optimize investment allocation
+    - Question: Should investment follow performance or build weaker elements?
+    """)
+    
+    st.write("")
+    st.write("")
+
+    # Portfolio Optimization Matrices
+    st.markdown("### 📊 Portfolio Optimization Matrices")
+    st.caption("Strategic analysis frameworks - where patterns emerge")
+
+    # Prepare data for matrices
+    matrix_df = master_df.copy()
+    
+    # Calculate medians for quadrant splits
+    median_recognition = matrix_df['Recognition'].median()
+    median_investment = matrix_df['Total Investment'].median()
+    median_uniqueness = matrix_df['Uniqueness'].median()
+    median_usage = matrix_df['Overall Usage'].median()
+    median_roi = matrix_df['Recognition ROI'].median()
+
     # Matrix 1: Recognition vs Investment (BCG Matrix)
     st.markdown("#### 1️⃣ Recognition vs Investment Matrix")
     st.caption("Strategic positioning: Stars, Cash Cows, Question Marks, Dogs")
@@ -2507,10 +2577,7 @@ with tab4:
         - Shows disconnect in consumer perception
         """)
 
-# ==================== TAB 4: NON-NEGOTIABLES ====================
 
-# --- Footer ---
-st.markdown("---")
 st.markdown("""
 <div style='text-align: center; color: #666; padding: 20px;'>
 <p><b>Škoda Brand Intelligence Dashboard</b> | Powered by Saffron</p>
