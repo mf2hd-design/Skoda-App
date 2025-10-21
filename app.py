@@ -357,169 +357,7 @@ with tab1:
     st.header("Executive Summary")
     st.caption("Combined view replicating Excel 'NEW Calculations ALL' sheet")
 
-    # Element Tier Ranking
-    st.markdown("### 🏆 Brand Asset Tier Ranking")
-    st.caption("Which elements are most iconic? Clear hierarchy for investment and usage decisions.")
-    
-    # Critical insight callout
-    st.error("""
-    ### ⚠️ Critical Finding: 56.3% Recognition Gap
-    **56.3% of respondents NEVER recognized brand elements as Škoda** — even after seeing 6 different assets.
-    
-    This is the primary challenge driving all recommendations below. Building consistency around Tier 1 assets is critical to closing this gap.
-    """)
-    
-    st.markdown("---")
-    
-    # Tier 1: Icons
-    st.markdown("### 🥇 TIER 1: Brand Icons (Must-Use)")
-    st.success("**Always include at minimum one Tier 1 element. Recommended: Use 2-3 together for maximum impact.**")
-    
-    tier1 = master_df[master_df['Recognition'] >= 0.30].sort_values('Recognition', ascending=False)
-    
-    col1, col2, col3 = st.columns(3)
-    
-    for idx, (_, row) in enumerate(tier1.iterrows()):
-        with [col1, col2, col3][idx % 3]:
-            st.markdown(f"#### {row['Element']}")
-            st.metric("Recognition", f"{row['Recognition']:.0%}")
-            st.metric("Uniqueness", f"{row['Uniqueness']:.0%}")
-            st.metric("Net Sentiment", f"{row['Net Sentiment']:+.1%}")
-            st.metric("ROI", f"{row['Recognition ROI']:.1f}")
-            
-            # Why it's Tier 1
-            if row['Recognition'] >= 0.40:
-                st.caption("✅ **Dominant recognition** - primary brand carrier")
-            else:
-                st.caption("✅ **Strong recognition** - proven asset")
-    
-    st.markdown("---")
-    
-    # Tier 2: Supporting Assets
-    st.markdown("### 🥈 TIER 2: Supporting Assets (Strongly Recommended)")
-    st.info("**Use to complement Tier 1 elements. Effective in combination but not strong enough standalone.**")
-    
-    tier2 = master_df[(master_df['Recognition'] >= 0.19) & (master_df['Recognition'] < 0.30)].sort_values('Recognition', ascending=False)
-    
-    if len(tier2) > 0:
-        cols = st.columns(min(len(tier2), 4))
-        for idx, (_, row) in enumerate(tier2.iterrows()):
-            with cols[idx % len(cols)]:
-                st.markdown(f"**{row['Element']}**")
-                st.write(f"Rec: {row['Recognition']:.0%}")
-                st.write(f"Uniq: {row['Uniqueness']:.0%}")
-                st.write(f"Sent: {row['Net Sentiment']:+.1%}")
-                
-                # Recommendation
-                if row['Uniqueness'] >= 0.30:
-                    st.caption("💎 Good uniqueness - build awareness")
-                elif row['Net Sentiment'] > 0:
-                    st.caption("😊 Positive sentiment - safe choice")
-                else:
-                    st.caption("⚠️ Watch sentiment")
-    
-    st.markdown("---")
-    
-    # Tier 3: Needs Work
-    st.markdown("### 🥉 TIER 3: Requires Attention (Optional/Redesign)")
-    st.warning("**Low recognition, negative sentiment, or competitive confusion. Use sparingly or redesign.**")
-    
-    tier3 = master_df[master_df['Recognition'] < 0.19].sort_values('Recognition', ascending=False)
-    
-    if len(tier3) > 0:
-        for _, row in tier3.iterrows():
-            with st.expander(f"⚠️ **{row['Element']}** - {row['Recognition']:.0%} Recognition"):
-                col1, col2 = st.columns(2)
-                
-                with col1:
-                    st.write("**Current Performance:**")
-                    st.write(f"• Recognition: {row['Recognition']:.0%}")
-                    st.write(f"• Uniqueness: {row['Uniqueness']:.0%}")
-                    st.write(f"• Net Sentiment: {row['Net Sentiment']:+.1%}")
-                    st.write(f"• ROI: {row['Recognition ROI']:.1f}")
-                    st.write(f"• Investment: €{row['Total Investment']:,.0f}")
-                
-                with col2:
-                    st.write("**Why Tier 3:**")
-                    issues = []
-                    if row['Recognition'] < 0.20:
-                        issues.append("🔴 Very low recognition")
-                    if row['Uniqueness'] < 0.30:
-                        issues.append("🔴 Low brand attribution")
-                    if row['Net Sentiment'] < -0.05:
-                        issues.append("🔴 Negative sentiment")
-                    if row['Recognition ROI'] < 10:
-                        issues.append("🔴 Poor ROI")
-                    
-                    for issue in issues:
-                        st.write(f"• {issue}")
-                    
-                    st.write("")
-                    st.write("**Recommendation:**")
-                    if row['Net Sentiment'] < -0.05 and row['Uniqueness'] < 0.30:
-                        st.write("⛔ **Consider redesign or retire**")
-                    elif row['Uniqueness'] >= 0.30:
-                        st.write("💡 **Build awareness** - has distinctiveness")
-                    else:
-                        st.write("⚠️ **Use sparingly** - monitor performance")
 
-    st.markdown("---")
-    
-    # Summary table
-    st.markdown("### 📊 Complete Tier Overview")
-    
-    tier_summary = []
-    for _, row in master_df.iterrows():
-        if row['Recognition'] >= 0.30:
-            tier = "🥇 Tier 1"
-            action = "Must Use"
-        elif row['Recognition'] >= 0.19:
-            tier = "🥈 Tier 2"
-            action = "Recommended"
-        else:
-            tier = "🥉 Tier 3"
-            action = "Optional/Redesign"
-        
-        tier_summary.append({
-            'Element': row['Element'],
-            'Tier': tier,
-            'Action': action,
-            'Recognition': row['Recognition'],
-            'Uniqueness': row['Uniqueness'],
-            'Net Sentiment': row['Net Sentiment'],
-            'ROI': row['Recognition ROI']
-        })
-    
-    tier_summary_df = pd.DataFrame(tier_summary).sort_values('Recognition', ascending=False)
-    
-    st.dataframe(tier_summary_df.style.format({
-        'Recognition': '{:.0%}',
-        'Uniqueness': '{:.0%}',
-        'Net Sentiment': '{:+.1%}',
-        'ROI': '{:.1f}'
-    }), use_container_width=True, hide_index=True)
-
-    st.markdown("---")
-
-    # Key Takeaways Box
-    st.success("""
-    ### 🎯 Key Takeaways
-    
-    **Top Performers:**
-    - **Symbol** dominates with 48% recognition and 65% uniqueness - the clear brand leader
-    - **Wordmark** and **Sonic** show strong secondary performance
-    
-    **Critical Challenge:**
-    - 56% of respondents never recognized elements as Škoda (see Recognition Journey tab)
-    - Average recognition is only 20% - significant room for improvement
-    
-    **Strategic Priority:**
-    - Focus on Symbol as the primary brand carrier (2.5x more recognized than other elements)
-    - Use minimum 3 elements together for effective brand recognition
-    - Address negative sentiment in 7 out of 9 brand elements
-    """)
-
-    st.markdown("---")
 
     # Key Headlines
     col1, col2, col3, col4 = st.columns(4)
@@ -611,6 +449,62 @@ with tab1:
             **Opportunity:** This asset punches above its weight - consider increasing investment to amplify results further.
             """)
 
+
+    st.markdown("---")
+
+    # Summary table
+    st.markdown("### 📊 Complete Tier Overview")
+    
+    tier_summary = []
+    for _, row in master_df.iterrows():
+        if row['Recognition'] >= 0.30:
+            tier = "🥇 Tier 1"
+            action = "Must Use"
+        elif row['Recognition'] >= 0.19:
+            tier = "🥈 Tier 2"
+            action = "Recommended"
+        else:
+            tier = "🥉 Tier 3"
+            action = "Optional/Redesign"
+        
+        tier_summary.append({
+            'Element': row['Element'],
+            'Tier': tier,
+            'Action': action,
+            'Recognition': row['Recognition'],
+            'Uniqueness': row['Uniqueness'],
+            'Net Sentiment': row['Net Sentiment'],
+            'ROI': row['Recognition ROI']
+        })
+    
+    tier_summary_df = pd.DataFrame(tier_summary).sort_values('Recognition', ascending=False)
+    
+    st.dataframe(tier_summary_df.style.format({
+        'Recognition': '{:.0%}',
+        'Uniqueness': '{:.0%}',
+        'Net Sentiment': '{:+.1%}',
+        'ROI': '{:.1f}'
+    }), use_container_width=True, hide_index=True)
+
+    st.markdown("---")
+
+    # Key Takeaways Box
+    st.success("""
+    ### 🎯 Key Takeaways
+    
+    **Top Performers:**
+    - **Symbol** dominates with 48% recognition and 65% uniqueness - the clear brand leader
+    - **Wordmark** and **Sonic** show strong secondary performance
+    
+    **Critical Challenge:**
+    - 56% of respondents never recognized elements as Škoda (see Recognition Journey tab)
+    - Average recognition is only 20% - significant room for improvement
+    
+    **Strategic Priority:**
+    - Focus on Symbol as the primary brand carrier (2.5x more recognized than other elements)
+    - Use minimum 3 elements together for effective brand recognition
+    - Address negative sentiment in 7 out of 9 brand elements
+    """)
 
     st.markdown("---")
 
