@@ -344,6 +344,88 @@ with tab1:
 
 
     st.markdown("---")
+    
+    # Country Performance Scorecard
+    st.markdown("#### 🌍 Market Performance Scorecard")
+    st.caption("Recognition performance across UK, Spain, Germany, and Poland")
+
+    # Calculate country-level metrics
+    country_performance = []
+    for country in ['Poland', 'Spain', 'UK', 'Germany']:
+        # Calculate average recognition across all elements for this country
+        country_recognitions = [recognition_by_country[element][country] for element in brand_elements]
+        avg_recognition = sum(country_recognitions) / len(country_recognitions)
+        
+        # Find top element for this country
+        top_element = max(brand_elements, key=lambda e: recognition_by_country[e][country])
+        top_element_recognition = recognition_by_country[top_element][country]
+        
+        # Determine status
+        if avg_recognition >= 0.215:
+            status = "✅ Best"
+            status_color = "#4CAF50"
+        elif avg_recognition >= 0.195:
+            status = "👍 Good"
+            status_color = "#66BB6A"
+        elif avg_recognition >= 0.185:
+            status = "⚖️ Average"
+            status_color = "#FFC107"
+        else:
+            status = "⚠️ Weak"
+            status_color = "#FF9800"
+        
+        country_performance.append({
+            'Country': country,
+            'Avg Recognition': avg_recognition,
+            'Top Element': f"{top_element} ({top_element_recognition:.0%})",
+            'Status': status,
+            'Status_Color': status_color
+        })
+    
+    # Create dataframe
+    country_df = pd.DataFrame(country_performance)
+    
+    # Display as formatted table
+    col1, col2 = st.columns([3, 1])
+    
+    with col1:
+        # Custom HTML table with colors
+        html_table = "<table style='width:100%; border-collapse: collapse;'>"
+        html_table += "<tr style='background-color: #f0f0f0; font-weight: bold;'>"
+        html_table += "<th style='padding: 12px; text-align: left; border-bottom: 2px solid #ddd;'>Country</th>"
+        html_table += "<th style='padding: 12px; text-align: center; border-bottom: 2px solid #ddd;'>Avg Recognition</th>"
+        html_table += "<th style='padding: 12px; text-align: left; border-bottom: 2px solid #ddd;'>Top Element</th>"
+        html_table += "<th style='padding: 12px; text-align: center; border-bottom: 2px solid #ddd;'>Status</th>"
+        html_table += "</tr>"
+        
+        for _, row in country_df.iterrows():
+            html_table += "<tr style='border-bottom: 1px solid #eee;'>"
+            html_table += f"<td style='padding: 12px;'><b>{row['Country']}</b></td>"
+            html_table += f"<td style='padding: 12px; text-align: center;'>{row['Avg Recognition']:.1%}</td>"
+            html_table += f"<td style='padding: 12px;'>{row['Top Element']}</td>"
+            html_table += f"<td style='padding: 12px; text-align: center;'><span style='background-color: {row['Status_Color']}; color: white; padding: 4px 12px; border-radius: 12px;'>{row['Status']}</span></td>"
+            html_table += "</tr>"
+        
+        html_table += "</table>"
+        st.markdown(html_table, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("#### Key Insights")
+        
+        best_country = country_df.iloc[0]
+        worst_country = country_df.iloc[-1]
+        
+        st.metric("Best Market", best_country['Country'], f"{best_country['Avg Recognition']:.1%}")
+        st.metric("Weakest Market", worst_country['Country'], f"{worst_country['Avg Recognition']:.1%}")
+        
+        gap = best_country['Avg Recognition'] - worst_country['Avg Recognition']
+        st.metric("Market Gap", f"{gap:.1%}", "Poland vs Germany")
+        
+        st.caption("""
+        **Symbol dominates** in all markets, but Poland shows strongest overall performance (+6% vs Germany).
+        """)
+
+    st.markdown("---")
 
     # Combined Analysis Table (matching Excel structure)
     st.markdown("#### Combined Analysis Table")
@@ -1026,6 +1108,138 @@ with tab3:
         with col2:
             st.warning(f"**Least Consistent:** {least_consistent} (σ={consistency_scores[least_consistent]:.3f})")
 
+    st.markdown("---")
+
+    # Element Combinations Analysis
+    st.markdown("### 🔗 Element Combinations: What Works Together?")
+    st.caption("Analyzing which brand elements appear together and their combined impact")
+
+    # Calculate co-occurrence matrix
+    st.markdown("#### Co-Occurrence Matrix")
+    st.info("Shows how often element pairs appear together in the same ad. Higher percentages indicate elements that are frequently combined.")
+
+    # Create co-occurrence matrix
+    co_occurrence = pd.DataFrame(0, index=brand_elements, columns=brand_elements, dtype=float)
+    
+    for element1 in brand_elements:
+        for element2 in brand_elements:
+            if element1 != element2:
+                # Count ads where both elements appear
+                both_present = audit_df[audit_df[element1] & audit_df[element2]].shape[0]
+                element1_present = audit_df[audit_df[element1]].shape[0]
+                
+                # Calculate percentage: of ads with element1, what % also have element2
+                if element1_present > 0:
+                    co_occurrence.loc[element1, element2] = both_present / element1_present
+
+    # Display as heatmap
+    fig_cooccur = px.imshow(
+        co_occurrence,
+        labels=dict(x="Also appears with", y="When using", color="Co-occurrence %"),
+        x=co_occurrence.columns,
+        y=co_occurrence.index,
+        color_continuous_scale='Blues',
+        text_auto='.0%',
+        aspect="auto",
+        title="Element Co-Occurrence Matrix"
+    )
+    fig_cooccur.update_layout(height=600)
+    st.plotly_chart(fig_cooccur, use_container_width=True)
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("#### 🤝 Strongest Combinations")
+        
+        # Find top combinations
+        combinations = []
+        for element1 in brand_elements:
+            for element2 in brand_elements:
+                if element1 < element2:  # Avoid duplicates
+                    cooccur_rate = min(co_occurrence.loc[element1, element2], co_occurrence.loc[element2, element1])
+                    if cooccur_rate > 0:
+                        # Get combined recognition boost
+                        rec1 = recognition_by_country[element1]
+                        rec2 = recognition_by_country[element2]
+                        avg_combined_rec = (sum(rec1.values()) + sum(rec2.values())) / (2 * len(rec1))
+                        
+                        combinations.append({
+                            'Pair': f"{element1} + {element2}",
+                            'Co-occurrence': cooccur_rate,
+                            'Avg Recognition': avg_combined_rec
+                        })
+        
+        combinations_df = pd.DataFrame(combinations).sort_values('Co-occurrence', ascending=False).head(5)
+        
+        for _, row in combinations_df.iterrows():
+            st.success(f"**{row['Pair']}**")
+            st.write(f"   Co-occur: {row['Co-occurrence']:.0%} | Combined Recognition: {row['Avg Recognition']:.0%}")
+
+    with col2:
+        st.markdown("#### 💡 Strategic Recommendations")
+        
+        # Find Symbol combinations
+        symbol_combos = co_occurrence.loc['Symbol'].sort_values(ascending=False)
+        top_symbol_partner = symbol_combos.index[0]
+        
+        st.markdown(f"""
+        **Key Findings:**
+        
+        1. **Symbol as anchor:** Symbol appears with {top_symbol_partner} {symbol_combos.iloc[0]:.0%} of the time
+        
+        2. **Minimum combinations:** Use at least 3 elements together (recognition builds from 10% with 1 element to 40% with 6)
+        
+        3. **Recommended pairings:**
+           - Symbol + Wordmark (strongest duo)
+           - Symbol + Color elements
+           - Symbol + Sonic (for video)
+        
+        4. **Avoid:** Single element use (only 10% recognition)
+        """)
+
+    st.markdown("---")
+
+    # Recognition lift analysis
+    st.markdown("#### 📈 Recognition Lift: Multi-Element Effect")
+    
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        # Calculate how many elements typically appear together
+        audit_df['num_elements'] = audit_df[brand_elements].sum(axis=1)
+        elements_per_ad = audit_df['num_elements'].value_counts().sort_index()
+        
+        fig_elements = go.Figure(go.Bar(
+            x=elements_per_ad.index,
+            y=elements_per_ad.values,
+            marker_color='#4CAF50',
+            text=elements_per_ad.values,
+            textposition='outside'
+        ))
+        fig_elements.update_layout(
+            title='Distribution: Number of Elements per Ad',
+            xaxis_title='Number of Brand Elements',
+            yaxis_title='Number of Ads',
+            height=400
+        )
+        st.plotly_chart(fig_elements, use_container_width=True)
+    
+    with col2:
+        st.markdown("#### Key Stats")
+        
+        avg_elements = audit_df['num_elements'].mean()
+        st.metric("Avg Elements/Ad", f"{avg_elements:.1f}")
+        
+        median_elements = audit_df['num_elements'].median()
+        st.metric("Median Elements/Ad", f"{int(median_elements)}")
+        
+        max_elements = audit_df['num_elements'].max()
+        st.metric("Max Elements/Ad", f"{int(max_elements)}")
+        
+        st.info("""
+        **Insight:** Based on recognition journey data, ads with 3+ elements are more likely to drive brand recognition.
+        """)
+
 # ==================== TAB 4: NON-NEGOTIABLES ====================
 with tab4:
     st.header("🎯 Non-Negotiables: Asset Usage Guidelines")
@@ -1618,7 +1832,7 @@ with tab7:
     st.header("📄 Data Explorer")
     st.caption("Raw data access and detailed views")
 
-    tab_a, tab_b, tab_c = st.tabs(["Comms Audit Data", "Research Data", "Combined Metrics"])
+    tab_a, tab_b, tab_c, tab_d = st.tabs(["Comms Audit Data", "Research Data", "Combined Metrics", "Survey Demographics"])
 
     with tab_a:
         st.markdown("### Comms Audit Data (102 Ads)")
@@ -1707,6 +1921,121 @@ with tab7:
             file_name="skoda_combined_metrics.csv",
             mime="text/csv"
         )
+
+    with tab_d:
+        st.markdown("### Survey Demographics (n=2,011)")
+        st.caption("P045556 - Saffron Brand Assets Study")
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.markdown("#### 🌍 Sample by Country")
+            country_data = pd.DataFrame({
+                'Country': ['UK', 'Spain', 'Germany', 'Poland'],
+                'Respondents': [
+                    demographics['countries']['UK'],
+                    demographics['countries']['Spain'],
+                    demographics['countries']['Germany'],
+                    demographics['countries']['Poland']
+                ],
+                'Percentage': [
+                    demographics['countries']['UK'] / demographics['total_respondents'],
+                    demographics['countries']['Spain'] / demographics['total_respondents'],
+                    demographics['countries']['Germany'] / demographics['total_respondents'],
+                    demographics['countries']['Poland'] / demographics['total_respondents']
+                ]
+            })
+
+            st.dataframe(country_data.style.format({
+                'Respondents': '{:,.0f}',
+                'Percentage': '{:.1%}'
+            }), use_container_width=True)
+
+            # Country chart
+            fig_countries = px.pie(
+                country_data,
+                values='Respondents',
+                names='Country',
+                title='Sample Distribution by Country',
+                color_discrete_sequence=['#4CAF50', '#66BB6A', '#81C784', '#A5D6A7']
+            )
+            st.plotly_chart(fig_countries, use_container_width=True)
+
+        with col2:
+            st.markdown("#### 👥 Demographics")
+            
+            # Age
+            st.metric("Age Range", demographics['age']['range'])
+            st.caption(f"Mean: {demographics['age']['mean']} years | Median: {demographics['age']['median']} years")
+            
+            # Gender
+            st.markdown("**Gender Split:**")
+            gender_data = pd.DataFrame({
+                'Gender': ['Male', 'Female'],
+                'Percentage': [demographics['gender']['male'], demographics['gender']['female']]
+            })
+            fig_gender = go.Figure(go.Bar(
+                x=gender_data['Gender'],
+                y=gender_data['Percentage'],
+                marker_color=['#2196F3', '#E91E63'],
+                text=gender_data['Percentage'].apply(lambda x: f'{x:.0%}'),
+                textposition='outside'
+            ))
+            fig_gender.update_layout(
+                yaxis_tickformat='.0%',
+                height=300,
+                showlegend=False
+            )
+            st.plotly_chart(fig_gender, use_container_width=True)
+
+            # Škoda Awareness
+            st.markdown("**Škoda Brand Awareness:**")
+            awareness_data = pd.DataFrame({
+                'Status': ['Heard of Škoda', 'Unaware'],
+                'Percentage': [
+                    demographics['skoda_awareness']['heard_of_skoda'],
+                    demographics['skoda_awareness']['unaware']
+                ]
+            })
+            fig_awareness = go.Figure(go.Bar(
+                x=awareness_data['Status'],
+                y=awareness_data['Percentage'],
+                marker_color=['#4CAF50', '#F44336'],
+                text=awareness_data['Percentage'].apply(lambda x: f'{x:.0%}'),
+                textposition='outside'
+            ))
+            fig_awareness.update_layout(
+                yaxis_tickformat='.0%',
+                height=300,
+                showlegend=False
+            )
+            st.plotly_chart(fig_awareness, use_container_width=True)
+
+        st.markdown("---")
+
+        # Summary stats
+        st.markdown("#### 📊 Survey Summary")
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            st.metric("Total Respondents", f"{demographics['total_respondents']:,}")
+        
+        with col2:
+            st.metric("Countries", "4", "UK, Spain, Germany, Poland")
+        
+        with col3:
+            st.metric("Mean Age", f"{demographics['age']['mean']} years")
+        
+        with col4:
+            st.metric("Škoda Awareness", f"{demographics['skoda_awareness']['heard_of_skoda']:.0%}")
+
+        st.info("""
+        **Survey Design:**
+        - Each respondent was shown 6 out of 9 brand elements in randomized order
+        - Elements were shown individually without brand identification
+        - After viewing, respondents were asked if they recognized it as Škoda
+        - Finally, the Škoda brand was revealed and post-reveal questions were asked
+        """)
 
 # ==================== TAB 8: RECOGNITION JOURNEY ====================
 with tab8:
