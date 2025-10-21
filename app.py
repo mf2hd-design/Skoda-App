@@ -271,55 +271,6 @@ tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs([
 with tab1:
     st.header("Executive Summary")
     st.caption("Combined view replicating Excel 'NEW Calculations ALL' sheet")
-    
-    # DATA CORRECTION NOTICE
-    st.success("✅ **DATA CORRECTED**: This version uses actual survey data from P045556 study (n=2,011)")
-    
-    with st.expander("📋 View Data Corrections"):
-        st.markdown("""
-        ### What Was Corrected
-        
-        **Recognition Rates:**
-        - ❌ Previous: Ranged from 36-64% (INFLATED)
-        - ✅ Corrected: Range 19-48% (actual survey data)
-        - 🎯 Key Finding: **Symbol (Škoda logo) at 48%** is 2.5x more recognized than other elements (~20%)
-        
-        **Uniqueness (Brand Attribution):**
-        - ❌ Previous: 16-38% (too low)
-        - ✅ Corrected: 29-65% (actual data)
-        - 🎯 Overall: 50% of respondents correctly identified elements as Škoda
-        - 🎯 Symbol leads at 65% uniqueness
-        
-        **Survey Facts:**
-        - Base: n=2,011 (UK: 501, Spain: 502, Germany: 505, Poland: 503)
-        - Age: 18-55 years (mean 36.2)
-        - Each respondent saw 6 of 9 elements in randomized order
-        
-        ### Critical Insight
-        
-        **The Symbol (Škoda logo) is BY FAR the most recognized and distinctive element.**
-        It's the only element with recognition above 30%, and has 2.5x the recognition of other elements.
-        This should be the centerpiece of all Škoda communications.
-        """)
-    
-    st.markdown("---")
-    
-    # CRITICAL FINDING ALERT
-    st.error("""
-    ### 🚨 Critical Discovery: The 56% Recognition Gap
-    
-    **56.3% of respondents NEVER recognized these brand elements as Škoda** — even after seeing 6 different assets.
-    
-    **What this means:**
-    - Only 40% achieved recognition after 6 element exposures
-    - The Symbol (48% recognition) is critically important as it outperforms 2.5x vs other elements
-    - Multiple touchpoints are essential — single elements drive only 10% recognition
-    - Brand building requires strategic focus on the strongest carriers
-    
-    👉 See the **Recognition Journey tab** for full analysis of how recognition builds element by element.
-    """)
-
-    st.markdown("---")
 
     # Key Headlines
     col1, col2, col3, col4 = st.columns(4)
