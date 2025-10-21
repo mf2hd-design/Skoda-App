@@ -357,127 +357,147 @@ with tab1:
     st.header("Executive Summary")
     st.caption("Combined view replicating Excel 'NEW Calculations ALL' sheet")
 
-    # Executive Scorecard
-    st.markdown("### 📊 Executive Scorecard - Brand Health KPIs")
+    # Element Tier Ranking
+    st.markdown("### 🏆 Brand Asset Tier Ranking")
+    st.caption("Which elements are most iconic? Clear hierarchy for investment and usage decisions.")
     
-    # Calculate KPIs
-    avg_recognition = master_df['Recognition'].mean()
-    recognition_gap = recognition_journey['never_recognized']
-    avg_uniqueness = master_df['Uniqueness'].mean()
-    avg_net_sentiment = master_df['Net Sentiment'].mean()
-    portfolio_roi = master_df['Recognition ROI'].mean()
+    # Critical insight callout
+    st.error("""
+    ### ⚠️ Critical Finding: 56.3% Recognition Gap
+    **56.3% of respondents NEVER recognized brand elements as Škoda** — even after seeing 6 different assets.
     
-    # Elements above/below thresholds
-    elements_above_threshold = len(master_df[master_df['Recognition'] >= 0.30])
-    elements_below_threshold = len(master_df[master_df['Recognition'] < 0.30])
-    
-    # Brand Health Score (weighted average, normalized to 0-100)
-    # All inputs normalized to 0-1 scale, then weighted and converted to 0-100
-    recognition_score = avg_recognition  # Already 0-1
-    uniqueness_score = avg_uniqueness    # Already 0-1
-    sentiment_score = (avg_net_sentiment + 0.15) / 0.30  # Normalize from [-0.15, +0.15] to [0, 1]
-    sentiment_score = max(0, min(1, sentiment_score))  # Clamp to [0, 1]
-    roi_score = min(portfolio_roi / 25, 1)  # Normalize: 25+ ROI = perfect score
-    
-    brand_health_score = (
-        (recognition_score * 0.40) +  # Recognition weighted 40%
-        (uniqueness_score * 0.30) +   # Uniqueness weighted 30%
-        (sentiment_score * 0.20) +    # Sentiment weighted 20%
-        (roi_score * 0.10)            # ROI weighted 10%
-    ) * 100  # Convert to 0-100 scale
-    
-    # Scorecard display
-    col1, col2, col3, col4, col5 = st.columns(5)
-    
-    with col1:
-        st.metric("Brand Health Score", f"{brand_health_score:.0f}/100", 
-                  help="Weighted score: Recognition (40%), Uniqueness (30%), Sentiment (20%), ROI (10%)")
-        status = "🟢 Good" if brand_health_score >= 70 else "🟡 Fair" if brand_health_score >= 50 else "🔴 Poor"
-        st.caption(status)
-    
-    with col2:
-        st.metric("Avg Recognition", f"{avg_recognition:.1%}",
-                  help="Target: 30%. Current portfolio average across 9 elements")
-        gap_to_target = avg_recognition - 0.30
-        if gap_to_target < 0:
-            st.caption(f"🔴 {abs(gap_to_target):.1%} below target")
-        else:
-            st.caption(f"🟢 {gap_to_target:.1%} above target")
-    
-    with col3:
-        st.metric("Recognition Gap", f"{recognition_gap:.1%}",
-                  help="% who never recognized elements as Škoda. Target: <40%")
-        gap_to_target = recognition_gap - 0.40
-        if gap_to_target > 0:
-            st.caption(f"🔴 {gap_to_target:.1%} above target")
-        else:
-            st.caption(f"🟢 On target")
-    
-    with col4:
-        st.metric("Portfolio ROI", f"{portfolio_roi:.1f}",
-                  help="Average recognition points per €1M spent. Target: 20")
-        gap_to_target = portfolio_roi - 20
-        if gap_to_target < 0:
-            st.caption(f"🔴 {abs(gap_to_target):.1f} below target")
-        else:
-            st.caption(f"🟢 {gap_to_target:.1f} above target")
-    
-    with col5:
-        st.metric("Elements Above Target", f"{elements_above_threshold}/9",
-                  help="Elements with ≥30% recognition. Goal: 6/9")
-        st.caption(f"{elements_below_threshold} need work")
-    
-    # Detailed scorecard table
-    st.markdown("#### Detailed KPI Status")
-    
-    scorecard_data = pd.DataFrame({
-        'KPI': [
-            'Brand Health Score',
-            'Average Recognition',
-            'Average Uniqueness', 
-            'Recognition Gap',
-            'Net Sentiment',
-            'Portfolio ROI',
-            'Elements Above Threshold'
-        ],
-        'Current': [
-            f"{brand_health_score:.0f}/100",
-            f"{avg_recognition:.1%}",
-            f"{avg_uniqueness:.1%}",
-            f"{recognition_gap:.1%}",
-            f"{avg_net_sentiment:+.1%}",
-            f"{portfolio_roi:.1f}",
-            f"{elements_above_threshold}/9"
-        ],
-        'Target': [
-            "75/100",
-            "30%",
-            "50%",
-            "<40%",
-            ">+5%",
-            "20",
-            "6/9"
-        ],
-        'Status': [
-            "🟡 Below Target" if brand_health_score < 75 else "🟢 On Target",
-            "🔴 Below Target" if avg_recognition < 0.30 else "🟢 On Target",
-            "🟢 On Target" if avg_uniqueness >= 0.35 else "🟡 Close",
-            "🔴 Critical" if recognition_gap > 0.50 else "🟡 Needs Work",
-            "🔴 Negative" if avg_net_sentiment < 0 else "🟢 Positive",
-            "🟡 Below Target" if portfolio_roi < 20 else "🟢 On Target",
-            "🟡 Needs Work" if elements_above_threshold < 6 else "🟢 On Target"
-        ]
-    })
-    
-    st.dataframe(scorecard_data, use_container_width=True, hide_index=True)
-    
-    st.info("""
-    **Key Priorities Based on Scorecard:**
-    1. **Address Recognition Gap** (56.3% never recognize - most critical issue)
-    2. **Improve Average Recognition** (20% → 30% target)
-    3. **Fix Negative Sentiment** (-3.4% → +5% target)
-    4. **Increase Portfolio ROI** (14.2 → 20 target)
+    This is the primary challenge driving all recommendations below. Building consistency around Tier 1 assets is critical to closing this gap.
     """)
+    
+    st.markdown("---")
+    
+    # Tier 1: Icons
+    st.markdown("### 🥇 TIER 1: Brand Icons (Must-Use)")
+    st.success("**Always include at minimum one Tier 1 element. Recommended: Use 2-3 together for maximum impact.**")
+    
+    tier1 = master_df[master_df['Recognition'] >= 0.30].sort_values('Recognition', ascending=False)
+    
+    col1, col2, col3 = st.columns(3)
+    
+    for idx, (_, row) in enumerate(tier1.iterrows()):
+        with [col1, col2, col3][idx % 3]:
+            st.markdown(f"#### {row['Element']}")
+            st.metric("Recognition", f"{row['Recognition']:.0%}")
+            st.metric("Uniqueness", f"{row['Uniqueness']:.0%}")
+            st.metric("Net Sentiment", f"{row['Net Sentiment']:+.1%}")
+            st.metric("ROI", f"{row['Recognition ROI']:.1f}")
+            
+            # Why it's Tier 1
+            if row['Recognition'] >= 0.40:
+                st.caption("✅ **Dominant recognition** - primary brand carrier")
+            else:
+                st.caption("✅ **Strong recognition** - proven asset")
+    
+    st.markdown("---")
+    
+    # Tier 2: Supporting Assets
+    st.markdown("### 🥈 TIER 2: Supporting Assets (Strongly Recommended)")
+    st.info("**Use to complement Tier 1 elements. Effective in combination but not strong enough standalone.**")
+    
+    tier2 = master_df[(master_df['Recognition'] >= 0.19) & (master_df['Recognition'] < 0.30)].sort_values('Recognition', ascending=False)
+    
+    if len(tier2) > 0:
+        cols = st.columns(min(len(tier2), 4))
+        for idx, (_, row) in enumerate(tier2.iterrows()):
+            with cols[idx % len(cols)]:
+                st.markdown(f"**{row['Element']}**")
+                st.write(f"Rec: {row['Recognition']:.0%}")
+                st.write(f"Uniq: {row['Uniqueness']:.0%}")
+                st.write(f"Sent: {row['Net Sentiment']:+.1%}")
+                
+                # Recommendation
+                if row['Uniqueness'] >= 0.30:
+                    st.caption("💎 Good uniqueness - build awareness")
+                elif row['Net Sentiment'] > 0:
+                    st.caption("😊 Positive sentiment - safe choice")
+                else:
+                    st.caption("⚠️ Watch sentiment")
+    
+    st.markdown("---")
+    
+    # Tier 3: Needs Work
+    st.markdown("### 🥉 TIER 3: Requires Attention (Optional/Redesign)")
+    st.warning("**Low recognition, negative sentiment, or competitive confusion. Use sparingly or redesign.**")
+    
+    tier3 = master_df[master_df['Recognition'] < 0.19].sort_values('Recognition', ascending=False)
+    
+    if len(tier3) > 0:
+        for _, row in tier3.iterrows():
+            with st.expander(f"⚠️ **{row['Element']}** - {row['Recognition']:.0%} Recognition"):
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    st.write("**Current Performance:**")
+                    st.write(f"• Recognition: {row['Recognition']:.0%}")
+                    st.write(f"• Uniqueness: {row['Uniqueness']:.0%}")
+                    st.write(f"• Net Sentiment: {row['Net Sentiment']:+.1%}")
+                    st.write(f"• ROI: {row['Recognition ROI']:.1f}")
+                    st.write(f"• Investment: €{row['Total Investment']:,.0f}")
+                
+                with col2:
+                    st.write("**Why Tier 3:**")
+                    issues = []
+                    if row['Recognition'] < 0.20:
+                        issues.append("🔴 Very low recognition")
+                    if row['Uniqueness'] < 0.30:
+                        issues.append("🔴 Low brand attribution")
+                    if row['Net Sentiment'] < -0.05:
+                        issues.append("🔴 Negative sentiment")
+                    if row['Recognition ROI'] < 10:
+                        issues.append("🔴 Poor ROI")
+                    
+                    for issue in issues:
+                        st.write(f"• {issue}")
+                    
+                    st.write("")
+                    st.write("**Recommendation:**")
+                    if row['Net Sentiment'] < -0.05 and row['Uniqueness'] < 0.30:
+                        st.write("⛔ **Consider redesign or retire**")
+                    elif row['Uniqueness'] >= 0.30:
+                        st.write("💡 **Build awareness** - has distinctiveness")
+                    else:
+                        st.write("⚠️ **Use sparingly** - monitor performance")
+
+    st.markdown("---")
+    
+    # Summary table
+    st.markdown("### 📊 Complete Tier Overview")
+    
+    tier_summary = []
+    for _, row in master_df.iterrows():
+        if row['Recognition'] >= 0.30:
+            tier = "🥇 Tier 1"
+            action = "Must Use"
+        elif row['Recognition'] >= 0.19:
+            tier = "🥈 Tier 2"
+            action = "Recommended"
+        else:
+            tier = "🥉 Tier 3"
+            action = "Optional/Redesign"
+        
+        tier_summary.append({
+            'Element': row['Element'],
+            'Tier': tier,
+            'Action': action,
+            'Recognition': row['Recognition'],
+            'Uniqueness': row['Uniqueness'],
+            'Net Sentiment': row['Net Sentiment'],
+            'ROI': row['Recognition ROI']
+        })
+    
+    tier_summary_df = pd.DataFrame(tier_summary).sort_values('Recognition', ascending=False)
+    
+    st.dataframe(tier_summary_df.style.format({
+        'Recognition': '{:.0%}',
+        'Uniqueness': '{:.0%}',
+        'Net Sentiment': '{:+.1%}',
+        'ROI': '{:.1f}'
+    }), use_container_width=True, hide_index=True)
 
     st.markdown("---")
 
