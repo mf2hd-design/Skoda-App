@@ -2987,4 +2987,3 @@ st.markdown("""
 <p><b>Škoda Brand Intelligence Dashboard</b> | Powered by Saffron</p>
 </div>
 """, unsafe_allow_html=True)
-}
