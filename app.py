@@ -345,7 +345,7 @@ tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs([
     "📊 Executive Summary",
     "💚 Sentiment Analysis",
     "📈 Strategic Insights",
-    "🎯 Non-Negotiables",
+    "🎯 Performance Tiers",
     "🔮 Future-Proofing",
     "🔍 Deep Dive Analysis",
     "📄 Data Explorer",
@@ -458,7 +458,7 @@ with tab1:
             action = "Must Use"
         elif row['Recognition'] >= 0.19:
             tier = "🥈 Tier 2"
-            action = "Recommended"
+            action = "Moderate Performance"
         else:
             tier = "🥉 Tier 3"
             action = "Optional/Redesign"
@@ -1352,7 +1352,7 @@ with tab3:
             lambda x: (x['Recognition'] * x['Uniqueness']) / (x['Total Investment'] / 1_000_000) if x['Total Investment'] > 0 else 0, axis=1
         )
         metric_label = "Brand Equity Index (Recognition × Uniqueness) per €1M"
-        insight_text = "**Holistic efficiency combining fame and differentiation.** High scorers deliver the most long-term brand equity per euro - ideal for identifying non-negotiables."
+        insight_text = "**Holistic efficiency combining fame and differentiation.** High scorers deliver the most long-term brand equity per euro - ideal for identifying Performance Tiers."
 
     st.info(insight_text)
 
@@ -1423,7 +1423,7 @@ with tab3:
             st.write("• Optimize placement budgets")
             st.write("• Reallocate to efficient assets")
         else:
-            st.write("• **Top = Non-negotiables candidates**")
+            st.write("• **Top = Performance Tiers candidates**")
             st.write("• **Bottom = Requires optimization**")
 
     st.markdown("---")
@@ -1878,16 +1878,16 @@ with tab3:
         - Shows disconnect in consumer perception
         """)
 
-# ==================== TAB 4: NON-NEGOTIABLES ====================
+# ==================== TAB 4: Performance Tiers ====================
 with tab4:
-    st.header("🎯 Non-Negotiables: Asset Usage Guidelines")
+    st.header("🎯 Performance Tiers: Asset Usage Guidelines")
     st.caption("Data-driven recommendations for mandatory and optional asset usage")
 
     st.markdown("""
     <div style='background-color: #e3f2fd; padding: 20px; border-radius: 10px; margin-bottom: 20px;'>
     <h4>Objective: Create actionable guidelines for market teams</h4>
     <p>Based on combined analysis of media usage, spend data, and consumer research,
-    we recommend the following asset usage framework:</p>
+    the data shows the following patterns asset usage framework:</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -1898,10 +1898,10 @@ with tab4:
         (master_df['Overall Usage'] >= 0.50)
     ].sort_values('Recognition', ascending=False)
 
-    recommended = master_df[
+    Moderate Performance = master_df[
         ((master_df['Recognition'] >= 0.35) | (master_df['Uniqueness'] >= 0.25))
     ].sort_values(['Recognition', 'Uniqueness'], ascending=False)
-    recommended = recommended[~recommended['Element'].isin(must_use['Element'])]
+    Moderate Performance = Moderate Performance[~Moderate Performance['Element'].isin(must_use['Element'])]
 
     requires_attention = master_df[
         (master_df['Recognition'] < 0.40) &
@@ -1912,7 +1912,7 @@ with tab4:
     col1, col2 = st.columns([2, 1])
 
     with col1:
-        st.markdown("### ✅ MUST-USE Assets (Non-Negotiable)")
+        st.markdown("### ✅ High Performance Assets (Non-Negotiable)")
         st.success(f"**{len(must_use)} assets meet criteria:** High Recognition (≥40%) + Positive Sentiment + High Usage (≥50%)")
 
         for idx, row in must_use.iterrows():
@@ -1930,7 +1930,7 @@ with tab4:
                     st.metric("Brand Equity", f"{equity_score:.3f}")
                     st.metric("ROI", f"{row['Recognition ROI']:.2f}")
 
-                st.markdown("**Rationale for Must-Use Status:**")
+                st.markdown("**Observable Performance Characteristics:**")
                 st.write(f"• **Recognition:** {row['Recognition']:.0%} - consumers have seen/heard this element, ensuring immediate brand attribution")
                 st.write(f"• **Uniqueness:** {row['Uniqueness']:.0%} - distinctively Škoda (consumers correctly identify it as belonging to your brand, not competitors)")
                 st.write(f"• **Proven Usage:** {row['Overall Usage']:.0%} of campaigns - already validated as core asset")
@@ -1942,12 +1942,12 @@ with tab4:
 
         st.markdown("---")
 
-        st.markdown("### ⭐ RECOMMENDED Assets (Strongly Encouraged)")
-        st.info(f"**{len(recommended)} assets show strong potential:** Good recognition or uniqueness")
+        st.markdown("### ⭐ Moderate Performance Assets (Strongly Encouraged)")
+        st.info(f"**{len(Moderate Performance)} assets show strong potential:** Good recognition or uniqueness")
 
-        for idx, row in recommended.iterrows():
+        for idx, row in Moderate Performance.iterrows():
             with st.expander(f"**{row['Element']}** - Recognition: {row['Recognition']:.0%} | Uniqueness: {row['Uniqueness']:.0%}"):
-                st.markdown("**Why Recommended:**")
+                st.markdown("**Why Moderate Performance:**")
                 if row['Recognition'] >= 0.35:
                     st.write(f"• ✅ Strong recognition ({row['Recognition']:.0%}) - consumers are familiar with this element")
                 if row['Uniqueness'] >= 0.25:
@@ -1966,7 +1966,7 @@ with tab4:
 
         st.markdown("---")
 
-        st.markdown("### ⚠️ Some elements show X pattern")
+        st.markdown("### ⚠️ Lower Performance")
         st.warning(f"**{len(requires_attention)} assets** have low recognition despite significant investment")
 
         for idx, row in requires_attention.iterrows():
@@ -1983,7 +1983,7 @@ with tab4:
                 st.write("3. **Ineffective deployment:** Placement, creative execution, or context may need optimization")
                 st.write("4. **Low visibility:** May be used but not prominently featured in creative")
 
-                st.markdown("**Recommended action:**")
+                st.markdown("**Moderate Performance action:**")
                 if row['Uniqueness'] < 0.20:
                     st.write("⚠️ Consider redesigning for greater Škoda distinctiveness OR deprioritize in favor of higher-uniqueness assets")
                 else:
@@ -1992,12 +1992,12 @@ with tab4:
     with col2:
         st.markdown("### 📋 Quick Reference")
 
-        st.markdown("#### Must-Use (Non-Negotiable)")
+        st.markdown("#### High Performance (Non-Negotiable)")
         for idx, row in must_use.iterrows():
             st.success(f"✓ {row['Element']}")
 
-        st.markdown("#### Recommended")
-        for idx, row in recommended.head(5).iterrows():
+        st.markdown("#### Moderate Performance")
+        for idx, row in Moderate Performance.head(5).iterrows():
             st.info(f"⭐ {row['Element']}")
 
         st.markdown("#### Review Needed")
@@ -2008,11 +2008,11 @@ with tab4:
 
         # Download guidelines
         guidelines_text = "# Škoda Brand Asset Usage Guidelines\n\n"
-        guidelines_text += "## MUST-USE Assets (Non-Negotiable)\n"
+        guidelines_text += "## High Performance Assets (Non-Negotiable)\n"
         for idx, row in must_use.iterrows():
             guidelines_text += f"- {row['Element']}: {row['Recognition']:.0%} recognition\n"
-        guidelines_text += "\n## RECOMMENDED Assets\n"
-        for idx, row in recommended.iterrows():
+        guidelines_text += "\n## Moderate Performance Assets\n"
+        for idx, row in Moderate Performance.iterrows():
             guidelines_text += f"- {row['Element']}: {row['Recognition']:.0%} recognition, {row['Uniqueness']:.0%} uniqueness\n"
 
         st.download_button(
@@ -2090,7 +2090,7 @@ with tab5:
         - High efficiency = Getting strong brand-building results with limited investment (opportunity to scale up)
         - Low efficiency = Spending a lot but not getting proportional brand equity (may need optimization or reallocation)
 
-        **Ideal strategy:** Increase investment in high-efficiency assets, optimize or reduce spend on low-efficiency ones
+        **Observed patterns:** Increase investment in high-efficiency assets, optimize or reduce spend on low-efficiency ones
         """)
 
     # Calculate efficiency scores
@@ -2118,7 +2118,7 @@ with tab5:
                     st.markdown("**Why it's efficient:**")
                     st.write(f"Delivers strong brand equity ({(row['Recognition'] * row['Uniqueness']):.3f}) with minimal spend. Each euro generates {row['Efficiency Score']:.2f} units of brand equity - among the best performers.")
                     st.markdown("**Opportunity:**")
-                    st.write(f"Increase investment from €{row['Total Investment']:,.0f} to €{row['Total Investment']*1.5:,.0f} could boost recognition from {row['Recognition']:.0%} to {min(row['Recognition']*1.3, 0.85):.0%} while maintaining high uniqueness")
+                    st.write(f"0f} to €{row['Total Investment']*1.5:,.0f} could boost recognition from {row['Recognition']:.0%} to {min(row['Recognition']*1.3, 0.85):.0%} while maintaining high uniqueness")
                 st.write("")
 
     with col2:
@@ -2192,7 +2192,7 @@ with tab5:
 
     with col1:
         st.markdown("#### Short-term (0-6 months)")
-        st.write("1. **Increase must-use asset deployment**")
+        st.write("1. **Increase High Performance asset deployment**")
         for idx, row in must_use.head(3).iterrows():
             st.write(f"   • Ensure {row['Element']} in 80%+ of campaigns")
 
@@ -2942,7 +2942,7 @@ with tab8:
     
     1. **Elevate the Symbol** - At 48% recognition vs 20% average, the logo is the critical brand carrier. Make it prominent in all communications.
     
-    2. **Create Combinations** - Since single elements drive only 10% recognition, ensure multiple elements appear together. Recommended minimum: 3 elements per touchpoint.
+    2. **Create Combinations** - Since single elements drive only 10% recognition, ensure multiple elements appear together. Moderate Performance minimum: 3 elements per touchpoint.
     
     3. **Address the 56% Gap** - More than half never connect elements to Škoda. This requires:
        - Bolder, more distinctive asset design
