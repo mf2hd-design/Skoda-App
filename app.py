@@ -1061,16 +1061,16 @@ with tab3:
     - Minimum 3 elements needed per ad for effective brand recognition
     
     **Investment Insights:**
-    - Some high-investment elements underperform (requires attention)
-    - Focus budget on proven high-ROI combinations
-    - Symbol should anchor all communications (48% recognition vs 20% average)
+    - Some high-investment elements underperform (Some elements show X pattern)
+    - Some elements show X pattern proven high-ROI combinations
+    - Symbol achieves 48% recognition vs 20% average (48% recognition vs 20% average)
     """)
 
     st.markdown("---")
 
     # Portfolio Optimization Matrices
     st.markdown("### 📊 Portfolio Optimization Matrices")
-    st.caption("BCG-style strategic analysis - where to invest, hold, or cut")
+    st.caption("BCG-style strategic analysis - performance patterns across investment and recognition")
 
     # Prepare data for matrices
     matrix_df = master_df.copy()
@@ -1140,13 +1140,13 @@ with tab3:
             st.success(f"**HIDDEN GEMS ({len(gems)}):**")
             for _, row in gems.iterrows():
                 st.write(f"• {row['Element']}")
-            st.caption("⬆️ Increase investment")
+            st.caption("")
         
         if len(dogs) > 0:
             st.error(f"**DOGS ({len(dogs)}):**")
             for _, row in dogs.iterrows():
                 st.write(f"• {row['Element']}")
-            st.caption("⚠️ Cut or redesign")
+            st.caption("")
         
         if len(questions) > 0:
             st.warning(f"**QUESTION MARKS ({len(questions)}):**")
@@ -1221,13 +1221,13 @@ with tab3:
             st.info(f"**HIDDEN GEMS ({len(hidden)}):**")
             for _, row in hidden.iterrows():
                 st.write(f"• {row['Element']}")
-            st.caption("💎 Build awareness")
+            st.caption("")
         
         if len(weak) > 0:
             st.error(f"**WEAK ({len(weak)}):**")
             for _, row in weak.iterrows():
                 st.write(f"• {row['Element']}")
-            st.caption("🔴 Redesign urgently")
+            st.caption("")
 
     st.markdown("---")
 
@@ -1966,12 +1966,12 @@ with tab4:
 
         st.markdown("---")
 
-        st.markdown("### ⚠️ REQUIRES ATTENTION")
+        st.markdown("### ⚠️ Some elements show X pattern")
         st.warning(f"**{len(requires_attention)} assets** have low recognition despite significant investment")
 
         for idx, row in requires_attention.iterrows():
             with st.expander(f"**{row['Element']}** - Recognition: {row['Recognition']:.0%} | Investment: €{row['Total Investment']:,.0f}"):
-                st.markdown("**Why this requires attention:**")
+                st.markdown("**Why this Some elements show X pattern:**")
                 st.write(f"• **Low recognition:** {row['Recognition']:.0%} despite €{row['Total Investment']:,.0f} investment (above median)")
                 st.write(f"• **Usage:** {row['Overall Usage']:.0%} of campaigns")
                 st.write(f"• **Uniqueness:** {row['Uniqueness']:.0%}")
