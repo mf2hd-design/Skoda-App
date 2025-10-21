@@ -902,19 +902,54 @@ with tab2:
     confusion_df = confusion_df[['Skoda', 'VW', 'Toyota', 'Seat', 'Generic', 'Dont_Know']]
     confusion_df.columns = ['Škoda', 'VW', 'Toyota', 'Seat', 'Generic', "Don't Know"]
 
-    # Create heatmap
+    # Create confusion matrix with inverted scale for competitors
+    # We need to invert competitor columns so high values = red, low values = green
+    confusion_df_display = confusion_df.copy()
+    
+    # Invert competitor and generic columns (1 - value) so high becomes low for coloring
+    for col in ['VW', 'Toyota', 'Seat', 'Generic', "Don't Know"]:
+        confusion_df_display[col] = 1 - confusion_df_display[col]
+    
+    # Keep Škoda as-is (high = green is correct)
+    
+    # Create heatmap with consistent color scale
     fig_confusion = px.imshow(
-        confusion_df,
-        labels=dict(x="Attributed Brand", y="Element", color="Attribution %"),
-        x=confusion_df.columns,
-        y=confusion_df.index,
-        color_continuous_scale='RdYlGn',
-        text_auto='.0%',
+        confusion_df_display,
+        labels=dict(x="Attributed Brand", y="Element", color="Score"),
+        x=confusion_df_display.columns,
+        y=confusion_df_display.index,
+        color_continuous_scale='RdYlGn',  # Red = bad, Green = good
+        text_auto=False,  # We'll add custom text
         aspect="auto",
         title="Brand Attribution: Who Do Consumers Think Owns These Elements?"
     )
-    fig_confusion.update_layout(height=500)
+    
+    # Add text annotations with actual percentages (not inverted display values)
+    annotations = []
+    for i, element in enumerate(confusion_df.index):
+        for j, brand in enumerate(confusion_df.columns):
+            actual_value = confusion_df.loc[element, brand]
+            annotations.append(
+                dict(
+                    x=j,
+                    y=i,
+                    text=f'{actual_value:.0%}',
+                    showarrow=False,
+                    font=dict(size=12, color='white' if confusion_df_display.iloc[i, j] < 0.5 else 'black')
+                )
+            )
+    
+    fig_confusion.update_layout(
+        annotations=annotations,
+        height=500
+    )
     st.plotly_chart(fig_confusion, use_container_width=True)
+    
+    st.caption("""
+    **Color Guide:** 
+    - 🟢 Green = Good (High Škoda attribution OR Low competitor/generic confusion)
+    - 🔴 Red = Bad (Low Škoda attribution OR High competitor/generic confusion)
+    """)
 
     # Analysis columns
     col1, col2 = st.columns(2)
