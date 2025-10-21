@@ -341,99 +341,25 @@ st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Škoda Brand Intell
 st.markdown("---")
 
 # --- Navigation Tabs ---
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "🏠 Overview",
-    "📊 Asset Performance",
-    "💭 Brand Perception",
-    "🎯 Strategic Recommendations",
-    "📈 Detailed Analytics"
+tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs([
+    "📊 Executive Summary",
+    "💚 Sentiment Analysis",
+    "📈 Strategic Insights",
+    "🎯 Non-Negotiables",
+    "🔮 Future-Proofing",
+    "🔍 Deep Dive Analysis",
+    "📄 Data Explorer",
+    "🧭 Recognition Journey"
 ])
 
-# ==================== TAB 1: OVERVIEW ====================
+# ==================== TAB 1: EXECUTIVE SUMMARY ====================
 with tab1:
-    st.header("🏠 Brand Asset Overview")
-    st.caption("Data-driven insights into Škoda's brand asset performance across key markets")
-    
-    st.write("")  # Add breathing room
-    
-    # Educational context upfront
-    with st.expander("📊 Understanding the Key Metrics", expanded=False):
-        st.markdown("""
-        This dashboard analyzes Škoda brand assets across two critical dimensions:
-        
-        **Recognition (Awareness):**
-        - Measured via survey question: "Have you seen or heard this element before?"
-        - Indicates how familiar consumers are with each brand element
-        - Higher recognition = more brand exposure achieved
-        - Based on responses from 2,011 consumers (18-55 years) across UK, Spain, Germany, and Poland
-        
-        **Uniqueness (Brand Attribution):**
-        - Measured via survey question: "Which brand do you think this belongs to?"
-        - Percentage who correctly identified the element as Škoda (not competitor or generic)
-        - Higher uniqueness = stronger brand ownership and differentiation
-        - Critical for long-term brand equity - prevents confusion with competitors
-        
-        **Why Both Matter:**
-        - High Recognition + Low Uniqueness = Familiar but generic (doesn't build Škoda equity)
-        - Low Recognition + High Uniqueness = Distinctive but unknown (wasted potential)
-        - High Recognition + High Uniqueness = Optimal (builds strong Škoda brand equity)
-        
-        **Investment Data:**
-        - Sourced from communications audit of 102 campaigns across 4 markets over 12 months
-        - Total spend tracked: €24.8M across all campaigns analyzed
-        - Usage frequency shows consistency of element deployment
-        """)
-    
-    st.write("")
-    
-    # Hero visual first - Brand Equity Matrix
-    st.markdown("### 📍 Brand Equity Landscape")
-    st.caption("Visual map of all brand assets - position indicates strategic value, size shows investment")
-    
-    with st.expander("📖 How to interpret this chart", expanded=False):
-        st.markdown("""
-        **Reading the Chart:**
-        - **Y-Axis (Recognition):** % of consumers who have seen/heard this element
-        - **X-Axis (Uniqueness):** % who correctly identify it as belonging to Škoda
-        - **Bubble Size:** Total investment (€) across all campaigns featuring this element
-        - **Color Intensity:** Green = higher uniqueness, Red = lower uniqueness
-        
-        **What Positions Mean:**
-        - **Top-Right Quadrant:** High recognition + high uniqueness = strongest performers
-        - **Top-Left Quadrant:** High recognition + low uniqueness = familiar but not distinctive
-        - **Bottom-Right Quadrant:** Low recognition + high uniqueness = distinctive but underexposed
-        - **Bottom-Left Quadrant:** Low recognition + low uniqueness = requires attention
-        
-        **Strategic Implications:**
-        - Elements in top-right are proven brand builders - high priority for continued investment
-        - Large bubbles in bottom-left may indicate inefficient spending
-        - Small bubbles in top-right present opportunities to scale investment
-        - Gap between median recognition and top performers shows potential for improvement
-        """)
-    
-    fig_matrix = px.scatter(
-        master_df,
-        x="Uniqueness",
-        y="Recognition",
-        size="Total Investment",
-        color="Uniqueness",
-        text="Element",
-        size_max=60,
-        hover_data=['Total Investment', 'Average Investment', 'Overall Usage'],
-        color_continuous_scale='RdYlGn',
-        title=""
-    )
-    fig_matrix.update_traces(textposition='top center')
-    fig_matrix.update_layout(height=500)
-    st.plotly_chart(fig_matrix, use_container_width=True)
-    
-    st.write("")  # Breathing room
+    st.header("Executive Summary")
+    st.caption("Combined view replicating Excel 'NEW Calculations ALL' sheet")
 
 
-    # Key Headlines - simplified
-    st.markdown("### 🎯 Top Performers")
-    st.caption("Assets achieving the strongest measurable performance across key metrics")
-    
+
+    # Key Headlines
     col1, col2, col3, col4 = st.columns(4)
 
     most_recognized = master_df.loc[master_df['Recognition'].idxmax()]
@@ -445,284 +371,173 @@ with tab1:
         st.metric(
             "Most Recognised Asset", 
             most_recognized['Element'],
-            help="Recognition measures the percentage of consumers who have seen or heard this element before."
+            help="Recognition measures the percentage of consumers who have seen or heard this element before. Based on survey question: 'Have you seen/heard this element before?'"
         )
-        st.info(f"**{most_recognized['Recognition']:.0%}** of consumers recognize this asset")
+        st.info(f"**{most_recognized['Recognition']:.0%}** of consumers have seen or heard this element before, making it the most familiar Škoda brand asset.")
+        with st.expander("📊 Why is this the most recognized?"):
+            st.markdown(f"""
+            **{most_recognized['Element']}** achieves highest recognition due to:
+
+            1. **High Usage Frequency:** Used in **{most_recognized['Overall Usage']:.0%}** of campaigns, providing maximum exposure
+            2. **Investment Level:** **€{most_recognized['Total Investment']:,.0f}** total investment ensures visibility
+            3. **Visual Prominence:** {most_recognized['Element']} is typically the most visually dominant brand asset
+            4. **Universal Presence:** Consistently appears across all markets and media types
+
+            This recognition translates to immediate brand attribution when consumers see Škoda communications.
+            """)
 
     with col2:
         st.metric(
             "Most Unique Asset", 
             most_unique['Element'],
-            help="Uniqueness measures brand attribution - how many correctly identify this as Škoda."
+            help="Uniqueness measures brand attribution - the percentage of consumers who correctly identified this element as belonging to Škoda (not competitors or generic)."
         )
-        st.info(f"**{most_unique['Uniqueness']:.0%}** distinctiveness rating")
+        st.info(f"Rated **{most_unique['Uniqueness']:.0%}** for distinctiveness - consumers correctly identify this as belonging to Škoda.")
+        with st.expander("🎯 Why does this element have the highest uniqueness?"):
+            usage_pct = most_unique['Overall Usage']
+            st.markdown(f"""
+            **{most_unique['Element']}** stands out as the most distinctive Škoda asset because:
+
+            1. **Brand-Specific Design:** Unlike generic automotive elements, this is uniquely Škoda
+            2. **Consistent Usage:** Present in **{usage_pct:.0%}** of ads, building strong brand association
+            3. **Low Competitor Overlap:** Competitors don't have similar visual elements
+            4. **Recognition Reinforcement:** **{most_unique['Recognition']:.0%}** recognition means consumers learn to associate it with Škoda
+
+            High uniqueness is critical for long-term brand equity - it means this asset can't be confused with competitors.
+            """)
 
     with col3:
         st.metric(
             "Highest Investment", 
             highest_investment['Element'],
-            help="Total investment across all campaigns where this element appears."
+            help="Total investment represents the combined media spend across all campaigns where this element appears. Calculated from the comms audit data."
         )
-        st.info(f"**€{highest_investment['Total Investment']:,.0f}** invested")
+        st.info(f"**€{highest_investment['Total Investment']:,.0f}** invested across **{int(highest_investment['Overall Usage'] * 102)}** ads.")
+        with st.expander("💰 Why has this element received the most investment?"):
+            roi_comparison = highest_investment['Recognition'] / best_roi['Recognition'] if best_roi['Recognition'] > 0 else 1
+            st.markdown(f"""
+            **{highest_investment['Element']}** receives the highest investment because:
+
+            1. **Campaign Frequency:** Used in **{highest_investment['Overall Usage']:.0%}** of all campaigns
+            2. **Strategic Priority:** Identified as a core brand asset requiring consistent presence
+            3. **Media Versatility:** Works effectively across **{('image and video' if highest_investment['Usage Image'] > 0.3 and highest_investment['Usage Video'] > 0.3 else 'all')}** formats
+            4. **Performance:** Achieves **{highest_investment['Recognition']:.0%}** recognition with this investment
+
+            **ROI Context:** Recognition ROI is **{highest_investment['Recognition ROI']:.2f}** per €1M. Compare this to the most efficient asset ({best_roi['Element']}) at **{best_roi['Recognition ROI']:.2f}** per €1M.
+            """)
 
     with col4:
         st.metric(
             "Best Recognition ROI", 
             best_roi['Element'],
-            help="Recognition points gained per million euros spent. Higher is better."
+            help="Recognition ROI = (Recognition % / Total Investment) × €1M. Shows how many recognition points are gained per million euros spent. Higher is better."
         )
-        st.info(f"**{best_roi['Recognition ROI']:.2f}** recognition per €1M")
-        
-        with st.expander("📊 Understanding Recognition ROI", expanded=False):
+        st.info(f"Delivers **{best_roi['Recognition ROI']:.2f}** recognition points per €1M spent - the most efficient performer.")
+        with st.expander("⚡ Why is this element the most efficient?"):
             st.markdown(f"""
-            **What is Recognition ROI?**
-            
-            **Formula:** (Recognition % ÷ Total Investment) × €1,000,000
-            
-            This metric shows how many percentage points of recognition are gained for every €1M invested.
-            
-            **Example:**
-            - Element with 40% recognition and €10M investment → ROI = 4.0
-            - Element with 20% recognition and €2M investment → ROI = 10.0
-            - Higher ROI = more efficient at building recognition per € spent
-            
-            **{best_roi['Element']} Performance:**
-            - Recognition: {best_roi['Recognition']:.0%}
-            - Total Investment: €{best_roi['Total Investment']:,.0f}
-            - ROI: {best_roi['Recognition ROI']:.2f} points per €1M
-            
-            **Important Caveats:**
-            
-            1. **Not the Only Metric:** High ROI doesn't automatically mean "invest more here"
-            2. **Correlation ≠ Causation:** Other factors influence recognition beyond spend
-            3. **Diminishing Returns:** Efficiency may decrease as investment scales up
-            4. **Strategic Value:** Low ROI elements may still serve important roles
-            
-            **Questions for Discussion:**
-            - Should investment strategy prioritize high-ROI elements?
-            - Or should it build low-performing elements to target thresholds?
-            - Does ROI reflect inherent memorability or campaign placement?
-            - How does ROI compare across different media types or markets?
+            **{best_roi['Element']}** achieves exceptional efficiency because:
+
+            1. **Low Investment, High Impact:** Only **€{best_roi['Total Investment']:,.0f}** spent, yet achieves **{best_roi['Recognition']:.0%}** recognition
+            2. **Strategic Placement:** Used in **{best_roi['Overall Usage']:.0%}** of campaigns, focusing on high-impact moments
+            3. **Inherent Memorability:** The design is naturally distinctive and memorable
+            4. **Uniqueness Bonus:** **{best_roi['Uniqueness']:.0%}** uniqueness means strong brand association with less repetition needed
+
+            **Opportunity:** This asset punches above its weight - consider increasing investment to amplify results further.
             """)
 
-    st.write("")  # Breathing room
-    st.write("")
 
-    # Key Observations Box - descriptive not prescriptive
-    st.info("""
-    ### 📊 Key Observations from the Data
+    st.markdown("---")
+
+    # Summary table
+    st.markdown("### 📊 Complete Tier Overview")
     
-    **Performance Patterns:**
-    - Symbol achieves 48% recognition and 65% uniqueness - significantly outperforming other elements
-    - Average recognition across all elements is 20%, with Symbol being 2.5x above this average
-    - Wordmark and Sonic show secondary strength with 30% and 22% recognition respectively
+    tier_summary = []
+    for _, row in master_df.iterrows():
+        if row['Recognition'] >= 0.30:
+            tier = "🥇 Tier 1"
+            action = "Must Use"
+        elif row['Recognition'] >= 0.19:
+            tier = "🥈 Tier 2"
+            action = "Recommended"
+        else:
+            tier = "🥉 Tier 3"
+            action = "Optional/Redesign"
+        
+        tier_summary.append({
+            'Element': row['Element'],
+            'Tier': tier,
+            'Recognition': row['Recognition'],
+            'Uniqueness': row['Uniqueness'],
+            'Net Sentiment': row['Net Sentiment'],
+            'ROI': row['Recognition ROI']
+        })
     
-    **Recognition Challenge:**
-    - 56% of respondents never recognized elements as Škoda after exposure to 6 different assets
-    - Recognition builds incrementally: 10% after 1 element → 40% after 6 elements
-    - This cumulative pattern suggests need for multiple touchpoints
+    tier_summary_df = pd.DataFrame(tier_summary).sort_values('Recognition', ascending=False)
     
-    **Investment vs. Performance:**
-    - Total investment across all elements: €24.8M over 12 months
-    - Symbol receives highest investment (€8.2M) and delivers highest recognition
-    - Best ROI performer achieves recognition more efficiently per € spent
+    st.dataframe(tier_summary_df.style.format({
+        'Recognition': '{:.0%}',
+        'Uniqueness': '{:.0%}',
+        'Net Sentiment': '{:+.1%}',
+        'ROI': '{:.1f}'
+    }), use_container_width=True, hide_index=True)
+
+    st.markdown("---")
+
+    # Key Takeaways Box
+    st.success("""
+    ### 🎯 Key Takeaways
     
-    **Questions for Strategic Discussion:**
-    - What explains the 56% recognition gap? Is it inconsistent usage, insufficient differentiation, or low awareness of Škoda brand overall?
-    - Should investment follow recognition (concentrate on winners) or should it aim to build weaker elements?
-    - How does Škoda's 20% average recognition compare to category benchmarks?
+    **Top Performers:**
+    - **Symbol** dominates with 48% recognition and 65% uniqueness - the clear brand leader
+    - **Wordmark** and **Sonic** show strong secondary performance
+    
+    **Critical Challenge:**
+    - 56% of respondents never recognized elements as Škoda (see Recognition Journey tab)
+    - Average recognition is only 20% - significant room for improvement
+    
+    **Strategic Priority:**
+    - Focus on Symbol as the primary brand carrier (2.5x more recognized than other elements)
+    - Use minimum 3 elements together for effective brand recognition
+    - Address negative sentiment in 7 out of 9 brand elements
     """)
 
-    st.write("")
-    st.write("")
+    st.markdown("---")
 
-    # Collapsible detailed sections
-    with st.expander("📊 Performance Tier Analysis", expanded=False):
-        st.markdown("""
-        **Understanding Performance Tiers:**
-        
-        Assets are grouped based on recognition thresholds to identify performance patterns:
-        - **Tier 1 (≥30% recognition):** Established assets with proven consumer awareness
-        - **Tier 2 (19-29% recognition):** Moderate awareness, potential for growth
-        - **Tier 3 (<19% recognition):** Low current awareness, requires analysis of investment efficiency
-        
-        These tiers are descriptive categories based on current performance, not prescriptive guidelines. 
-        Strategic decisions should consider multiple factors beyond recognition alone.
-        """)
-        
-        tier_summary = []
-        for _, row in master_df.iterrows():
-            if row['Recognition'] >= 0.30:
-                tier = "🥇 Tier 1"
-                description = "High Recognition"
-            elif row['Recognition'] >= 0.19:
-                tier = "🥈 Tier 2"
-                description = "Moderate Recognition"
-            else:
-                tier = "🥉 Tier 3"
-                description = "Emerging/Low Recognition"
-            
-            tier_summary.append({
-                'Element': row['Element'],
-                'Tier': tier,
-                'Status': description,
-                'Recognition': row['Recognition'],
-                'Uniqueness': row['Uniqueness'],
-                'Net Sentiment': row['Net Sentiment'],
-                'ROI': row['Recognition ROI']
-            })
-        
-        tier_summary_df = pd.DataFrame(tier_summary).sort_values('Recognition', ascending=False)
-        
-        st.dataframe(tier_summary_df.style.format({
-            'Recognition': '{:.0%}',
-            'Uniqueness': '{:.0%}',
-            'Net Sentiment': '{:+.1%}',
-            'ROI': '{:.1f}'
-        }), use_container_width=True, hide_index=True)
-        
-        st.caption("Note: Tier placement based solely on recognition percentage. Strategic value depends on combination of recognition, uniqueness, sentiment, and investment efficiency.")
+    # Combined Analysis Table (matching Excel structure)
+    st.markdown("#### Combined Analysis Table")
+    st.caption("Synthesizes Comms Audit media metrics with Quantitative Research insights")
 
-    with st.expander("📋 Combined Analysis Table", expanded=False):
-        st.markdown("""
-        **Data Sources:**
-        - **Comms Audit Metrics:** Usage frequency, investment levels, media channel distribution
-        - **Quantitative Research:** Recognition, uniqueness, and sentiment scores from consumer survey (n=2,011)
-        
-        This integrated view enables correlation analysis between media spend patterns and consumer perception outcomes.
-        """)
-        
-        display_df = master_df[[
-            'Element', 'Overall Usage', 'Usage Image', 'Usage Video',
-            'Average Investment', 'Total Investment',
-            'Recognition', 'Uniqueness', 'Net Sentiment'
-        ]].set_index('Element')
+    display_df = master_df[[
+        'Element', 'Overall Usage', 'Usage Image', 'Usage Video',
+        'Average Investment', 'Total Investment',
+        'Recognition', 'Uniqueness', 'Net Sentiment'
+    ]].set_index('Element')
 
-        # Style the dataframe
-        styler = display_df.T.style
+    # Style the dataframe
+    styler = display_df.T.style
 
-        # Heatmaps for research metrics
-        research_rows = ['Recognition', 'Uniqueness', 'Net Sentiment']
-        styler = styler.background_gradient(cmap='RdYlGn', axis=1, subset=(pd.IndexSlice[research_rows], slice(None)))
+    # Heatmaps for research metrics
+    research_rows = ['Recognition', 'Uniqueness', 'Net Sentiment']
+    styler = styler.background_gradient(cmap='RdYlGn', axis=1, subset=(pd.IndexSlice[research_rows], slice(None)))
 
-        # Format percentages and currency
-        percent_rows = ['Overall Usage', 'Usage Image', 'Usage Video', 'Recognition', 'Uniqueness', 'Net Sentiment']
-        currency_rows = ['Average Investment', 'Total Investment']
-        styler = styler.format("{:.1%}", subset=(pd.IndexSlice[percent_rows], slice(None)))
-        styler = styler.format("€{:,.2f}", subset=(pd.IndexSlice[currency_rows], slice(None)))
+    # Format percentages and currency
+    percent_rows = ['Overall Usage', 'Usage Image', 'Usage Video', 'Recognition', 'Uniqueness', 'Net Sentiment']
+    currency_rows = ['Average Investment', 'Total Investment']
+    styler = styler.format("{:.1%}", subset=(pd.IndexSlice[percent_rows], slice(None)))
+    styler = styler.format("€{:,.2f}", subset=(pd.IndexSlice[currency_rows], slice(None)))
 
-        st.dataframe(styler, use_container_width=True)
+    st.dataframe(styler, use_container_width=True)
 
-        # Export button
-        excel_file = to_excel(display_df.fillna(0))
-        st.download_button(
-            label="📥 Export Analysis to Excel",
-            data=excel_file,
-            file_name="skoda_combined_analysis.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
+    # Export button
+    excel_file = to_excel(display_df.fillna(0))
+    st.download_button(
+        label="📥 Export Analysis to Excel",
+        data=excel_file,
+        file_name="skoda_combined_analysis.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
 
-    with st.expander("🔍 Interpreting Top Performer Metrics", expanded=False):
-        st.markdown("""
-        **Context for Understanding Performance Leaders:**
-        
-        These metrics identify which assets currently perform strongest, but understanding *why* helps inform strategy.
-        Consider both the data patterns shown here and broader market context when developing recommendations.
-        """)
-        
-        st.markdown("### Most Recognised Asset")
-        st.markdown(f"""
-        **{most_recognized['Element']}** achieves highest recognition ({most_recognized['Recognition']:.0%}):
-
-        **Observable Patterns:**
-        - Usage Frequency: **{most_recognized['Overall Usage']:.0%}** of campaigns analyzed
-        - Investment Level: **€{most_recognized['Total Investment']:,.0f}** total spend tracked
-        - Appears in **{int(most_recognized['Overall Usage'] * 102)}** of 102 audited campaigns
-        - Present across all surveyed markets (UK, Spain, Germany, Poland)
-        
-        **Questions for Discussion:**
-        - Does high usage drive recognition, or is this element prioritized *because* it's recognizable?
-        - How does visual prominence affect recognition beyond frequency?
-        - What role does media channel mix play in recognition rates?
-        """)
-        
-        st.markdown("---")
-        st.markdown("### Most Unique Asset")
-        usage_pct = most_unique['Overall Usage']
-        st.markdown(f"""
-        **{most_unique['Element']}** achieves highest uniqueness ({most_unique['Uniqueness']:.0%}):
-
-        **Observable Patterns:**
-        - Recognition Level: **{most_unique['Recognition']:.0%}** (context: element is recognized AND attributed correctly)
-        - Usage Frequency: **{usage_pct:.0%}** of campaigns
-        - Net Sentiment: **{most_unique['Net Sentiment']:+.1%}** (emotional associations)
-        
-        **Questions for Discussion:**
-        - Is this element inherently distinctive, or has consistent usage built association?
-        - What design characteristics contribute to brand attribution vs. generic perception?
-        - How does this compare to competitor brand elements in automotive category?
-        """)
-        
-        st.markdown("---")
-        st.markdown("### Highest Investment")
-        roi_comparison = highest_investment['Recognition'] / best_roi['Recognition'] if best_roi['Recognition'] > 0 else 1
-        st.markdown(f"""
-        **{highest_investment['Element']}** receives highest investment (€{highest_investment['Total Investment']:,.0f}):
-
-        **Observable Patterns:**
-        - Campaign Presence: **{highest_investment['Overall Usage']:.0%}** of all campaigns
-        - Recognition Achieved: **{highest_investment['Recognition']:.0%}**
-        - Recognition ROI: **{highest_investment['Recognition ROI']:.2f}** points per €1M
-        - Compared to most efficient asset: **{best_roi['Recognition ROI']:.2f}** points per €1M ({best_roi['Element']})
-        
-        **Questions for Discussion:**
-        - Is current investment level optimal, or could reallocations improve overall performance?
-        - Does high investment reflect strategic priority or historical momentum?
-        - What would be the impact of increasing/decreasing investment by 20%?
-        """)
-        
-        st.markdown("---")
-        st.markdown("### Best Recognition ROI")
-        st.markdown(f"""
-        **{best_roi['Element']}** achieves highest efficiency ({best_roi['Recognition ROI']:.2f} recognition points per €1M):
-
-        **Observable Patterns:**
-        - Total Investment: **€{best_roi['Total Investment']:,.0f}** (relatively lower spend)
-        - Recognition Achieved: **{best_roi['Recognition']:.0%}**
-        - Uniqueness: **{best_roi['Uniqueness']:.0%}** (brand attribution strength)
-        - Usage: **{best_roi['Overall Usage']:.0%}** of campaigns
-        
-        **Questions for Discussion:**
-        - Does this efficiency reflect inherent memorability or strategic placement?
-        - Is there opportunity to scale investment while maintaining efficiency?
-        - What factors beyond spend drive recognition for this element?
-        - Could insights from this element's efficiency apply to other assets?
-        """)
-        roi_comparison = highest_investment['Recognition'] / best_roi['Recognition'] if best_roi['Recognition'] > 0 else 1
-        st.markdown(f"""
-        **{highest_investment['Element']}** receives the highest investment because:
-
-        1. **Campaign Frequency:** Used in **{highest_investment['Overall Usage']:.0%}** of all campaigns
-        2. **Strategic Priority:** Identified as a core brand asset requiring consistent presence
-        3. **Media Versatility:** Works effectively across **{('image and video' if highest_investment['Usage Image'] > 0.3 and highest_investment['Usage Video'] > 0.3 else 'all')}** formats
-        4. **Performance:** Achieves **{highest_investment['Recognition']:.0%}** recognition with this investment
-
-        **ROI Context:** Recognition ROI is **{highest_investment['Recognition ROI']:.2f}** per €1M. Compare this to the most efficient asset ({best_roi['Element']}) at **{best_roi['Recognition ROI']:.2f}** per €1M.
-        """)
-        
-        st.markdown("---")
-        st.markdown("### Best Recognition ROI")
-        st.markdown(f"""
-        **{best_roi['Element']}** achieves exceptional efficiency because:
-
-        1. **Low Investment, High Impact:** Only **€{best_roi['Total Investment']:,.0f}** spent, yet achieves **{best_roi['Recognition']:.0%}** recognition
-        2. **Strategic Placement:** Used in **{best_roi['Overall Usage']:.0%}** of campaigns, focusing on high-impact moments
-        3. **Inherent Memorability:** The design is naturally distinctive and memorable
-        4. **Uniqueness Bonus:** **{best_roi['Uniqueness']:.0%}** uniqueness means strong brand association with less repetition needed
-
-        **Opportunity:** This asset punches above its weight - consider increasing investment to amplify results further.
-        """)
-
+    st.markdown("---")
 
     # Brand Equity Matrix
     st.markdown("#### Brand Equity Matrix: Fame vs. Uniqueness")
@@ -797,337 +612,180 @@ with tab1:
         else:
             st.write("No elements in this quadrant")
 
-# ==================== TAB 2: ASSET PERFORMANCE ====================
+# ==================== TAB 2: SENTIMENT ANALYSIS ====================
 with tab2:
-    st.header("📊 Asset Performance Deep Dive")
-    st.caption("Individual element analysis with personality traits and usage patterns")
-    
-    st.write("")  # Breathing room
-    
-    # Educational context upfront
-    with st.expander("📊 Understanding Personality Trait Analysis", expanded=False):
-        st.markdown("""
-        **Methodology:**
-        
-        Personality traits measured via semantic differential scales in consumer survey (n=2,011).
-        Respondents shown each brand element and asked to rate on 7 bipolar dimensions:
-        
-        1. **Bold ↔ Cautious:** Energy and confidence level
-        2. **Stylish ↔ Plain:** Aesthetic sophistication
-        3. **Modern ↔ Old-Fashioned:** Contemporary relevance
-        4. **Simple ↔ Complicated:** Clarity and accessibility
-        5. **Human ↔ Cold:** Warmth and approachability
-        6. **Exciting ↔ Boring:** Emotional engagement
-        7. **Playful ↔ Serious:** Brand character and tone
-        
-        **Interpreting the Scores:**
-        - Scores range from 0% (negative trait) to 100% (positive trait)
-        - 50% = neutral midpoint (neither positive nor negative)
-        - Scores above 50% indicate positive association with that trait
-        - Scores below 50% indicate association with opposite trait
-        
-        **Strategic Relevance:**
-        - **Brand Consistency:** Do elements share a common personality profile?
-        - **Target Alignment:** Do traits match intended brand positioning?
-        - **Emotional Differentiation:** How do traits compare to competitors?
-        - **Campaign Fit:** Which elements suit different message types?
-        
-        **Example Interpretation:**
-        - Element scoring 70% "Modern" but 30% "Simple" = perceived as contemporary but complex
-        - Element scoring 60% "Bold", 55% "Exciting", 50% "Playful" = energetic character
-        - Element with all traits near 50% = lacks distinctive personality
-        
-        **Questions to Consider:**
-        - Which personality combinations best serve Škoda's brand goals?
-        - Do low-scoring traits indicate weaknesses or intentional positioning?
-        - How do personality scores correlate with sentiment and recognition?
-        """)
-    
-    st.write("")
-    
-    # Lead with visual - personality radar first
-    st.markdown("### 🎨 Brand Personality Profiles")
-    st.caption("Emotional associations consumers form with each brand element")
-    
-    selected_element_personality = st.selectbox("Select brand element to analyze", brand_elements, key="personality_select")
-    
-    if selected_element_personality in research_data:
-        elem_data = research_data[selected_element_personality]
-        
-        personality_traits = ['bold', 'stylish', 'modern', 'simple', 'human', 'exciting', 'playful']
-        trait_values = [elem_data.get(trait, 0.5) for trait in personality_traits]
-        trait_labels = [t.title() for t in personality_traits]
-        
-        fig_radar = go.Figure()
-        fig_radar.add_trace(go.Scatterpolar(
-            r=trait_values,
-            theta=trait_labels,
-            fill='toself',
-            name=selected_element_personality,
-            marker=dict(color='#4CAF50')
-        ))
-        
-        fig_radar.update_layout(
-            polar=dict(
-                radialaxis=dict(visible=True, range=[0, 1], tickformat='.0%')
-            ),
-            showlegend=False,
-            height=450
-        )
-        
-        st.plotly_chart(fig_radar, use_container_width=True)
-        
-        col1, col2 = st.columns(2)
-        with col1:
-            st.metric("Recognition", f"{elem_data['recognition']:.0%}")
-            st.metric("Uniqueness", f"{elem_data['uniqueness']:.0%}")
-        with col2:
-            st.metric("Net Sentiment", f"{elem_data['net_sentiment']:+.1%}")
-            pos_traits = sum(1 for v in trait_values if v > 0.5)
-            st.metric("Positive Traits", f"{pos_traits} of 7")
-    
-    st.write("")
-    st.write("")
-    
-    # Filters section - collapsed by default
-    with st.expander("🔍 Filter by Market/Medium/Placement", expanded=False):
-        col1, col2, col3 = st.columns(3)
-        
-        with col1:
-            selected_market = st.selectbox("Market", ['All'] + sorted(audit_df['Market'].unique().tolist()))
-        with col2:
-            selected_medium = st.selectbox("Medium", ['All'] + sorted(audit_df['Medium'].unique().tolist()))
-        with col3:
-            selected_placement = st.selectbox("Placement", ['All'] + sorted(audit_df['Placement'].unique().tolist()))
-        
-        # Apply filters
-        filtered_df = audit_df.copy()
-        if selected_market != 'All':
-            filtered_df = filtered_df[filtered_df['Market'] == selected_market]
-        if selected_medium != 'All':
-            filtered_df = filtered_df[filtered_df['Medium'] == selected_medium]
-        if selected_placement != 'All':
-            filtered_df = filtered_df[filtered_df['Placement'] == selected_placement]
-        
-        st.info(f"Showing {len(filtered_df)} of {len(audit_df)} ads")
-    
-    # If no filters applied, use full dataset
-    if 'filtered_df' not in locals():
-        filtered_df = audit_df.copy()
-    
-    st.write("")
-    
-    # Investment and Usage side by side
-    st.markdown("### 💰 Investment & Usage Analysis")
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        invest_data = []
-        for element in brand_elements:
-            element_df = filtered_df[filtered_df[element] == True]
-            invest_data.append({
-                'Element': element,
-                'Investment': element_df['Spend'].sum()
-            })
-        invest_df = pd.DataFrame(invest_data).sort_values('Investment', ascending=True)
-        
-        fig_invest = px.bar(
-            invest_df,
-            y='Element',
-            x='Investment',
-            orientation='h',
-            text=invest_df['Investment'].apply(lambda x: f'€{x:,.0f}'),
-            title='Total Investment by Element'
-        )
-        fig_invest.update_layout(height=400)
-        st.plotly_chart(fig_invest, use_container_width=True)
-    
-    with col2:
-        usage_data = []
-        total = len(filtered_df)
-        for element in brand_elements:
-            count = filtered_df[element].sum()
-            usage_data.append({
-                'Element': element,
-                'Usage': count / total if total > 0 else 0
-            })
-        usage_df = pd.DataFrame(usage_data).sort_values('Usage', ascending=True)
-        
-        fig_usage = px.bar(
-            usage_df,
-            y='Element',
-            x='Usage',
-            orientation='h',
-            text=usage_df['Usage'].apply(lambda x: f'{x:.0%}'),
-            title='Element Usage Frequency'
-        )
-        fig_usage.update_layout(height=400)
-        st.plotly_chart(fig_usage, use_container_width=True)
-    
-    st.write("")
-    st.write("")
-    
-    # Detailed tables collapsed
-    with st.expander("📊 Detailed Performance Metrics Table", expanded=False):
-        st.dataframe(
-            master_df[['Element', 'Recognition', 'Uniqueness', 'Net Sentiment', 
-                       'Overall Usage', 'Total Investment', 'Recognition ROI']]
-            .style.format({
-                'Recognition': '{:.0%}',
-                'Uniqueness': '{:.0%}',
-                'Net Sentiment': '{:+.1%}',
-                'Overall Usage': '{:.0%}',
-                'Total Investment': '€{:,.0f}',
-                'Recognition ROI': '{:.2f}'
-            })
-            .background_gradient(subset=['Recognition', 'Uniqueness'], cmap='RdYlGn'),
-            use_container_width=True,
-            hide_index=True
-        )
-    
-    with st.expander("📋 Raw Data Explorer", expanded=False):
-        st.caption("Explore the complete communications audit dataset")
-        
-        # Show/hide columns
-        all_columns = filtered_df.columns.tolist()
-        selected_columns = st.multiselect(
-            "Select columns to display",
-            all_columns,
-            default=['Market', 'Medium', 'Placement', 'Spend'] + brand_elements
-        )
-        
-        if selected_columns:
-            st.dataframe(filtered_df[selected_columns], use_container_width=True, height=400)
-            
-            # Download button
-            csv = filtered_df[selected_columns].to_csv(index=False)
-            st.download_button(
-                label="📥 Download filtered data as CSV",
-                data=csv,
-                file_name="skoda_filtered_data.csv",
-                mime="text/csv"
-            )
+    st.header("💚 Sentiment Analysis")
+    st.caption("Consumer perception analysis based on Q04 semantic differential scales")
 
-# ==================== TAB 3: BRAND PERCEPTION ====================
-with tab3:
-    st.header("💭 Brand Perception & Recognition")
-    st.caption("How consumers feel about and recognize Škoda brand elements")
-    
-    st.write("")  # Breathing room
-    
-    # Lead with recognition journey visual
-    st.markdown("### 🧭 Recognition Journey")
-    st.caption("How brand recognition builds as consumers see multiple elements")
-    
-    with st.expander("📖 Understanding the recognition journey", expanded=False):
-        st.markdown("""
-        This shows the **cumulative effect** of exposing consumers to multiple brand elements:
-        - After seeing 1 element, only 10% recognize it as Škoda
-        - Recognition grows to 40% after seeing all 6 elements
-        - **Critical finding:** 56% never recognize elements as Škoda, even after 6 exposures
-        
-        **Implication:** Multiple touchpoints are essential - Symbol must lead every campaign.
-        """)
-    
-    # Recognition Journey Data
-    recognition_journey = {
-        'after_1_element': 0.103,
-        'after_2_elements': 0.157,
-        'after_3_elements': 0.232,
-        'after_4_elements': 0.295,
-        'after_5_elements': 0.356,
-        'after_all_6_elements': 0.397,
-        'never_recognized': 0.563
-    }
-    
-    journey_df = pd.DataFrame([
-        {'Stage': 'After 1 element', 'Recognition': recognition_journey['after_1_element'], 'Cumulative': True},
-        {'Stage': 'After 2 elements', 'Recognition': recognition_journey['after_2_elements'], 'Cumulative': True},
-        {'Stage': 'After 3 elements', 'Recognition': recognition_journey['after_3_elements'], 'Cumulative': True},
-        {'Stage': 'After 4 elements', 'Recognition': recognition_journey['after_4_elements'], 'Cumulative': True},
-        {'Stage': 'After 5 elements', 'Recognition': recognition_journey['after_5_elements'], 'Cumulative': True},
-        {'Stage': 'After all 6', 'Recognition': recognition_journey['after_all_6_elements'], 'Cumulative': True},
-        {'Stage': 'Never recognized', 'Recognition': recognition_journey['never_recognized'], 'Cumulative': False}
-    ])
-    
-    fig_journey = go.Figure()
-    
-    # Cumulative recognition (building up)
-    cumulative_data = journey_df[journey_df['Cumulative'] == True]
-    fig_journey.add_trace(go.Scatter(
-        x=cumulative_data['Stage'],
-        y=cumulative_data['Recognition'],
-        mode='lines+markers+text',
-        name='Cumulative Recognition',
-        line=dict(color='#4CAF50', width=3),
-        marker=dict(size=12),
-        text=cumulative_data['Recognition'].apply(lambda x: f'{x:.0%}'),
-        textposition='top center',
-        textfont=dict(size=14, color='#4CAF50')
-    ))
-    
-    # Never recognized (separate point)
-    never_data = journey_df[journey_df['Cumulative'] == False]
-    fig_journey.add_trace(go.Scatter(
-        x=never_data['Stage'],
-        y=never_data['Recognition'],
-        mode='markers+text',
-        name='Never Recognized',
-        marker=dict(size=15, color='#F44336'),
-        text=never_data['Recognition'].apply(lambda x: f'{x:.0%}'),
-        textposition='top center',
-        textfont=dict(size=14, color='#F44336')
-    ))
-    
-    fig_journey.update_layout(
-        title='',
-        xaxis_title='Exposure to Brand Elements',
-        yaxis_title='% Recognizing as Škoda',
-        yaxis_tickformat='.0%',
-        height=450,
-        showlegend=False,
-        hovermode='x unified'
-    )
-    
-    st.plotly_chart(fig_journey, use_container_width=True)
-    
-    # Key metrics
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.metric("Recognition after 1 element", "10%")
-        st.caption("Initial brand attribution is very low")
-    with col2:
-        st.metric("Recognition after 6 elements", "40%")
-        st.caption("Maximum cumulative recognition")
-    with col3:
-        st.metric("Never Recognized", "56%", delta="-56%", delta_color="inverse")
-        st.caption("Critical gap requiring urgent attention")
-    
-    st.write("")
-    st.write("")
-    
-    # Sentiment Analysis Section
-    st.markdown("### 💚 Emotional Sentiment Analysis")
-    st.caption("Consumer emotional response to each brand element")
-    
-    # Sentiment warning callout
+    # Key Takeaways
     st.warning("""
-    **Sentiment Challenge:** Only 2 of 9 elements have positive sentiment. The brand triggers slightly more negative than positive emotional responses - a concern requiring strategic attention.
+    ### 🎯 Key Takeaways - Sentiment Challenge
+    
+    **The Reality:**
+    - Only 2 out of 9 elements have positive sentiment (Symbol +0.3%, Sonic +1.1%)
+    - 7 elements have net negative sentiment (more negative than positive associations)
+    - Average sentiment is -3.4% across all elements
+    
+    **What This Means:**
+    - Brand elements trigger slightly more negative than positive emotional responses
+    - This is a brand health concern requiring attention
+    - Focus on strengthening emotional connection, especially for weakest performers
+    
+    **Action Items:**
+    - Redesign or reposition elements with <-5% sentiment
+    - Leverage Sonic and Symbol (the only positive performers) more prominently
+    - Address why Type (-7.7%) and Hacek (-6.9%) perform poorly
     """)
-    
-    with st.expander("📖 Understanding sentiment scores", expanded=False):
-        st.markdown("""
-        **Positive Sentiment:** % choosing positive descriptors (Bold, Stylish, Modern, Simple, Human, Exciting, Playful)
-        
-        **Negative Sentiment:** % choosing opposite descriptors (Cautious, Plain, Old-Fashioned, Complicated, Cold, Boring, Serious)
-        
-        **Net Sentiment:** Positive minus Negative (higher = more positive brand perception)
-        """)
-    
-    # Sentiment ranking chart
+
+    st.markdown("---")
+
+    st.markdown("""
+    <div style='background-color: #e8f5e9; padding: 20px; border-radius: 10px; margin-bottom: 20px;'>
+    <h4>Understanding Sentiment Scores</h4>
+    <p><b>Positive Sentiment:</b> Average % of respondents choosing positive descriptors (Bold, Stylish, Modern, Simple, Human, Exciting, Playful)</p>
+    <p><b>Negative Sentiment:</b> Average % choosing opposite descriptors (Cautious, Plain, Old-Fashioned, Complicated, Cold, Boring, Serious)</p>
+    <p><b>Net Sentiment:</b> Positive minus Negative (higher = more positive brand perception)</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Overview Metrics Cards
+    col1, col2, col3, col4 = st.columns(4)
+
+    most_positive = master_df.loc[master_df['Net Sentiment'].idxmax()]
+    least_positive = master_df.loc[master_df['Net Sentiment'].idxmin()]
+    avg_net_sentiment = master_df['Net Sentiment'].mean()
+    sentiment_range = master_df['Net Sentiment'].max() - master_df['Net Sentiment'].min()
+
+    with col1:
+        st.metric(
+            "Most Positive Element", 
+            most_positive['Element'], 
+            f"+{most_positive['Net Sentiment']:.1%}",
+            help="Net sentiment = % choosing positive descriptors minus % choosing negative descriptors. Positive values indicate more positive than negative associations."
+        )
+        st.success(f"**{most_positive['Net Sentiment']:.1%}** net positive perception.")
+        with st.expander("❓ Why does this element have the highest sentiment?"):
+            st.markdown(f"""
+            **{most_positive['Element']}** resonates most strongly because:
+
+            1. **Strong Positive Scores:** {most_positive['Positive Sentiment']:.1%} positive vs {most_positive['Negative Sentiment']:.1%} negative
+            2. **Design Appeal:** The visual/audio qualities naturally evoke positive emotions
+            3. **Familiarity Effect:** {most_positive['Recognition']:.0%} recognition builds positive associations over time
+            4. **Emotional Triggers:** Successfully communicates brand values like modern, stylish, exciting
+
+            High sentiment indicates this asset creates emotional connection beyond just recognition.
+            """)
+
+    with col2:
+        st.metric("Least Positive Element", least_positive['Element'], f"{least_positive['Net Sentiment']:+.1%}")
+        st.warning(f"**{least_positive['Net Sentiment']:+.1%}** net sentiment - needs improvement.")
+        with st.expander("❓ Why is this element's sentiment negative?"):
+            st.markdown(f"""
+            **{least_positive['Element']}** has negative net sentiment because:
+
+            1. **More Negative Associations:** {least_positive['Negative Sentiment']:.1%} negative vs {least_positive['Positive Sentiment']:.1%} positive
+            2. **Lower Recognition:** Only {least_positive['Recognition']:.0%} recognition - less familiarity may lead to weaker emotional connection
+            3. **Design Challenge:** The element may not resonate emotionally or appears generic
+            4. **Opportunity:** With {least_positive['Overall Usage']:.0%} current usage, this asset needs redesign or stronger positioning
+
+            **This is a brand concern that requires strategic attention.**
+            """)
+
+    with col3:
+        st.metric("Average Net Sentiment", "All Elements", f"{avg_net_sentiment:+.1%}")
+        st.warning(f"Škoda brand elements generate **{avg_net_sentiment:+.1%}** net sentiment - slightly negative overall.")
+        with st.expander("💡 What does this mean for the brand?"):
+            st.markdown(f"""
+            This average sentiment score tells us:
+
+            1. **Brand Health Concern:** 7 out of 9 elements have net negative sentiment - needs attention
+            2. **Mixed Performance:** Range of {master_df['Net Sentiment'].min():+.1%} to {master_df['Net Sentiment'].max():+.1%} shows inconsistent performance
+            3. **Emotional Disconnect:** Only {master_df['Positive Sentiment'].mean():.1%} average positive sentiment vs {master_df['Negative Sentiment'].mean():.1%} negative
+            4. **Action Required:** The negative overall sentiment indicates brand perception needs strengthening
+
+            **Strategic Priority:** Focus on improving emotional connection and positive associations, especially for the 7 underperforming elements.
+            """)
+
+    with col4:
+        st.metric("Sentiment Range", f"{sentiment_range:.1%}", "Max - Min")
+        st.info(f"Variation of **{sentiment_range:.1%}** shows significant differences in emotional impact.")
+        with st.expander("📊 Why does sentiment vary across elements?"):
+            st.markdown(f"""
+            Sentiment varies between {master_df['Net Sentiment'].min():+.1%} and {master_df['Net Sentiment'].max():+.1%} because:
+
+            1. **Design Characteristics:** Some elements (Sonic, Symbol) trigger more positive emotional responses
+            2. **Recognition Impact:** Higher-recognition assets don't automatically have better sentiment (e.g., Electric Green has 20% recognition but negative sentiment)
+            3. **Cultural Factors:** Elements like typography and colors may not resonate across all markets
+            4. **Functional vs Emotional:** Logo/sonic elements perform better than color/type elements
+
+            **Strategy:** Prioritize Sonic and Symbol in communications; redesign or phase out weakest performers.
+            """)
+
+
+    st.markdown("---")
+
+    # Positive vs Negative Bar Chart
+    st.markdown("### Positive vs Negative Sentiment Comparison")
+    st.caption("Green bars show positive associations, red bars show negative associations")
+
+    # Prepare data for grouped bar chart
+    sentiment_comparison = master_df[['Element', 'Positive Sentiment', 'Negative Sentiment']].copy()
+    sentiment_comparison_melted = sentiment_comparison.melt(
+        id_vars='Element',
+        var_name='Sentiment Type',
+        value_name='Percentage'
+    )
+
+    fig_comparison = go.Figure()
+
+    # Add positive sentiment bars (green)
+    fig_comparison.add_trace(go.Bar(
+        name='Positive Sentiment',
+        x=sentiment_comparison['Element'],
+        y=sentiment_comparison['Positive Sentiment'],
+        marker_color='#4CAF50',
+        text=sentiment_comparison['Positive Sentiment'].apply(lambda x: f'{x:.1%}'),
+        textposition='outside'
+    ))
+
+    # Add negative sentiment bars (red)
+    fig_comparison.add_trace(go.Bar(
+        name='Negative Sentiment',
+        x=sentiment_comparison['Element'],
+        y=sentiment_comparison['Negative Sentiment'],
+        marker_color='#F44336',
+        text=sentiment_comparison['Negative Sentiment'].apply(lambda x: f'{x:.1%}'),
+        textposition='outside'
+    ))
+
+    fig_comparison.update_layout(
+        barmode='group',
+        title='Positive vs Negative Sentiment by Brand Element',
+        xaxis_title='Brand Element',
+        yaxis_title='Sentiment Score',
+        yaxis_tickformat='.0%',
+        height=500,
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+    )
+
+    st.plotly_chart(fig_comparison, use_container_width=True)
+
+    st.warning("**Key Insight:** Only 2 out of 9 brand elements (Symbol and Sonic) show net positive sentiment. The majority have slightly more negative than positive associations, with an average net sentiment of -3.4%. This indicates opportunities for improvement in brand perception.")
+
+    st.markdown("---")
+
+    # Net Sentiment Ranking Chart
+    st.markdown("### Net Sentiment Ranking")
+    st.caption("Elements ranked by overall sentiment score (positive minus negative)")
+
     sentiment_ranked = master_df.sort_values('Net Sentiment', ascending=True)
-    
-    fig_sentiment = go.Figure(go.Bar(
+
+    # Create color gradient based on net sentiment values
+    colors = sentiment_ranked['Net Sentiment'].apply(
+        lambda x: f'rgb({int(244 - (x * 400))}, {int(67 + (x * 400))}, {int(54 + (x * 100))})'
+    ).tolist()
+
+    fig_net = go.Figure(go.Bar(
         x=sentiment_ranked['Net Sentiment'],
         y=sentiment_ranked['Element'],
         orientation='h',
@@ -1141,635 +799,278 @@ with tab3:
         textposition='outside',
         hovertemplate='<b>%{y}</b><br>Net Sentiment: %{x:.1%}<extra></extra>'
     ))
-    
-    fig_sentiment.update_layout(
-        title='Elements Ranked by Net Sentiment',
+
+    fig_net.update_layout(
+        title='Brand Elements Ranked by Net Sentiment',
         xaxis_title='Net Sentiment Score',
-        yaxis_title='',
+        yaxis_title='Brand Element',
         xaxis_tickformat='.0%',
-        height=450,
+        height=500,
         showlegend=False
     )
-    
-    st.plotly_chart(fig_sentiment, use_container_width=True)
-    
-    st.write("")
-    
-    # Sentiment metrics
-    col1, col2, col3 = st.columns(3)
-    
-    most_positive = master_df.loc[master_df['Net Sentiment'].idxmax()]
-    least_positive = master_df.loc[master_df['Net Sentiment'].idxmin()]
-    avg_net_sentiment = master_df['Net Sentiment'].mean()
-    
-    with col1:
-        st.metric("Most Positive", most_positive['Element'])
-        st.success(f"**{most_positive['Net Sentiment']:+.1%}** net sentiment")
-        
-        with st.expander("📊 Why does this element score highest?", expanded=False):
-            st.markdown(f"""
-            **{most_positive['Element']}** resonates most strongly with consumers.
-            
-            **Observable Data:**
-            - **Positive Sentiment:** {most_positive['Positive Sentiment']:.1%} of respondents chose positive descriptors
-            - **Negative Sentiment:** {most_positive['Negative Sentiment']:.1%} chose negative descriptors
-            - **Net Difference:** {most_positive['Net Sentiment']:+.1%} (positive minus negative)
-            - **Recognition Level:** {most_positive['Recognition']:.0%} have seen/heard this element
-            - **Uniqueness:** {most_positive['Uniqueness']:.0%} correctly identify it as Škoda
-            
-            **Correlation Patterns:**
-            - This element has {most_positive['Recognition']:.0%} recognition, suggesting familiarity may influence sentiment
-            - Uniqueness at {most_positive['Uniqueness']:.0%} indicates strong brand attribution
-            
-            **Questions for Discussion:**
-            - What design characteristics drive the positive emotional response?
-            - Does this sentiment align with Škoda's intended brand positioning?
-            - Can insights from this element inform improvements to others?
-            - Is the sentiment consistent across all markets or does it vary?
-            """)
-    
-    with col2:
-        st.metric("Least Positive", least_positive['Element'])
-        st.error(f"**{least_positive['Net Sentiment']:+.1%}** net sentiment")
-        
-        with st.expander("📊 Why does this element score lowest?", expanded=False):
-            st.markdown(f"""
-            **{least_positive['Element']}** triggers more negative than positive associations.
-            
-            **Observable Data:**
-            - **Positive Sentiment:** {least_positive['Positive Sentiment']:.1%} chose positive descriptors
-            - **Negative Sentiment:** {least_positive['Negative Sentiment']:.1%} chose negative descriptors
-            - **Net Difference:** {least_positive['Net Sentiment']:+.1%} (negative sentiment exceeds positive)
-            - **Recognition Level:** {least_positive['Recognition']:.0%} have seen/heard this element
-            - **Usage Frequency:** {least_positive['Overall Usage']:.0%} of campaigns use this element
-            
-            **Possible Factors:**
-            - Lower recognition ({least_positive['Recognition']:.0%}) may indicate limited familiarity
-            - Personality trait scores may reveal specific associations driving negativity
-            - Visual or audio characteristics may not resonate with target audience
-            - Cultural factors may influence perception differently across markets
-            
-            **Questions for Discussion:**
-            - Is negative sentiment due to design weakness or market misalignment?
-            - Does low recognition contribute to negative sentiment (unfamiliarity bias)?
-            - Which specific personality traits score lowest for this element?
-            - What would be required to improve sentiment - redesign or repositioning?
-            """)
-    
-    with col3:
-        st.metric("Average", "All Elements")
-        st.warning(f"**{avg_net_sentiment:+.1%}** average net sentiment")
-        
-        with st.expander("📊 Interpreting the average", expanded=False):
-            sentiment_range = master_df['Net Sentiment'].max() - master_df['Net Sentiment'].min()
-            positive_count = len(master_df[master_df['Net Sentiment'] > 0])
-            negative_count = len(master_df[master_df['Net Sentiment'] < 0])
-            
-            st.markdown(f"""
-            **Overall Sentiment Pattern:**
-            - **Average:** {avg_net_sentiment:+.1%} across all 9 brand elements
-            - **Range:** {sentiment_range:.1%} between highest and lowest performers
-            - **Distribution:** {positive_count} elements with positive sentiment, {negative_count} with negative
-            
-            **Context:**
-            - Average positive sentiment across elements: {master_df['Positive Sentiment'].mean():.1%}
-            - Average negative sentiment across elements: {master_df['Negative Sentiment'].mean():.1%}
-            - The slight negative tilt suggests more consumers choose negative descriptors
-            
-            **Industry Context Considerations:**
-            - Is -3.4% net sentiment typical for automotive brands or below average?
-            - How does this compare to competitor brand element sentiment?
-            - Are there category-specific expectations affecting perception?
-            
-            **Questions for Discussion:**
-            - Does negative sentiment indicate need for element redesign or brand repositioning?
-            - Which elements drag down the average most significantly?
-            - Is consistency of sentiment across elements more important than average score?
-            - How quickly can sentiment shift with design changes or increased exposure?
-            """)
 
-    
-    st.write("")
-    st.write("")
-    
-    # Brand Familiarity section
-    st.markdown("### 🎯 Brand Familiarity Levels")
-    st.caption("How well do consumers know Škoda?")
-    
-    with st.expander("📖 Understanding brand familiarity context", expanded=False):
-        st.markdown("""
-        **Methodology:**
-        Survey question: "How familiar are you with the Škoda brand?"
-        - Respondents: n=2,011 consumers aged 18-55 across UK, Spain, Germany, Poland
-        - No exposure to brand elements before this question
-        - Measures overall brand awareness independent of specific assets
-        
-        **Why This Matters:**
-        This data provides critical context for interpreting asset recognition:
-        - **High familiarity + low asset recognition** = Assets not distinctive enough
-        - **Low familiarity + low asset recognition** = General awareness challenge
-        - **Familiarity gap** = Opportunity for brand education
-        
-        **Interpreting the Categories:**
-        - **Very/Quite Familiar (33%):** Core audience who know Škoda well
-        - **Heard of, not much knowledge (46%):** Aware but superficial understanding
-        - **Never heard of (18%):** Complete lack of brand awareness
-        
-        **Strategic Questions:**
-        - Does 33% familiarity align with category benchmarks for automotive brands?
-        - What explains the 46% who've heard of Škoda but lack deeper knowledge?
-        - Should asset strategy prioritize deepening existing awareness or expanding reach?
-        - How does familiarity correlate with asset recognition rates?
-        """)
-    
-    skoda_familiarity = {
-        'very_familiar': 0.15,
-        'quite_familiar': 0.18,
-        'heard_of_not_much': 0.46,
-        'never_heard': 0.18,
-        'dont_know': 0.03
-    }
-    
-    familiarity_df = pd.DataFrame([
-        {'Level': 'Very familiar', 'Percentage': skoda_familiarity['very_familiar'], 'Category': 'Familiar'},
-        {'Level': 'Quite familiar', 'Percentage': skoda_familiarity['quite_familiar'], 'Category': 'Familiar'},
-        {'Level': 'Heard of, not much knowledge', 'Percentage': skoda_familiarity['heard_of_not_much'], 'Category': 'Aware'},
-        {'Level': 'Never heard of', 'Percentage': skoda_familiarity['never_heard'], 'Category': 'Unaware'},
-        {'Level': "Don't know", 'Percentage': skoda_familiarity['dont_know'], 'Category': 'Unaware'}
-    ])
-    
-    color_map = {'Familiar': '#4CAF50', 'Aware': '#FFC107', 'Unaware': '#F44336'}
-    familiarity_df['Color'] = familiarity_df['Category'].map(color_map)
-    
-    fig_familiarity = go.Figure(go.Bar(
-        x=familiarity_df['Percentage'],
-        y=familiarity_df['Level'],
-        orientation='h',
-        marker_color=familiarity_df['Color'],
-        text=familiarity_df['Percentage'].apply(lambda x: f'{x:.0%}'),
-        textposition='outside',
-        hovertemplate='<b>%{y}</b><br>%{x:.0%} of respondents<extra></extra>'
-    ))
-    
-    fig_familiarity.update_layout(
-        title='',
-        xaxis_title='% of Respondents',
-        yaxis_title='',
-        xaxis_tickformat='.0%',
-        height=350,
-        showlegend=False
-    )
-    
-    st.plotly_chart(fig_familiarity, use_container_width=True)
-    
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        familiar_total = skoda_familiarity['very_familiar'] + skoda_familiarity['quite_familiar']
-        st.metric("Familiar with Brand", f"{familiar_total:.0%}")
-        st.caption("Very + Quite familiar combined")
-    
-    with col2:
-        st.metric("Heard Name Only", f"{skoda_familiarity['heard_of_not_much']:.0%}")
-        st.caption("Lack deeper brand knowledge")
-    
-    with col3:
-        st.metric("Completely Unaware", f"{skoda_familiarity['never_heard']:.0%}")
-        st.caption("Never heard of Škoda")
-    
-    st.write("")
-    st.write("")
-    
-    # Strategic discussion points - not prescriptive
-    st.info("""
-    ### 💡 Key Patterns for Strategic Discussion
-    
-    **Recognition Journey Patterns:**
-    - 56% never recognize elements as Škoda after 6 exposures
-    - Recognition builds incrementally (10% → 40% across 6 elements)
-    - Symbol drives majority of initial recognition at 48%
-    
-    **Discussion Questions:**
-    - What factors explain the 56% non-recognition rate? Inconsistency? Low brand familiarity? Generic design?
-    - Is cumulative recognition pattern typical for automotive category?
-    - What's the optimal number of elements per campaign for recognition?
-    
-    **Sentiment Patterns:**
-    - Only 2 of 9 elements show positive sentiment (Symbol +0.3%, Sonic +1.1%)
-    - 7 elements generate more negative than positive associations
-    - Average net sentiment: -3.4%
-    
-    **Discussion Questions:**
-    - Is negative sentiment unusual in automotive category or within norms?
-    - Do personality traits explain sentiment patterns?
-    - Should strategy prioritize fixing negative sentiment or amplifying positive elements?
-    
-    **Familiarity Patterns:**
-    - 33% familiar with Škoda brand overall
-    - 46% heard name but lack knowledge
-    - 18% never heard of brand
-    
-    **Discussion Questions:**
-    - Does low brand familiarity explain weak element recognition?
-    - Should brand building focus on awareness first, then asset recognition?
-    - How do familiarity levels compare to competitive set?
-    """)
-    
-    # Detailed data in expander
-    with st.expander("📊 Detailed Sentiment Data by Element", expanded=False):
-        sentiment_detail = master_df[['Element', 'Recognition', 'Uniqueness', 'Positive Sentiment', 
-                                       'Negative Sentiment', 'Net Sentiment']].sort_values('Net Sentiment', ascending=False)
-        
-        st.dataframe(
-            sentiment_detail.style.format({
-                'Recognition': '{:.0%}',
-                'Uniqueness': '{:.0%}',
-                'Positive Sentiment': '{:.1%}',
-                'Negative Sentiment': '{:.1%}',
-                'Net Sentiment': '{:+.1%}'
-            }).background_gradient(subset=['Net Sentiment'], cmap='RdYlGn'),
-            use_container_width=True,
-            hide_index=True
-        )
+    st.plotly_chart(fig_net, use_container_width=True)
 
-# ==================== TAB 4: STRATEGIC DISCUSSION POINTS ====================
-with tab4:
-    st.header("💭 Strategic Discussion Framework")
-    st.caption("Data patterns and questions to guide brand asset strategy development")
-    
-    st.write("")  # Breathing room
-    
-    # Context setting
-    with st.expander("📋 Purpose of This Analysis", expanded=False):
-        st.markdown("""
-        **Objective:**
-        
-        This tab synthesizes data patterns to facilitate strategic discussions between Škoda and Saffron teams.
-        It presents questions and observations—not prescriptions—to guide collaborative decision-making.
-        
-        **How to Use This Section:**
-        
-        1. Review data patterns for each strategic area
-        2. Consider the discussion questions with your team
-        3. Use insights to inform (not replace) your strategic judgment
-        4. Combine this quantitative data with qualitative insights, market knowledge, and brand vision
-        
-        **What This Analysis Does NOT Do:**
-        
-        - Prescribe specific actions (that's for workshop discussions)
-        - Account for factors beyond this research (competitive moves, business strategy, etc.)
-        - Replace strategic judgment with algorithmic recommendations
-        """)
-    
-    st.write("")
-    
-    # Performance patterns section
-    st.markdown("### 📊 Performance Pattern Analysis")
-    st.caption("Observable patterns in the data worth discussing")
-    
-    # Identify high/moderate/low performers based on data
-    high_performers = master_df[
-        (master_df['Recognition'] >= 0.30) |
-        (master_df['Uniqueness'] >= 0.40)
-    ].sort_values('Recognition', ascending=False)
-    
-    moderate_performers = master_df[
-        (master_df['Recognition'] >= 0.19) & 
-        (master_df['Recognition'] < 0.30) &
-        (master_df['Uniqueness'] < 0.40)
-    ].sort_values('Recognition', ascending=False)
-    
-    low_performers = master_df[
-        (master_df['Recognition'] < 0.19) &
-        (master_df['Uniqueness'] < 0.30)
-    ].sort_values('Recognition', ascending=False)
-    
-    col1, col2, col3 = st.columns(3)
-    
+    # Top 3 and Bottom 3
+    col1, col2 = st.columns(2)
+
     with col1:
-        st.markdown("#### High Performance")
-        st.success(f"**{len(high_performers)} elements** meeting high thresholds")
-        
-        for idx, row in high_performers.iterrows():
-            with st.expander(f"**{row['Element']}**", expanded=False):
-                st.markdown(f"""
-                **Metrics:**
-                - Recognition: {row['Recognition']:.0%}
-                - Uniqueness: {row['Uniqueness']:.0%}
-                - Sentiment: {row['Net Sentiment']:+.1%}
-                - Usage: {row['Overall Usage']:.0%} of campaigns
-                - Investment: €{row['Total Investment']:,.0f}
-                - ROI: {row['Recognition ROI']:.2f} per €1M
-                
-                **Discussion Points:**
-                - What makes this element successful?
-                - Should it anchor brand system?
-                - Can success be replicated in other elements?
-                - Is investment proportional to performance?
-                """)
-    
+        st.markdown("#### 🏆 Top 3 Best Performing")
+        top_3_sentiment = sentiment_ranked.nlargest(3, 'Net Sentiment')
+        for idx, row in top_3_sentiment.iterrows():
+            sentiment_color = "success" if row['Net Sentiment'] > 0 else "info"
+            if sentiment_color == "success":
+                st.success(f"**{row['Element']}**: {row['Net Sentiment']:+.1%} net sentiment")
+            else:
+                st.info(f"**{row['Element']}**: {row['Net Sentiment']:+.1%} net sentiment")
+            st.write(f"   • Positive: {row['Positive Sentiment']:.1%} | Negative: {row['Negative Sentiment']:.1%}")
+
     with col2:
-        st.markdown("#### Moderate Performance")
-        st.info(f"**{len(moderate_performers)} elements** with mixed results")
-        
-        for idx, row in moderate_performers.iterrows():
-            with st.expander(f"**{row['Element']}**", expanded=False):
-                st.markdown(f"""
-                **Metrics:**
-                - Recognition: {row['Recognition']:.0%}
-                - Uniqueness: {row['Uniqueness']:.0%}
-                - Sentiment: {row['Net Sentiment']:+.1%}
-                - Usage: {row['Overall Usage']:.0%} of campaigns
-                - Investment: €{row['Total Investment']:,.0f}
-                
-                **Discussion Points:**
-                - What's limiting performance?
-                - Is there unrealized potential?
-                - Should usage increase or decrease?
-                - Does it serve a specific strategic role?
-                """)
-    
-    with col3:
-        st.markdown("#### Lower Performance")
-        st.warning(f"**{len(low_performers)} elements** below thresholds")
-        
-        for idx, row in low_performers.iterrows():
-            with st.expander(f"**{row['Element']}**", expanded=False):
-                st.markdown(f"""
-                **Metrics:**
-                - Recognition: {row['Recognition']:.0%}
-                - Uniqueness: {row['Uniqueness']:.0%}
-                - Sentiment: {row['Net Sentiment']:+.1%}
-                - Usage: {row['Overall Usage']:.0%} of campaigns
-                - Investment: €{row['Total Investment']:,.0f}
-                
-                **Discussion Points:**
-                - Why is performance low despite investment?
-                - Is redesign worth considering?
-                - Does it fill a necessary role despite metrics?
-                - Should investment shift elsewhere?
-                """)
-    
-    st.write("")
-    st.write("")
-    
-    # Investment efficiency analysis
-    st.markdown("### 💰 Investment Efficiency Discussion")
-    st.caption("Examining relationship between spend and recognition outcomes")
-    
-    with st.expander("📊 Investment vs. Recognition Patterns", expanded=False):
-        # Calculate efficiency metrics
-        high_investment_low_rec = master_df[
-            (master_df['Total Investment'] > master_df['Total Investment'].median()) &
-            (master_df['Recognition'] < master_df['Recognition'].median())
-        ]
-        
-        low_investment_high_rec = master_df[
-            (master_df['Total Investment'] < master_df['Total Investment'].median()) &
-            (master_df['Recognition'] > master_df['Recognition'].median())
-        ]
-        
-        st.markdown("""
-        **High Investment, Lower Recognition:**
-        
-        These elements receive above-median spend but achieve below-median recognition.
-        """)
-        
-        if len(high_investment_low_rec) > 0:
-            for idx, row in high_investment_low_rec.iterrows():
-                st.write(f"- **{row['Element']}:** €{row['Total Investment']:,.0f} invested → {row['Recognition']:.0%} recognition (ROI: {row['Recognition ROI']:.2f})")
-            
-            st.markdown("""
-            **Discussion Questions:**
-            - Is investment disproportionate to results?
-            - Are there execution issues (size, prominence, consistency)?
-            - Should investment be reallocated?
-            - Or does this reflect strategic choice (building for future)?
-            """)
+        st.markdown("#### ⚠️ Bottom 3 (Need Improvement)")
+        bottom_3_sentiment = sentiment_ranked.nsmallest(3, 'Net Sentiment')
+        for idx, row in bottom_3_sentiment.iterrows():
+            st.warning(f"**{row['Element']}**: {row['Net Sentiment']:.1%} net sentiment")
+            st.write(f"   • Positive: {row['Positive Sentiment']:.1%} | Negative: {row['Negative Sentiment']:.1%}")
+
+    st.markdown("---")
+
+    # Detailed Sentiment Data Table
+    st.markdown("### Detailed Sentiment Data")
+    st.caption("Complete breakdown of sentiment scores with interpretations")
+
+    # Create detailed table with interpretation
+    detailed_sentiment = master_df[['Element', 'Positive Sentiment', 'Negative Sentiment', 'Net Sentiment']].copy()
+
+    # Add interpretation column
+    def interpret_sentiment(net):
+        if net >= 0.01:
+            return "✅ Net Positive - Good emotional connection"
+        elif net >= -0.02:
+            return "⚖️ Near Neutral - Balanced perception"
+        elif net >= -0.05:
+            return "⚠️ Slightly Negative - Needs attention"
         else:
-            st.write("No elements in this category")
-        
-        st.write("")
-        
-        st.markdown("""
-        **Lower Investment, Higher Recognition:**
-        
-        These elements achieve above-median recognition with below-median spend.
-        """)
-        
-        if len(low_investment_high_rec) > 0:
-            for idx, row in low_investment_high_rec.iterrows():
-                st.write(f"- **{row['Element']}:** €{row['Total Investment']:,.0f} invested → {row['Recognition']:.0%} recognition (ROI: {row['Recognition ROI']:.2f})")
-            
-            st.markdown("""
-            **Discussion Questions:**
-            - What drives efficiency? Inherent memorability? Strategic placement?
-            - Is there opportunity to scale investment while maintaining efficiency?
-            - Can learnings apply to other elements?
-            - Why isn't more being invested here?
-            """)
-        else:
-            st.write("No elements in this category")
-    
-    st.write("")
-    st.write("")
-    
-    # Future considerations
-    st.markdown("### 🔮 Future Considerations")
-    st.caption("Strategic areas requiring long-term planning")
-    
-    with st.expander("🚗 Electric Vehicle Transition Context", expanded=False):
-        st.markdown("""
-        **Data Observations:**
-        
-        - **Electric Green:** 20% recognition, 32% uniqueness, -6.0% sentiment
-        - **Symbol:** 48% recognition, 65% uniqueness, +0.3% sentiment
-        - **Sonic:** 22% recognition, 34% uniqueness, +1.1% sentiment
-        
-        **Discussion Framework:**
-        
-        1. **EV Relevance:** Which current elements feel appropriate for electric vehicles?
-        2. **Green Performance:** Why does Electric Green underperform? Color choice? Execution? Positioning?
-        3. **Sonic Evolution:** How should audio identity adapt for quiet EVs?
-        4. **Continuity vs. Change:** Balance maintaining recognition (Symbol) with signaling transformation
-        
-        **Questions to Explore:**
-        - Should EV communications use different element combinations?
-        - Is a new EV-specific element needed, or adapt existing ones?
-        - How do competitor EV brands use brand elements?
-        - What do focus groups say about current elements and EV fit?
-        """)
-    
-    with st.expander("🎨 Design Evolution Opportunities", expanded=False):
-        negative_sentiment_elements = master_df[master_df['Net Sentiment'] < -0.03].sort_values('Net Sentiment')
-        
-        st.markdown("""
-        **Data Observations:**
-        
-        7 of 9 elements show negative net sentiment:
-        """)
-        
-        for idx, row in negative_sentiment_elements.iterrows():
-            st.write(f"- **{row['Element']}:** {row['Net Sentiment']:+.1%} sentiment ({row['Recognition']:.0%} recognition)")
-        
-        st.markdown("""
-        
-        **Discussion Framework:**
-        
-        1. **Severity Assessment:** Is negative sentiment problematic or category-typical?
-        2. **Design vs. Perception:** Do elements need redesign or repositioning?
-        3. **Priority Setting:** Which negative sentiment elements hurt most?
-        4. **Risk Evaluation:** What's lost if elements are redesigned (recognition drops)?
-        
-        **Questions to Explore:**
-        - What sentiment scores do competitor brands achieve?
-        - Do personality traits explain sentiment (e.g., "boring" vs "exciting")?
-        - Can negative sentiment be addressed without major redesign?
-        - Should focus be on amplifying positives vs. fixing negatives?
-        """)
-    
-    with st.expander("📊 Measurement & Tracking Framework", expanded=False):
-        st.markdown("""
-        **Current Baseline Metrics (for future tracking):**
-        
-        - **Recognition Rate:** Average 20% across elements (range: 19-48%)
-        - **Uniqueness Rate:** Average 35% across elements (range: 29-65%)
-        - **Net Sentiment:** Average -3.4% across elements (range: -7.7% to +1.1%)
-        - **Recognition Journey:** 10% after 1 element → 40% after 6 elements
-        - **Non-Recognition:** 56% never attribute elements to Škoda
-        
-        **Tracking Considerations:**
-        
-        1. **Frequency:** Quarterly? Annually? Post-campaign?
-        2. **Metrics:** Which KPIs matter most for strategy?
-        3. **Methodology:** Repeat exact survey or adapt based on learnings?
-        4. **Benchmarks:** Compare to competitors or category norms?
-        5. **Triggers:** What performance changes would prompt strategy review?
-        
-        **Questions to Explore:**
-        - What constitutes "success" - improved recognition? Sentiment? Both?
-        - How long before design changes impact metrics?
-        - Should tracking vary by market or be consistent?
-        - Who owns ongoing measurement and reporting?
-        """)
-    
-    st.write("")
-    st.write("")
-    
-    # Workshop preparation section
-    st.markdown("### 🎯 Preparing for Strategy Workshop")
-    st.caption("Key questions to address in collaborative sessions")
-    
-    st.info("""
-    **Core Strategic Questions for Discussion:**
-    
-    **Brand Architecture:**
-    - Should one element (Symbol?) anchor the entire system?
-    - What's the minimum viable element set for recognition?
-    - How should elements combine - fixed templates or flexible?
-    
-    **Investment Strategy:**
-    - Should investment follow performance or build weak areas?
-    - What's the target recognition threshold for each element?
-    - How to balance consistency (repeat winners) vs. evolution (new ideas)?
-    
-    **Market Adaptation:**
-    - Are element guidelines universal or market-specific?
-    - How much flexibility should local markets have?
-    - Should underperforming markets use different combinations?
-    
-    **Timeline & Priorities:**
-    - What changes can happen immediately vs. require redesign?
-    - Which elements are "locked" vs. "flexible"?
-    - What's the 12/24/36-month vision?
-    
-    **Success Criteria:**
-    - How will we know if new strategy works?
-    - What metrics define success?
-    - What's the acceptable timeframe for results?
-    """)
-    
-    st.write("")
-    
-    # Download data for workshop
-    st.markdown("### 📥 Export Data for Workshop")
-    
-    workshop_data = master_df[['Element', 'Recognition', 'Uniqueness', 'Net Sentiment', 
-                                'Total Investment', 'Overall Usage', 'Recognition ROI']].copy()
-    workshop_data['Performance Tier'] = workshop_data.apply(
-        lambda row: 'High' if (row['Recognition'] >= 0.30 or row['Uniqueness'] >= 0.40) 
-        else 'Moderate' if row['Recognition'] >= 0.19 
-        else 'Lower', axis=1
+            return "🔴 Negative - Requires improvement"
+
+    detailed_sentiment['Interpretation'] = detailed_sentiment['Net Sentiment'].apply(interpret_sentiment)
+
+    # Style the table
+    styler_sentiment = detailed_sentiment.set_index('Element').style
+
+    # Apply heatmap to sentiment columns
+    styler_sentiment = styler_sentiment.background_gradient(
+        cmap='RdYlGn',
+        subset=['Net Sentiment'],
+        vmin=-0.08,
+        vmax=0.02
     )
-    
-    csv_data = workshop_data.to_csv(index=False)
+
+    styler_sentiment = styler_sentiment.background_gradient(
+        cmap='Greens',
+        subset=['Positive Sentiment'],
+        vmin=0.46,
+        vmax=0.51
+    )
+
+    styler_sentiment = styler_sentiment.background_gradient(
+        cmap='Reds_r',
+        subset=['Negative Sentiment'],
+        vmin=0.49,
+        vmax=0.54
+    )
+
+    # Format as percentages
+    styler_sentiment = styler_sentiment.format({
+        'Positive Sentiment': '{:.1%}',
+        'Negative Sentiment': '{:.1%}',
+        'Net Sentiment': '{:+.1%}'
+    })
+
+    st.dataframe(styler_sentiment, use_container_width=True)
+
+    # Download sentiment data
+    sentiment_csv = detailed_sentiment.to_csv(index=False)
     st.download_button(
-        label="📥 Download Strategic Discussion Data",
-        data=csv_data,
-        file_name="skoda_strategic_discussion_data.csv",
+        label="📥 Download Sentiment Analysis CSV",
+        data=sentiment_csv,
+        file_name="skoda_sentiment_analysis.csv",
         mime="text/csv"
     )
-    
-    st.caption("Export includes all metrics for offline analysis and workshop preparation")
 
-# ==================== TAB 5: DETAILED ANALYTICS ====================
-with tab5:
-    st.header("📈 Detailed Analytics & Strategic Insights")
-    st.caption("Advanced analytics to identify opportunities and optimize brand asset usage")
-    
-    st.write("")  # Breathing room
-    
-    # Educational context
-    with st.expander("📊 Understanding Portfolio Analysis", expanded=False):
-        st.markdown("""
-        **Purpose of This Section:**
-        
-        This tab provides advanced analytical frameworks for understanding brand asset performance patterns.
-        These matrices help visualize strategic trade-offs and opportunities.
-        
-        **Three Key Frameworks:**
-        
-        1. **BCG Matrix (Recognition vs Investment):** Identifies Stars, Cash Cows, Question Marks, Dogs
-        2. **Brand Equity Matrix (Recognition vs Uniqueness):** Maps Icons, Famous Generics, Hidden Gems, Weak elements
-        3. **Efficiency Matrix (Usage vs ROI):** Reveals Workhorses, Overused, Untapped Potential, Underperformers
-        
-        **How to Use:**
-        - Each matrix reveals different strategic insights
-        - Combine perspectives for comprehensive understanding
-        - Use for workshop discussions, not algorithmic decisions
-        - Consider factors beyond what data shows (brand vision, competitive moves, etc.)
-        
-        **Important Caveat:**
-        Quadrant labels (Stars, Dogs, etc.) are analytical frameworks, not prescriptions. 
-        Strategic decisions require judgment beyond classification.
-        """)
-    
-    st.write("")
-    
-    # Key observations
+    st.markdown("---")
+
+    # Additional Insights
+    st.markdown("### 📊 Strategic Implications")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("#### Strengths")
+        st.write(f"• **{most_positive['Element']}** leads with {most_positive['Net Sentiment']:+.1%} net sentiment")
+        st.write(f"• **Symbol** (+0.3%) shows the brand mark itself has balanced perception")
+        st.write("• Average 48.3% positive associations shows baseline appeal")
+        st.write("• No element is severely negative - all have ~46-51% positive scores")
+
+    with col2:
+        st.markdown("#### ⚠️ Areas for Improvement")
+        st.write(f"• **7 out of 9 elements have net negative sentiment** - concern for brand health")
+        st.write(f"• **{least_positive['Element']}** needs most work with {least_positive['Net Sentiment']:+.1%} net sentiment")
+        st.write(f"• Average net sentiment is **-3.4%** - slightly more negative than positive overall")
+        st.write(f"• Focus on strengthening emotional connection for bottom performers")
+        st.write("• Consider design/messaging updates for weakest elements")
+
+    st.markdown("---")
+
+    # Q05 Brand Confusion Matrix
+    st.markdown("### 🎯 Brand Confusion Matrix (Q05)")
+    st.caption("Which brands do consumers think these elements belong to?")
+
     st.info("""
-    ### 🎯 Key Observations from Advanced Analysis
-    
-    **ROI Patterns:**
-    - Sonic delivers best efficiency (low investment, strong recognition)
-    - Symbol provides best overall value (high recognition + high uniqueness)
-    
-    **Investment-Performance Relationship:**
-    - Not all high-investment elements achieve proportional recognition
-    - Some lower-investment elements punch above their weight
-    - Efficiency varies significantly across the portfolio
-    
-    **Portfolio Balance:**
-    - Heavy concentration in certain elements vs light usage of others
-    - Opportunity to optimize investment allocation
-    - Question: Should investment follow performance or build weaker elements?
+    **Key Insight:** Brand confusion analysis reveals competitive threats. High Škoda attribution = distinctive asset. 
+    High competitor attribution = confusion risk. High "Generic" = lacks brand identity.
     """)
+
+    # Create confusion matrix
+    confusion_df = pd.DataFrame(q05_confusion_data).T
+    confusion_df = confusion_df[['Skoda', 'VW', 'Toyota', 'Seat', 'Generic', 'Dont_Know']]
+    confusion_df.columns = ['Škoda', 'VW', 'Toyota', 'Seat', 'Generic', "Don't Know"]
+
+    # Create confusion matrix with inverted scale for competitors
+    # We need to invert competitor columns so high values = red, low values = green
+    confusion_df_display = confusion_df.copy()
     
-    st.write("")
-    st.write("")
+    # Invert competitor and generic columns (1 - value) so high becomes low for coloring
+    for col in ['VW', 'Toyota', 'Seat', 'Generic', "Don't Know"]:
+        confusion_df_display[col] = 1 - confusion_df_display[col]
+    
+    # Keep Škoda as-is (high = green is correct)
+    
+    # Create heatmap with consistent color scale
+    fig_confusion = px.imshow(
+        confusion_df_display,
+        labels=dict(x="Attributed Brand", y="Element", color="Score"),
+        x=confusion_df_display.columns,
+        y=confusion_df_display.index,
+        color_continuous_scale='RdYlGn',  # Red = bad, Green = good
+        text_auto=False,  # We'll add custom text
+        aspect="auto",
+        title="Brand Attribution: Who Do Consumers Think Owns These Elements?"
+    )
+    
+    # Add text annotations with actual percentages (not inverted display values)
+    annotations = []
+    for i, element in enumerate(confusion_df.index):
+        for j, brand in enumerate(confusion_df.columns):
+            actual_value = confusion_df.loc[element, brand]
+            annotations.append(
+                dict(
+                    x=j,
+                    y=i,
+                    text=f'{actual_value:.0%}',
+                    showarrow=False,
+                    font=dict(size=12, color='white' if confusion_df_display.iloc[i, j] < 0.5 else 'black')
+                )
+            )
+    
+    fig_confusion.update_layout(
+        annotations=annotations,
+        height=500
+    )
+    st.plotly_chart(fig_confusion, use_container_width=True)
+    
+    st.caption("""
+    **Color Guide:** 
+    - 🟢 Green = Good (High Škoda attribution OR Low competitor/generic confusion)
+    - 🔴 Red = Bad (Low Škoda attribution OR High competitor/generic confusion)
+    """)
+
+    # Analysis columns
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("#### ✅ Distinctive Assets")
+        distinctive = confusion_df.sort_values('Škoda', ascending=False).head(3)
+        for element, row in distinctive.iterrows():
+            st.success(f"**{element}**: {row['Škoda']:.0%} Škoda")
+            st.caption(f"VW: {row['VW']:.0%} | Generic: {row['Generic']:.0%}")
+
+    with col2:
+        st.markdown("#### ⚠️ Confusion Risks")
+        
+        # Find elements with high VW confusion
+        high_vw = confusion_df[confusion_df['VW'] >= 0.15].sort_values('VW', ascending=False)
+        if len(high_vw) > 0:
+            st.warning("**VW Confusion (Brand Dilution Risk):**")
+            for element, row in high_vw.iterrows():
+                st.write(f"• **{element}**: {row['VW']:.0%} think it's VW")
+        
+        # Find elements with high generic attribution
+        high_generic = confusion_df[confusion_df['Generic'] >= 0.20].sort_values('Generic', ascending=False)
+        if len(high_generic) > 0:
+            st.warning("**Generic/No Brand Association:**")
+            for element, row in high_generic.iterrows():
+                st.write(f"• **{element}**: {row['Generic']:.0%} say generic")
+
+    # Competitive threat matrix
+    st.markdown("#### 📊 Redesign Priority Matrix")
+    
+    confusion_df['Competitive_Risk'] = confusion_df['VW'] + confusion_df['Toyota'] + confusion_df['Seat']
+    confusion_df['Distinctiveness_Score'] = confusion_df['Škoda'] - confusion_df['Competitive_Risk']
+    
+    threat_matrix = []
+    for element in confusion_df.index:
+        skoda_attr = confusion_df.loc[element, 'Škoda']
+        comp_risk = confusion_df.loc[element, 'Competitive_Risk']
+        
+        if skoda_attr < 0.35 and comp_risk > 0.25:
+            priority = "🔴 HIGH - Fix Now"
+        elif skoda_attr < 0.35 or comp_risk > 0.25:
+            priority = "🟡 MEDIUM - Monitor"
+        else:
+            priority = "🟢 LOW - Maintain"
+        
+        threat_matrix.append({
+            'Element': element,
+            'Škoda Attribution': skoda_attr,
+            'Competitor Confusion': comp_risk,
+            'Priority': priority
+        })
+    
+    threat_df = pd.DataFrame(threat_matrix).sort_values('Competitor Confusion', ascending=False)
+    st.dataframe(threat_df.style.format({
+        'Škoda Attribution': '{:.0%}',
+        'Competitor Confusion': '{:.0%}'
+    }), use_container_width=True)
+
+# ==================== TAB 3: STRATEGIC INSIGHTS ====================
+with tab3:
+    st.header("Strategic Insights Dashboard")
+    st.caption("Advanced analytics to identify opportunities and optimize brand asset usage")
+
+    # Key Takeaways
+    st.info("""
+    ### 🎯 Key Takeaways - Efficiency & Combinations
+    
+    **ROI Winners:**
+    - **Sonic** delivers best efficiency (low investment, strong recognition)
+    - **Symbol** provides best overall value (high recognition + high uniqueness)
+    
+    **Element Combinations:**
+    - Symbol-based combinations consistently show highest recognition (green in heatmap)
+    - Type + Electric Green shows poor performance (red in heatmap) - avoid this pairing
+    - Minimum 3 elements needed per ad for effective brand recognition
+    
+    **Investment Insights:**
+    - Some high-investment elements underperform (requires attention)
+    - Focus budget on proven high-ROI combinations
+    - Symbol should anchor all communications (48% recognition vs 20% average)
+    """)
+
+    st.markdown("---")
 
     # Portfolio Optimization Matrices
     st.markdown("### 📊 Portfolio Optimization Matrices")
-    st.caption("Strategic analysis frameworks - where patterns emerge")
+    st.caption("BCG-style strategic analysis - where to invest, hold, or cut")
 
     # Prepare data for matrices
     matrix_df = master_df.copy()
@@ -2577,10 +1878,1112 @@ with tab5:
         - Shows disconnect in consumer perception
         """)
 
+# ==================== TAB 4: NON-NEGOTIABLES ====================
+with tab4:
+    st.header("🎯 Non-Negotiables: Asset Usage Guidelines")
+    st.caption("Data-driven recommendations for mandatory and optional asset usage")
 
+    st.markdown("""
+    <div style='background-color: #e3f2fd; padding: 20px; border-radius: 10px; margin-bottom: 20px;'>
+    <h4>Objective: Create actionable guidelines for market teams</h4>
+    <p>Based on combined analysis of media usage, spend data, and consumer research,
+    we recommend the following asset usage framework:</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Auto-generate recommendations based on data
+    must_use = master_df[
+        (master_df['Recognition'] >= 0.40) &
+        (master_df['Uniqueness'] >= 0.15) &
+        (master_df['Overall Usage'] >= 0.50)
+    ].sort_values('Recognition', ascending=False)
+
+    recommended = master_df[
+        ((master_df['Recognition'] >= 0.35) | (master_df['Uniqueness'] >= 0.25))
+    ].sort_values(['Recognition', 'Uniqueness'], ascending=False)
+    recommended = recommended[~recommended['Element'].isin(must_use['Element'])]
+
+    requires_attention = master_df[
+        (master_df['Recognition'] < 0.40) &
+        (master_df['Total Investment'] > master_df['Total Investment'].median())
+    ]
+
+    # Display recommendations
+    col1, col2 = st.columns([2, 1])
+
+    with col1:
+        st.markdown("### ✅ MUST-USE Assets (Non-Negotiable)")
+        st.success(f"**{len(must_use)} assets meet criteria:** High Recognition (≥40%) + Positive Sentiment + High Usage (≥50%)")
+
+        for idx, row in must_use.iterrows():
+            with st.expander(f"**{row['Element']}** - Recognition: {row['Recognition']:.0%} | Usage: {row['Overall Usage']:.0%}"):
+                col_a, col_b, col_c = st.columns(3)
+                with col_a:
+                    st.metric("Recognition", f"{row['Recognition']:.0%}")
+                    st.metric("Uniqueness", f"{row['Uniqueness']:.0%}")
+                with col_b:
+                    st.metric("Usage", f"{row['Overall Usage']:.0%}")
+                    st.metric("Investment", f"€{row['Total Investment']:,.0f}")
+                with col_c:
+                    # Calculate Brand Equity Score
+                    equity_score = row['Recognition'] * row['Uniqueness']
+                    st.metric("Brand Equity", f"{equity_score:.3f}")
+                    st.metric("ROI", f"{row['Recognition ROI']:.2f}")
+
+                st.markdown("**Rationale for Must-Use Status:**")
+                st.write(f"• **Recognition:** {row['Recognition']:.0%} - consumers have seen/heard this element, ensuring immediate brand attribution")
+                st.write(f"• **Uniqueness:** {row['Uniqueness']:.0%} - distinctively Škoda (consumers correctly identify it as belonging to your brand, not competitors)")
+                st.write(f"• **Proven Usage:** {row['Overall Usage']:.0%} of campaigns - already validated as core asset")
+                st.write(f"• **Investment Efficiency:** €{row['Total Investment']:,.0f} delivers {row['Recognition']:.0%} recognition = {row['Recognition ROI']:.2f} ROI")
+                st.write(f"• **Sentiment:** +{row['Net Sentiment']:.1%} net positive emotional associations")
+
+                st.markdown("**Why these metrics matter:**")
+                st.write("High recognition ensures your ads are immediately identified as Škoda. High uniqueness prevents confusion with competitors. Combined, they build lasting brand equity with every exposure.")
+
+        st.markdown("---")
+
+        st.markdown("### ⭐ RECOMMENDED Assets (Strongly Encouraged)")
+        st.info(f"**{len(recommended)} assets show strong potential:** Good recognition or uniqueness")
+
+        for idx, row in recommended.iterrows():
+            with st.expander(f"**{row['Element']}** - Recognition: {row['Recognition']:.0%} | Uniqueness: {row['Uniqueness']:.0%}"):
+                st.markdown("**Why Recommended:**")
+                if row['Recognition'] >= 0.35:
+                    st.write(f"• ✅ Strong recognition ({row['Recognition']:.0%}) - consumers are familiar with this element")
+                if row['Uniqueness'] >= 0.25:
+                    st.write(f"• ✅ High uniqueness ({row['Uniqueness']:.0%}) - distinctively Škoda, differentiates from competitors")
+                st.write(f"• Current usage: {row['Overall Usage']:.0%} of campaigns")
+                st.write(f"• Investment: €{row['Total Investment']:,.0f}")
+                st.write(f"• ROI: {row['Recognition ROI']:.2f} per €1M")
+
+                st.markdown("**Strategic value:**")
+                if row['Recognition'] >= 0.35 and row['Uniqueness'] < 0.25:
+                    st.write("High recognition makes this useful for awareness, though consider pairing with unique assets for differentiation")
+                elif row['Uniqueness'] >= 0.25 and row['Recognition'] < 0.40:
+                    st.write(f"Strong differentiation potential - increase usage from {row['Overall Usage']:.0%} to build recognition while maintaining uniqueness")
+                else:
+                    st.write("Solid performer across both recognition and uniqueness - reliable brand builder")
+
+        st.markdown("---")
+
+        st.markdown("### ⚠️ REQUIRES ATTENTION")
+        st.warning(f"**{len(requires_attention)} assets** have low recognition despite significant investment")
+
+        for idx, row in requires_attention.iterrows():
+            with st.expander(f"**{row['Element']}** - Recognition: {row['Recognition']:.0%} | Investment: €{row['Total Investment']:,.0f}"):
+                st.markdown("**Why this requires attention:**")
+                st.write(f"• **Low recognition:** {row['Recognition']:.0%} despite €{row['Total Investment']:,.0f} investment (above median)")
+                st.write(f"• **Usage:** {row['Overall Usage']:.0%} of campaigns")
+                st.write(f"• **Uniqueness:** {row['Uniqueness']:.0%}")
+                st.write(f"• **ROI:** {row['Recognition ROI']:.2f} per €1M (compare to best performer: {master_df['Recognition ROI'].max():.2f})")
+
+                st.markdown("**Possible causes:**")
+                st.write("1. **Recent investment:** Recognition may still be building (takes time)")
+                st.write("2. **Generic design:** Low uniqueness suggests it may not be distinctive enough")
+                st.write("3. **Ineffective deployment:** Placement, creative execution, or context may need optimization")
+                st.write("4. **Low visibility:** May be used but not prominently featured in creative")
+
+                st.markdown("**Recommended action:**")
+                if row['Uniqueness'] < 0.20:
+                    st.write("⚠️ Consider redesigning for greater Škoda distinctiveness OR deprioritize in favor of higher-uniqueness assets")
+                else:
+                    st.write("💡 Increase prominence in creative or give more time to build recognition - the distinctiveness is there")
+
+    with col2:
+        st.markdown("### 📋 Quick Reference")
+
+        st.markdown("#### Must-Use (Non-Negotiable)")
+        for idx, row in must_use.iterrows():
+            st.success(f"✓ {row['Element']}")
+
+        st.markdown("#### Recommended")
+        for idx, row in recommended.head(5).iterrows():
+            st.info(f"⭐ {row['Element']}")
+
+        st.markdown("#### Review Needed")
+        for idx, row in requires_attention.iterrows():
+            st.warning(f"⚠️ {row['Element']}")
+
+        st.markdown("---")
+
+        # Download guidelines
+        guidelines_text = "# Škoda Brand Asset Usage Guidelines\n\n"
+        guidelines_text += "## MUST-USE Assets (Non-Negotiable)\n"
+        for idx, row in must_use.iterrows():
+            guidelines_text += f"- {row['Element']}: {row['Recognition']:.0%} recognition\n"
+        guidelines_text += "\n## RECOMMENDED Assets\n"
+        for idx, row in recommended.iterrows():
+            guidelines_text += f"- {row['Element']}: {row['Recognition']:.0%} recognition, {row['Uniqueness']:.0%} uniqueness\n"
+
+        st.download_button(
+            label="📥 Download Guidelines (TXT)",
+            data=guidelines_text,
+            file_name="skoda_brand_guidelines.txt",
+            mime="text/plain"
+        )
+
+# ==================== TAB 5: FUTURE-PROOFING ====================
+with tab5:
+    st.header("🔮 Future-Proofing Opportunities")
+    st.caption("Actionable steps to improve long-term memorability and brand equity")
+
+    st.markdown("""
+    <div style='background-color: #fff3e0; padding: 20px; border-radius: 10px; margin-bottom: 20px;'>
+    <h4>Objective: Identify opportunities to strengthen brand assets over time</h4>
+    <p>Analysis of underutilized assets, investment optimization, and consistency improvements</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # High Potential Assets (underutilized)
+    st.markdown("### 💎 High Potential Assets: Underutilized Opportunities")
+
+    high_potential = master_df[
+        (master_df['Uniqueness'] >= 0.25) &
+        (master_df['Overall Usage'] < 0.40)
+    ].sort_values('Uniqueness', ascending=False)
+
+    if len(high_potential) > 0:
+        st.success(f"**{len(high_potential)} assets identified** with high uniqueness but low current usage")
+
+        for idx, row in high_potential.iterrows():
+            with st.expander(f"**{row['Element']}** - Uniqueness: {row['Uniqueness']:.0%} | Current Usage: {row['Overall Usage']:.0%}"):
+                col1, col2 = st.columns(2)
+
+                with col1:
+                    st.metric("Uniqueness Score", f"{row['Uniqueness']:.0%}", "High differentiator")
+                    st.metric("Current Usage", f"{row['Overall Usage']:.0%}", "Underutilized")
+                    st.metric("Recognition", f"{row['Recognition']:.0%}")
+
+                with col2:
+                    st.metric("Brand Equity", f"{(row['Recognition'] * row['Uniqueness']):.3f}")
+                    st.metric("Current Investment", f"€{row['Total Investment']:,.0f}")
+                    st.metric("Recognition ROI", f"{row['Recognition ROI']:.2f}")
+
+                st.markdown("**💡 Why is this an opportunity?**")
+                st.write(f"• **High uniqueness ({row['Uniqueness']:.0%})** means consumers correctly attribute it to Škoda, not competitors")
+                st.write(f"• **Underutilized ({row['Overall Usage']:.0%})** - only used in {row['Overall Usage']:.0%} of campaigns despite its differentiation power")
+                st.write(f"• **Strong differentiation potential** - increasing usage would build brand equity more efficiently than generic assets")
+                st.write(f"• **Current investment is modest** (€{row['Total Investment']:,.0f}) - scaling up wouldn't require massive budget increases")
+
+                st.markdown("**📈 Why these recommendations make sense:**")
+                st.write(f"• **Increase to 50%+ usage:** Would boost recognition from {row['Recognition']:.0%} closer to top performers (64%+) while maintaining distinctiveness")
+                st.write(f"• **High-visibility placements:** With {row['Uniqueness']:.0%} uniqueness, prominent placement would maximize brand differentiation impact")
+                st.write(f"• **Consistency guidelines:** Current {row['Overall Usage']:.0%} usage suggests inconsistent deployment across markets - standardize to build familiarity")
+
+                st.markdown("**🎯 Expected impact:**")
+                st.write("If usage increases to 50%, recognition could grow 25-40% over 12 months, creating a powerful differentiator that competitors can't copy")
+    else:
+        st.info("No significantly underutilized high-potential assets identified")
+
+    st.markdown("---")
+
+    # Investment Reallocation Opportunities
+    st.markdown("### 💰 Investment Optimization")
+
+    with st.expander("📖 Understanding Efficiency Scores"):
+        st.markdown("""
+        **Efficiency Score = (Recognition × Uniqueness) / Investment (in millions)**
+
+        This metric shows how much brand equity (recognition + differentiation) each asset delivers per euro spent.
+
+        **Why this matters:**
+        - High efficiency = Getting strong brand-building results with limited investment (opportunity to scale up)
+        - Low efficiency = Spending a lot but not getting proportional brand equity (may need optimization or reallocation)
+
+        **Ideal strategy:** Increase investment in high-efficiency assets, optimize or reduce spend on low-efficiency ones
+        """)
+
+    # Calculate efficiency scores
+    master_df['Efficiency Score'] = (master_df['Recognition'] * master_df['Uniqueness']) / (master_df['Total Investment'] / 1000000)
+    master_df['Efficiency Score'] = master_df['Efficiency Score'].fillna(0)
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("#### 📈 High Efficiency (Underfunded)")
+        high_efficiency = master_df.nlargest(3, 'Efficiency Score')
+
+        for idx, row in high_efficiency.iterrows():
+            if row['Total Investment'] < master_df['Total Investment'].median():
+                st.success(f"**{row['Element']}**")
+                st.write(f"• Efficiency Score: {row['Efficiency Score']:.2f}")
+                st.write(f"• Current Investment: €{row['Total Investment']:,.0f} (below median)")
+                st.write(f"• Brand Equity: {(row['Recognition'] * row['Uniqueness']):.3f}")
+
+                with st.expander(f"Why is {row['Element']} highly efficient?"):
+                    st.write(f"**Recognition:** {row['Recognition']:.0%}")
+                    st.write(f"**Uniqueness:** {row['Uniqueness']:.0%}")
+                    st.write(f"**Current Investment:** €{row['Total Investment']:,.0f}")
+                    st.write(f"**Usage:** {row['Overall Usage']:.0%}")
+                    st.markdown("**Why it's efficient:**")
+                    st.write(f"Delivers strong brand equity ({(row['Recognition'] * row['Uniqueness']):.3f}) with minimal spend. Each euro generates {row['Efficiency Score']:.2f} units of brand equity - among the best performers.")
+                    st.markdown("**Opportunity:**")
+                    st.write(f"Increase investment from €{row['Total Investment']:,.0f} to €{row['Total Investment']*1.5:,.0f} could boost recognition from {row['Recognition']:.0%} to {min(row['Recognition']*1.3, 0.85):.0%} while maintaining high uniqueness")
+                st.write("")
+
+    with col2:
+        st.markdown("#### 📉 Low Efficiency (Overfunded)")
+        low_efficiency = master_df.nsmallest(3, 'Efficiency Score')
+
+        for idx, row in low_efficiency.iterrows():
+            if row['Total Investment'] > master_df['Total Investment'].median():
+                st.warning(f"**{row['Element']}**")
+                st.write(f"• Efficiency Score: {row['Efficiency Score']:.2f}")
+                st.write(f"• Current Investment: €{row['Total Investment']:,.0f} (above median)")
+                st.write(f"• Brand Equity: {(row['Recognition'] * row['Uniqueness']):.3f}")
+
+                with st.expander(f"Why is {row['Element']} less efficient?"):
+                    st.write(f"**Recognition:** {row['Recognition']:.0%}")
+                    st.write(f"**Uniqueness:** {row['Uniqueness']:.0%}")
+                    st.write(f"**Current Investment:** €{row['Total Investment']:,.0f}")
+                    st.write(f"**Usage:** {row['Overall Usage']:.0%}")
+                    st.markdown("**Why efficiency is lower:**")
+                    if row['Recognition'] < 0.40:
+                        st.write(f"High investment (€{row['Total Investment']:,.0f}) hasn't translated to strong recognition ({row['Recognition']:.0%}). Possible causes: recent launch, poor visibility in creative, or low distinctiveness")
+                    if row['Uniqueness'] < 0.20:
+                        st.write(f"Low uniqueness ({row['Uniqueness']:.0%}) means it's not strongly associated with Škoda - may be too generic")
+                    st.markdown("**Opportunity:**")
+                    st.write("Re-evaluate: Can creative execution be improved? Should budget be partially reallocated to higher-efficiency assets? Or does it need more time to build recognition?")
+                st.write("")
+
+    st.markdown("---")
+
+    # Consistency Improvements
+    st.markdown("### 🎯 Consistency Improvement Opportunities")
+
+    # Calculate consistency across markets
+    consistency_data = []
+    for element in brand_elements:
+        usage_by_market = []
+        for market in audit_df['Market'].unique():
+            market_df = audit_df[audit_df['Market'] == market]
+            usage = market_df[element].sum() / len(market_df) if len(market_df) > 0 else 0
+            usage_by_market.append(usage)
+
+        std_dev = pd.Series(usage_by_market).std()
+        avg_usage = pd.Series(usage_by_market).mean()
+
+        consistency_data.append({
+            'Element': element,
+            'Std Dev': std_dev,
+            'Avg Usage': avg_usage,
+            'Consistency Score': 1 - std_dev  # Higher is more consistent
+        })
+
+    consistency_df = pd.DataFrame(consistency_data).sort_values('Consistency Score')
+
+    st.info("**Assets requiring consistency guidelines:** High usage variation across markets")
+
+    for idx, row in consistency_df.head(5).iterrows():
+        col1, col2, col3 = st.columns([2, 1, 2])
+        with col1:
+            st.write(f"**{row['Element']}**")
+        with col2:
+            st.metric("Variation", f"{row['Std Dev']:.2f}")
+        with col3:
+            st.write(f"Avg usage: {row['Avg Usage']:.0%} - Create standardized usage guidelines")
+
+    st.markdown("---")
+
+    # Action Plan Summary
+    st.markdown("### 📋 Future-Proofing Action Plan")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("#### Short-term (0-6 months)")
+        st.write("1. **Increase must-use asset deployment**")
+        for idx, row in must_use.head(3).iterrows():
+            st.write(f"   • Ensure {row['Element']} in 80%+ of campaigns")
+
+        st.write("2. **Test high-potential assets**")
+        for idx, row in high_potential.head(2).iterrows():
+            st.write(f"   • Pilot {row['Element']} in 50% more campaigns")
+
+        st.write("3. **Standardize market guidelines**")
+        st.write(f"   • Create usage frameworks for inconsistent assets")
+
+    with col2:
+        st.markdown("#### Long-term (6-18 months)")
+        st.write("1. **Investment reallocation**")
+        st.write("   • Shift budget from low-ROI to high-ROI assets")
+
+        st.write("2. **Build uniqueness equity**")
+        for idx, row in high_potential.head(2).iterrows():
+            st.write(f"   • Amplify {row['Element']} for differentiation")
+
+        st.write("3. **Continuous monitoring**")
+        st.write("   • Track recognition metrics quarterly")
+        st.write("   • Adjust based on performance data")
+
+# ==================== TAB 6: DEEP DIVE ANALYSIS ====================
+with tab6:
+    st.header("🔍 Deep Dive Analysis")
+    st.caption("Detailed breakdowns and custom filtering")
+
+    # Filters
+    st.markdown("### Filters")
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        selected_market = st.selectbox("Market", ['All'] + sorted(audit_df['Market'].unique().tolist()))
+    with col2:
+        selected_medium = st.selectbox("Medium", ['All'] + sorted(audit_df['Medium'].unique().tolist()))
+    with col3:
+        selected_placement = st.selectbox("Placement", ['All'] + sorted(audit_df['Placement'].unique().tolist()))
+
+    # Apply filters
+    filtered_df = audit_df.copy()
+    if selected_market != 'All':
+        filtered_df = filtered_df[filtered_df['Market'] == selected_market]
+    if selected_medium != 'All':
+        filtered_df = filtered_df[filtered_df['Medium'] == selected_medium]
+    if selected_placement != 'All':
+        filtered_df = filtered_df[filtered_df['Placement'] == selected_placement]
+
+    st.info(f"Showing {len(filtered_df)} of {len(audit_df)} ads")
+
+    st.markdown("---")
+
+    # Investment breakdown
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("#### Investment by Element")
+        invest_data = []
+        for element in brand_elements:
+            element_df = filtered_df[filtered_df[element] == True]
+            invest_data.append({
+                'Element': element,
+                'Investment': element_df['Spend'].sum()
+            })
+        invest_df = pd.DataFrame(invest_data).sort_values('Investment', ascending=True)
+
+        fig_invest = px.bar(
+            invest_df,
+            y='Element',
+            x='Investment',
+            orientation='h',
+            text=invest_df['Investment'].apply(lambda x: f'€{x:,.0f}'),
+            title='Total Investment by Element'
+        )
+        st.plotly_chart(fig_invest, use_container_width=True)
+
+    with col2:
+        st.markdown("#### Usage Frequency")
+        usage_data = []
+        total = len(filtered_df)
+        for element in brand_elements:
+            count = filtered_df[element].sum()
+            usage_data.append({
+                'Element': element,
+                'Usage': count / total if total > 0 else 0
+            })
+        usage_df = pd.DataFrame(usage_data).sort_values('Usage', ascending=True)
+
+        fig_usage = px.bar(
+            usage_df,
+            y='Element',
+            x='Usage',
+            orientation='h',
+            text=usage_df['Usage'].apply(lambda x: f'{x:.0%}'),
+            title='Element Usage Frequency'
+        )
+        st.plotly_chart(fig_usage, use_container_width=True)
+
+    st.markdown("---")
+
+    # Personality attributes
+    st.markdown("### Brand Personality Analysis")
+
+    with st.expander("💡 Why personality attributes matter"):
+        st.markdown("""
+        These 7 personality dimensions (Bold, Stylish, Modern, Simple, Human, Exciting, Playful) reveal the **emotional character** of each brand asset.
+
+        **Why this matters for strategy:**
+        - **Emotional connection** drives preference beyond rational features
+        - **Personality consistency** across assets strengthens brand identity
+        - **Differentiation** comes from unique personality, not just visual recognition
+        - **Campaign selection:** Choose assets that match your communication goal (e.g., "Exciting" for launch campaigns, "Simple" for practical messaging)
+
+        **What the scores mean:**
+        High scores (50%+) indicate strong associations - consumers clearly perceive these qualities in the asset.
+        Variations between assets show which elements carry different emotional messages.
+        """)
+
+    personality_view = st.radio(
+        "Choose visualization:",
+        ["Radar Chart (7 Dimensions)", "Bar Chart Comparison"],
+        horizontal=True
+    )
+
+    selected_elements = st.multiselect(
+        "Select elements to compare:",
+        brand_elements,
+        default=brand_elements[:3]
+    )
+
+    if selected_elements:
+        if personality_view == "Radar Chart (7 Dimensions)":
+            # Radar chart with 7 positive personality dimensions
+            fig_radar = go.Figure()
+
+            personality_dimensions = ['Bold', 'Stylish', 'Modern', 'Simple', 'Human', 'Exciting', 'Playful']
+
+            for element in selected_elements:
+                research = research_data[element]
+                values = [
+                    research['bold'], research['stylish'], research['modern'],
+                    research['simple'], research['human'], research['exciting'], research['playful']
+                ]
+                # Close the radar chart
+                values_closed = values + [values[0]]
+                dimensions_closed = personality_dimensions + [personality_dimensions[0]]
+
+                fig_radar.add_trace(go.Scatterpolar(
+                    r=values_closed,
+                    theta=dimensions_closed,
+                    name=element,
+                    fill='toself'
+                ))
+
+            fig_radar.update_layout(
+                polar=dict(
+                    radialaxis=dict(
+                        visible=True,
+                        range=[0, 0.6],
+                        tickformat='.0%'
+                    )
+                ),
+                showlegend=True,
+                title="Brand Personality Profile (7 Dimensions)",
+                height=600
+            )
+            st.plotly_chart(fig_radar, use_container_width=True)
+
+            st.info("**Extended personality profile** includes: Bold, Stylish, Modern, Simple, Human, Exciting, and Playful. " +
+                    "Higher scores indicate stronger associations with these positive attributes.")
+
+        else:
+            # Bar chart comparison
+            personality_data = []
+            for element in selected_elements:
+                research = research_data[element]
+                personality_data.append({
+                    'Element': element,
+                    'Bold': research['bold'],
+                    'Stylish': research['stylish'],
+                    'Modern': research['modern'],
+                    'Simple': research['simple'],
+                    'Human': research['human'],
+                    'Exciting': research['exciting'],
+                    'Playful': research['playful']
+                })
+
+            personality_df = pd.DataFrame(personality_data).melt(
+                id_vars='Element',
+                var_name='Attribute',
+                value_name='Score'
+            )
+
+            fig_personality = px.bar(
+                personality_df,
+                x='Attribute',
+                y='Score',
+                color='Element',
+                barmode='group',
+                text=personality_df['Score'].apply(lambda x: f'{x:.0%}'),
+                title='Brand Personality Attributes (7 Dimensions)'
+            )
+            st.plotly_chart(fig_personality, use_container_width=True)
+
+    st.markdown("---")
+
+    # Market/Country Recognition Analysis
+    st.markdown("### Recognition by Market")
+    st.caption("See how brand elements perform across different countries")
+
+    col1, col2 = st.columns([2, 1])
+
+    with col1:
+        # Heatmap of recognition by country
+        heatmap_data = []
+        for element in brand_elements:
+            row_data = {'Element': element}
+            for country in ['UK', 'Spain', 'Germany', 'Poland']:
+                row_data[country] = recognition_by_country[element][country]
+            heatmap_data.append(row_data)
+
+        heatmap_df = pd.DataFrame(heatmap_data).set_index('Element')
+
+        fig_heatmap = px.imshow(
+            heatmap_df,
+            labels=dict(x="Country", y="Brand Element", color="Recognition"),
+            text_auto='.0%',
+            aspect="auto",
+            color_continuous_scale='RdYlGn',
+            title="Brand Element Recognition by Country"
+        )
+        fig_heatmap.update_layout(height=500)
+        st.plotly_chart(fig_heatmap, use_container_width=True)
+
+    with col2:
+        st.markdown("#### Key Findings:")
+
+        # Find strongest market per element
+        st.markdown("**Strongest Markets:**")
+        for element in brand_elements[:5]:  # Show top 5
+            countries_sorted = sorted(
+                recognition_by_country[element].items(),
+                key=lambda x: x[1],
+                reverse=True
+            )
+            best_country = countries_sorted[0]
+            st.success(f"**{element}**: {best_country[0]} ({best_country[1]:.0%})")
+
+        st.markdown("**Market Opportunities:**")
+        # Find elements with biggest market variations
+        variations = []
+        for element in brand_elements:
+            values = list(recognition_by_country[element].values())
+            variation = max(values) - min(values)
+            min_country = min(recognition_by_country[element].items(), key=lambda x: x[1])
+            max_country = max(recognition_by_country[element].items(), key=lambda x: x[1])
+            variations.append((element, variation, min_country, max_country))
+
+        variations_sorted = sorted(variations, key=lambda x: x[1], reverse=True)
+        for element, var, min_c, max_c in variations_sorted[:3]:
+            with st.expander(f"**{element}**: {var:.0%} variation"):
+                st.write(f"**Highest:** {max_c[0]} ({max_c[1]:.0%})")
+                st.write(f"**Lowest:** {min_c[0]} ({min_c[1]:.0%})")
+                st.markdown("**Why this variation exists:**")
+                st.write("Possible causes:")
+                st.write(f"• **Market maturity:** {max_c[0]} may be a more established Škoda market with longer brand presence")
+                st.write(f"• **Media mix differences:** {element} may be used more prominently in {max_c[0]} campaigns")
+                st.write(f"• **Cultural relevance:** Design/messaging may resonate differently across cultures")
+                st.write(f"• **Competitive landscape:** {min_c[0]} may have stronger local competitors that dilute brand asset recognition")
+                st.markdown("**Strategic action:**")
+                st.write(f"Analyze why {max_c[0]} outperforms - replicate successful tactics in {min_c[0]} to close the {var:.0%} gap")
+
+# ==================== TAB 7: DATA EXPLORER ====================
+with tab7:
+    st.header("📄 Data Explorer")
+    st.caption("Raw data access and detailed views")
+
+    tab_a, tab_b, tab_c, tab_d = st.tabs(["Comms Audit Data", "Research Data", "Combined Metrics", "Survey Demographics"])
+
+    with tab_a:
+        st.markdown("### Comms Audit Data (102 Ads)")
+        st.dataframe(audit_df, use_container_width=True)
+
+        csv = audit_df.to_csv(index=False)
+        st.download_button(
+            label="📥 Download Comms Audit CSV",
+            data=csv,
+            file_name="skoda_comms_audit.csv",
+            mime="text/csv"
+        )
+
+    with tab_b:
+        st.markdown("### Research Data (P045556 - Saffron Brand Assets)")
+
+        research_view = st.radio(
+            "Select view:",
+            ["Core Metrics", "Extended Personality (7 Dimensions)", "Recognition by Country"],
+            horizontal=True
+        )
+
+        if research_view == "Core Metrics":
+            research_display = []
+            for element, data in research_data.items():
+                research_display.append({
+                    'Element': element,
+                    'Recognition': data['recognition'],
+                    'Uniqueness': data['uniqueness']
+                })
+            research_display_df = pd.DataFrame(research_display)
+
+            st.dataframe(research_display_df.style.format({
+                'Recognition': '{:.1%}',
+                'Uniqueness': '{:.1%}'
+            }), use_container_width=True)
+
+        elif research_view == "Extended Personality (7 Dimensions)":
+            personality_display = []
+            for element, data in research_data.items():
+                personality_display.append({
+                    'Element': element,
+                    'Bold': data['bold'],
+                    'Stylish': data['stylish'],
+                    'Modern': data['modern'],
+                    'Simple': data['simple'],
+                    'Human': data['human'],
+                    'Exciting': data['exciting'],
+                    'Playful': data['playful']
+                })
+            personality_display_df = pd.DataFrame(personality_display)
+
+            st.dataframe(personality_display_df.style.format({
+                'Bold': '{:.1%}',
+                'Stylish': '{:.1%}',
+                'Modern': '{:.1%}',
+                'Simple': '{:.1%}',
+                'Human': '{:.1%}',
+                'Exciting': '{:.1%}',
+                'Playful': '{:.1%}'
+            }), use_container_width=True)
+
+        else:  # Recognition by Country
+            country_display = []
+            for element in brand_elements:
+                row_data = {'Element': element}
+                row_data.update(recognition_by_country[element])
+                country_display.append(row_data)
+            country_display_df = pd.DataFrame(country_display)
+
+            st.dataframe(country_display_df.style.format({
+                'UK': '{:.1%}',
+                'Spain': '{:.1%}',
+                'Germany': '{:.1%}',
+                'Poland': '{:.1%}'
+            }), use_container_width=True)
+
+    with tab_c:
+        st.markdown("### Combined Metrics")
+        st.dataframe(master_df, use_container_width=True)
+
+        csv = master_df.to_csv(index=False)
+        st.download_button(
+            label="📥 Download Combined Metrics CSV",
+            data=csv,
+            file_name="skoda_combined_metrics.csv",
+            mime="text/csv"
+        )
+
+    with tab_d:
+        st.markdown("### Survey Demographics (n=2,011)")
+        st.caption("P045556 - Saffron Brand Assets Study")
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.markdown("#### 🌍 Sample by Country")
+            country_data = pd.DataFrame({
+                'Country': ['UK', 'Spain', 'Germany', 'Poland'],
+                'Respondents': [
+                    demographics['countries']['UK'],
+                    demographics['countries']['Spain'],
+                    demographics['countries']['Germany'],
+                    demographics['countries']['Poland']
+                ],
+                'Percentage': [
+                    demographics['countries']['UK'] / demographics['total_respondents'],
+                    demographics['countries']['Spain'] / demographics['total_respondents'],
+                    demographics['countries']['Germany'] / demographics['total_respondents'],
+                    demographics['countries']['Poland'] / demographics['total_respondents']
+                ]
+            })
+
+            st.dataframe(country_data.style.format({
+                'Respondents': '{:,.0f}',
+                'Percentage': '{:.1%}'
+            }), use_container_width=True)
+
+            # Country chart
+            fig_countries = px.pie(
+                country_data,
+                values='Respondents',
+                names='Country',
+                title='Sample Distribution by Country',
+                color_discrete_sequence=['#4CAF50', '#66BB6A', '#81C784', '#A5D6A7']
+            )
+            st.plotly_chart(fig_countries, use_container_width=True)
+
+        with col2:
+            st.markdown("#### 👥 Demographics")
+            
+            # Age
+            st.metric("Age Range", demographics['age']['range'])
+            st.caption(f"Mean: {demographics['age']['mean']} years | Median: {demographics['age']['median']} years")
+            
+            # Gender
+            st.markdown("**Gender Split:**")
+            gender_data = pd.DataFrame({
+                'Gender': ['Male', 'Female'],
+                'Percentage': [demographics['gender']['male'], demographics['gender']['female']]
+            })
+            fig_gender = go.Figure(go.Bar(
+                x=gender_data['Gender'],
+                y=gender_data['Percentage'],
+                marker_color=['#2196F3', '#E91E63'],
+                text=gender_data['Percentage'].apply(lambda x: f'{x:.0%}'),
+                textposition='outside'
+            ))
+            fig_gender.update_layout(
+                yaxis_tickformat='.0%',
+                height=300,
+                showlegend=False
+            )
+            st.plotly_chart(fig_gender, use_container_width=True)
+
+            # Škoda Awareness
+            st.markdown("**Škoda Brand Awareness:**")
+            awareness_data = pd.DataFrame({
+                'Status': ['Heard of Škoda', 'Unaware'],
+                'Percentage': [
+                    demographics['skoda_awareness']['heard_of_skoda'],
+                    demographics['skoda_awareness']['unaware']
+                ]
+            })
+            fig_awareness = go.Figure(go.Bar(
+                x=awareness_data['Status'],
+                y=awareness_data['Percentage'],
+                marker_color=['#4CAF50', '#F44336'],
+                text=awareness_data['Percentage'].apply(lambda x: f'{x:.0%}'),
+                textposition='outside'
+            ))
+            fig_awareness.update_layout(
+                yaxis_tickformat='.0%',
+                height=300,
+                showlegend=False
+            )
+            st.plotly_chart(fig_awareness, use_container_width=True)
+
+        st.markdown("---")
+
+        # Summary stats
+        st.markdown("#### 📊 Survey Summary")
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            st.metric("Total Respondents", f"{demographics['total_respondents']:,}")
+        
+        with col2:
+            st.metric("Countries", "4", "UK, Spain, Germany, Poland")
+        
+        with col3:
+            st.metric("Mean Age", f"{demographics['age']['mean']} years")
+        
+        with col4:
+            st.metric("Škoda Awareness", f"{demographics['skoda_awareness']['heard_of_skoda']:.0%}")
+
+        st.info("""
+        **Survey Design:**
+        - Each respondent was shown 6 out of 9 brand elements in randomized order
+        - Elements were shown individually without brand identification
+        - After viewing, respondents were asked if they recognized it as Škoda
+        - Finally, the Škoda brand was revealed and post-reveal questions were asked
+        """)
+
+# ==================== TAB 8: RECOGNITION JOURNEY ====================
+with tab8:
+    st.header("🧭 Recognition Journey & Brand Discovery")
+    st.caption("How consumers discover and recognize Škoda through brand elements")
+
+    # Critical finding callout
+    st.error("""
+    ### ⚠️ Critical Finding
+    **56.3% of respondents NEVER recognized these elements as Škoda** — even after seeing 6 different brand assets.
+    
+    This finding underscores:
+    - The challenge of brand recognition in the automotive market
+    - The critical importance of the Symbol (48% recognition) as the primary brand carrier
+    - The need for multiple touchpoints working together
+    - The opportunity to strengthen brand identity through strategic asset deployment
+    """)
+
+    st.markdown("---")
+
+    # SECTION 1: Recognition Journey
+    st.markdown("### 📈 The Recognition Build: When Do People Identify Škoda?")
+    st.caption("Tracking how recognition accumulates as respondents see more brand elements")
+
+    col1, col2 = st.columns([2, 1])
+
+    with col1:
+        # Create waterfall-style visualization - FLIPPED ORDER (1 element at top)
+        journey_data = pd.DataFrame([
+            {'Stage': 'Never recognized', 'Recognition': recognition_journey['never_recognized'], 'Label': '56.3%'},
+            {'Stage': 'After all 6 elements', 'Recognition': recognition_journey['after_all_6_elements'], 'Label': '40.1%'},
+            {'Stage': 'After 5 elements', 'Recognition': recognition_journey['after_5_elements'], 'Label': '31.3%'},
+            {'Stage': 'After 4 elements', 'Recognition': recognition_journey['after_4_elements'], 'Label': '24.7%'},
+            {'Stage': 'After 3 elements', 'Recognition': recognition_journey['after_3_elements'], 'Label': '19.7%'},
+            {'Stage': 'After 2 elements', 'Recognition': recognition_journey['after_2_elements'], 'Label': '13.3%'},
+            {'Stage': 'After 1 element', 'Recognition': recognition_journey['after_1_element'], 'Label': '10.3%'},
+        ])
+
+        fig_journey = go.Figure()
+
+        # Never recognized (red) - now at top
+        fig_journey.add_trace(go.Bar(
+            x=[journey_data['Recognition'].iloc[0]],
+            y=[journey_data['Stage'].iloc[0]],
+            orientation='h',
+            marker_color='#F44336',
+            text=[journey_data['Label'].iloc[0]],
+            textposition='outside',
+            name='Never Recognized',
+            hovertemplate='<b>%{y}</b><br>%{x:.1%} never identified Škoda<extra></extra>'
+        ))
+
+        # Recognition builders (green) - now below
+        fig_journey.add_trace(go.Bar(
+            x=journey_data['Recognition'][1:],
+            y=journey_data['Stage'][1:],
+            orientation='h',
+            marker_color='#4CAF50',
+            text=journey_data['Label'][1:],
+            textposition='outside',
+            name='Recognized',
+            hovertemplate='<b>%{y}</b><br>%{x:.1%} recognized Škoda<extra></extra>'
+        ))
+
+        fig_journey.update_layout(
+            title='Progressive Recognition: The "Aha Moment" Journey',
+            xaxis_title='% of Respondents',
+            yaxis_title='',
+            xaxis_tickformat='.0%',
+            height=500,
+            showlegend=True,
+            barmode='overlay'
+        )
+
+        st.plotly_chart(fig_journey, use_container_width=True)
+
+    with col2:
+        st.markdown("#### 🔍 Key Insights")
+        
+        st.metric("Immediate Recognition", "10.3%", "After just 1 element")
+        st.caption("Only 1 in 10 recognize Škoda from a single brand element")
+        
+        st.metric("Maximum Recognition", "40.1%", "After all 6 elements")
+        st.caption("Even with 6 touchpoints, less than half recognize the brand")
+        
+        st.metric("Never Recognized", "56.3%", delta="-56.3%", delta_color="inverse")
+        st.caption("**Critical gap:** More than half never connect elements to Škoda")
+
+        st.markdown("---")
+        
+        st.markdown("#### 💡 Strategic Implications")
+        st.markdown("""
+        **What this means:**
+        1. **Single elements are insufficient** - Recognition requires multiple exposures
+        2. **Symbol is critical** - At 48% recognition, it's the strongest individual carrier
+        3. **Cumulative effect matters** - Each additional element adds ~5-7% recognition
+        4. **56% gap is the priority** - Focus on making assets more distinctively Škoda
+        """)
+
+    st.markdown("---")
+
+    # SECTION 2: Post-Reveal Brand Familiarity
+    st.markdown("### 🎯 Post-Reveal: How Well Do People Know Škoda?")
+    st.caption("After revealing these are Škoda elements, respondents rated their familiarity with the brand")
+
+    col1, col2 = st.columns([2, 1])
+
+    with col1:
+        familiarity_data = pd.DataFrame([
+            {'Level': 'Very familiar', 'Percentage': skoda_familiarity['very_familiar'], 'Description': 'Strong brand advocates'},
+            {'Level': 'Quite familiar', 'Percentage': skoda_familiarity['quite_familiar'], 'Description': 'Active considerers'},
+            {'Level': 'Heard of, don\'t know much', 'Percentage': skoda_familiarity['heard_of_not_much'], 'Description': 'Awareness without knowledge'},
+            {'Level': 'Never heard of Škoda', 'Percentage': skoda_familiarity['never_heard'], 'Description': 'Outside consideration set'},
+            {'Level': 'Not sure', 'Percentage': skoda_familiarity['not_sure'], 'Description': 'Uncertain'},
+        ])
+
+        # Create color scale
+        colors = ['#2E7D32', '#4CAF50', '#FFC107', '#FF5722', '#9E9E9E']
+
+        fig_familiarity = go.Figure(go.Bar(
+            x=familiarity_data['Percentage'],
+            y=familiarity_data['Level'],
+            orientation='h',
+            marker_color=colors,
+            text=familiarity_data['Percentage'].apply(lambda x: f'{x:.0%}'),
+            textposition='outside',
+            hovertemplate='<b>%{y}</b><br>%{x:.1%} of respondents<br>%{customdata}<extra></extra>',
+            customdata=familiarity_data['Description']
+        ))
+
+        fig_familiarity.update_layout(
+            title='Škoda Brand Familiarity Levels',
+            xaxis_title='% of Respondents',
+            yaxis_title='',
+            xaxis_tickformat='.0%',
+            height=400,
+            showlegend=False
+        )
+
+        st.plotly_chart(fig_familiarity, use_container_width=True)
+
+    with col2:
+        st.markdown("#### 📊 Familiarity Breakdown")
+        
+        familiar_total = skoda_familiarity['very_familiar'] + skoda_familiarity['quite_familiar']
+        st.metric("Familiar with Brand", f"{familiar_total:.0%}", "Very + Quite familiar")
+        
+        st.metric("Heard Name Only", f"{skoda_familiarity['heard_of_not_much']:.0%}", "Lack deeper knowledge")
+        
+        st.metric("Completely Unaware", f"{skoda_familiarity['never_heard']:.0%}", delta=f"-{skoda_familiarity['never_heard']:.0%}", delta_color="inverse")
+
+        st.markdown("---")
+        
+        st.info("""
+        **The Familiarity Challenge:**
+        
+        Only **33% are familiar** with Škoda, while **46% have heard the name but lack knowledge**.
+        
+        This explains why recognition is low and highlights the opportunity for brand education.
+        """)
+
+    st.markdown("---")
+
+    # SECTION 3: Emotional Response to Brand Reveal
+    st.markdown("### 💚 Emotional Response: Learning It's Škoda")
+    st.caption("How respondents felt when told these elements belong to Škoda")
+
+    col1, col2 = st.columns([2, 1])
+
+    with col1:
+        response_data = pd.DataFrame([
+            {'Response': 'Positively surprised', 'Percentage': response_to_reveal['positive_surprised'], 'Sentiment': 'Positive'},
+            {'Response': 'Makes sense / Expected', 'Percentage': response_to_reveal['makes_sense'], 'Sentiment': 'Positive'},
+            {'Response': 'Neutral / No strong feeling', 'Percentage': response_to_reveal['neutral'], 'Sentiment': 'Neutral'},
+            {'Response': 'Disappointed', 'Percentage': response_to_reveal['disappointed'], 'Sentiment': 'Negative'},
+            {'Response': 'Don\'t know', 'Percentage': response_to_reveal['dont_know'], 'Sentiment': 'Neutral'},
+        ])
+
+        # Color by sentiment
+        color_map = {'Positive': '#4CAF50', 'Neutral': '#FFC107', 'Negative': '#F44336'}
+        response_data['Color'] = response_data['Sentiment'].map(color_map)
+
+        fig_response = go.Figure(go.Bar(
+            x=response_data['Percentage'],
+            y=response_data['Response'],
+            orientation='h',
+            marker_color=response_data['Color'],
+            text=response_data['Percentage'].apply(lambda x: f'{x:.0%}'),
+            textposition='outside',
+            hovertemplate='<b>%{y}</b><br>%{x:.1%} of respondents<extra></extra>'
+        ))
+
+        fig_response.update_layout(
+            title='Emotional Reaction to Brand Reveal',
+            xaxis_title='% of Respondents',
+            yaxis_title='',
+            xaxis_tickformat='.0%',
+            height=400,
+            showlegend=False
+        )
+
+        st.plotly_chart(fig_response, use_container_width=True)
+
+    with col2:
+        st.markdown("#### 🎭 Response Summary")
+        
+        positive_total = response_to_reveal['positive_surprised'] + response_to_reveal['makes_sense']
+        st.metric("Positive Reactions", f"{positive_total:.0%}", "Surprised or expected")
+        
+        st.metric("Neutral/Indifferent", f"{response_to_reveal['neutral']:.0%}", "No emotional response")
+        
+        st.metric("Disappointed", f"{response_to_reveal['disappointed']:.0%}", "Negative reaction")
+
+        st.markdown("---")
+        
+        st.warning("""
+        **The Emotional Gap:**
+        
+        **42% felt nothing** when learning these are Škoda elements.
+        
+        Combined with only 47% positive reactions, this indicates the brand lacks strong emotional connection.
+        """)
+
+    st.markdown("---")
+
+    # SECTION 4: Integrated Strategic View
+    st.markdown("### 🎯 Strategic Integration: The Complete Picture")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.markdown("#### Recognition Challenge")
+        st.markdown("""
+        - **56%** never identify elements as Škoda
+        - **10%** recognize after 1 element
+        - **40%** maximum with 6 elements
+        
+        **Implication:** Multiple touchpoints essential; Symbol must lead
+        """)
+
+    with col2:
+        st.markdown("#### Awareness Challenge")
+        st.markdown("""
+        - **33%** familiar with brand
+        - **46%** heard name only
+        - **18%** completely unaware
+        
+        **Implication:** Brand education opportunity; not just recognition issue
+        """)
+
+    with col3:
+        st.markdown("#### Engagement Challenge")
+        st.markdown("""
+        - **47%** positive reaction
+        - **42%** indifferent
+        - **3%** disappointed
+        
+        **Implication:** Strengthen emotional positioning; brand not rejected but not loved
+        """)
+
+    st.markdown("---")
+
+    # Key recommendations
+    st.success("""
+    ### 🎯 Strategic Priorities Based on This Data
+    
+    1. **Elevate the Symbol** - At 48% recognition vs 20% average, the logo is the critical brand carrier. Make it prominent in all communications.
+    
+    2. **Create Combinations** - Since single elements drive only 10% recognition, ensure multiple elements appear together. Recommended minimum: 3 elements per touchpoint.
+    
+    3. **Address the 56% Gap** - More than half never connect elements to Škoda. This requires:
+       - Bolder, more distinctive asset design
+       - More consistent usage across markets
+       - Stronger connection between elements and brand name
+    
+    4. **Build Familiarity** - 46% have heard of Škoda but know little. Use brand elements as educational tools, not just identity markers.
+    
+    5. **Strengthen Emotional Connection** - 42% feel nothing about Škoda. Move beyond functional attributes to emotional benefits in messaging.
+    """)
+
+    # Download option
+    st.markdown("---")
+    
+    journey_export = pd.DataFrame({
+        'Metric': ['After 1 element', 'After 2 elements', 'After 3 elements', 
+                   'After 4 elements', 'After 5 elements', 'After all 6 elements', 
+                   'Never recognized'],
+        'Recognition Rate': [
+            recognition_journey['after_1_element'],
+            recognition_journey['after_2_elements'],
+            recognition_journey['after_3_elements'],
+            recognition_journey['after_4_elements'],
+            recognition_journey['after_5_elements'],
+            recognition_journey['after_all_6_elements'],
+            recognition_journey['never_recognized']
+        ]
+    })
+    
+    csv_journey = journey_export.to_csv(index=False)
+    st.download_button(
+        label="📥 Download Recognition Journey Data",
+        data=csv_journey,
+        file_name="skoda_recognition_journey.csv",
+        mime="text/csv"
+    )
+
+# --- Footer ---
+st.markdown("---")
 st.markdown("""
 <div style='text-align: center; color: #666; padding: 20px;'>
 <p><b>Škoda Brand Intelligence Dashboard</b> | Powered by Saffron</p>
-<p style='font-size: 0.9em;'>Redesigned for better user experience and progressive disclosure</p>
 </div>
 """, unsafe_allow_html=True)
