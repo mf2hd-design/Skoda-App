@@ -458,7 +458,7 @@ with tab1:
             action = "Must Use"
         elif row['Recognition'] >= 0.19:
             tier = "🥈 Tier 2"
-            action = "Moderate Performance"
+            action = "Moderate_Performance"
         else:
             tier = "🥉 Tier 3"
             action = "Optional/Redesign"
@@ -1901,7 +1901,7 @@ with tab4:
     Moderate_Performance = master_df[
         ((master_df['Recognition'] >= 0.35) | (master_df['Uniqueness'] >= 0.25))
     ].sort_values(['Recognition', 'Uniqueness'], ascending=False)
-    Moderate_Performance = Moderate Performance[~Moderate Performance['Element'].isin(must_use['Element'])]
+    Moderate_Performance = Moderate_Performance[~Moderate_Performance['Element'].isin(must_use['Element'])]
 
     requires_attention = master_df[
         (master_df['Recognition'] < 0.40) &
@@ -1942,12 +1942,12 @@ with tab4:
 
         st.markdown("---")
 
-        st.markdown("### ⭐ Moderate Performance Assets (Strongly Encouraged)")
-        st.info(f"**{len(Moderate Performance)} assets show strong potential:** Good recognition or uniqueness")
+        st.markdown("### ⭐ Moderate_Performance Assets (Strongly Encouraged)")
+        st.info(f"**{len(Moderate_Performance)} assets show strong potential:** Good recognition or uniqueness")
 
-        for idx, row in Moderate Performance.iterrows():
+        for idx, row in Moderate_Performance.iterrows():
             with st.expander(f"**{row['Element']}** - Recognition: {row['Recognition']:.0%} | Uniqueness: {row['Uniqueness']:.0%}"):
-                st.markdown("**Why Moderate Performance:**")
+                st.markdown("**Why Moderate_Performance:**")
                 if row['Recognition'] >= 0.35:
                     st.write(f"• ✅ Strong recognition ({row['Recognition']:.0%}) - consumers are familiar with this element")
                 if row['Uniqueness'] >= 0.25:
@@ -1983,7 +1983,7 @@ with tab4:
                 st.write("3. **Ineffective deployment:** Placement, creative execution, or context may need optimization")
                 st.write("4. **Low visibility:** May be used but not prominently featured in creative")
 
-                st.markdown("**Moderate Performance action:**")
+                st.markdown("**Moderate_Performance action:**")
                 if row['Uniqueness'] < 0.20:
                     st.write("⚠️ Consider redesigning for greater Škoda distinctiveness OR deprioritize in favor of higher-uniqueness assets")
                 else:
@@ -1996,8 +1996,8 @@ with tab4:
         for idx, row in must_use.iterrows():
             st.success(f"✓ {row['Element']}")
 
-        st.markdown("#### Moderate Performance")
-        for idx, row in Moderate Performance.head(5).iterrows():
+        st.markdown("#### Moderate_Performance")
+        for idx, row in Moderate_Performance.head(5).iterrows():
             st.info(f"⭐ {row['Element']}")
 
         st.markdown("#### Review Needed")
@@ -2011,8 +2011,8 @@ with tab4:
         guidelines_text += "## MUST-USE Assets (Non-Negotiable)\n"
         for idx, row in must_use.iterrows():
             guidelines_text += f"- {row['Element']}: {row['Recognition']:.0%} recognition\n"
-        guidelines_text += "\n## Moderate Performance Assets\n"
-        for idx, row in Moderate Performance.iterrows():
+        guidelines_text += "\n## Moderate_Performance Assets\n"
+        for idx, row in Moderate_Performance.iterrows():
             guidelines_text += f"- {row['Element']}: {row['Recognition']:.0%} recognition, {row['Uniqueness']:.0%} uniqueness\n"
 
         st.download_button(
@@ -2942,7 +2942,7 @@ with tab8:
     
     1. **Elevate the Symbol** - At 48% recognition vs 20% average, the logo is the critical brand carrier. Make it prominent in all communications.
     
-    2. **Create Combinations** - Since single elements drive only 10% recognition, ensure multiple elements appear together. Moderate Performance minimum: 3 elements per touchpoint.
+    2. **Create Combinations** - Since single elements drive only 10% recognition, ensure multiple elements appear together. Moderate_Performance minimum: 3 elements per touchpoint.
     
     3. **Address the 56% Gap** - More than half never connect elements to Škoda. This requires:
        - Bolder, more distinctive asset design
@@ -2987,3 +2987,4 @@ st.markdown("""
 <p><b>Škoda Brand Intelligence Dashboard</b> | Powered by Saffron</p>
 </div>
 """, unsafe_allow_html=True)
+}
