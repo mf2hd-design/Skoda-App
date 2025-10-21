@@ -370,8 +370,7 @@ with tab1:
     with col1:
         st.metric(
             "Most Recognised Asset", 
-            most_recognized['Element'], 
-            f"{most_recognized['Recognition']:.0%}",
+            most_recognized['Element'],
             help="Recognition measures the percentage of consumers who have seen or heard this element before. Based on survey question: 'Have you seen/heard this element before?'"
         )
         st.info(f"**{most_recognized['Recognition']:.0%}** of consumers have seen or heard this element before, making it the most familiar Škoda brand asset.")
@@ -390,8 +389,7 @@ with tab1:
     with col2:
         st.metric(
             "Most Unique Asset", 
-            most_unique['Element'], 
-            f"{most_unique['Uniqueness']:.0%}",
+            most_unique['Element'],
             help="Uniqueness measures brand attribution - the percentage of consumers who correctly identified this element as belonging to Škoda (not competitors or generic)."
         )
         st.info(f"Rated **{most_unique['Uniqueness']:.0%}** for distinctiveness - consumers correctly identify this as belonging to Škoda.")
@@ -411,8 +409,7 @@ with tab1:
     with col3:
         st.metric(
             "Highest Investment", 
-            highest_investment['Element'], 
-            f"€{highest_investment['Total Investment']:,.0f}",
+            highest_investment['Element'],
             help="Total investment represents the combined media spend across all campaigns where this element appears. Calculated from the comms audit data."
         )
         st.info(f"**€{highest_investment['Total Investment']:,.0f}** invested across **{int(highest_investment['Overall Usage'] * 102)}** ads.")
@@ -432,8 +429,7 @@ with tab1:
     with col4:
         st.metric(
             "Best Recognition ROI", 
-            best_roi['Element'], 
-            f"{best_roi['Recognition ROI']:.2f}",
+            best_roi['Element'],
             help="Recognition ROI = (Recognition % / Total Investment) × €1M. Shows how many recognition points are gained per million euros spent. Higher is better."
         )
         st.info(f"Delivers **{best_roi['Recognition ROI']:.2f}** recognition points per €1M spent - the most efficient performer.")
@@ -470,7 +466,6 @@ with tab1:
         tier_summary.append({
             'Element': row['Element'],
             'Tier': tier,
-            'Action': action,
             'Recognition': row['Recognition'],
             'Uniqueness': row['Uniqueness'],
             'Net Sentiment': row['Net Sentiment'],
