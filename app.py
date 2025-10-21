@@ -272,6 +272,26 @@ with tab1:
     st.header("Executive Summary")
     st.caption("Combined view replicating Excel 'NEW Calculations ALL' sheet")
 
+    # Key Takeaways Box
+    st.success("""
+    ### 🎯 Key Takeaways
+    
+    **Top Performers:**
+    - **Symbol** dominates with 48% recognition and 65% uniqueness - the clear brand leader
+    - **Wordmark** and **Sonic** show strong secondary performance
+    
+    **Critical Challenge:**
+    - 56% of respondents never recognized elements as Škoda (see Recognition Journey tab)
+    - Average recognition is only 20% - significant room for improvement
+    
+    **Strategic Priority:**
+    - Focus on Symbol as the primary brand carrier (2.5x more recognized than other elements)
+    - Use minimum 3 elements together for effective brand recognition
+    - Address negative sentiment in 7 out of 9 brand elements
+    """)
+
+    st.markdown("---")
+
     # Key Headlines
     col1, col2, col3, col4 = st.columns(4)
 
@@ -281,7 +301,12 @@ with tab1:
     best_roi = master_df.loc[master_df['Recognition ROI'].idxmax()]
 
     with col1:
-        st.metric("Most Recognised Asset", most_recognized['Element'], f"{most_recognized['Recognition']:.0%}")
+        st.metric(
+            "Most Recognised Asset", 
+            most_recognized['Element'], 
+            f"{most_recognized['Recognition']:.0%}",
+            help="Recognition measures the percentage of consumers who have seen or heard this element before. Based on survey question: 'Have you seen/heard this element before?'"
+        )
         st.info(f"**{most_recognized['Recognition']:.0%}** of consumers have seen or heard this element before, making it the most familiar Škoda brand asset.")
         with st.expander("📊 Why is this the most recognized?"):
             st.markdown(f"""
@@ -296,7 +321,12 @@ with tab1:
             """)
 
     with col2:
-        st.metric("Most Unique Asset", most_unique['Element'], f"{most_unique['Uniqueness']:.0%}")
+        st.metric(
+            "Most Unique Asset", 
+            most_unique['Element'], 
+            f"{most_unique['Uniqueness']:.0%}",
+            help="Uniqueness measures brand attribution - the percentage of consumers who correctly identified this element as belonging to Škoda (not competitors or generic)."
+        )
         st.info(f"Rated **{most_unique['Uniqueness']:.0%}** for distinctiveness - consumers correctly identify this as belonging to Škoda.")
         with st.expander("🎯 Why does this element have the highest uniqueness?"):
             usage_pct = most_unique['Overall Usage']
@@ -312,7 +342,12 @@ with tab1:
             """)
 
     with col3:
-        st.metric("Highest Investment", highest_investment['Element'], f"€{highest_investment['Total Investment']:,.0f}")
+        st.metric(
+            "Highest Investment", 
+            highest_investment['Element'], 
+            f"€{highest_investment['Total Investment']:,.0f}",
+            help="Total investment represents the combined media spend across all campaigns where this element appears. Calculated from the comms audit data."
+        )
         st.info(f"**€{highest_investment['Total Investment']:,.0f}** invested across **{int(highest_investment['Overall Usage'] * 102)}** ads.")
         with st.expander("💰 Why has this element received the most investment?"):
             roi_comparison = highest_investment['Recognition'] / best_roi['Recognition'] if best_roi['Recognition'] > 0 else 1
@@ -328,7 +363,12 @@ with tab1:
             """)
 
     with col4:
-        st.metric("Best Recognition ROI", best_roi['Element'], f"{best_roi['Recognition ROI']:.2f}")
+        st.metric(
+            "Best Recognition ROI", 
+            best_roi['Element'], 
+            f"{best_roi['Recognition ROI']:.2f}",
+            help="Recognition ROI = (Recognition % / Total Investment) × €1M. Shows how many recognition points are gained per million euros spent. Higher is better."
+        )
         st.info(f"Delivers **{best_roi['Recognition ROI']:.2f}** recognition points per €1M spent - the most efficient performer.")
         with st.expander("⚡ Why is this element the most efficient?"):
             st.markdown(f"""
@@ -459,6 +499,28 @@ with tab2:
     st.header("💚 Sentiment Analysis")
     st.caption("Consumer perception analysis based on Q04 semantic differential scales")
 
+    # Key Takeaways
+    st.warning("""
+    ### 🎯 Key Takeaways - Sentiment Challenge
+    
+    **The Reality:**
+    - Only 2 out of 9 elements have positive sentiment (Symbol +0.3%, Sonic +1.1%)
+    - 7 elements have net negative sentiment (more negative than positive associations)
+    - Average sentiment is -3.4% across all elements
+    
+    **What This Means:**
+    - Brand elements trigger slightly more negative than positive emotional responses
+    - This is a brand health concern requiring attention
+    - Focus on strengthening emotional connection, especially for weakest performers
+    
+    **Action Items:**
+    - Redesign or reposition elements with <-5% sentiment
+    - Leverage Sonic and Symbol (the only positive performers) more prominently
+    - Address why Type (-7.7%) and Hacek (-6.9%) perform poorly
+    """)
+
+    st.markdown("---")
+
     st.markdown("""
     <div style='background-color: #e8f5e9; padding: 20px; border-radius: 10px; margin-bottom: 20px;'>
     <h4>Understanding Sentiment Scores</h4>
@@ -477,7 +539,12 @@ with tab2:
     sentiment_range = master_df['Net Sentiment'].max() - master_df['Net Sentiment'].min()
 
     with col1:
-        st.metric("Most Positive Element", most_positive['Element'], f"+{most_positive['Net Sentiment']:.1%}")
+        st.metric(
+            "Most Positive Element", 
+            most_positive['Element'], 
+            f"+{most_positive['Net Sentiment']:.1%}",
+            help="Net sentiment = % choosing positive descriptors minus % choosing negative descriptors. Positive values indicate more positive than negative associations."
+        )
         st.success(f"**{most_positive['Net Sentiment']:.1%}** net positive perception.")
         with st.expander("❓ Why does this element have the highest sentiment?"):
             st.markdown(f"""
@@ -738,6 +805,27 @@ with tab2:
 with tab3:
     st.header("Strategic Insights Dashboard")
     st.caption("Advanced analytics to identify opportunities and optimize brand asset usage")
+
+    # Key Takeaways
+    st.info("""
+    ### 🎯 Key Takeaways - Efficiency & Combinations
+    
+    **ROI Winners:**
+    - **Sonic** delivers best efficiency (low investment, strong recognition)
+    - **Symbol** provides best overall value (high recognition + high uniqueness)
+    
+    **Element Combinations:**
+    - Symbol-based combinations consistently show highest recognition (green in heatmap)
+    - Type + Electric Green shows poor performance (red in heatmap) - avoid this pairing
+    - Minimum 3 elements needed per ad for effective brand recognition
+    
+    **Investment Insights:**
+    - Some high-investment elements underperform (requires attention)
+    - Focus budget on proven high-ROI combinations
+    - Symbol should anchor all communications (48% recognition vs 20% average)
+    """)
+
+    st.markdown("---")
 
     # Recognition ROI Analysis - Multi-Dimensional
     st.markdown("### 💡 Recognition Efficiency: Multi-Dimensional Analysis")
