@@ -275,6 +275,95 @@ demographics = {
     }
 }
 
+# --- ADJECTIVE ASSOCIATIONS (Semantic Differential Scales) ---
+# Data Source: Q04 from P045556 study - 7 adjective pairs on 5-point scales
+# positive_net = % who chose positions 1 or 2 (positive end of scale)
+# negative_net = % who chose positions 4 or 5 (negative end of scale)
+# neutral = % who chose position 3 (middle/neutral)
+adjective_data = {
+    'Electric Green': {
+        'bold': {'positive_net': 0.460, 'negative_net': 0.140, 'neutral': 0.300, 'negative_adjective': 'Cautious'},
+        'stylish': {'positive_net': 0.500, 'negative_net': 0.220, 'neutral': 0.290, 'negative_adjective': 'Plain'},
+        'modern': {'positive_net': 0.440, 'negative_net': 0.180, 'neutral': 0.290, 'negative_adjective': 'Old-Fashioned'},
+        'playful': {'positive_net': 0.450, 'negative_net': 0.260, 'neutral': 0.290, 'negative_adjective': 'Serious'},
+        'exciting': {'positive_net': 0.450, 'negative_net': 0.240, 'neutral': 0.310, 'negative_adjective': 'Boring'},
+        'human': {'positive_net': 0.500, 'negative_net': 0.220, 'neutral': 0.280, 'negative_adjective': 'Cold'},
+        'simple': {'positive_net': 0.500, 'negative_net': 0.200, 'neutral': 0.300, 'negative_adjective': 'Complicated'},
+    },
+    'Facets': {
+        'bold': {'positive_net': 0.480, 'negative_net': 0.250, 'neutral': 0.260, 'negative_adjective': 'Cautious'},
+        'stylish': {'positive_net': 0.520, 'negative_net': 0.200, 'neutral': 0.280, 'negative_adjective': 'Plain'},
+        'modern': {'positive_net': 0.460, 'negative_net': 0.240, 'neutral': 0.300, 'negative_adjective': 'Old-Fashioned'},
+        'playful': {'positive_net': 0.450, 'negative_net': 0.240, 'neutral': 0.300, 'negative_adjective': 'Serious'},
+        'exciting': {'positive_net': 0.430, 'negative_net': 0.150, 'neutral': 0.320, 'negative_adjective': 'Boring'},
+        'human': {'positive_net': 0.510, 'negative_net': 0.110, 'neutral': 0.280, 'negative_adjective': 'Cold'},
+        'simple': {'positive_net': 0.480, 'negative_net': 0.200, 'neutral': 0.300, 'negative_adjective': 'Complicated'},
+    },
+    'Type': {
+        'bold': {'positive_net': 0.480, 'negative_net': 0.230, 'neutral': 0.290, 'negative_adjective': 'Cautious'},
+        'stylish': {'positive_net': 0.490, 'negative_net': 0.220, 'neutral': 0.290, 'negative_adjective': 'Plain'},
+        'modern': {'positive_net': 0.410, 'negative_net': 0.180, 'neutral': 0.300, 'negative_adjective': 'Old-Fashioned'},
+        'playful': {'positive_net': 0.450, 'negative_net': 0.270, 'neutral': 0.280, 'negative_adjective': 'Serious'},
+        'exciting': {'positive_net': 0.440, 'negative_net': 0.240, 'neutral': 0.320, 'negative_adjective': 'Boring'},
+        'human': {'positive_net': 0.500, 'negative_net': 0.210, 'neutral': 0.290, 'negative_adjective': 'Cold'},
+        'simple': {'positive_net': 0.500, 'negative_net': 0.200, 'neutral': 0.300, 'negative_adjective': 'Complicated'},
+    },
+    'Symbol': {
+        'bold': {'positive_net': 0.500, 'negative_net': 0.220, 'neutral': 0.280, 'negative_adjective': 'Cautious'},
+        'stylish': {'positive_net': 0.560, 'negative_net': 0.130, 'neutral': 0.250, 'negative_adjective': 'Plain'},
+        'modern': {'positive_net': 0.460, 'negative_net': 0.240, 'neutral': 0.300, 'negative_adjective': 'Old-Fashioned'},
+        'playful': {'positive_net': 0.500, 'negative_net': 0.230, 'neutral': 0.270, 'negative_adjective': 'Serious'},
+        'exciting': {'positive_net': 0.460, 'negative_net': 0.220, 'neutral': 0.310, 'negative_adjective': 'Boring'},
+        'human': {'positive_net': 0.540, 'negative_net': 0.200, 'neutral': 0.270, 'negative_adjective': 'Cold'},
+        'simple': {'positive_net': 0.500, 'negative_net': 0.200, 'neutral': 0.300, 'negative_adjective': 'Complicated'},
+    },
+    'Sonic': {
+        'bold': {'positive_net': 0.490, 'negative_net': 0.230, 'neutral': 0.280, 'negative_adjective': 'Cautious'},
+        'stylish': {'positive_net': 0.550, 'negative_net': 0.200, 'neutral': 0.260, 'negative_adjective': 'Plain'},
+        'modern': {'positive_net': 0.470, 'negative_net': 0.240, 'neutral': 0.290, 'negative_adjective': 'Old-Fashioned'},
+        'playful': {'positive_net': 0.510, 'negative_net': 0.230, 'neutral': 0.270, 'negative_adjective': 'Serious'},
+        'exciting': {'positive_net': 0.460, 'negative_net': 0.230, 'neutral': 0.300, 'negative_adjective': 'Boring'},
+        'human': {'positive_net': 0.540, 'negative_net': 0.170, 'neutral': 0.280, 'negative_adjective': 'Cold'},
+        'simple': {'positive_net': 0.500, 'negative_net': 0.200, 'neutral': 0.300, 'negative_adjective': 'Complicated'},
+    },
+    'Wordmark': {
+        'bold': {'positive_net': 0.490, 'negative_net': 0.220, 'neutral': 0.280, 'negative_adjective': 'Cautious'},
+        'stylish': {'positive_net': 0.540, 'negative_net': 0.200, 'neutral': 0.260, 'negative_adjective': 'Plain'},
+        'modern': {'positive_net': 0.450, 'negative_net': 0.250, 'neutral': 0.300, 'negative_adjective': 'Old-Fashioned'},
+        'playful': {'positive_net': 0.480, 'negative_net': 0.240, 'neutral': 0.280, 'negative_adjective': 'Serious'},
+        'exciting': {'positive_net': 0.450, 'negative_net': 0.240, 'neutral': 0.310, 'negative_adjective': 'Boring'},
+        'human': {'positive_net': 0.520, 'negative_net': 0.210, 'neutral': 0.280, 'negative_adjective': 'Cold'},
+        'simple': {'positive_net': 0.500, 'negative_net': 0.200, 'neutral': 0.300, 'negative_adjective': 'Complicated'},
+    },
+    'Dark Green': {
+        'bold': {'positive_net': 0.490, 'negative_net': 0.240, 'neutral': 0.270, 'negative_adjective': 'Cautious'},
+        'stylish': {'positive_net': 0.520, 'negative_net': 0.180, 'neutral': 0.300, 'negative_adjective': 'Plain'},
+        'modern': {'positive_net': 0.450, 'negative_net': 0.250, 'neutral': 0.300, 'negative_adjective': 'Old-Fashioned'},
+        'playful': {'positive_net': 0.480, 'negative_net': 0.230, 'neutral': 0.290, 'negative_adjective': 'Serious'},
+        'exciting': {'positive_net': 0.460, 'negative_net': 0.220, 'neutral': 0.320, 'negative_adjective': 'Boring'},
+        'human': {'positive_net': 0.520, 'negative_net': 0.200, 'neutral': 0.270, 'negative_adjective': 'Cold'},
+        'simple': {'positive_net': 0.460, 'negative_net': 0.220, 'neutral': 0.310, 'negative_adjective': 'Complicated'},
+    },
+    'Hacek': {
+        'bold': {'positive_net': 0.460, 'negative_net': 0.270, 'neutral': 0.280, 'negative_adjective': 'Cautious'},
+        'stylish': {'positive_net': 0.490, 'negative_net': 0.200, 'neutral': 0.300, 'negative_adjective': 'Plain'},
+        'modern': {'positive_net': 0.420, 'negative_net': 0.170, 'neutral': 0.320, 'negative_adjective': 'Old-Fashioned'},
+        'playful': {'positive_net': 0.440, 'negative_net': 0.270, 'neutral': 0.280, 'negative_adjective': 'Serious'},
+        'exciting': {'positive_net': 0.440, 'negative_net': 0.250, 'neutral': 0.310, 'negative_adjective': 'Boring'},
+        'human': {'positive_net': 0.550, 'negative_net': 0.170, 'neutral': 0.280, 'negative_adjective': 'Cold'},
+        'simple': {'positive_net': 0.480, 'negative_net': 0.200, 'neutral': 0.300, 'negative_adjective': 'Complicated'},
+    },
+    'Tagline': {
+        'bold': {'positive_net': 0.480, 'negative_net': 0.230, 'neutral': 0.290, 'negative_adjective': 'Cautious'},
+        'stylish': {'positive_net': 0.510, 'negative_net': 0.190, 'neutral': 0.300, 'negative_adjective': 'Plain'},
+        'modern': {'positive_net': 0.450, 'negative_net': 0.230, 'neutral': 0.320, 'negative_adjective': 'Old-Fashioned'},
+        'playful': {'positive_net': 0.510, 'negative_net': 0.230, 'neutral': 0.260, 'negative_adjective': 'Serious'},
+        'exciting': {'positive_net': 0.470, 'negative_net': 0.230, 'neutral': 0.300, 'negative_adjective': 'Boring'},
+        'human': {'positive_net': 0.490, 'negative_net': 0.200, 'neutral': 0.310, 'negative_adjective': 'Cold'},
+        'simple': {'positive_net': 0.500, 'negative_net': 0.200, 'neutral': 0.300, 'negative_adjective': 'Complicated'},
+    },
+}
+
 # --- Load Comms Audit Data ---
 audit_df = pd.DataFrame(comms_audit_data)
 
@@ -2313,7 +2402,7 @@ with tab6:
 
     personality_view = st.radio(
         "Choose visualization:",
-        ["Radar Chart (7 Dimensions)", "Bar Chart Comparison"],
+        ["Radar Chart (7 Dimensions)", "Bar Chart Comparison", "Semantic Differential (Positive vs Negative)"],
         horizontal=True
     )
 
@@ -2364,7 +2453,7 @@ with tab6:
             st.info("**Extended personality profile** includes: Bold, Stylish, Modern, Simple, Human, Exciting, and Playful. " +
                     "Higher scores indicate stronger associations with these positive attributes.")
 
-        else:
+        elif personality_view == "Bar Chart Comparison":
             # Bar chart comparison
             personality_data = []
             for element in selected_elements:
@@ -2396,6 +2485,120 @@ with tab6:
                 title='Brand Personality Attributes (7 Dimensions)'
             )
             st.plotly_chart(fig_personality, use_container_width=True)
+
+        elif personality_view == "Semantic Differential (Positive vs Negative)":
+            # Diverging bar chart showing positive vs negative adjectives
+            st.caption("Shows the full spectrum from negative to positive perceptions for each dimension")
+
+            # Define the 7 adjective pairs
+            adjective_pairs = [
+                ('bold', 'Cautious'),
+                ('stylish', 'Plain'),
+                ('modern', 'Old-Fashioned'),
+                ('playful', 'Serious'),
+                ('exciting', 'Boring'),
+                ('human', 'Cold'),
+                ('simple', 'Complicated')
+            ]
+
+            for element in selected_elements:
+                st.markdown(f"#### {element}")
+
+                # Get adjective data for this element
+                element_adj_data = adjective_data[element]
+
+                # Create figure for this element
+                fig_diverging = go.Figure()
+
+                # Prepare data for diverging bars
+                y_labels = []
+                positive_values = []
+                negative_values = []
+
+                for pos_adj, neg_adj in adjective_pairs:
+                    adj_info = element_adj_data[pos_adj.lower()]
+                    y_labels.append(f"{pos_adj.title()} ← → {neg_adj}")
+                    positive_values.append(adj_info['positive_net'])
+                    negative_values.append(-adj_info['negative_net'])  # Negative for left side
+
+                # Add negative bars (left side, red)
+                fig_diverging.add_trace(go.Bar(
+                    y=y_labels,
+                    x=negative_values,
+                    name='Negative',
+                    orientation='h',
+                    marker=dict(color='#EF5350'),
+                    text=[f"{abs(v):.0%}" for v in negative_values],
+                    textposition='inside',
+                    textangle=0,
+                    hovertemplate='%{text}<extra></extra>'
+                ))
+
+                # Add positive bars (right side, green)
+                fig_diverging.add_trace(go.Bar(
+                    y=y_labels,
+                    x=positive_values,
+                    name='Positive',
+                    orientation='h',
+                    marker=dict(color='#66BB6A'),
+                    text=[f"{v:.0%}" for v in positive_values],
+                    textposition='inside',
+                    textangle=0,
+                    hovertemplate='%{text}<extra></extra>'
+                ))
+
+                # Update layout
+                fig_diverging.update_layout(
+                    barmode='overlay',
+                    xaxis=dict(
+                        title="",
+                        range=[-0.7, 0.7],
+                        tickformat='.0%',
+                        tickvals=[-0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6],
+                        ticktext=['60%', '40%', '20%', '0%', '20%', '40%', '60%'],
+                        zeroline=True,
+                        zerolinewidth=2,
+                        zerolinecolor='#333'
+                    ),
+                    yaxis=dict(
+                        title="",
+                        autorange='reversed'
+                    ),
+                    height=500,
+                    showlegend=True,
+                    legend=dict(
+                        orientation="h",
+                        yanchor="bottom",
+                        y=1.02,
+                        xanchor="right",
+                        x=1
+                    ),
+                    margin=dict(l=200, r=50, t=50, b=50)
+                )
+
+                st.plotly_chart(fig_diverging, use_container_width=True)
+
+                # Show key insights
+                # Find strongest positive and strongest negative
+                pos_strengths = [(adjective_pairs[i][0].title(), positive_values[i]) for i in range(len(adjective_pairs))]
+                neg_strengths = [(adjective_pairs[i][1], abs(negative_values[i])) for i in range(len(adjective_pairs))]
+
+                pos_strengths.sort(key=lambda x: x[1], reverse=True)
+                neg_strengths.sort(key=lambda x: x[1], reverse=True)
+
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.success(f"**Top Positive:** {pos_strengths[0][0]} ({pos_strengths[0][1]:.0%})")
+                with col2:
+                    if neg_strengths[0][1] > 0.15:  # Only show if significant
+                        st.warning(f"**Top Negative:** {neg_strengths[0][0]} ({neg_strengths[0][1]:.0%})")
+                    else:
+                        st.info("No significant negative associations")
+
+                st.markdown("---")
+
+            st.info("**How to read this chart:** Green bars show % who chose positive adjectives, red bars show % who chose negative adjectives. " +
+                    "Longer bars indicate stronger associations. The center represents neutral responses.")
 
     st.markdown("---")
 
