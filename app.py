@@ -3,6 +3,14 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from io import BytesIO
+import json
+
+# Load Q05 and Q03 data
+with open('/home/claude/q05_confusion_data.json', 'r') as f:
+    q05_confusion_data = json.load(f)
+
+with open('/home/claude/q03_associations_data.json', 'r') as f:
+    q03_associations_data = json.load(f)
 from comms_data import comms_audit_data
 
 # --- Configuration ---
@@ -801,6 +809,94 @@ with tab2:
         st.write(f"• Focus on strengthening emotional connection for bottom performers")
         st.write("• Consider design/messaging updates for weakest elements")
 
+    st.markdown("---")
+
+    # Q05 Brand Confusion Matrix
+    st.markdown("### 🎯 Brand Confusion Matrix (Q05)")
+    st.caption("Which brands do consumers think these elements belong to?")
+
+    st.info("""
+    **Key Insight:** Brand confusion analysis reveals competitive threats. High Škoda attribution = distinctive asset. 
+    High competitor attribution = confusion risk. High "Generic" = lacks brand identity.
+    """)
+
+    # Create confusion matrix
+    confusion_df = pd.DataFrame(q05_confusion_data).T
+    confusion_df = confusion_df[['Skoda', 'VW', 'Toyota', 'Seat', 'Generic', 'Dont_Know']]
+    confusion_df.columns = ['Škoda', 'VW', 'Toyota', 'Seat', 'Generic', "Don't Know"]
+
+    # Create heatmap
+    fig_confusion = px.imshow(
+        confusion_df,
+        labels=dict(x="Attributed Brand", y="Element", color="Attribution %"),
+        x=confusion_df.columns,
+        y=confusion_df.index,
+        color_continuous_scale='RdYlGn',
+        text_auto='.0%',
+        aspect="auto",
+        title="Brand Attribution: Who Do Consumers Think Owns These Elements?"
+    )
+    fig_confusion.update_layout(height=500)
+    st.plotly_chart(fig_confusion, use_container_width=True)
+
+    # Analysis columns
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("#### ✅ Distinctive Assets")
+        distinctive = confusion_df.sort_values('Škoda', ascending=False).head(3)
+        for element, row in distinctive.iterrows():
+            st.success(f"**{element}**: {row['Škoda']:.0%} Škoda")
+            st.caption(f"VW: {row['VW']:.0%} | Generic: {row['Generic']:.0%}")
+
+    with col2:
+        st.markdown("#### ⚠️ Confusion Risks")
+        
+        # Find elements with high VW confusion
+        high_vw = confusion_df[confusion_df['VW'] >= 0.15].sort_values('VW', ascending=False)
+        if len(high_vw) > 0:
+            st.warning("**VW Confusion (Brand Dilution Risk):**")
+            for element, row in high_vw.iterrows():
+                st.write(f"• **{element}**: {row['VW']:.0%} think it's VW")
+        
+        # Find elements with high generic attribution
+        high_generic = confusion_df[confusion_df['Generic'] >= 0.20].sort_values('Generic', ascending=False)
+        if len(high_generic) > 0:
+            st.warning("**Generic/No Brand Association:**")
+            for element, row in high_generic.iterrows():
+                st.write(f"• **{element}**: {row['Generic']:.0%} say generic")
+
+    # Competitive threat matrix
+    st.markdown("#### 📊 Redesign Priority Matrix")
+    
+    confusion_df['Competitive_Risk'] = confusion_df['VW'] + confusion_df['Toyota'] + confusion_df['Seat']
+    confusion_df['Distinctiveness_Score'] = confusion_df['Škoda'] - confusion_df['Competitive_Risk']
+    
+    threat_matrix = []
+    for element in confusion_df.index:
+        skoda_attr = confusion_df.loc[element, 'Škoda']
+        comp_risk = confusion_df.loc[element, 'Competitive_Risk']
+        
+        if skoda_attr < 0.35 and comp_risk > 0.25:
+            priority = "🔴 HIGH - Fix Now"
+        elif skoda_attr < 0.35 or comp_risk > 0.25:
+            priority = "🟡 MEDIUM - Monitor"
+        else:
+            priority = "🟢 LOW - Maintain"
+        
+        threat_matrix.append({
+            'Element': element,
+            'Škoda Attribution': skoda_attr,
+            'Competitor Confusion': comp_risk,
+            'Priority': priority
+        })
+    
+    threat_df = pd.DataFrame(threat_matrix).sort_values('Competitor Confusion', ascending=False)
+    st.dataframe(threat_df.style.format({
+        'Škoda Attribution': '{:.0%}',
+        'Competitor Confusion': '{:.0%}'
+    }), use_container_width=True)
+
 # ==================== TAB 3: STRATEGIC INSIGHTS ====================
 with tab3:
     st.header("Strategic Insights Dashboard")
@@ -1246,6 +1342,158 @@ with tab3:
         
         st.info("""
         **Insight:** Based on recognition journey data, ads with 3+ elements are more likely to drive brand recognition.
+        """)
+
+    st.markdown("---")
+
+    # Q03 Consumer Language Analysis
+    st.markdown("### 💬 Consumer Language Analysis (Q03)")
+    st.caption("What words do consumers use to describe brand elements? Sentiment classification and theme analysis.")
+
+    st.info("""
+    **Methodology:** Text analysis of open-ended responses using NLP sentiment classification and theme clustering. 
+    Shows what consumers actually say (not just predefined scales).
+    """)
+
+    # Element selector
+    selected_element = st.selectbox(
+        "Select element to analyze:",
+        list(q03_associations_data.keys()),
+        key="q03_element_selector"
+    )
+
+    element_data = q03_associations_data[selected_element]
+
+    col1, col2 = st.columns([2, 1])
+
+    with col1:
+        # Top words bar chart
+        st.markdown(f"#### Top 10 Words for {selected_element}")
+        
+        words_df = pd.DataFrame({
+            'Word': element_data['top_words'],
+            'Frequency': element_data['frequencies']
+        })
+        
+        fig_words = px.bar(
+            words_df,
+            x='Frequency',
+            y='Word',
+            orientation='h',
+            title=f'Most Common Words: {selected_element}',
+            text=words_df['Frequency'].apply(lambda x: f'{x:.0%}'),
+            color='Frequency',
+            color_continuous_scale='Blues'
+        )
+        fig_words.update_layout(height=400, showlegend=False)
+        fig_words.update_traces(textposition='outside')
+        st.plotly_chart(fig_words, use_container_width=True)
+
+    with col2:
+        # Sentiment pie chart
+        st.markdown("#### Sentiment Classification")
+        
+        sentiment_data = pd.DataFrame({
+            'Sentiment': ['Positive', 'Neutral', 'Negative'],
+            'Percentage': [
+                element_data['sentiment']['positive'],
+                element_data['sentiment']['neutral'],
+                element_data['sentiment']['negative']
+            ]
+        })
+        
+        fig_sentiment = px.pie(
+            sentiment_data,
+            values='Percentage',
+            names='Sentiment',
+            title='Text Sentiment',
+            color='Sentiment',
+            color_discrete_map={'Positive': '#4CAF50', 'Neutral': '#FFC107', 'Negative': '#F44336'}
+        )
+        st.plotly_chart(fig_sentiment, use_container_width=True)
+
+    # Theme analysis
+    st.markdown(f"#### Themes Identified in {selected_element} Descriptions")
+    
+    themes_df = pd.DataFrame({
+        'Theme': list(element_data['themes'].keys()),
+        'Prevalence': list(element_data['themes'].values())
+    }).sort_values('Prevalence', ascending=True)
+    
+    fig_themes = px.bar(
+        themes_df,
+        x='Prevalence',
+        y='Theme',
+        orientation='h',
+        title='Thematic Analysis',
+        text=themes_df['Prevalence'].apply(lambda x: f'{x:.0%}'),
+        color='Prevalence',
+        color_continuous_scale='Viridis'
+    )
+    fig_themes.update_layout(height=300, showlegend=False)
+    fig_themes.update_traces(textposition='outside')
+    st.plotly_chart(fig_themes, use_container_width=True)
+
+    # Comparative sentiment across all elements
+    st.markdown("---")
+    st.markdown("### 📊 Sentiment Comparison Across All Elements")
+    
+    all_sentiments = []
+    for elem, data in q03_associations_data.items():
+        all_sentiments.append({
+            'Element': elem,
+            'Positive': data['sentiment']['positive'],
+            'Neutral': data['sentiment']['neutral'],
+            'Negative': data['sentiment']['negative'],
+            'Net': data['sentiment']['positive'] - data['sentiment']['negative']
+        })
+    
+    sent_comparison_df = pd.DataFrame(all_sentiments).sort_values('Net', ascending=True)
+    
+    fig_sent_comp = go.Figure()
+    
+    fig_sent_comp.add_trace(go.Bar(
+        name='Positive',
+        y=sent_comparison_df['Element'],
+        x=sent_comparison_df['Positive'],
+        orientation='h',
+        marker_color='#4CAF50'
+    ))
+    
+    fig_sent_comp.add_trace(go.Bar(
+        name='Negative',
+        y=sent_comparison_df['Element'],
+        x=sent_comparison_df['Negative'],
+        orientation='h',
+        marker_color='#F44336'
+    ))
+    
+    fig_sent_comp.update_layout(
+        barmode='overlay',
+        title='Text Sentiment Analysis: All Elements',
+        xaxis_title='Percentage',
+        yaxis_title='',
+        height=500,
+        xaxis_tickformat='.0%'
+    )
+    
+    st.plotly_chart(fig_sent_comp, use_container_width=True)
+
+    # Key insights
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.success(f"""
+        **Most Positive Language:**
+        - **{sent_comparison_df.iloc[-1]['Element']}**: {sent_comparison_df.iloc[-1]['Positive']:.0%} positive
+        - Top word: "{q03_associations_data[sent_comparison_df.iloc[-1]['Element']]['top_words'][0]}"
+        """)
+    
+    with col2:
+        st.warning(f"""
+        **Most Negative Language:**
+        - **{sent_comparison_df.iloc[0]['Element']}**: {sent_comparison_df.iloc[0]['Negative']:.0%} negative
+        - Shows disconnect in consumer perception
         """)
 
 # ==================== TAB 4: NON-NEGOTIABLES ====================
