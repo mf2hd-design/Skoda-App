@@ -88,6 +88,39 @@ except Exception as e:
     st.error(f"Error loading Q03/Q05 data: {e}")
     q05_confusion_data = {}
     q03_associations_data = {}
+
+# Load new demographic and trigger data
+try:
+    if os.path.exists('first_recognition_trigger.json'):
+        with open('first_recognition_trigger.json', 'r') as f:
+            first_recognition_trigger = json.load(f)
+    else:
+        first_recognition_trigger = {}
+
+    if os.path.exists('recognition_by_age_gender.json'):
+        with open('recognition_by_age_gender.json', 'r') as f:
+            recognition_by_age_gender = json.load(f)
+    else:
+        recognition_by_age_gender = {}
+
+    if os.path.exists('uniqueness_by_country.json'):
+        with open('uniqueness_by_country.json', 'r') as f:
+            uniqueness_by_country = json.load(f)
+    else:
+        uniqueness_by_country = {}
+
+    if os.path.exists('uniqueness_by_age_gender.json'):
+        with open('uniqueness_by_age_gender.json', 'r') as f:
+            uniqueness_by_age_gender = json.load(f)
+    else:
+        uniqueness_by_age_gender = {}
+except Exception as e:
+    st.error(f"Error loading demographic data: {e}")
+    first_recognition_trigger = {}
+    recognition_by_age_gender = {}
+    uniqueness_by_country = {}
+    uniqueness_by_age_gender = {}
+
 from comms_data import comms_audit_data
 
 # --- Configuration ---
@@ -446,15 +479,67 @@ with tab1:
     st.header("Executive Summary")
     st.caption("Combined view replicating Excel 'NEW Calculations ALL' sheet")
 
+    # Demographic Filter Section
+    st.markdown("### 👥 View by Demographics")
+    filter_col1, filter_col2, filter_col3 = st.columns([1, 1, 2])
 
+    with filter_col1:
+        demographic_type = st.selectbox(
+            "Filter by:",
+            ["All Audiences (Default)", "Gender", "Age"],
+            help="View recognition and uniqueness data broken down by demographics"
+        )
+
+    demographic_filter = None
+    demographic_label = "All Audiences"
+
+    if demographic_type == "Gender" and recognition_by_age_gender:
+        with filter_col2:
+            gender_choice = st.selectbox("Select Gender:", ["Male", "Female"])
+            demographic_filter = ("gender", gender_choice.lower())
+            demographic_label = gender_choice
+    elif demographic_type == "Age" and recognition_by_age_gender:
+        with filter_col2:
+            age_choice = st.selectbox("Select Age Group:", ["18-30", "31-42", "43-55"])
+            demographic_filter = ("age", age_choice)
+            demographic_label = f"Age {age_choice}"
+
+    # Show current view
+    if demographic_filter:
+        st.info(f"📊 Currently viewing: **{demographic_label}** audience")
+    else:
+        st.info("📊 Currently viewing: **All Audiences** (aggregated data)")
+
+    st.markdown("---")
 
     # Key Headlines
     col1, col2, col3, col4 = st.columns(4)
 
-    most_recognized = master_df.loc[master_df['Recognition'].idxmax()]
-    most_unique = master_df.loc[master_df['Uniqueness'].idxmax()]
-    highest_investment = master_df.loc[master_df['Total Investment'].idxmax()]
-    best_roi = master_df.loc[master_df['Recognition ROI'].idxmax()]
+    # Apply demographic filter to create filtered dataframe
+    filtered_df = master_df.copy()
+
+    if demographic_filter and recognition_by_age_gender and uniqueness_by_age_gender:
+        filter_type, filter_value = demographic_filter
+
+        # Update Recognition values based on demographic filter
+        for idx, row in filtered_df.iterrows():
+            element = row['Element']
+            if element in recognition_by_age_gender and filter_type in recognition_by_age_gender[element]:
+                if filter_value in recognition_by_age_gender[element][filter_type]:
+                    filtered_df.at[idx, 'Recognition'] = recognition_by_age_gender[element][filter_type][filter_value]
+
+            # Update Uniqueness values based on demographic filter
+            if element in uniqueness_by_age_gender and filter_type in uniqueness_by_age_gender[element]:
+                if filter_value in uniqueness_by_age_gender[element][filter_type]:
+                    filtered_df.at[idx, 'Uniqueness'] = uniqueness_by_age_gender[element][filter_type][filter_value]
+
+        # Recalculate Recognition ROI with filtered recognition values
+        filtered_df['Recognition ROI'] = (filtered_df['Recognition'] / (filtered_df['Total Investment'] / 1_000_000)).replace([float('inf'), -float('inf')], 0)
+
+    most_recognized = filtered_df.loc[filtered_df['Recognition'].idxmax()]
+    most_unique = filtered_df.loc[filtered_df['Uniqueness'].idxmax()]
+    highest_investment = filtered_df.loc[filtered_df['Total Investment'].idxmax()]
+    best_roi = filtered_df.loc[filtered_df['Recognition ROI'].idxmax()]
 
     with col1:
         st.metric(
@@ -465,11 +550,11 @@ with tab1:
         st.info(f"**{most_recognized['Recognition']:.0%}** of consumers have seen or heard this element before, making it the most familiar Škoda brand asset.")
         with st.expander("📊 Why is this the most recognized?"):
             # Calculate relative context
-            median_usage = master_df['Overall Usage'].median()
-            median_investment = master_df['Total Investment'].median()
-            max_usage = master_df['Overall Usage'].max()
-            usage_rank = (master_df['Overall Usage'] >= most_recognized['Overall Usage']).sum()
-            investment_rank = (master_df['Total Investment'] >= most_recognized['Total Investment']).sum()
+            median_usage = filtered_df['Overall Usage'].median()
+            median_investment = filtered_df['Total Investment'].median()
+            max_usage = filtered_df['Overall Usage'].max()
+            usage_rank = (filtered_df['Overall Usage'] >= most_recognized['Overall Usage']).sum()
+            investment_rank = (filtered_df['Total Investment'] >= most_recognized['Total Investment']).sum()
 
             # Build data-driven explanation
             factors = []
@@ -490,13 +575,13 @@ with tab1:
                 factors.append(f"**Campaign Presence:** Used in {most_recognized['Overall Usage']:.0%} of campaigns")
 
             # ROI factor
-            if most_recognized['Recognition ROI'] >= master_df['Recognition ROI'].median():
+            if most_recognized['Recognition ROI'] >= filtered_df['Recognition ROI'].median():
                 factors.append(f"**Strong ROI:** Achieves {most_recognized['Recognition ROI']:.2f} recognition points per €1M (efficient performance)")
             else:
                 factors.append(f"**Investment-Driven Recognition:** ROI of {most_recognized['Recognition ROI']:.2f} per €1M - recognition built through consistent spend")
 
             # Uniqueness bonus
-            if most_recognized['Uniqueness'] >= master_df['Uniqueness'].median():
+            if most_recognized['Uniqueness'] >= filtered_df['Uniqueness'].median():
                 factors.append(f"**Distinctive Design:** {most_recognized['Uniqueness']:.0%} uniqueness reinforces brand attribution")
 
             explanation = "**" + most_recognized['Element'] + "** achieves highest recognition through:\n\n"
@@ -516,8 +601,8 @@ with tab1:
         st.info(f"Rated **{most_unique['Uniqueness']:.0%}** for distinctiveness - consumers correctly identify this as belonging to Škoda.")
         with st.expander("🎯 Why does this element have the highest uniqueness?"):
             # Calculate relative context
-            median_usage = master_df['Overall Usage'].median()
-            median_recognition = master_df['Recognition'].median()
+            median_usage = filtered_df['Overall Usage'].median()
+            median_recognition = filtered_df['Recognition'].median()
 
             factors = []
 
@@ -534,14 +619,14 @@ with tab1:
                 factors.append(f"**Campaign Presence:** Appears in {most_unique['Overall Usage']:.0%} of campaigns")
 
             # Distinctiveness insight
-            uniqueness_gap = most_unique['Uniqueness'] - master_df['Uniqueness'].median()
+            uniqueness_gap = most_unique['Uniqueness'] - filtered_df['Uniqueness'].median()
             if uniqueness_gap >= 0.15:
                 factors.append(f"**Exceptional Distinctiveness:** {uniqueness_gap:.0%} points above median uniqueness - clearly Škoda-specific")
             else:
                 factors.append(f"**Distinctive Design:** Stands out as uniquely Škoda versus competitors")
 
             # ROI/efficiency
-            if most_unique['Recognition ROI'] >= master_df['Recognition ROI'].median():
+            if most_unique['Recognition ROI'] >= filtered_df['Recognition ROI'].median():
                 factors.append(f"**Efficient Performance:** {most_unique['Recognition ROI']:.2f} ROI per €1M - builds brand equity cost-effectively")
 
             explanation = f"**{most_unique['Element']}** stands out as the most distinctive Škoda asset:\n\n"
@@ -561,9 +646,9 @@ with tab1:
         st.info(f"**€{highest_investment['Total Investment']:,.0f}** invested across **{int(highest_investment['Overall Usage'] * 102)}** ads.")
         with st.expander("💰 Why has this element received the most investment?"):
             # Calculate relative context
-            median_usage = master_df['Overall Usage'].median()
-            median_recognition = master_df['Recognition'].median()
-            inv_vs_median = ((highest_investment['Total Investment'] / master_df['Total Investment'].median()) - 1) * 100
+            median_usage = filtered_df['Overall Usage'].median()
+            median_recognition = filtered_df['Recognition'].median()
+            inv_vs_median = ((highest_investment['Total Investment'] / filtered_df['Total Investment'].median()) - 1) * 100
 
             factors = []
 
@@ -611,10 +696,10 @@ with tab1:
         st.info(f"Delivers **{best_roi['Recognition ROI']:.2f}** recognition points per €1M spent - the most efficient performer.")
         with st.expander("⚡ Why is this element the most efficient?"):
             # Calculate relative context
-            median_investment = master_df['Total Investment'].median()
-            median_recognition = master_df['Recognition'].median()
-            median_usage = master_df['Overall Usage'].median()
-            roi_vs_median = ((best_roi['Recognition ROI'] / master_df['Recognition ROI'].median()) - 1) * 100
+            median_investment = filtered_df['Total Investment'].median()
+            median_recognition = filtered_df['Recognition'].median()
+            median_usage = filtered_df['Overall Usage'].median()
+            roi_vs_median = ((best_roi['Recognition ROI'] / filtered_df['Recognition ROI'].median()) - 1) * 100
 
             factors = []
 
@@ -636,7 +721,7 @@ with tab1:
                 factors.append(f"**Selective Usage:** Appears in {best_roi['Overall Usage']:.0%} of campaigns")
 
             # Uniqueness factor
-            if best_roi['Uniqueness'] >= master_df['Uniqueness'].median():
+            if best_roi['Uniqueness'] >= filtered_df['Uniqueness'].median():
                 factors.append(f"**Distinctive Asset:** {best_roi['Uniqueness']:.0%} uniqueness - memorability reduces need for repetition")
             else:
                 factors.append(f"**Uniqueness:** {best_roi['Uniqueness']:.0%} uniqueness score")
@@ -661,9 +746,9 @@ with tab1:
 
     # Summary table
     st.markdown("### 📊 Complete Tier Overview")
-    
+
     tier_summary = []
-    for _, row in master_df.iterrows():
+    for _, row in filtered_df.iterrows():
         if row['Recognition'] >= 0.30:
             tier = "🥇 Tier 1"
             action = "Must Use"
@@ -695,11 +780,11 @@ with tab1:
     st.markdown("---")
 
     # Key Takeaways Box - Data-driven
-    top_recognition = master_df.nlargest(3, 'Recognition')
+    top_recognition = filtered_df.nlargest(3, 'Recognition')
     top_performer = top_recognition.iloc[0]
-    avg_recognition = master_df['Recognition'].mean()
+    avg_recognition = filtered_df['Recognition'].mean()
     recognition_ratio = top_performer['Recognition'] / avg_recognition if avg_recognition > 0 else 0
-    negative_sentiment_count = (master_df['Net Sentiment'] < 0).sum()
+    negative_sentiment_count = (filtered_df['Net Sentiment'] < 0).sum()
 
     takeaways_text = f"""
     ### 🎯 Key Takeaways
@@ -721,7 +806,7 @@ with tab1:
 
     **Strategic Priority:**
     - Focus on **{top_performer['Element']}** as the primary brand carrier ({recognition_ratio:.1f}x average recognition)
-    - Address negative sentiment in {negative_sentiment_count} out of {len(master_df)} brand elements
+    - Address negative sentiment in {negative_sentiment_count} out of {len(filtered_df)} brand elements
     """
 
     st.success(takeaways_text)
@@ -732,7 +817,7 @@ with tab1:
     st.markdown("#### Combined Analysis Table")
     st.caption("Synthesizes Comms Audit media metrics with Quantitative Research insights")
 
-    display_df = master_df[[
+    display_df = filtered_df[[
         'Element', 'Overall Usage', 'Usage Image', 'Usage Video',
         'Average Investment', 'Total Investment',
         'Recognition', 'Uniqueness', 'Net Sentiment'
@@ -787,7 +872,7 @@ with tab1:
         """)
 
     fig_matrix = px.scatter(
-        master_df,
+        filtered_df,
         x="Uniqueness",
         y="Recognition",
         size="Total Investment",
@@ -803,10 +888,10 @@ with tab1:
     st.plotly_chart(fig_matrix, use_container_width=True)
 
     # Add interpretation of matrix patterns
-    top_right = master_df[(master_df['Recognition'] >= master_df['Recognition'].median()) &
-                          (master_df['Uniqueness'] >= master_df['Uniqueness'].median())]
-    bottom_left = master_df[(master_df['Recognition'] < master_df['Recognition'].median()) &
-                            (master_df['Uniqueness'] < master_df['Uniqueness'].median())]
+    top_right = filtered_df[(filtered_df['Recognition'] >= filtered_df['Recognition'].median()) &
+                          (filtered_df['Uniqueness'] >= filtered_df['Uniqueness'].median())]
+    bottom_left = filtered_df[(filtered_df['Recognition'] < filtered_df['Recognition'].median()) &
+                            (filtered_df['Uniqueness'] < filtered_df['Uniqueness'].median())]
 
     st.markdown("#### 🔍 Matrix Insights: Why do elements position where they do?")
     col1, col2 = st.columns(2)
@@ -2862,6 +2947,96 @@ with tab6:
                 st.markdown("**Strategic action:**")
                 st.write(f"Analyze why {max_c[0]} outperforms - replicate successful tactics in {min_c[0]} to close the {var:.0%} gap")
 
+    st.markdown("---")
+
+    # Market-Level Uniqueness (Brand Attribution) Analysis
+    if uniqueness_by_country:
+        st.markdown("### 🌍 Brand Attribution (Uniqueness) by Market")
+        st.caption("Shows which markets correctly identify each element as belonging to Škoda (not competitors)")
+
+        with st.expander("📖 Why market-level uniqueness matters"):
+            st.markdown("""
+            **Uniqueness** measures brand attribution - the % of consumers who correctly identify an element as belonging to Škoda (vs competitors or generic design).
+
+            **Why market variations are critical:**
+            - **2x differences** exist between markets (e.g., Symbol: UK 23% vs Poland 55%)
+            - Global averages mask these massive variations
+            - **Strategy implications:** Elements may need market-specific support or repositioning
+            - **Investment decisions:** High-uniqueness markets can leverage assets; low-uniqueness markets need brand education
+
+            **What to look for:**
+            - Markets with <30% uniqueness: Element not seen as distinctively Škoda
+            - Large gaps between markets: Opportunity to learn from high performers
+            """)
+
+        col1, col2 = st.columns([2, 1])
+
+        with col1:
+            # Heatmap of uniqueness by country
+            uniqueness_heatmap_data = []
+            for element in brand_elements:
+                if element in uniqueness_by_country:
+                    row_data = {'Element': element}
+                    for country in ['UK', 'Spain', 'Germany', 'Poland']:
+                        if country in uniqueness_by_country[element]:
+                            row_data[country] = uniqueness_by_country[element][country]
+                        else:
+                            row_data[country] = 0
+                    uniqueness_heatmap_data.append(row_data)
+
+            uniqueness_heatmap_df = pd.DataFrame(uniqueness_heatmap_data).set_index('Element')
+
+            fig_uniqueness_heatmap = px.imshow(
+                uniqueness_heatmap_df,
+                labels=dict(x="Country", y="Brand Element", color="Brand Attribution"),
+                text_auto='.0%',
+                aspect="auto",
+                color_continuous_scale='RdYlGn',
+                title="Brand Attribution (Uniqueness) by Country"
+            )
+            fig_uniqueness_heatmap.update_layout(height=500)
+            st.plotly_chart(fig_uniqueness_heatmap, use_container_width=True)
+
+        with col2:
+            st.markdown("#### Key Findings:")
+
+            # Find strongest market per element for uniqueness
+            st.markdown("**Strongest Attribution:**")
+            for element in brand_elements[:5]:  # Show top 5
+                if element in uniqueness_by_country:
+                    countries_sorted = sorted(
+                        uniqueness_by_country[element].items(),
+                        key=lambda x: x[1],
+                        reverse=True
+                    )
+                    best_country = countries_sorted[0]
+                    st.success(f"**{element}**: {best_country[0]} ({best_country[1]:.0%})")
+
+            st.markdown("**Biggest Market Gaps:**")
+            # Find elements with biggest uniqueness variations
+            uniqueness_variations = []
+            for element in brand_elements:
+                if element in uniqueness_by_country:
+                    values = list(uniqueness_by_country[element].values())
+                    if values:
+                        variation = max(values) - min(values)
+                        min_country = min(uniqueness_by_country[element].items(), key=lambda x: x[1])
+                        max_country = max(uniqueness_by_country[element].items(), key=lambda x: x[1])
+                        uniqueness_variations.append((element, variation, min_country, max_country))
+
+            uniqueness_variations_sorted = sorted(uniqueness_variations, key=lambda x: x[1], reverse=True)
+            for element, var, min_c, max_c in uniqueness_variations_sorted[:3]:
+                with st.expander(f"**{element}**: {var:.0%} gap"):
+                    st.write(f"**Highest:** {max_c[0]} ({max_c[1]:.0%})")
+                    st.write(f"**Lowest:** {min_c[0]} ({min_c[1]:.0%})")
+                    st.markdown("**Why this gap matters:**")
+                    if min_c[1] < 0.30:
+                        st.warning(f"⚠️ In {min_c[0]}, consumers don't strongly associate {element} with Škoda - risk of competitor confusion")
+                    st.markdown("**Strategic actions:**")
+                    st.write(f"• **{max_c[0]} playbook:** Study what makes {element} distinctively Škoda here ({max_c[1]:.0%} attribution)")
+                    st.write(f"• **{min_c[0]} support:** Increase co-branding of {element} with strong Škoda identifiers (Symbol, Wordmark)")
+                    st.write(f"• **Investment priority:** Focus {element} investment in high-attribution markets; support with core brand assets in {min_c[0]}")
+
 # ==================== TAB 7: DATA EXPLORER ====================
 with tab7:
     st.header("📄 Data Explorer")
@@ -3171,6 +3346,74 @@ with tab8:
         """)
 
     st.markdown("---")
+
+    # NEW SECTION: First Recognition Trigger Index
+    if first_recognition_trigger:
+        st.markdown("### 🎯 First Recognition Trigger Index")
+        st.caption("Which elements are most likely to trigger brand recognition when shown first?")
+
+        st.info("""
+        **NEW INSIGHT:** This analysis shows which brand elements are most effective at triggering
+        immediate Škoda recognition when consumers see them as their FIRST exposure to the brand.
+        """)
+
+        col1, col2 = st.columns([2, 1])
+
+        with col1:
+            # Create dataframe and sort by percentage
+            trigger_df = pd.DataFrame([
+                {
+                    'Element': element,
+                    'Percent': data['percent_of_total_first_triggers'],
+                    'Count': data['count'],
+                    'Recognition Rate': data['percent_recognized']
+                }
+                for element, data in first_recognition_trigger.items()
+            ]).sort_values('Percent', ascending=True)
+
+            # Create horizontal bar chart
+            fig_trigger = go.Figure(go.Bar(
+                x=trigger_df['Percent'],
+                y=trigger_df['Element'],
+                orientation='h',
+                marker_color='#4CAF50',
+                text=trigger_df['Percent'].apply(lambda x: f'{x:.1%}'),
+                textposition='outside',
+                hovertemplate='<b>%{y}</b><br>%{x:.1%} of all first recognitions<br>Count: %{customdata}<extra></extra>',
+                customdata=trigger_df['Count']
+            ))
+
+            fig_trigger.update_layout(
+                title='First Recognition Trigger: % of Total First Recognitions',
+                xaxis_title='% of All First Recognitions',
+                yaxis_title='',
+                xaxis_tickformat='.0%',
+                height=400,
+                showlegend=False
+            )
+
+            st.plotly_chart(fig_trigger, use_container_width=True)
+
+        with col2:
+            st.markdown("#### 🔍 Key Findings")
+
+            # Get top trigger
+            top_trigger = max(first_recognition_trigger.items(), key=lambda x: x[1]['percent_of_total_first_triggers'])
+            st.success(f"**Top Trigger:** {top_trigger[0]}")
+            st.metric("% of First Recognitions", f"{top_trigger[1]['percent_of_total_first_triggers']:.1%}")
+            st.caption(f"{top_trigger[1]['count']} people recognized Škoda when shown this element first")
+
+            st.markdown("---")
+
+            st.markdown("#### 💡 Strategic Implication")
+            st.markdown(f"""
+            **{top_trigger[0]}** is your strongest "first impression" asset:
+            - Use in teaser campaigns and new market launches
+            - Prioritize in media with limited brand exposure time
+            - Ensure prominent placement in all touchpoints
+            """)
+
+        st.markdown("---")
 
     # SECTION 2: Post-Reveal Brand Familiarity
     st.markdown("### 🎯 Post-Reveal: How Well Do People Know Škoda?")
