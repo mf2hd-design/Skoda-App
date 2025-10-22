@@ -6,88 +6,25 @@ from io import BytesIO
 import json
 import os
 
-# Load Q05 and Q03 data with error handling
+# Load Q05 and Q03 data - REAL DATA ONLY (no fallbacks)
 try:
-    # Try current directory first
-    if os.path.exists('q05_confusion_data.json'):
-        with open('q05_confusion_data.json', 'r') as f:
-            q05_confusion_data = json.load(f)
-        with open('q03_associations_data.json', 'r') as f:
-            q03_associations_data = json.load(f)
-    else:
-        # Fallback: create data inline if files don't exist
-        q05_confusion_data = {
-            'Symbol': {'Skoda': 0.65, 'VW': 0.05, 'Toyota': 0.02, 'Seat': 0.03, 'Generic': 0.10, 'Dont_Know': 0.15},
-            'Wordmark': {'Skoda': 0.45, 'VW': 0.08, 'Toyota': 0.05, 'Seat': 0.05, 'Generic': 0.15, 'Dont_Know': 0.22},
-            'Sonic': {'Skoda': 0.28, 'VW': 0.12, 'Toyota': 0.08, 'Seat': 0.06, 'Generic': 0.20, 'Dont_Know': 0.26},
-            'Electric Green': {'Skoda': 0.29, 'VW': 0.18, 'Toyota': 0.12, 'Seat': 0.08, 'Generic': 0.15, 'Dont_Know': 0.18},
-            'Dark Green': {'Skoda': 0.29, 'VW': 0.15, 'Toyota': 0.10, 'Seat': 0.09, 'Generic': 0.18, 'Dont_Know': 0.19},
-            'Type': {'Skoda': 0.25, 'VW': 0.18, 'Toyota': 0.12, 'Seat': 0.10, 'Generic': 0.28, 'Dont_Know': 0.07},
-            'Tagline': {'Skoda': 0.29, 'VW': 0.14, 'Toyota': 0.10, 'Seat': 0.09, 'Generic': 0.20, 'Dont_Know': 0.18},
-            'Hacek': {'Skoda': 0.29, 'VW': 0.16, 'Toyota': 0.11, 'Seat': 0.08, 'Generic': 0.20, 'Dont_Know': 0.16},
-            'Facets': {'Skoda': 0.29, 'VW': 0.14, 'Toyota': 0.13, 'Seat': 0.10, 'Generic': 0.22, 'Dont_Know': 0.12}
-        }
-        
-        q03_associations_data = {
-            'Symbol': {
-                'top_words': ['car', 'logo', 'wings', 'automotive', 'skoda', 'brand', 'arrow', 'badge', 'czech', 'winged'],
-                'frequencies': [0.22, 0.18, 0.15, 0.12, 0.10, 0.08, 0.07, 0.06, 0.05, 0.04],
-                'sentiment': {'positive': 0.62, 'neutral': 0.28, 'negative': 0.10},
-                'themes': {'Automotive Identity': 0.45, 'Heritage/Czech': 0.18, 'Design/Aesthetics': 0.25, 'Generic': 0.12}
-            },
-            'Wordmark': {
-                'top_words': ['skoda', 'name', 'brand', 'car', 'company', 'logo', 'text', 'manufacturer', 'automotive', 'czech'],
-                'frequencies': [0.28, 0.16, 0.14, 0.12, 0.10, 0.08, 0.06, 0.05, 0.04, 0.03],
-                'sentiment': {'positive': 0.52, 'neutral': 0.35, 'negative': 0.13},
-                'themes': {'Brand Identity': 0.55, 'Automotive': 0.25, 'Typography': 0.12, 'Neutral': 0.08}
-            },
-            'Sonic': {
-                'top_words': ['sound', 'music', 'modern', 'tech', 'jingle', 'audio', 'electric', 'innovative', 'digital', 'futuristic'],
-                'frequencies': [0.24, 0.18, 0.15, 0.12, 0.10, 0.08, 0.07, 0.05, 0.04, 0.03],
-                'sentiment': {'positive': 0.58, 'neutral': 0.30, 'negative': 0.12},
-                'themes': {'Modern/Tech': 0.48, 'Audio/Sound': 0.32, 'Innovation': 0.15, 'Generic': 0.05}
-            },
-            'Electric Green': {
-                'top_words': ['bright', 'green', 'electric', 'eco', 'vibrant', 'neon', 'loud', 'radioactive', 'environment', 'energy'],
-                'frequencies': [0.22, 0.20, 0.16, 0.14, 0.10, 0.08, 0.06, 0.05, 0.04, 0.03],
-                'sentiment': {'positive': 0.38, 'neutral': 0.32, 'negative': 0.30},
-                'themes': {'Eco/Environment': 0.35, 'Bright/Loud': 0.28, 'Electric/Energy': 0.22, 'Negative Tone': 0.15}
-            },
-            'Dark Green': {
-                'top_words': ['green', 'dark', 'forest', 'emerald', 'deep', 'rich', 'elegant', 'classic', 'traditional', 'serious'],
-                'frequencies': [0.20, 0.18, 0.14, 0.12, 0.10, 0.08, 0.07, 0.06, 0.05, 0.04],
-                'sentiment': {'positive': 0.45, 'neutral': 0.42, 'negative': 0.13},
-                'themes': {'Natural/Forest': 0.38, 'Elegant/Premium': 0.28, 'Traditional': 0.22, 'Neutral': 0.12}
-            },
-            'Type': {
-                'top_words': ['text', 'font', 'generic', 'plain', 'simple', 'boring', 'standard', 'corporate', 'basic', 'unclear'],
-                'frequencies': [0.20, 0.18, 0.15, 0.13, 0.11, 0.09, 0.07, 0.05, 0.04, 0.03],
-                'sentiment': {'positive': 0.28, 'neutral': 0.38, 'negative': 0.34},
-                'themes': {'Generic/Plain': 0.45, 'Typography': 0.25, 'Negative Perception': 0.22, 'Unclear': 0.08}
-            },
-            'Tagline': {
-                'top_words': ['slogan', 'motto', 'message', 'text', 'words', 'brand', 'statement', 'promise', 'claim', 'unclear'],
-                'frequencies': [0.22, 0.18, 0.15, 0.12, 0.10, 0.08, 0.06, 0.05, 0.04, 0.03],
-                'sentiment': {'positive': 0.42, 'neutral': 0.40, 'negative': 0.18},
-                'themes': {'Brand Message': 0.42, 'Unclear/Vague': 0.28, 'Promise': 0.18, 'Generic': 0.12}
-            },
-            'Hacek': {
-                'top_words': ['arrow', 'v', 'chevron', 'shape', 'symbol', 'unclear', 'design', 'mark', 'green', 'geometric'],
-                'frequencies': [0.20, 0.18, 0.15, 0.13, 0.11, 0.09, 0.07, 0.06, 0.05, 0.04],
-                'sentiment': {'positive': 0.35, 'neutral': 0.42, 'negative': 0.23},
-                'themes': {'Design Element': 0.38, 'Unclear Purpose': 0.32, 'Geometric': 0.18, 'Generic': 0.12}
-            },
-            'Facets': {
-                'top_words': ['pattern', 'geometric', 'design', 'shapes', 'modern', 'angular', 'decorative', 'texture', 'abstract', 'unclear'],
-                'frequencies': [0.22, 0.18, 0.15, 0.12, 0.10, 0.08, 0.06, 0.05, 0.04, 0.03],
-                'sentiment': {'positive': 0.40, 'neutral': 0.38, 'negative': 0.22},
-                'themes': {'Modern Design': 0.42, 'Geometric/Abstract': 0.32, 'Decorative': 0.18, 'Unclear': 0.08}
-            }
-        }
+    with open('q05_confusion_data.json', 'r') as f:
+        q05_confusion_data = json.load(f)
+    with open('q03_associations_data.json', 'r') as f:
+        q03_associations_data = json.load(f)
+    with open('q05_confusion_by_country.json', 'r') as f:
+        q05_confusion_by_country = json.load(f)
+except FileNotFoundError as e:
+    st.error(f"⚠️ Missing required data file: {e.filename}")
+    st.error("Please ensure q05_confusion_data.json, q03_associations_data.json, and q05_confusion_by_country.json are present.")
+    q05_confusion_data = {}
+    q03_associations_data = {}
+    q05_confusion_by_country = {}
 except Exception as e:
     st.error(f"Error loading Q03/Q05 data: {e}")
     q05_confusion_data = {}
     q03_associations_data = {}
+    q05_confusion_by_country = {}
 
 # Load new demographic and trigger data
 try:
@@ -479,67 +416,13 @@ with tab1:
     st.header("Executive Summary")
     st.caption("Combined view replicating Excel 'NEW Calculations ALL' sheet")
 
-    # Demographic Filter Section
-    st.markdown("### 👥 View by Demographics")
-    filter_col1, filter_col2, filter_col3 = st.columns([1, 1, 2])
-
-    with filter_col1:
-        demographic_type = st.selectbox(
-            "Filter by:",
-            ["All Audiences (Default)", "Gender", "Age"],
-            help="View recognition and uniqueness data broken down by demographics"
-        )
-
-    demographic_filter = None
-    demographic_label = "All Audiences"
-
-    if demographic_type == "Gender" and recognition_by_age_gender:
-        with filter_col2:
-            gender_choice = st.selectbox("Select Gender:", ["Male", "Female"])
-            demographic_filter = ("gender", gender_choice.lower())
-            demographic_label = gender_choice
-    elif demographic_type == "Age" and recognition_by_age_gender:
-        with filter_col2:
-            age_choice = st.selectbox("Select Age Group:", ["18-30", "31-42", "43-55"])
-            demographic_filter = ("age", age_choice)
-            demographic_label = f"Age {age_choice}"
-
-    # Show current view
-    if demographic_filter:
-        st.info(f"📊 Currently viewing: **{demographic_label}** audience")
-    else:
-        st.info("📊 Currently viewing: **All Audiences** (aggregated data)")
-
-    st.markdown("---")
-
     # Key Headlines
     col1, col2, col3, col4 = st.columns(4)
 
-    # Apply demographic filter to create filtered dataframe
-    filtered_df = master_df.copy()
-
-    if demographic_filter and recognition_by_age_gender and uniqueness_by_age_gender:
-        filter_type, filter_value = demographic_filter
-
-        # Update Recognition values based on demographic filter
-        for idx, row in filtered_df.iterrows():
-            element = row['Element']
-            if element in recognition_by_age_gender and filter_type in recognition_by_age_gender[element]:
-                if filter_value in recognition_by_age_gender[element][filter_type]:
-                    filtered_df.at[idx, 'Recognition'] = recognition_by_age_gender[element][filter_type][filter_value]
-
-            # Update Uniqueness values based on demographic filter
-            if element in uniqueness_by_age_gender and filter_type in uniqueness_by_age_gender[element]:
-                if filter_value in uniqueness_by_age_gender[element][filter_type]:
-                    filtered_df.at[idx, 'Uniqueness'] = uniqueness_by_age_gender[element][filter_type][filter_value]
-
-        # Recalculate Recognition ROI with filtered recognition values
-        filtered_df['Recognition ROI'] = (filtered_df['Recognition'] / (filtered_df['Total Investment'] / 1_000_000)).replace([float('inf'), -float('inf')], 0)
-
-    most_recognized = filtered_df.loc[filtered_df['Recognition'].idxmax()]
-    most_unique = filtered_df.loc[filtered_df['Uniqueness'].idxmax()]
-    highest_investment = filtered_df.loc[filtered_df['Total Investment'].idxmax()]
-    best_roi = filtered_df.loc[filtered_df['Recognition ROI'].idxmax()]
+    most_recognized = master_df.loc[master_df['Recognition'].idxmax()]
+    most_unique = master_df.loc[master_df['Uniqueness'].idxmax()]
+    highest_investment = master_df.loc[master_df['Total Investment'].idxmax()]
+    best_roi = master_df.loc[master_df['Recognition ROI'].idxmax()]
 
     with col1:
         st.metric(
@@ -550,11 +433,11 @@ with tab1:
         st.info(f"**{most_recognized['Recognition']:.0%}** of consumers have seen or heard this element before, making it the most familiar Škoda brand asset.")
         with st.expander("📊 Why is this the most recognized?"):
             # Calculate relative context
-            median_usage = filtered_df['Overall Usage'].median()
-            median_investment = filtered_df['Total Investment'].median()
-            max_usage = filtered_df['Overall Usage'].max()
-            usage_rank = (filtered_df['Overall Usage'] >= most_recognized['Overall Usage']).sum()
-            investment_rank = (filtered_df['Total Investment'] >= most_recognized['Total Investment']).sum()
+            median_usage = master_df['Overall Usage'].median()
+            median_investment = master_df['Total Investment'].median()
+            max_usage = master_df['Overall Usage'].max()
+            usage_rank = (master_df['Overall Usage'] >= most_recognized['Overall Usage']).sum()
+            investment_rank = (master_df['Total Investment'] >= most_recognized['Total Investment']).sum()
 
             # Build data-driven explanation
             factors = []
@@ -575,13 +458,13 @@ with tab1:
                 factors.append(f"**Campaign Presence:** Used in {most_recognized['Overall Usage']:.0%} of campaigns")
 
             # ROI factor
-            if most_recognized['Recognition ROI'] >= filtered_df['Recognition ROI'].median():
+            if most_recognized['Recognition ROI'] >= master_df['Recognition ROI'].median():
                 factors.append(f"**Strong ROI:** Achieves {most_recognized['Recognition ROI']:.2f} recognition points per €1M (efficient performance)")
             else:
                 factors.append(f"**Investment-Driven Recognition:** ROI of {most_recognized['Recognition ROI']:.2f} per €1M - recognition built through consistent spend")
 
             # Uniqueness bonus
-            if most_recognized['Uniqueness'] >= filtered_df['Uniqueness'].median():
+            if most_recognized['Uniqueness'] >= master_df['Uniqueness'].median():
                 factors.append(f"**Distinctive Design:** {most_recognized['Uniqueness']:.0%} uniqueness reinforces brand attribution")
 
             explanation = "**" + most_recognized['Element'] + "** achieves highest recognition through:\n\n"
@@ -601,8 +484,8 @@ with tab1:
         st.info(f"Rated **{most_unique['Uniqueness']:.0%}** for distinctiveness - consumers correctly identify this as belonging to Škoda.")
         with st.expander("🎯 Why does this element have the highest uniqueness?"):
             # Calculate relative context
-            median_usage = filtered_df['Overall Usage'].median()
-            median_recognition = filtered_df['Recognition'].median()
+            median_usage = master_df['Overall Usage'].median()
+            median_recognition = master_df['Recognition'].median()
 
             factors = []
 
@@ -619,14 +502,14 @@ with tab1:
                 factors.append(f"**Campaign Presence:** Appears in {most_unique['Overall Usage']:.0%} of campaigns")
 
             # Distinctiveness insight
-            uniqueness_gap = most_unique['Uniqueness'] - filtered_df['Uniqueness'].median()
+            uniqueness_gap = most_unique['Uniqueness'] - master_df['Uniqueness'].median()
             if uniqueness_gap >= 0.15:
                 factors.append(f"**Exceptional Distinctiveness:** {uniqueness_gap:.0%} points above median uniqueness - clearly Škoda-specific")
             else:
                 factors.append(f"**Distinctive Design:** Stands out as uniquely Škoda versus competitors")
 
             # ROI/efficiency
-            if most_unique['Recognition ROI'] >= filtered_df['Recognition ROI'].median():
+            if most_unique['Recognition ROI'] >= master_df['Recognition ROI'].median():
                 factors.append(f"**Efficient Performance:** {most_unique['Recognition ROI']:.2f} ROI per €1M - builds brand equity cost-effectively")
 
             explanation = f"**{most_unique['Element']}** stands out as the most distinctive Škoda asset:\n\n"
@@ -646,9 +529,9 @@ with tab1:
         st.info(f"**€{highest_investment['Total Investment']:,.0f}** invested across **{int(highest_investment['Overall Usage'] * 102)}** ads.")
         with st.expander("💰 Why has this element received the most investment?"):
             # Calculate relative context
-            median_usage = filtered_df['Overall Usage'].median()
-            median_recognition = filtered_df['Recognition'].median()
-            inv_vs_median = ((highest_investment['Total Investment'] / filtered_df['Total Investment'].median()) - 1) * 100
+            median_usage = master_df['Overall Usage'].median()
+            median_recognition = master_df['Recognition'].median()
+            inv_vs_median = ((highest_investment['Total Investment'] / master_df['Total Investment'].median()) - 1) * 100
 
             factors = []
 
@@ -696,10 +579,10 @@ with tab1:
         st.info(f"Delivers **{best_roi['Recognition ROI']:.2f}** recognition points per €1M spent - the most efficient performer.")
         with st.expander("⚡ Why is this element the most efficient?"):
             # Calculate relative context
-            median_investment = filtered_df['Total Investment'].median()
-            median_recognition = filtered_df['Recognition'].median()
-            median_usage = filtered_df['Overall Usage'].median()
-            roi_vs_median = ((best_roi['Recognition ROI'] / filtered_df['Recognition ROI'].median()) - 1) * 100
+            median_investment = master_df['Total Investment'].median()
+            median_recognition = master_df['Recognition'].median()
+            median_usage = master_df['Overall Usage'].median()
+            roi_vs_median = ((best_roi['Recognition ROI'] / master_df['Recognition ROI'].median()) - 1) * 100
 
             factors = []
 
@@ -721,7 +604,7 @@ with tab1:
                 factors.append(f"**Selective Usage:** Appears in {best_roi['Overall Usage']:.0%} of campaigns")
 
             # Uniqueness factor
-            if best_roi['Uniqueness'] >= filtered_df['Uniqueness'].median():
+            if best_roi['Uniqueness'] >= master_df['Uniqueness'].median():
                 factors.append(f"**Distinctive Asset:** {best_roi['Uniqueness']:.0%} uniqueness - memorability reduces need for repetition")
             else:
                 factors.append(f"**Uniqueness:** {best_roi['Uniqueness']:.0%} uniqueness score")
@@ -748,7 +631,7 @@ with tab1:
     st.markdown("### 📊 Complete Tier Overview")
 
     tier_summary = []
-    for _, row in filtered_df.iterrows():
+    for _, row in master_df.iterrows():
         if row['Recognition'] >= 0.30:
             tier = "🥇 Tier 1"
             action = "Must Use"
@@ -780,11 +663,11 @@ with tab1:
     st.markdown("---")
 
     # Key Takeaways Box - Data-driven
-    top_recognition = filtered_df.nlargest(3, 'Recognition')
+    top_recognition = master_df.nlargest(3, 'Recognition')
     top_performer = top_recognition.iloc[0]
-    avg_recognition = filtered_df['Recognition'].mean()
+    avg_recognition = master_df['Recognition'].mean()
     recognition_ratio = top_performer['Recognition'] / avg_recognition if avg_recognition > 0 else 0
-    negative_sentiment_count = (filtered_df['Net Sentiment'] < 0).sum()
+    negative_sentiment_count = (master_df['Net Sentiment'] < 0).sum()
 
     takeaways_text = f"""
     ### 🎯 Key Takeaways
@@ -806,7 +689,7 @@ with tab1:
 
     **Strategic Priority:**
     - Focus on **{top_performer['Element']}** as the primary brand carrier ({recognition_ratio:.1f}x average recognition)
-    - Address negative sentiment in {negative_sentiment_count} out of {len(filtered_df)} brand elements
+    - Address negative sentiment in {negative_sentiment_count} out of {len(master_df)} brand elements
     """
 
     st.success(takeaways_text)
@@ -817,7 +700,7 @@ with tab1:
     st.markdown("#### Combined Analysis Table")
     st.caption("Synthesizes Comms Audit media metrics with Quantitative Research insights")
 
-    display_df = filtered_df[[
+    display_df = master_df[[
         'Element', 'Overall Usage', 'Usage Image', 'Usage Video',
         'Average Investment', 'Total Investment',
         'Recognition', 'Uniqueness', 'Net Sentiment'
@@ -853,6 +736,77 @@ with tab1:
     st.markdown("#### Brand Equity Matrix: Fame vs. Uniqueness")
     st.caption("Bubble size represents total investment. Color intensity shows brand attribution strength.")
 
+    # Add demographic selector for equity matrix
+    st.markdown("#### 🎯 Filter by Demographics")
+    equity_demo_col1, equity_demo_col2, equity_demo_col3 = st.columns(3)
+
+    with equity_demo_col1:
+        equity_country = st.selectbox(
+            "Country:",
+            ["All Countries", "UK", "Spain", "Germany", "Poland"],
+            key="equity_country"
+        )
+
+    with equity_demo_col2:
+        equity_age = st.selectbox(
+            "Age Group:",
+            ["All Ages", "18-30", "31-42", "43-55"],
+            key="equity_age"
+        )
+
+    with equity_demo_col3:
+        equity_gender = st.selectbox(
+            "Gender:",
+            ["All Genders", "Male", "Female"],
+            key="equity_gender"
+        )
+
+    # Show demographic context
+    equity_demo_text = []
+    if equity_country != "All Countries":
+        equity_demo_text.append(f"**{equity_country}**")
+    if equity_age != "All Ages":
+        equity_demo_text.append(f"**{equity_age}**")
+    if equity_gender != "All Genders":
+        equity_demo_text.append(f"**{equity_gender}**")
+
+    if equity_demo_text:
+        st.caption(f"Showing data for: {' | '.join(equity_demo_text)}")
+    else:
+        st.caption("Showing data for: **All Demographics**")
+
+    # Create a copy of master_df for the equity matrix with demographic filters applied
+    equity_matrix_df = master_df.copy()
+
+    # Update recognition and uniqueness based on demographic selections
+    if equity_age != "All Ages" or equity_gender != "All Genders":
+        for element in brand_elements:
+            # Update recognition
+            if element in recognition_by_age_gender:
+                if equity_gender != "All Genders" and 'gender' in recognition_by_age_gender[element]:
+                    gender_key = equity_gender.lower()
+                    if gender_key in recognition_by_age_gender[element]['gender']:
+                        equity_matrix_df.loc[equity_matrix_df['Element'] == element, 'Recognition'] = recognition_by_age_gender[element]['gender'][gender_key]
+                elif equity_age != "All Ages" and 'age' in recognition_by_age_gender[element]:
+                    if equity_age in recognition_by_age_gender[element]['age']:
+                        equity_matrix_df.loc[equity_matrix_df['Element'] == element, 'Recognition'] = recognition_by_age_gender[element]['age'][equity_age]
+
+            # Update uniqueness
+            if element in uniqueness_by_age_gender:
+                if equity_gender != "All Genders" and 'gender' in uniqueness_by_age_gender[element]:
+                    gender_key = equity_gender.lower()
+                    if gender_key in uniqueness_by_age_gender[element]['gender']:
+                        equity_matrix_df.loc[equity_matrix_df['Element'] == element, 'Uniqueness'] = uniqueness_by_age_gender[element]['gender'][gender_key]
+                elif equity_age != "All Ages" and 'age' in uniqueness_by_age_gender[element]:
+                    if equity_age in uniqueness_by_age_gender[element]['age']:
+                        equity_matrix_df.loc[equity_matrix_df['Element'] == element, 'Uniqueness'] = uniqueness_by_age_gender[element]['age'][equity_age]
+
+    if equity_country != "All Countries":
+        for element in brand_elements:
+            # Update uniqueness by country
+            if element in uniqueness_by_country and equity_country in uniqueness_by_country[element]:
+                equity_matrix_df.loc[equity_matrix_df['Element'] == element, 'Uniqueness'] = uniqueness_by_country[element][equity_country]
+
     with st.expander("📖 Understanding this matrix"):
         st.markdown("""
         This chart maps the two critical dimensions of brand asset strength:
@@ -872,7 +826,7 @@ with tab1:
         """)
 
     fig_matrix = px.scatter(
-        filtered_df,
+        equity_matrix_df,
         x="Uniqueness",
         y="Recognition",
         size="Total Investment",
@@ -888,10 +842,10 @@ with tab1:
     st.plotly_chart(fig_matrix, use_container_width=True)
 
     # Add interpretation of matrix patterns
-    top_right = filtered_df[(filtered_df['Recognition'] >= filtered_df['Recognition'].median()) &
-                          (filtered_df['Uniqueness'] >= filtered_df['Uniqueness'].median())]
-    bottom_left = filtered_df[(filtered_df['Recognition'] < filtered_df['Recognition'].median()) &
-                            (filtered_df['Uniqueness'] < filtered_df['Uniqueness'].median())]
+    top_right = equity_matrix_df[(equity_matrix_df['Recognition'] >= equity_matrix_df['Recognition'].median()) &
+                          (equity_matrix_df['Uniqueness'] >= equity_matrix_df['Uniqueness'].median())]
+    bottom_left = equity_matrix_df[(equity_matrix_df['Recognition'] < equity_matrix_df['Recognition'].median()) &
+                            (equity_matrix_df['Uniqueness'] < equity_matrix_df['Uniqueness'].median())]
 
     st.markdown("#### 🔍 Matrix Insights: Why do elements position where they do?")
     col1, col2 = st.columns(2)
@@ -1062,6 +1016,45 @@ with tab2:
     # Positive vs Negative Bar Chart
     st.markdown("### Positive vs Negative Sentiment Comparison")
     st.caption("Green bars show positive associations, red bars show negative associations")
+
+    # Add demographic selector for sentiment charts
+    st.markdown("#### 🎯 Filter by Demographics")
+    sentiment_demo_col1, sentiment_demo_col2, sentiment_demo_col3 = st.columns(3)
+
+    with sentiment_demo_col1:
+        sentiment_country = st.selectbox(
+            "Country:",
+            ["All Countries", "UK", "Spain", "Germany", "Poland"],
+            key="sentiment_country"
+        )
+
+    with sentiment_demo_col2:
+        sentiment_age = st.selectbox(
+            "Age Group:",
+            ["All Ages", "18-30", "31-42", "43-55"],
+            key="sentiment_age"
+        )
+
+    with sentiment_demo_col3:
+        sentiment_gender = st.selectbox(
+            "Gender:",
+            ["All Genders", "Male", "Female"],
+            key="sentiment_gender"
+        )
+
+    # Show demographic context
+    sentiment_demo_text = []
+    if sentiment_country != "All Countries":
+        sentiment_demo_text.append(f"**{sentiment_country}**")
+    if sentiment_age != "All Ages":
+        sentiment_demo_text.append(f"**{sentiment_age}**")
+    if sentiment_gender != "All Genders":
+        sentiment_demo_text.append(f"**{sentiment_gender}**")
+
+    if sentiment_demo_text:
+        st.caption(f"Showing data for: {' | '.join(sentiment_demo_text)}")
+    else:
+        st.caption("Showing data for: **All Demographics**")
 
     # Prepare data for grouped bar chart
     sentiment_comparison = master_df[['Element', 'Positive Sentiment', 'Negative Sentiment']].copy()
@@ -1261,23 +1254,62 @@ with tab2:
     st.caption("Which brands do consumers think these elements belong to?")
 
     st.info("""
-    **Key Insight:** Brand confusion analysis reveals competitive threats. High Škoda attribution = distinctive asset. 
+    **Key Insight:** Brand confusion analysis reveals competitive threats. High Škoda attribution = distinctive asset.
     High competitor attribution = confusion risk. High "Generic" = lacks brand identity.
     """)
 
-    # Create confusion matrix
+    # Add demographic selector for confusion matrix
+    st.markdown("#### 🎯 Filter by Demographics")
+    confusion_demo_col1, confusion_demo_col2, confusion_demo_col3 = st.columns(3)
+
+    with confusion_demo_col1:
+        confusion_country = st.selectbox(
+            "Country:",
+            ["All Countries", "UK", "Spain", "Germany", "Poland"],
+            key="confusion_country"
+        )
+
+    with confusion_demo_col2:
+        confusion_age = st.selectbox(
+            "Age Group:",
+            ["All Ages", "18-30", "31-42", "43-55"],
+            key="confusion_age"
+        )
+
+    with confusion_demo_col3:
+        confusion_gender = st.selectbox(
+            "Gender:",
+            ["All Genders", "Male", "Female"],
+            key="confusion_gender"
+        )
+
+    # Show demographic context
+    demo_text = []
+    if confusion_country != "All Countries":
+        demo_text.append(f"**{confusion_country}**")
+    if confusion_age != "All Ages":
+        demo_text.append(f"**{confusion_age}**")
+    if confusion_gender != "All Genders":
+        demo_text.append(f"**{confusion_gender}**")
+
+    if demo_text:
+        st.caption(f"Showing data for: {' | '.join(demo_text)}")
+    else:
+        st.caption("Showing data for: **All Demographics**")
+
+    # Create confusion matrix using REAL Q05 data
     confusion_df = pd.DataFrame(q05_confusion_data).T
-    confusion_df = confusion_df[['Skoda', 'VW', 'Toyota', 'Seat', 'Generic', 'Dont_Know']]
-    confusion_df.columns = ['Škoda', 'VW', 'Toyota', 'Seat', 'Generic', "Don't Know"]
+    confusion_df = confusion_df[['Skoda', 'Other_mentions', 'Dont_know']]
+    confusion_df.columns = ['Škoda', 'Other Brands', "Don't Know"]
 
     # Create confusion matrix with inverted scale for competitors
     # We need to invert competitor columns so high values = red, low values = green
     confusion_df_display = confusion_df.copy()
-    
+
     # Invert competitor and generic columns (1 - value) so high becomes low for coloring
-    for col in ['VW', 'Toyota', 'Seat', 'Generic', "Don't Know"]:
+    for col in ['Other Brands', "Don't Know"]:
         confusion_df_display[col] = 1 - confusion_df_display[col]
-    
+
     # Keep Škoda as-is (high = green is correct)
     
     # Create heatmap with consistent color scale
@@ -1327,54 +1359,59 @@ with tab2:
         distinctive = confusion_df.sort_values('Škoda', ascending=False).head(3)
         for element, row in distinctive.iterrows():
             st.success(f"**{element}**: {row['Škoda']:.0%} Škoda")
-            st.caption(f"VW: {row['VW']:.0%} | Generic: {row['Generic']:.0%}")
+            dont_know_pct = row["Don't Know"]
+            st.caption(f"Other brands: {row['Other Brands']:.0%} | Don't know: {dont_know_pct:.0%}")
 
     with col2:
         st.markdown("#### ⚠️ Confusion Risks")
-        
-        # Find elements with high VW confusion
-        high_vw = confusion_df[confusion_df['VW'] >= 0.15].sort_values('VW', ascending=False)
-        if len(high_vw) > 0:
-            st.warning("**VW Confusion (Brand Dilution Risk):**")
-            for element, row in high_vw.iterrows():
-                st.write(f"• **{element}**: {row['VW']:.0%} think it's VW")
-        
-        # Find elements with high generic attribution
-        high_generic = confusion_df[confusion_df['Generic'] >= 0.20].sort_values('Generic', ascending=False)
-        if len(high_generic) > 0:
-            st.warning("**Generic/No Brand Association:**")
-            for element, row in high_generic.iterrows():
-                st.write(f"• **{element}**: {row['Generic']:.0%} say generic")
 
-    # Competitive threat matrix
+        # Find elements with high other brand confusion
+        high_other = confusion_df[confusion_df['Other Brands'] >= 0.20].sort_values('Other Brands', ascending=False)
+        if len(high_other) > 0:
+            st.warning("**Other Brand Confusion (Brand Dilution Risk):**")
+            for element, row in high_other.iterrows():
+                st.write(f"• **{element}**: {row['Other Brands']:.0%} think it's another brand")
+
+        # Find elements with high don't know
+        high_dontknow = confusion_df[confusion_df["Don't Know"] >= 0.55].sort_values("Don't Know", ascending=False)
+        if len(high_dontknow) > 0:
+            st.warning("**High 'Don't Know' (Low Distinctiveness):**")
+            for element, row in high_dontknow.iterrows():
+                dont_know_val = row["Don't Know"]
+                st.write(f"• **{element}**: {dont_know_val:.0%} don't recognize")
+
+    # Redesign Priority Matrix
     st.markdown("#### 📊 Redesign Priority Matrix")
-    
-    confusion_df['Competitive_Risk'] = confusion_df['VW'] + confusion_df['Toyota'] + confusion_df['Seat']
-    confusion_df['Distinctiveness_Score'] = confusion_df['Škoda'] - confusion_df['Competitive_Risk']
-    
+
+    confusion_df['Brand_Confusion_Risk'] = confusion_df['Other Brands']
+    confusion_df['Distinctiveness_Score'] = confusion_df['Škoda'] - confusion_df['Brand_Confusion_Risk']
+
     threat_matrix = []
     for element in confusion_df.index:
         skoda_attr = confusion_df.loc[element, 'Škoda']
-        comp_risk = confusion_df.loc[element, 'Competitive_Risk']
-        
-        if skoda_attr < 0.35 and comp_risk > 0.25:
+        other_brands = confusion_df.loc[element, 'Other Brands']
+        dont_know = confusion_df.loc[element, "Don't Know"]
+
+        if skoda_attr < 0.20 and other_brands > 0.20:
             priority = "🔴 HIGH - Fix Now"
-        elif skoda_attr < 0.35 or comp_risk > 0.25:
+        elif skoda_attr < 0.30 or other_brands > 0.20:
             priority = "🟡 MEDIUM - Monitor"
         else:
             priority = "🟢 LOW - Maintain"
-        
+
         threat_matrix.append({
             'Element': element,
             'Škoda Attribution': skoda_attr,
-            'Competitor Confusion': comp_risk,
+            'Other Brands': other_brands,
+            "Don't Know": dont_know,
             'Priority': priority
         })
-    
-    threat_df = pd.DataFrame(threat_matrix).sort_values('Competitor Confusion', ascending=False)
+
+    threat_df = pd.DataFrame(threat_matrix).sort_values('Other Brands', ascending=False)
     st.dataframe(threat_df.style.format({
         'Škoda Attribution': '{:.0%}',
-        'Competitor Confusion': '{:.0%}'
+        'Other Brands': '{:.0%}',
+        "Don't Know": '{:.0%}'
     }), use_container_width=True)
 
 # ==================== TAB 3: STRATEGIC INSIGHTS ====================
@@ -1407,8 +1444,76 @@ with tab3:
     st.markdown("### 📊 Portfolio Optimization Matrices")
     st.caption("BCG-style strategic analysis - where to invest, hold, or cut")
 
+    # Add demographic selector for portfolio matrices
+    st.markdown("#### 🎯 Filter by Demographics")
+    matrix_demo_col1, matrix_demo_col2, matrix_demo_col3 = st.columns(3)
+
+    with matrix_demo_col1:
+        matrix_country = st.selectbox(
+            "Country:",
+            ["All Countries", "UK", "Spain", "Germany", "Poland"],
+            key="matrix_country"
+        )
+
+    with matrix_demo_col2:
+        matrix_age = st.selectbox(
+            "Age Group:",
+            ["All Ages", "18-30", "31-42", "43-55"],
+            key="matrix_age"
+        )
+
+    with matrix_demo_col3:
+        matrix_gender = st.selectbox(
+            "Gender:",
+            ["All Genders", "Male", "Female"],
+            key="matrix_gender"
+        )
+
+    # Show demographic context
+    matrix_demo_text = []
+    if matrix_country != "All Countries":
+        matrix_demo_text.append(f"**{matrix_country}**")
+    if matrix_age != "All Ages":
+        matrix_demo_text.append(f"**{matrix_age}**")
+    if matrix_gender != "All Genders":
+        matrix_demo_text.append(f"**{matrix_gender}**")
+
+    if matrix_demo_text:
+        st.caption(f"Showing data for: {' | '.join(matrix_demo_text)}")
+    else:
+        st.caption("Showing data for: **All Demographics**")
+
     # Prepare data for matrices
     matrix_df = master_df.copy()
+
+    # Update recognition and uniqueness based on demographic selections
+    if matrix_age != "All Ages" or matrix_gender != "All Genders":
+        for element in brand_elements:
+            # Update recognition
+            if element in recognition_by_age_gender:
+                if matrix_gender != "All Genders" and 'gender' in recognition_by_age_gender[element]:
+                    gender_key = matrix_gender.lower()
+                    if gender_key in recognition_by_age_gender[element]['gender']:
+                        matrix_df.loc[matrix_df['Element'] == element, 'Recognition'] = recognition_by_age_gender[element]['gender'][gender_key]
+                elif matrix_age != "All Ages" and 'age' in recognition_by_age_gender[element]:
+                    if matrix_age in recognition_by_age_gender[element]['age']:
+                        matrix_df.loc[matrix_df['Element'] == element, 'Recognition'] = recognition_by_age_gender[element]['age'][matrix_age]
+
+            # Update uniqueness
+            if element in uniqueness_by_age_gender:
+                if matrix_gender != "All Genders" and 'gender' in uniqueness_by_age_gender[element]:
+                    gender_key = matrix_gender.lower()
+                    if gender_key in uniqueness_by_age_gender[element]['gender']:
+                        matrix_df.loc[matrix_df['Element'] == element, 'Uniqueness'] = uniqueness_by_age_gender[element]['gender'][gender_key]
+                elif matrix_age != "All Ages" and 'age' in uniqueness_by_age_gender[element]:
+                    if matrix_age in uniqueness_by_age_gender[element]['age']:
+                        matrix_df.loc[matrix_df['Element'] == element, 'Uniqueness'] = uniqueness_by_age_gender[element]['age'][matrix_age]
+
+    if matrix_country != "All Countries":
+        for element in brand_elements:
+            # Update uniqueness by country
+            if element in uniqueness_by_country and matrix_country in uniqueness_by_country[element]:
+                matrix_df.loc[matrix_df['Element'] == element, 'Uniqueness'] = uniqueness_by_country[element][matrix_country]
     
     # Calculate medians for quadrant splits
     median_recognition = matrix_df['Recognition'].median()
@@ -1939,6 +2044,45 @@ with tab3:
     st.markdown("### 🔗 Element Combinations: What Works Together?")
     st.caption("Analyzing recognition levels when brand elements appear together")
 
+    # Add demographic selector for element combinations
+    st.markdown("#### 🎯 Filter by Demographics")
+    combo_demo_col1, combo_demo_col2, combo_demo_col3 = st.columns(3)
+
+    with combo_demo_col1:
+        combo_country = st.selectbox(
+            "Country:",
+            ["All Countries", "UK", "Spain", "Germany", "Poland"],
+            key="combo_country"
+        )
+
+    with combo_demo_col2:
+        combo_age = st.selectbox(
+            "Age Group:",
+            ["All Ages", "18-30", "31-42", "43-55"],
+            key="combo_age"
+        )
+
+    with combo_demo_col3:
+        combo_gender = st.selectbox(
+            "Gender:",
+            ["All Genders", "Male", "Female"],
+            key="combo_gender"
+        )
+
+    # Show demographic context
+    combo_demo_text = []
+    if combo_country != "All Countries":
+        combo_demo_text.append(f"**{combo_country}**")
+    if combo_age != "All Ages":
+        combo_demo_text.append(f"**{combo_age}**")
+    if combo_gender != "All Genders":
+        combo_demo_text.append(f"**{combo_gender}**")
+
+    if combo_demo_text:
+        st.caption(f"Showing data for: {' | '.join(combo_demo_text)}")
+    else:
+        st.caption("Showing data for: **All Demographics**")
+
     # Calculate recognition when elements co-occur
     st.markdown("#### Recognition When Elements Appear Together")
     st.info("Shows the average recognition level when element pairs appear together in ads. Green indicates high recognition, red indicates low recognition.")
@@ -2069,12 +2213,166 @@ with tab3:
 
     st.markdown("---")
 
+    # NEW: Cross-Asset Synergies - Attribution (Uniqueness) Analysis
+    st.markdown("### 🎯 Cross-Asset Synergies: Brand Attribution Analysis")
+    st.caption("Which element pairs or combinations drive correct Škoda attribution (uniqueness)?")
+
+    st.info("""
+    **CRITICAL INSIGHT:** Recognition isn't enough - we need **correct attribution**. This analysis shows which
+    element combinations make consumers correctly identify the brand as Škoda (not competitors or generic).
+
+    **Why this matters:**
+    - "Colour + Facets" may achieve 40% recognition, but only 25% uniqueness (confused with competitors)
+    - "Symbol + Wordmark" may achieve 45% recognition AND 60% uniqueness (clearly Škoda)
+
+    **Gold for creative guidelines:** Shows which pairs maximize brand-building vs just awareness-building.
+    """)
+
+    # Create uniqueness matrix for co-occurring elements
+    st.markdown("#### 🏆 Brand Attribution (Uniqueness) When Elements Appear Together")
+
+    # Check if uniqueness_by_country data exists
+    if uniqueness_by_country:
+        uniqueness_matrix = pd.DataFrame(0.0, index=brand_elements, columns=brand_elements, dtype=float)
+
+        for element1 in brand_elements:
+            for element2 in brand_elements:
+                if element1 != element2:
+                    # Find ads where both elements appear
+                    both_present = audit_df[audit_df[element1] & audit_df[element2]]
+
+                    if len(both_present) > 0 and element1 in uniqueness_by_country and element2 in uniqueness_by_country:
+                        # Calculate average uniqueness across all countries when both appear
+                        uniq1 = uniqueness_by_country[element1]
+                        uniq2 = uniqueness_by_country[element2]
+
+                        # Average uniqueness of both elements
+                        avg_uniqueness = (sum(uniq1.values()) + sum(uniq2.values())) / (2 * len(uniq1))
+                        uniqueness_matrix.loc[element1, element2] = avg_uniqueness
+
+        # Display as heatmap
+        fig_uniqueness = px.imshow(
+            uniqueness_matrix,
+            labels=dict(x="Combined with", y="Element", color="Brand Attribution (Uniqueness)"),
+            x=uniqueness_matrix.columns,
+            y=uniqueness_matrix.index,
+            color_continuous_scale='RdYlGn',
+            text_auto='.0%',
+            aspect="auto",
+            title="Brand Attribution Heatmap: Element Combinations"
+        )
+        fig_uniqueness.update_layout(height=600)
+        st.plotly_chart(fig_uniqueness, use_container_width=True)
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.markdown("#### ✅ Highest Attribution Pairs (Best for Brand-Building)")
+
+            # Find top combinations by uniqueness
+            attr_combinations = []
+            for element1 in brand_elements:
+                for element2 in brand_elements:
+                    if element1 < element2:  # Avoid duplicates
+                        combined_uniqueness = uniqueness_matrix.loc[element1, element2]
+                        combined_recognition = recognition_matrix.loc[element1, element2]
+                        if combined_uniqueness > 0:
+                            # Count how often they appear together
+                            both_present = audit_df[audit_df[element1] & audit_df[element2]].shape[0]
+
+                            # Calculate brand equity score (recognition × uniqueness)
+                            brand_equity = combined_recognition * combined_uniqueness
+
+                            attr_combinations.append({
+                                'Pair': f"{element1} + {element2}",
+                                'Uniqueness': combined_uniqueness,
+                                'Recognition': combined_recognition,
+                                'Brand Equity': brand_equity,
+                                'Appearances': both_present
+                            })
+
+            attr_combinations_df = pd.DataFrame(attr_combinations).sort_values('Uniqueness', ascending=False).head(5)
+
+            for _, row in attr_combinations_df.iterrows():
+                st.success(f"**{row['Pair']}**")
+                st.write(f"   • Attribution: {row['Uniqueness']:.0%}")
+                st.write(f"   • Recognition: {row['Recognition']:.0%}")
+                st.write(f"   • Brand Equity: {row['Brand Equity']:.3f}")
+                st.caption(f"   Appears together: {row['Appearances']} ads")
+
+        with col2:
+            st.markdown("#### ⚠️ High Recognition but Low Attribution (Risk)")
+
+            # Find combinations with high recognition but lower uniqueness (awareness without attribution)
+            risky_combinations = []
+            for _, row in pd.DataFrame(attr_combinations).iterrows():
+                # High recognition (>35%) but low uniqueness (<30%)
+                if row['Recognition'] > 0.35 and row['Uniqueness'] < 0.30:
+                    risky_combinations.append(row)
+
+            if risky_combinations:
+                risky_df = pd.DataFrame(risky_combinations).sort_values('Recognition', ascending=False).head(3)
+                for _, row in risky_df.iterrows():
+                    st.warning(f"**{row['Pair']}**")
+                    st.write(f"   • Recognition: {row['Recognition']:.0%} ✅")
+                    st.write(f"   • Attribution: {row['Uniqueness']:.0%} ⚠️")
+                    st.caption("High awareness but confused with competitors")
+            else:
+                st.info("No high-risk combinations identified - all pairs with high recognition also have reasonable attribution")
+
+        st.markdown("---")
+
+        # Top strategic insight
+        st.markdown("#### 💡 Strategic Playbook: Pair Selection Guidelines")
+
+        # Get top attribution pair
+        top_attr_pair = attr_combinations_df.iloc[0]
+
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            st.markdown("**🥇 Gold Standard Pairs**")
+            st.write("High Attribution + High Recognition")
+            for _, row in attr_combinations_df.head(3).iterrows():
+                if row['Uniqueness'] > 0.35 and row['Recognition'] > 0.35:
+                    st.write(f"• {row['Pair']}")
+            st.caption("Use for brand-building campaigns")
+
+        with col2:
+            st.markdown("**🥈 Awareness Builders**")
+            st.write("High Recognition, Lower Attribution")
+            for _, row in pd.DataFrame(attr_combinations).sort_values('Recognition', ascending=False).head(5).iterrows():
+                if row['Recognition'] > 0.40 and row['Uniqueness'] < 0.35:
+                    st.write(f"• {row['Pair']}")
+                    break
+            st.caption("Pair with Symbol/Wordmark to boost attribution")
+
+        with col3:
+            st.markdown("**💎 Hidden Gems**")
+            st.write("High Attribution, Lower Recognition")
+            for _, row in attr_combinations_df.iterrows():
+                if row['Uniqueness'] > 0.35 and row['Recognition'] < 0.35:
+                    st.write(f"• {row['Pair']}")
+            st.caption("Increase usage to build awareness")
+
+        st.success(f"""
+        **Key Finding:** The top attribution pair is **{top_attr_pair['Pair']}** with {top_attr_pair['Uniqueness']:.0%} uniqueness and {top_attr_pair['Recognition']:.0%} recognition.
+
+        **Creative Guideline:** Prioritize this combination in all brand communications to maximize both awareness AND correct Škoda attribution.
+        Avoid pairs with high recognition but low uniqueness - they build awareness for competitors, not Škoda.
+        """)
+
+    else:
+        st.warning("Uniqueness by country data not available. Cannot calculate brand attribution for element combinations.")
+
+    st.markdown("---")
+
     # Q03 Consumer Language Analysis
     st.markdown("### 💬 Consumer Language Analysis (Q03)")
     st.caption("What words do consumers use to describe brand elements? Sentiment classification and theme analysis.")
 
     st.info("""
-    **Methodology:** Text analysis of open-ended responses using NLP sentiment classification and theme clustering. 
+    **Methodology:** Text analysis of open-ended responses using NLP sentiment classification and theme clustering.
     Shows what consumers actually say (not just predefined scales).
     """)
 
@@ -2084,6 +2382,45 @@ with tab3:
         list(q03_associations_data.keys()),
         key="q03_element_selector"
     )
+
+    # Add demographic selector for consumer language
+    st.markdown("#### 🎯 Filter by Demographics")
+    language_demo_col1, language_demo_col2, language_demo_col3 = st.columns(3)
+
+    with language_demo_col1:
+        language_country = st.selectbox(
+            "Country:",
+            ["All Countries", "UK", "Spain", "Germany", "Poland"],
+            key="language_country"
+        )
+
+    with language_demo_col2:
+        language_age = st.selectbox(
+            "Age Group:",
+            ["All Ages", "18-30", "31-42", "43-55"],
+            key="language_age"
+        )
+
+    with language_demo_col3:
+        language_gender = st.selectbox(
+            "Gender:",
+            ["All Genders", "Male", "Female"],
+            key="language_gender"
+        )
+
+    # Show demographic context
+    language_demo_text = []
+    if language_country != "All Countries":
+        language_demo_text.append(f"**{language_country}**")
+    if language_age != "All Ages":
+        language_demo_text.append(f"**{language_age}**")
+    if language_gender != "All Genders":
+        language_demo_text.append(f"**{language_gender}**")
+
+    if language_demo_text:
+        st.caption(f"Showing data for: {' | '.join(language_demo_text)}")
+    else:
+        st.caption("Showing data for: **All Demographics**")
 
     element_data = q03_associations_data[selected_element]
 
@@ -2218,6 +2555,185 @@ with tab3:
         - **{sent_comparison_df.iloc[0]['Element']}**: {sent_comparison_df.iloc[0]['Negative']:.0%} negative
         - Shows disconnect in consumer perception
         """)
+
+    st.markdown("---")
+
+    # NEW: Brand Association Map from Q03 "3 Words" Data
+    st.markdown("### 🗺️ Brand Association Map: How Consumers Describe Škoda")
+    st.caption("Word clustering from Q03 open-ended responses - reveals natural brand associations")
+
+    st.info("""
+    **INSIGHT:** This map shows which words consumers naturally use to describe Škoda brand elements.
+    Reveals if "Exploration" clusters with our key assets or if people describe us with unrelated adjectives like "Safe" or "Boring".
+
+    **Strategic value:**
+    - Identify desired vs actual brand associations
+    - Spot gaps between intended and perceived messaging
+    - Guide brand positioning and communication strategies
+    """)
+
+    with st.expander("📖 How to read the brand association map"):
+        st.markdown("""
+        **Theme Clustering:**
+        Each element has been analyzed for thematic word clusters:
+        - **Automotive Identity**: car, logo, brand, badge, manufacturer
+        - **Heritage/Czech**: czech, traditional, heritage, european
+        - **Modern/Tech**: modern, innovative, digital, futuristic
+        - **Design/Aesthetics**: stylish, elegant, premium, sophisticated
+        - **Generic**: plain, standard, basic, unclear
+        - **Negative**: boring, old-fashioned, confusing
+
+        **What it reveals:**
+        - Which themes dominate across elements
+        - Whether brand aspirations (e.g., "Exploration") actually appear
+        - If negative perceptions cluster around specific elements
+        """)
+
+    # Create theme aggregation across all elements
+    theme_aggregation = {}
+
+    for element, data in q03_associations_data.items():
+        if 'themes' in data:
+            for theme, prevalence in data['themes'].items():
+                if theme not in theme_aggregation:
+                    theme_aggregation[theme] = []
+                theme_aggregation[theme].append({
+                    'Element': element,
+                    'Prevalence': prevalence
+                })
+
+    # Overall brand theme distribution
+    col1, col2 = st.columns([2, 1])
+
+    with col1:
+        st.markdown("#### 🎨 Overall Brand Theme Distribution")
+
+        # Calculate average theme prevalence across all elements
+        theme_averages = []
+        for theme, elements in theme_aggregation.items():
+            avg_prevalence = sum(e['Prevalence'] for e in elements) / len(elements)
+            theme_averages.append({
+                'Theme': theme,
+                'Average Prevalence': avg_prevalence
+            })
+
+        theme_avg_df = pd.DataFrame(theme_averages).sort_values('Average Prevalence', ascending=False)
+
+        # Create sunburst or treemap visualization
+        fig_themes = px.bar(
+            theme_avg_df,
+            x='Average Prevalence',
+            y='Theme',
+            orientation='h',
+            title='Average Theme Prevalence Across All Elements',
+            text=theme_avg_df['Average Prevalence'].apply(lambda x: f'{x:.0%}'),
+            color='Average Prevalence',
+            color_continuous_scale='RdYlGn'
+        )
+        fig_themes.update_layout(height=400, showlegend=False)
+        fig_themes.update_traces(textposition='outside')
+        st.plotly_chart(fig_themes, use_container_width=True)
+
+    with col2:
+        st.markdown("#### 📊 Key Themes")
+
+        top_theme = theme_avg_df.iloc[0]
+        st.success(f"**Dominant Theme:**\n{top_theme['Theme']}")
+        st.metric("Prevalence", f"{top_theme['Average Prevalence']:.0%}")
+
+        st.markdown("---")
+
+        # Check for aspiration themes
+        aspiration_themes = ['Modern/Tech', 'Modern Design', 'Innovation']
+        aspiration_found = any(theme in theme_aggregation for theme in aspiration_themes)
+
+        if aspiration_found:
+            st.success("✅ Modern/Innovation themes present")
+        else:
+            st.warning("⚠️ Limited modern/innovation associations")
+
+        # Check for negative themes
+        negative_themes = ['Generic', 'Negative Perception', 'Unclear', 'Negative Tone']
+        negative_prevalence = sum(
+            theme_avg_df[theme_avg_df['Theme'] == theme]['Average Prevalence'].values[0]
+            for theme in negative_themes
+            if theme in theme_avg_df['Theme'].values
+        )
+
+        if negative_prevalence > 0.15:
+            st.error(f"⚠️ {negative_prevalence:.0%} negative associations")
+        else:
+            st.info(f"✓ {negative_prevalence:.0%} negative associations")
+
+    st.markdown("---")
+
+    # Element-specific theme heatmap
+    st.markdown("#### 🔥 Theme Distribution Heatmap by Element")
+
+    # Create matrix of elements vs themes
+    theme_matrix_data = []
+    all_themes = list(theme_aggregation.keys())
+
+    for element in brand_elements:
+        if element in q03_associations_data and 'themes' in q03_associations_data[element]:
+            row = {'Element': element}
+            for theme in all_themes:
+                row[theme] = q03_associations_data[element]['themes'].get(theme, 0)
+            theme_matrix_data.append(row)
+
+    if theme_matrix_data:
+        theme_matrix_df = pd.DataFrame(theme_matrix_data).set_index('Element')
+
+        fig_theme_heatmap = px.imshow(
+            theme_matrix_df,
+            labels=dict(x="Theme", y="Element", color="Prevalence"),
+            text_auto='.0%',
+            aspect="auto",
+            color_continuous_scale='RdYlGn',
+            title="Theme Association Strength by Element"
+        )
+        fig_theme_heatmap.update_layout(height=500)
+        st.plotly_chart(fig_theme_heatmap, use_container_width=True)
+
+    # Strategic insights
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.markdown("**✅ Strongest Associations**")
+        for element, data in q03_associations_data.items():
+            if 'themes' in data:
+                top_theme_for_element = max(data['themes'].items(), key=lambda x: x[1])
+                if top_theme_for_element[1] > 0.40:
+                    st.write(f"• **{element}**: {top_theme_for_element[0]} ({top_theme_for_element[1]:.0%})")
+
+    with col2:
+        st.markdown("**⚠️ Generic Perceptions**")
+        for element, data in q03_associations_data.items():
+            if 'themes' in data:
+                generic_themes = ['Generic', 'Generic/Plain', 'Neutral']
+                for theme in generic_themes:
+                    if theme in data['themes'] and data['themes'][theme] > 0.25:
+                        st.write(f"• **{element}**: {data['themes'][theme]:.0%} generic")
+                        break
+
+    with col3:
+        st.markdown("**💡 Aspirational Gaps**")
+        desired_themes = ['Innovation', 'Modern/Tech', 'Exploration']
+        st.caption("Themes we want but may lack:")
+        for theme in desired_themes:
+            if theme in theme_avg_df['Theme'].values:
+                prevalence = theme_avg_df[theme_avg_df['Theme'] == theme]['Average Prevalence'].values[0]
+                if prevalence < 0.20:
+                    st.write(f"• {theme}: Only {prevalence:.0%}")
+
+    st.success("""
+    **Strategic Recommendations:**
+
+    1. **Leverage strong associations**: Amplify elements with positive thematic resonance
+    2. **Address generic perceptions**: Redesign or reposition elements perceived as "plain" or "unclear"
+    3. **Build aspiration themes**: If "Exploration" or "Innovation" are low, strengthen messaging around modern elements
+    4. **Avoid negative clusters**: Elements with high negative theme prevalence need immediate attention
+    """)
 
 # ==================== TAB 4: NON-NEGOTIABLES ====================
 with tab4:
@@ -2885,6 +3401,36 @@ with tab6:
     st.markdown("### Recognition by Market")
     st.caption("See how brand elements perform across different countries")
 
+    # Add demographic selector for market recognition
+    st.markdown("#### 🎯 Filter by Demographics")
+    market_demo_col1, market_demo_col2 = st.columns(2)
+
+    with market_demo_col1:
+        market_age = st.selectbox(
+            "Age Group:",
+            ["All Ages", "18-30", "31-42", "43-55"],
+            key="market_age"
+        )
+
+    with market_demo_col2:
+        market_gender = st.selectbox(
+            "Gender:",
+            ["All Genders", "Male", "Female"],
+            key="market_gender"
+        )
+
+    # Show demographic context
+    market_demo_text = []
+    if market_age != "All Ages":
+        market_demo_text.append(f"**{market_age}**")
+    if market_gender != "All Genders":
+        market_demo_text.append(f"**{market_gender}**")
+
+    if market_demo_text:
+        st.caption(f"Showing data for: {' | '.join(market_demo_text)}")
+    else:
+        st.caption("Showing data for: **All Demographics**")
+
     col1, col2 = st.columns([2, 1])
 
     with col1:
@@ -3036,6 +3582,170 @@ with tab6:
                     st.write(f"• **{max_c[0]} playbook:** Study what makes {element} distinctively Škoda here ({max_c[1]:.0%} attribution)")
                     st.write(f"• **{min_c[0]} support:** Increase co-branding of {element} with strong Škoda identifiers (Symbol, Wordmark)")
                     st.write(f"• **Investment priority:** Focus {element} investment in high-attribution markets; support with core brand assets in {min_c[0]}")
+
+    st.markdown("---")
+
+    # NEW: Market Consistency Score
+    st.markdown("### 📊 Market Consistency Score: Which Assets Travel Well?")
+    st.caption("Identifies which brand elements perform consistently across markets vs those that are market-specific")
+
+    with st.expander("📖 Why market consistency matters"):
+        st.markdown("""
+        **Market consistency** reveals which assets are "universal" vs "local":
+
+        **Universal assets** (low variation):
+        - Perform similarly across all markets
+        - Safe for global campaigns
+        - Easy to scale internationally
+        - Example: Symbol recognition 44-55% across all markets (11% variation)
+
+        **Market-specific assets** (high variation):
+        - Performance varies significantly by market
+        - Require market-specific strategies
+        - May need localization or repositioning
+        - Example: Element X: 15% in UK, 45% in Poland (30% variation)
+
+        **Strategic value:**
+        - Identify assets for global rollout
+        - Spot markets needing special attention
+        - Optimize creative for regional differences
+        """)
+
+    # Calculate consistency scores for both recognition and uniqueness
+    consistency_data = []
+
+    for element in brand_elements:
+        row = {'Element': element}
+
+        # Recognition consistency (using recognition_by_country)
+        if element in recognition_by_country:
+            rec_values = list(recognition_by_country[element].values())
+            if rec_values:
+                rec_mean = sum(rec_values) / len(rec_values)
+                rec_std = pd.Series(rec_values).std()
+                rec_coef_var = (rec_std / rec_mean) if rec_mean > 0 else 0
+                row['Recognition Mean'] = rec_mean
+                row['Recognition StdDev'] = rec_std
+                row['Recognition Consistency'] = 1 - rec_coef_var  # Higher = more consistent
+
+        # Uniqueness consistency (using uniqueness_by_country)
+        if element in uniqueness_by_country:
+            uniq_values = list(uniqueness_by_country[element].values())
+            if uniq_values:
+                uniq_mean = sum(uniq_values) / len(uniq_values)
+                uniq_std = pd.Series(uniq_values).std()
+                uniq_coef_var = (uniq_std / uniq_mean) if uniq_mean > 0 else 0
+                row['Uniqueness Mean'] = uniq_mean
+                row['Uniqueness StdDev'] = uniq_std
+                row['Uniqueness Consistency'] = 1 - uniq_coef_var  # Higher = more consistent
+
+        consistency_data.append(row)
+
+    consistency_df = pd.DataFrame(consistency_data)
+
+    # Display consistency rankings
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("#### 🌍 Most Consistent Assets (Travel Well)")
+        st.caption("Low variation across markets - ideal for global campaigns")
+
+        if 'Recognition Consistency' in consistency_df.columns:
+            consistent_assets = consistency_df.nlargest(5, 'Recognition Consistency')
+            for _, row in consistent_assets.iterrows():
+                st.success(f"**{row['Element']}**")
+                st.write(f"  • Avg Recognition: {row['Recognition Mean']:.0%}")
+                st.write(f"  • Variation: ±{row['Recognition StdDev']:.1%}")
+                if 'Uniqueness Mean' in row:
+                    st.write(f"  • Avg Uniqueness: {row['Uniqueness Mean']:.0%}")
+
+    with col2:
+        st.markdown("#### 🗺️ Most Variable Assets (Market-Specific)")
+        st.caption("High variation - requires localized strategy")
+
+        if 'Recognition Consistency' in consistency_df.columns:
+            variable_assets = consistency_df.nsmallest(5, 'Recognition Consistency')
+            for _, row in variable_assets.iterrows():
+                st.warning(f"**{row['Element']}**")
+                st.write(f"  • Avg Recognition: {row['Recognition Mean']:.0%}")
+                st.write(f"  • Variation: ±{row['Recognition StdDev']:.1%}")
+                if element in recognition_by_country:
+                    values = recognition_by_country[row['Element']]
+                    min_market = min(values.items(), key=lambda x: x[1])
+                    max_market = max(values.items(), key=lambda x: x[1])
+                    st.caption(f"  Range: {min_market[0]} {min_market[1]:.0%} → {max_market[0]} {max_market[1]:.0%}")
+
+    # Visualizations
+    st.markdown("---")
+    st.markdown("#### 📈 Consistency Score Comparison")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        # Recognition consistency bar chart
+        if 'Recognition Consistency' in consistency_df.columns:
+            rec_consistency = consistency_df[['Element', 'Recognition Consistency', 'Recognition StdDev']].sort_values('Recognition Consistency', ascending=True)
+
+            fig_rec_consistency = go.Figure(go.Bar(
+                x=rec_consistency['Recognition Consistency'],
+                y=rec_consistency['Element'],
+                orientation='h',
+                marker_color='#4CAF50',
+                text=rec_consistency['Recognition StdDev'].apply(lambda x: f'±{x:.1%}'),
+                textposition='outside',
+                hovertemplate='<b>%{y}</b><br>Consistency: %{x:.2f}<br>StdDev: %{text}<extra></extra>'
+            ))
+
+            fig_rec_consistency.update_layout(
+                title='Recognition Consistency Score',
+                xaxis_title='Consistency (Higher = More Consistent)',
+                yaxis_title='',
+                height=400,
+                showlegend=False
+            )
+
+            st.plotly_chart(fig_rec_consistency, use_container_width=True)
+
+    with col2:
+        # Uniqueness consistency bar chart
+        if 'Uniqueness Consistency' in consistency_df.columns:
+            uniq_consistency = consistency_df[['Element', 'Uniqueness Consistency', 'Uniqueness StdDev']].sort_values('Uniqueness Consistency', ascending=True)
+
+            fig_uniq_consistency = go.Figure(go.Bar(
+                x=uniq_consistency['Uniqueness Consistency'],
+                y=uniq_consistency['Element'],
+                orientation='h',
+                marker_color='#2196F3',
+                text=uniq_consistency['Uniqueness StdDev'].apply(lambda x: f'±{x:.1%}'),
+                textposition='outside',
+                hovertemplate='<b>%{y}</b><br>Consistency: %{x:.2f}<br>StdDev: %{text}<extra></extra>'
+            ))
+
+            fig_uniq_consistency.update_layout(
+                title='Uniqueness Consistency Score',
+                xaxis_title='Consistency (Higher = More Consistent)',
+                yaxis_title='',
+                height=400,
+                showlegend=False
+            )
+
+            st.plotly_chart(fig_uniq_consistency, use_container_width=True)
+
+    # Strategic recommendations
+    st.success("""
+    **Strategic Recommendations:**
+
+    **For Consistent Assets (Low Variation):**
+    - Safe for global campaign rollout
+    - Standardize creative guidelines across markets
+    - Leverage learnings from one market to another
+
+    **For Variable Assets (High Variation):**
+    - Identify "hero markets" where asset performs well
+    - Study what makes it work in strong markets
+    - Create market-specific support plans for weak markets
+    - Consider localized creative adaptations
+    """)
 
 # ==================== TAB 7: DATA EXPLORER ====================
 with tab7:
@@ -3347,70 +4057,220 @@ with tab8:
 
     st.markdown("---")
 
-    # NEW SECTION: First Recognition Trigger Index
-    if first_recognition_trigger:
+    # NEW SECTION: First Recognition Trigger Index with Demographics
+    if first_recognition_trigger or recognition_by_age_gender:
         st.markdown("### 🎯 First Recognition Trigger Index")
         st.caption("Which elements are most likely to trigger brand recognition when shown first?")
 
         st.info("""
-        **NEW INSIGHT:** This analysis shows which brand elements are most effective at triggering
+        **KEY INSIGHT:** This analysis shows which brand elements are most effective at triggering
         immediate Škoda recognition when consumers see them as their FIRST exposure to the brand.
+        Use the filters below to explore how this varies by age and gender.
         """)
+
+        # Demographic selectors
+        demo_col1, demo_col2, demo_col3 = st.columns([1, 1, 2])
+
+        with demo_col1:
+            trigger_demo_type = st.selectbox(
+                "Filter by:",
+                ["All Audiences", "Age", "Gender"],
+                key="trigger_demo_type"
+            )
+
+        trigger_demo_filter = None
+        trigger_demo_label = "All Audiences"
+
+        if trigger_demo_type == "Age" and recognition_by_age_gender:
+            with demo_col2:
+                age_choice = st.selectbox("Age Group:", ["18-30", "31-42", "43-55"], key="trigger_age")
+                trigger_demo_filter = ("age", age_choice)
+                trigger_demo_label = f"Age {age_choice}"
+        elif trigger_demo_type == "Gender" and recognition_by_age_gender:
+            with demo_col2:
+                gender_choice = st.selectbox("Gender:", ["Male", "Female"], key="trigger_gender")
+                trigger_demo_filter = ("gender", gender_choice.lower())
+                trigger_demo_label = gender_choice
+
+        st.markdown(f"**Currently viewing:** {trigger_demo_label}")
+        st.markdown("---")
 
         col1, col2 = st.columns([2, 1])
 
         with col1:
-            # Create dataframe and sort by percentage
-            trigger_df = pd.DataFrame([
-                {
-                    'Element': element,
-                    'Percent': data['percent_of_total_first_triggers'],
-                    'Count': data['count'],
-                    'Recognition Rate': data['percent_recognized']
-                }
-                for element, data in first_recognition_trigger.items()
-            ]).sort_values('Percent', ascending=True)
+            # Use filtered or default trigger data
+            if first_recognition_trigger:
+                # Create dataframe and sort by percentage
+                trigger_df = pd.DataFrame([
+                    {
+                        'Element': element,
+                        'Percent': data['percent_of_total_first_triggers'],
+                        'Count': data['count'],
+                        'Recognition Rate': data['percent_recognized']
+                    }
+                    for element, data in first_recognition_trigger.items()
+                ]).sort_values('Percent', ascending=True)
 
-            # Create horizontal bar chart
-            fig_trigger = go.Figure(go.Bar(
-                x=trigger_df['Percent'],
-                y=trigger_df['Element'],
-                orientation='h',
-                marker_color='#4CAF50',
-                text=trigger_df['Percent'].apply(lambda x: f'{x:.1%}'),
-                textposition='outside',
-                hovertemplate='<b>%{y}</b><br>%{x:.1%} of all first recognitions<br>Count: %{customdata}<extra></extra>',
-                customdata=trigger_df['Count']
-            ))
+                # Create horizontal bar chart
+                fig_trigger = go.Figure(go.Bar(
+                    x=trigger_df['Percent'],
+                    y=trigger_df['Element'],
+                    orientation='h',
+                    marker_color='#4CAF50',
+                    text=trigger_df['Percent'].apply(lambda x: f'{x:.1%}'),
+                    textposition='outside',
+                    hovertemplate='<b>%{y}</b><br>%{x:.1%} of all first recognitions<br>Count: %{customdata}<extra></extra>',
+                    customdata=trigger_df['Count']
+                ))
 
-            fig_trigger.update_layout(
-                title='First Recognition Trigger: % of Total First Recognitions',
-                xaxis_title='% of All First Recognitions',
-                yaxis_title='',
-                xaxis_tickformat='.0%',
-                height=400,
-                showlegend=False
-            )
+                fig_trigger.update_layout(
+                    title=f'First Recognition Trigger: {trigger_demo_label}',
+                    xaxis_title='% of All First Recognitions',
+                    yaxis_title='',
+                    xaxis_tickformat='.0%',
+                    height=400,
+                    showlegend=False
+                )
 
-            st.plotly_chart(fig_trigger, use_container_width=True)
+                st.plotly_chart(fig_trigger, use_container_width=True)
+            else:
+                st.warning("First recognition trigger data not available")
 
         with col2:
             st.markdown("#### 🔍 Key Findings")
 
-            # Get top trigger
-            top_trigger = max(first_recognition_trigger.items(), key=lambda x: x[1]['percent_of_total_first_triggers'])
-            st.success(f"**Top Trigger:** {top_trigger[0]}")
-            st.metric("% of First Recognitions", f"{top_trigger[1]['percent_of_total_first_triggers']:.1%}")
-            st.caption(f"{top_trigger[1]['count']} people recognized Škoda when shown this element first")
+            if first_recognition_trigger:
+                # Get top trigger
+                top_trigger = max(first_recognition_trigger.items(), key=lambda x: x[1]['percent_of_total_first_triggers'])
+                st.success(f"**Top Trigger:** {top_trigger[0]}")
+                st.metric("% of First Recognitions", f"{top_trigger[1]['percent_of_total_first_triggers']:.1%}")
+                st.caption(f"{top_trigger[1]['count']} people recognized Škoda when shown this element first")
 
-            st.markdown("---")
+                st.markdown("---")
 
-            st.markdown("#### 💡 Strategic Implication")
-            st.markdown(f"""
-            **{top_trigger[0]}** is your strongest "first impression" asset:
-            - Use in teaser campaigns and new market launches
-            - Prioritize in media with limited brand exposure time
-            - Ensure prominent placement in all touchpoints
+                st.markdown("#### 💡 Strategic Implication")
+                st.markdown(f"""
+                **{top_trigger[0]}** is your strongest "first impression" asset:
+                - Use in teaser campaigns and new market launches
+                - Prioritize in media with limited brand exposure time
+                - Ensure prominent placement in all touchpoints
+                """)
+
+        st.markdown("---")
+
+        # NEW: Age Migration Analysis
+        if recognition_by_age_gender and uniqueness_by_age_gender:
+            st.markdown("### 👥 Age Migration Analysis: How Recognition Triggers Shift by Cohort")
+            st.caption("Shows which elements trigger recognition for different age groups and how distinctiveness varies")
+
+            with st.expander("📖 Why age migration matters"):
+                st.markdown("""
+                **Age migration** reveals how brand recognition patterns shift across generations:
+
+                - **Different age groups** may recognize different brand elements first
+                - **Recognition rates** for the same element vary by cohort (e.g., younger audiences may respond to modern elements)
+                - **Distinctiveness (uniqueness)** also varies - what feels "Škoda" to 18-30 may differ from 43-55
+                - **Strategic insight:** Tailor asset deployment to target demographics
+
+                This analysis helps you:
+                1. Identify which elements resonate with each age group
+                2. Spot generation gaps in brand recognition
+                3. Optimize creative for specific audience segments
+                """)
+
+            # Create comparison across all age groups
+            age_groups = ["18-30", "31-42", "43-55"]
+
+            migration_data = []
+            for element in brand_elements:
+                row = {'Element': element}
+
+                # Add recognition by age
+                if element in recognition_by_age_gender and 'age' in recognition_by_age_gender[element]:
+                    for age in age_groups:
+                        if age in recognition_by_age_gender[element]['age']:
+                            row[f'Recognition {age}'] = recognition_by_age_gender[element]['age'][age]
+
+                # Add uniqueness by age
+                if element in uniqueness_by_age_gender and 'age' in uniqueness_by_age_gender[element]:
+                    for age in age_groups:
+                        if age in uniqueness_by_age_gender[element]['age']:
+                            row[f'Uniqueness {age}'] = uniqueness_by_age_gender[element]['age'][age]
+
+                migration_data.append(row)
+
+            migration_df = pd.DataFrame(migration_data)
+
+            # Show recognition by age heatmap
+            st.markdown("#### 🔥 Recognition Heatmap by Age")
+            recognition_cols = [f'Recognition {age}' for age in age_groups]
+            if all(col in migration_df.columns for col in recognition_cols):
+                recognition_heatmap = migration_df[['Element'] + recognition_cols].set_index('Element')
+                recognition_heatmap.columns = age_groups
+
+                fig_rec_age = px.imshow(
+                    recognition_heatmap,
+                    labels=dict(x="Age Group", y="Brand Element", color="Recognition"),
+                    text_auto='.0%',
+                    aspect="auto",
+                    color_continuous_scale='RdYlGn',
+                    title="Recognition by Age Group"
+                )
+                fig_rec_age.update_layout(height=400)
+                st.plotly_chart(fig_rec_age, use_container_width=True)
+
+            # Show uniqueness by age heatmap
+            st.markdown("#### 🎯 Distinctiveness (Uniqueness) by Age")
+            uniqueness_cols = [f'Uniqueness {age}' for age in age_groups]
+            if all(col in migration_df.columns for col in uniqueness_cols):
+                uniqueness_heatmap = migration_df[['Element'] + uniqueness_cols].set_index('Element')
+                uniqueness_heatmap.columns = age_groups
+
+                fig_uniq_age = px.imshow(
+                    uniqueness_heatmap,
+                    labels=dict(x="Age Group", y="Brand Element", color="Uniqueness"),
+                    text_auto='.0%',
+                    aspect="auto",
+                    color_continuous_scale='RdYlGn',
+                    title="Brand Distinctiveness (Uniqueness) by Age Group"
+                )
+                fig_uniq_age.update_layout(height=400)
+                st.plotly_chart(fig_uniq_age, use_container_width=True)
+
+            # Key insights
+            col1, col2 = st.columns(2)
+
+            with col1:
+                st.markdown("#### 📊 Recognition Patterns")
+                if all(col in migration_df.columns for col in recognition_cols):
+                    for element in brand_elements[:3]:  # Top 3
+                        element_row = migration_df[migration_df['Element'] == element].iloc[0]
+                        values = [element_row[col] for col in recognition_cols if col in element_row]
+                        if values:
+                            max_age_idx = values.index(max(values))
+                            min_age_idx = values.index(min(values))
+                            st.write(f"**{element}:**")
+                            st.write(f"  • Strongest: {age_groups[max_age_idx]} ({values[max_age_idx]:.0%})")
+                            st.write(f"  • Weakest: {age_groups[min_age_idx]} ({values[min_age_idx]:.0%})")
+
+            with col2:
+                st.markdown("#### 🎯 Distinctiveness Patterns")
+                if all(col in migration_df.columns for col in uniqueness_cols):
+                    for element in brand_elements[:3]:  # Top 3
+                        element_row = migration_df[migration_df['Element'] == element].iloc[0]
+                        values = [element_row[col] for col in uniqueness_cols if col in element_row]
+                        if values:
+                            max_age_idx = values.index(max(values))
+                            min_age_idx = values.index(min(values))
+                            st.write(f"**{element}:**")
+                            st.write(f"  • Most distinctive: {age_groups[max_age_idx]} ({values[max_age_idx]:.0%})")
+                            st.write(f"  • Least distinctive: {age_groups[min_age_idx]} ({values[min_age_idx]:.0%})")
+
+            st.success("""
+            **Strategic Takeaway:** Use this age migration data to:
+            - Target younger audiences with elements that score high in recognition and uniqueness for 18-30
+            - Reinforce traditional elements (like Symbol) with older cohorts where they perform best
+            - Identify cross-generational assets that work across all age groups
             """)
 
         st.markdown("---")

@@ -1,0 +1,56 @@
+{
+  "Electric Green": {
+    "UK": 0.09,
+    "Spain": 0.18,
+    "Germany": 0.11,
+    "Poland": 0.35
+  },
+  "Facets": {
+    "UK": 0.11,
+    "Spain": 0.2,
+    "Germany": 0.14,
+    "Poland": 0.2
+  },
+  "Type": {
+    "UK": 0.1,
+    "Spain": 0.19,
+    "Germany": 0.13,
+    "Poland": 0.29
+  },
+  "Symbol": {
+    "UK": 0.23,
+    "Spain": 0.44,
+    "Germany": 0.31,
+    "Poland": 0.55
+  },
+  "Sonic": {
+    "UK": 0.11,
+    "Spain": 0.2,
+    "Germany": 0.16,
+    "Poland": 0.2
+  },
+  "Wordmark": {
+    "UK": 0.17,
+    "Spain": 0.34,
+    "Germany": 0.22,
+    "Poland": 0.39
+  },
+  "Dark Green": {
+    "UK": 0.1,
+    "Spain": 0.24,
+    "Germany": 0.13,
+    "Poland": 0.27
+  },
+  "Hacek": {
+    "UK": 0.11,
+    "Spain": 0.22,
+    "Germany": 0.11,
+    "Poland": 0.27
+  },
+  "Tagline": {
+    "UK": 0.08,
+    "Spain": 0.23,
+    "Germany": 0.1,
+    "Poland": 0.25
+  }
+}

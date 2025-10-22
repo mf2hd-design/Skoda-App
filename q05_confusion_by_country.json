@@ -1,0 +1,200 @@
+{
+  "Electric Green": {
+    "UK": {
+      "Skoda": 0.09,
+      "Other": 0.29,
+      "Dont_know": 0.62
+    },
+    "Spain": {
+      "Skoda": 0.18,
+      "Other": 0.22,
+      "Dont_know": 0.6
+    },
+    "Germany": {
+      "Skoda": 0.11,
+      "Other": 0.17,
+      "Dont_know": 0.72
+    },
+    "Poland": {
+      "Skoda": 0.35,
+      "Other": 0.19,
+      "Dont_know": 0.46
+    }
+  },
+  "Facets": {
+    "UK": {
+      "Skoda": 0.11,
+      "Other": 0.28,
+      "Dont_know": 0.61
+    },
+    "Spain": {
+      "Skoda": 0.2,
+      "Other": 0.2,
+      "Dont_know": 0.6
+    },
+    "Germany": {
+      "Skoda": 0.14,
+      "Other": 0.19,
+      "Dont_know": 0.67
+    },
+    "Poland": {
+      "Skoda": 0.2,
+      "Other": 0.24,
+      "Dont_know": 0.57
+    }
+  },
+  "Type": {
+    "UK": {
+      "Skoda": 0.1,
+      "Other": 0.33,
+      "Dont_know": 0.58
+    },
+    "Spain": {
+      "Skoda": 0.19,
+      "Other": 0.24,
+      "Dont_know": 0.57
+    },
+    "Germany": {
+      "Skoda": 0.13,
+      "Other": 0.17,
+      "Dont_know": 0.7
+    },
+    "Poland": {
+      "Skoda": 0.29,
+      "Other": 0.2,
+      "Dont_know": 0.51
+    }
+  },
+  "Symbol": {
+    "UK": {
+      "Skoda": 0.23,
+      "Other": 0.24,
+      "Dont_know": 0.53
+    },
+    "Spain": {
+      "Skoda": 0.44,
+      "Other": 0.15,
+      "Dont_know": 0.41
+    },
+    "Germany": {
+      "Skoda": 0.31,
+      "Other": 0.14,
+      "Dont_know": 0.55
+    },
+    "Poland": {
+      "Skoda": 0.55,
+      "Other": 0.12,
+      "Dont_know": 0.33
+    }
+  },
+  "Sonic": {
+    "UK": {
+      "Skoda": 0.11,
+      "Other": 0.32,
+      "Dont_know": 0.57
+    },
+    "Spain": {
+      "Skoda": 0.2,
+      "Other": 0.21,
+      "Dont_know": 0.59
+    },
+    "Germany": {
+      "Skoda": 0.16,
+      "Other": 0.19,
+      "Dont_know": 0.65
+    },
+    "Poland": {
+      "Skoda": 0.2,
+      "Other": 0.22,
+      "Dont_know": 0.58
+    }
+  },
+  "Wordmark": {
+    "UK": {
+      "Skoda": 0.17,
+      "Other": 0.35,
+      "Dont_know": 0.48
+    },
+    "Spain": {
+      "Skoda": 0.34,
+      "Other": 0.24,
+      "Dont_know": 0.42
+    },
+    "Germany": {
+      "Skoda": 0.22,
+      "Other": 0.18,
+      "Dont_know": 0.6
+    },
+    "Poland": {
+      "Skoda": 0.39,
+      "Other": 0.2,
+      "Dont_know": 0.41
+    }
+  },
+  "Dark Green": {
+    "UK": {
+      "Skoda": 0.1,
+      "Other": 0.31,
+      "Dont_know": 0.59
+    },
+    "Spain": {
+      "Skoda": 0.24,
+      "Other": 0.18,
+      "Dont_know": 0.57
+    },
+    "Germany": {
+      "Skoda": 0.13,
+      "Other": 0.21,
+      "Dont_know": 0.66
+    },
+    "Poland": {
+      "Skoda": 0.27,
+      "Other": 0.22,
+      "Dont_know": 0.51
+    }
+  },
+  "Hacek": {
+    "UK": {
+      "Skoda": 0.11,
+      "Other": 0.31,
+      "Dont_know": 0.58
+    },
+    "Spain": {
+      "Skoda": 0.22,
+      "Other": 0.18,
+      "Dont_know": 0.6
+    },
+    "Germany": {
+      "Skoda": 0.11,
+      "Other": 0.19,
+      "Dont_know": 0.7
+    },
+    "Poland": {
+      "Skoda": 0.27,
+      "Other": 0.19,
+      "Dont_know": 0.54
+    }
+  },
+  "Tagline": {
+    "UK": {
+      "Skoda": 0.08,
+      "Other": 0.33,
+      "Dont_know": 0.59
+    },
+    "Spain": {
+      "Skoda": 0.23,
+      "Other": 0.22,
+      "Dont_know": 0.55
+    },
+    "Germany": {
+      "Skoda": 0.1,
+      "Other": 0.21,
+      "Dont_know": 0.69
+    },
+    "Poland": {
+      "Skoda": 0.25,
+      "Other": 0.24,
+      "Dont_know": 0.51
+    }
+  }
+}

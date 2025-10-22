@@ -1,0 +1,47 @@
+{
+  "Electric Green": {
+    "Skoda": 0.17,
+    "Other_mentions": 0.22,
+    "Dont_know": 0.61
+  },
+  "Facets": {
+    "Skoda": 0.16,
+    "Other_mentions": 0.22,
+    "Dont_know": 0.62
+  },
+  "Type": {
+    "Skoda": 0.17,
+    "Other_mentions": 0.23,
+    "Dont_know": 0.6
+  },
+  "Symbol": {
+    "Skoda": 0.38,
+    "Other_mentions": 0.16,
+    "Dont_know": 0.45
+  },
+  "Sonic": {
+    "Skoda": 0.17,
+    "Other_mentions": 0.24,
+    "Dont_know": 0.6
+  },
+  "Wordmark": {
+    "Skoda": 0.28,
+    "Other_mentions": 0.24,
+    "Dont_know": 0.48
+  },
+  "Dark Green": {
+    "Skoda": 0.19,
+    "Other_mentions": 0.23,
+    "Dont_know": 0.58
+  },
+  "Hacek": {
+    "Skoda": 0.19,
+    "Other_mentions": 0.21,
+    "Dont_know": 0.6
+  },
+  "Tagline": {
+    "Skoda": 0.17,
+    "Other_mentions": 0.25,
+    "Dont_know": 0.58
+  }
+}
