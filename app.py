@@ -2450,68 +2450,68 @@ with tab3:
         st.plotly_chart(fig_words, use_container_width=True)
 
     with col2:
-        # Sentiment pie chart
-        st.markdown("#### Sentiment Classification")
-        
-        sentiment_data = pd.DataFrame({
-            'Sentiment': ['Positive', 'Neutral', 'Negative'],
+        # Sentiment analysis from Q04 adjective scales
+        st.markdown("#### Sentiment (Q04 Adjectives)")
+
+        # Get sentiment data from research_data (Q04), not q03_associations_data
+        sentiment_data_source = research_data[selected_element]
+
+        sentiment_df = pd.DataFrame({
+            'Sentiment': ['Positive', 'Negative'],
             'Percentage': [
-                element_data['sentiment']['positive'],
-                element_data['sentiment']['neutral'],
-                element_data['sentiment']['negative']
+                sentiment_data_source['positive_sentiment'],
+                sentiment_data_source['negative_sentiment']
             ]
         })
-        
+
         fig_sentiment = px.pie(
-            sentiment_data,
+            sentiment_df,
             values='Percentage',
             names='Sentiment',
-            title='Text Sentiment',
+            title='Adjective Sentiment',
             color='Sentiment',
-            color_discrete_map={'Positive': '#4CAF50', 'Neutral': '#FFC107', 'Negative': '#F44336'}
+            color_discrete_map={'Positive': '#4CAF50', 'Negative': '#F44336'}
         )
         st.plotly_chart(fig_sentiment, use_container_width=True)
 
-    # Theme analysis
-    st.markdown(f"#### Themes Identified in {selected_element} Descriptions")
-    
-    themes_df = pd.DataFrame({
-        'Theme': list(element_data['themes'].keys()),
-        'Prevalence': list(element_data['themes'].values())
-    }).sort_values('Prevalence', ascending=True)
-    
-    fig_themes = px.bar(
-        themes_df,
-        x='Prevalence',
-        y='Theme',
-        orientation='h',
-        title='Thematic Analysis',
-        text=themes_df['Prevalence'].apply(lambda x: f'{x:.0%}'),
-        color='Prevalence',
-        color_continuous_scale='Viridis'
-    )
-    fig_themes.update_layout(height=300, showlegend=False)
-    fig_themes.update_traces(textposition='outside')
-    st.plotly_chart(fig_themes, use_container_width=True)
+        st.metric("Net Sentiment",
+                 f"{sentiment_data_source['net_sentiment']:+.1%}",
+                 "Positive - Negative")
 
-    # Comparative sentiment across all elements
+        st.caption("From Q04: Bold, Stylish, Modern, etc.")
+
+    # Word cloud alternative - show all associations
+    st.markdown(f"#### All Associations for {selected_element}")
+    st.caption("Full list of consumer descriptions (Q03 open-text responses)")
+
+    all_words_df = pd.DataFrame({
+        'Association': element_data['top_words'],
+        'Frequency': element_data['frequencies']
+    })
+
+    st.dataframe(all_words_df.style.format({'Frequency': '{:.1%}'}),
+                use_container_width=True, hide_index=True)
+
+    # Comparative sentiment analysis across all elements (Q04)
     st.markdown("---")
     st.markdown("### 📊 Sentiment Comparison Across All Elements")
-    
+    st.caption("Based on Q04 adjective scales: Bold, Stylish, Modern vs Cautious, Plain, Old-Fashioned")
+
+    # Create sentiment comparison using research_data (Q04)
     all_sentiments = []
-    for elem, data in q03_associations_data.items():
+    for elem in brand_elements:
+        elem_data = research_data[elem]
         all_sentiments.append({
             'Element': elem,
-            'Positive': data['sentiment']['positive'],
-            'Neutral': data['sentiment']['neutral'],
-            'Negative': data['sentiment']['negative'],
-            'Net': data['sentiment']['positive'] - data['sentiment']['negative']
+            'Positive': elem_data['positive_sentiment'],
+            'Negative': elem_data['negative_sentiment'],
+            'Net': elem_data['net_sentiment']
         })
-    
+
     sent_comparison_df = pd.DataFrame(all_sentiments).sort_values('Net', ascending=True)
-    
+
     fig_sent_comp = go.Figure()
-    
+
     fig_sent_comp.add_trace(go.Bar(
         name='Positive',
         y=sent_comparison_df['Element'],
@@ -2519,7 +2519,7 @@ with tab3:
         orientation='h',
         marker_color='#4CAF50'
     ))
-    
+
     fig_sent_comp.add_trace(go.Bar(
         name='Negative',
         y=sent_comparison_df['Element'],
@@ -2527,212 +2527,117 @@ with tab3:
         orientation='h',
         marker_color='#F44336'
     ))
-    
+
     fig_sent_comp.update_layout(
         barmode='overlay',
-        title='Text Sentiment Analysis: All Elements',
+        title='Adjective Sentiment Analysis: All Elements',
         xaxis_title='Percentage',
         yaxis_title='',
         height=500,
         xaxis_tickformat='.0%'
     )
-    
+
     st.plotly_chart(fig_sent_comp, use_container_width=True)
 
     # Key insights
     col1, col2 = st.columns(2)
-    
+
     with col1:
+        most_positive = sent_comparison_df.iloc[-1]
         st.success(f"""
-        **Most Positive Language:**
-        - **{sent_comparison_df.iloc[-1]['Element']}**: {sent_comparison_df.iloc[-1]['Positive']:.0%} positive
-        - Top word: "{q03_associations_data[sent_comparison_df.iloc[-1]['Element']]['top_words'][0]}"
+        **Most Positive Sentiment:**
+        - **{most_positive['Element']}**: {most_positive['Net']:+.1%} net sentiment
+        - {most_positive['Positive']:.0%} positive adjectives
         """)
-    
+
     with col2:
+        most_negative = sent_comparison_df.iloc[0]
         st.warning(f"""
-        **Most Negative Language:**
-        - **{sent_comparison_df.iloc[0]['Element']}**: {sent_comparison_df.iloc[0]['Negative']:.0%} negative
-        - Shows disconnect in consumer perception
+        **Most Negative Sentiment:**
+        - **{most_negative['Element']}**: {most_negative['Net']:+.1%} net sentiment
+        - {most_negative['Negative']:.0%} negative adjectives
         """)
 
     st.markdown("---")
 
-    # NEW: Brand Association Map from Q03 "3 Words" Data
-    st.markdown("### 🗺️ Brand Association Map: How Consumers Describe Škoda")
-    st.caption("Word clustering from Q03 open-ended responses - reveals natural brand associations")
+    # Search for Strategic Terms in Consumer Language
+    st.markdown("### 🔍 Strategic Brand Terms Search")
+    st.caption("Search Q03 responses to see if desired brand values appear in consumer language")
 
     st.info("""
-    **INSIGHT:** This map shows which words consumers naturally use to describe Škoda brand elements.
-    Reveals if "Exploration" clusters with our key assets or if people describe us with unrelated adjectives like "Safe" or "Boring".
+    **Purpose:** The client asked: *"Can we see whether 'Exploration' naturally clusters with our key assets or if people describe us with unrelated adjectives?"*
 
-    **Strategic value:**
-    - Identify desired vs actual brand associations
-    - Spot gaps between intended and perceived messaging
-    - Guide brand positioning and communication strategies
+    Use this search to find if strategic brand values (Exploration, Innovation, Modern, etc.) appear in actual consumer responses.
     """)
 
-    with st.expander("📖 How to read the brand association map"):
-        st.markdown("""
-        **Theme Clustering:**
-        Each element has been analyzed for thematic word clusters:
-        - **Automotive Identity**: car, logo, brand, badge, manufacturer
-        - **Heritage/Czech**: czech, traditional, heritage, european
-        - **Modern/Tech**: modern, innovative, digital, futuristic
-        - **Design/Aesthetics**: stylish, elegant, premium, sophisticated
-        - **Generic**: plain, standard, basic, unclear
-        - **Negative**: boring, old-fashioned, confusing
+    # Search input
+    search_term = st.text_input("Search for a word or phrase in consumer associations:",
+                                value="explore",
+                                placeholder="e.g., explore, innovation, modern, safe, boring")
 
-        **What it reveals:**
-        - Which themes dominate across elements
-        - Whether brand aspirations (e.g., "Exploration") actually appear
-        - If negative perceptions cluster around specific elements
-        """)
+    if search_term:
+        search_results = []
+        search_lower = search_term.lower()
 
-    # Create theme aggregation across all elements
-    theme_aggregation = {}
+        for element, data in q03_associations_data.items():
+            for word, freq in zip(data['top_words'], data['frequencies']):
+                if search_lower in word.lower():
+                    search_results.append({
+                        'Element': element,
+                        'Association': word,
+                        'Frequency': freq
+                    })
 
+        if search_results:
+            results_df = pd.DataFrame(search_results).sort_values('Frequency', ascending=False)
+            st.success(f"✅ Found '{search_term}' in {len(search_results)} associations across {len(results_df['Element'].unique())} elements")
+
+            st.dataframe(results_df.style.format({'Frequency': '{:.1%}'}),
+                        use_container_width=True, hide_index=True)
+
+            # Summary insight
+            total_freq = results_df['Frequency'].sum()
+            st.metric("Total Frequency",
+                     f"{total_freq:.1%}",
+                     f"Across {len(results_df['Element'].unique())} elements")
+
+        else:
+            st.warning(f"❌ No associations found containing '{search_term}'")
+            st.caption("This suggests the term is not prominent in consumer language about Škoda brand elements.")
+
+    # Common word analysis
+    st.markdown("#### 📊 Most Common Words Across All Elements")
+
+    all_words_aggregated = {}
     for element, data in q03_associations_data.items():
-        if 'themes' in data:
-            for theme, prevalence in data['themes'].items():
-                if theme not in theme_aggregation:
-                    theme_aggregation[theme] = []
-                theme_aggregation[theme].append({
-                    'Element': element,
-                    'Prevalence': prevalence
-                })
+        for word, freq in zip(data['top_words'], data['frequencies']):
+            if word not in all_words_aggregated:
+                all_words_aggregated[word] = 0
+            all_words_aggregated[word] += freq
 
-    # Overall brand theme distribution
-    col1, col2 = st.columns([2, 1])
+    top_overall = sorted(all_words_aggregated.items(), key=lambda x: x[1], reverse=True)[:15]
+    overall_df = pd.DataFrame(top_overall, columns=['Word', 'Total Frequency'])
 
-    with col1:
-        st.markdown("#### 🎨 Overall Brand Theme Distribution")
-
-        # Calculate average theme prevalence across all elements
-        theme_averages = []
-        for theme, elements in theme_aggregation.items():
-            avg_prevalence = sum(e['Prevalence'] for e in elements) / len(elements)
-            theme_averages.append({
-                'Theme': theme,
-                'Average Prevalence': avg_prevalence
-            })
-
-        theme_avg_df = pd.DataFrame(theme_averages).sort_values('Average Prevalence', ascending=False)
-
-        # Create sunburst or treemap visualization
-        fig_themes = px.bar(
-            theme_avg_df,
-            x='Average Prevalence',
-            y='Theme',
-            orientation='h',
-            title='Average Theme Prevalence Across All Elements',
-            text=theme_avg_df['Average Prevalence'].apply(lambda x: f'{x:.0%}'),
-            color='Average Prevalence',
-            color_continuous_scale='RdYlGn'
-        )
-        fig_themes.update_layout(height=400, showlegend=False)
-        fig_themes.update_traces(textposition='outside')
-        st.plotly_chart(fig_themes, use_container_width=True)
-
-    with col2:
-        st.markdown("#### 📊 Key Themes")
-
-        top_theme = theme_avg_df.iloc[0]
-        st.success(f"**Dominant Theme:**\n{top_theme['Theme']}")
-        st.metric("Prevalence", f"{top_theme['Average Prevalence']:.0%}")
-
-        st.markdown("---")
-
-        # Check for aspiration themes
-        aspiration_themes = ['Modern/Tech', 'Modern Design', 'Innovation']
-        aspiration_found = any(theme in theme_aggregation for theme in aspiration_themes)
-
-        if aspiration_found:
-            st.success("✅ Modern/Innovation themes present")
-        else:
-            st.warning("⚠️ Limited modern/innovation associations")
-
-        # Check for negative themes
-        negative_themes = ['Generic', 'Negative Perception', 'Unclear', 'Negative Tone']
-        negative_prevalence = sum(
-            theme_avg_df[theme_avg_df['Theme'] == theme]['Average Prevalence'].values[0]
-            for theme in negative_themes
-            if theme in theme_avg_df['Theme'].values
-        )
-
-        if negative_prevalence > 0.15:
-            st.error(f"⚠️ {negative_prevalence:.0%} negative associations")
-        else:
-            st.info(f"✓ {negative_prevalence:.0%} negative associations")
-
-    st.markdown("---")
-
-    # Element-specific theme heatmap
-    st.markdown("#### 🔥 Theme Distribution Heatmap by Element")
-
-    # Create matrix of elements vs themes
-    theme_matrix_data = []
-    all_themes = list(theme_aggregation.keys())
-
-    for element in brand_elements:
-        if element in q03_associations_data and 'themes' in q03_associations_data[element]:
-            row = {'Element': element}
-            for theme in all_themes:
-                row[theme] = q03_associations_data[element]['themes'].get(theme, 0)
-            theme_matrix_data.append(row)
-
-    if theme_matrix_data:
-        theme_matrix_df = pd.DataFrame(theme_matrix_data).set_index('Element')
-
-        fig_theme_heatmap = px.imshow(
-            theme_matrix_df,
-            labels=dict(x="Theme", y="Element", color="Prevalence"),
-            text_auto='.0%',
-            aspect="auto",
-            color_continuous_scale='RdYlGn',
-            title="Theme Association Strength by Element"
-        )
-        fig_theme_heatmap.update_layout(height=500)
-        st.plotly_chart(fig_theme_heatmap, use_container_width=True)
-
-    # Strategic insights
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        st.markdown("**✅ Strongest Associations**")
-        for element, data in q03_associations_data.items():
-            if 'themes' in data:
-                top_theme_for_element = max(data['themes'].items(), key=lambda x: x[1])
-                if top_theme_for_element[1] > 0.40:
-                    st.write(f"• **{element}**: {top_theme_for_element[0]} ({top_theme_for_element[1]:.0%})")
-
-    with col2:
-        st.markdown("**⚠️ Generic Perceptions**")
-        for element, data in q03_associations_data.items():
-            if 'themes' in data:
-                generic_themes = ['Generic', 'Generic/Plain', 'Neutral']
-                for theme in generic_themes:
-                    if theme in data['themes'] and data['themes'][theme] > 0.25:
-                        st.write(f"• **{element}**: {data['themes'][theme]:.0%} generic")
-                        break
-
-    with col3:
-        st.markdown("**💡 Aspirational Gaps**")
-        desired_themes = ['Innovation', 'Modern/Tech', 'Exploration']
-        st.caption("Themes we want but may lack:")
-        for theme in desired_themes:
-            if theme in theme_avg_df['Theme'].values:
-                prevalence = theme_avg_df[theme_avg_df['Theme'] == theme]['Average Prevalence'].values[0]
-                if prevalence < 0.20:
-                    st.write(f"• {theme}: Only {prevalence:.0%}")
+    fig_overall = px.bar(
+        overall_df,
+        x='Total Frequency',
+        y='Word',
+        orientation='h',
+        title='Top 15 Most Common Associations (All Elements Combined)',
+        text=overall_df['Total Frequency'].apply(lambda x: f'{x:.1%}')
+    )
+    fig_overall.update_layout(height=500, showlegend=False)
+    fig_overall.update_traces(textposition='outside')
+    st.plotly_chart(fig_overall, use_container_width=True)
 
     st.success("""
-    **Strategic Recommendations:**
+    **Strategic Insight:**
 
-    1. **Leverage strong associations**: Amplify elements with positive thematic resonance
-    2. **Address generic perceptions**: Redesign or reposition elements perceived as "plain" or "unclear"
-    3. **Build aspiration themes**: If "Exploration" or "Innovation" are low, strengthen messaging around modern elements
-    4. **Avoid negative clusters**: Elements with high negative theme prevalence need immediate attention
+    The most common words reveal what consumers **actually say** about Škoda elements, vs what the brand **wants** them to say.
+
+    - ✅ **If "Škoda" appears frequently**: Strong brand recognition
+    - ⚠️ **If "Confusing" or "Boring" appear**: Perception issues need addressing
+    - 💡 **If "Exploration" is absent**: Gap between brand aspiration and consumer reality
     """)
 
 # ==================== TAB 4: NON-NEGOTIABLES ====================
