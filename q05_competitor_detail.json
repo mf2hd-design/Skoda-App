@@ -1,0 +1,515 @@
+{
+  "Electric Green": {
+    "total_responses": 98,
+    "skoda_percentage": 0.0204,
+    "dont_know_percentage": 0.0918,
+    "other_brands": [
+      {
+        "brand": "Nike",
+        "count": 6,
+        "percentage": 0.0612
+      },
+      {
+        "brand": "Bolt",
+        "count": 2,
+        "percentage": 0.0204
+      },
+      {
+        "brand": "Rescuing",
+        "count": 2,
+        "percentage": 0.0204
+      },
+      {
+        "brand": "Meal",
+        "count": 2,
+        "percentage": 0.0204
+      },
+      {
+        "brand": "Green",
+        "count": 2,
+        "percentage": 0.0204
+      },
+      {
+        "brand": "Tesco",
+        "count": 2,
+        "percentage": 0.0204
+      },
+      {
+        "brand": "Frog",
+        "count": 2,
+        "percentage": 0.0204
+      },
+      {
+        "brand": "Coke",
+        "count": 1,
+        "percentage": 0.0102
+      },
+      {
+        "brand": "Uber Eats",
+        "count": 1,
+        "percentage": 0.0102
+      },
+      {
+        "brand": "To Any Brand",
+        "count": 1,
+        "percentage": 0.0102
+      },
+      {
+        "brand": "Brands",
+        "count": 1,
+        "percentage": 0.0102
+      },
+      {
+        "brand": "Sprite",
+        "count": 1,
+        "percentage": 0.0102
+      },
+      {
+        "brand": "Which Element? I Only See A Green Square",
+        "count": 1,
+        "percentage": 0.0102
+      },
+      {
+        "brand": "Piglet",
+        "count": 1,
+        "percentage": 0.0102
+      },
+      {
+        "brand": "Plus",
+        "count": 1,
+        "percentage": 0.0102
+      }
+    ]
+  },
+  "Facets": {
+    "total_responses": 72,
+    "skoda_percentage": 0.0278,
+    "dont_know_percentage": 0.1806,
+    "other_brands": [
+      {
+        "brand": "Leroy Merlin",
+        "count": 3,
+        "percentage": 0.0417
+      },
+      {
+        "brand": "Addidas",
+        "count": 1,
+        "percentage": 0.0139
+      },
+      {
+        "brand": "Idm",
+        "count": 1,
+        "percentage": 0.0139
+      },
+      {
+        "brand": "Bosch",
+        "count": 1,
+        "percentage": 0.0139
+      },
+      {
+        "brand": "Lloyds",
+        "count": 1,
+        "percentage": 0.0139
+      },
+      {
+        "brand": "Puma",
+        "count": 1,
+        "percentage": 0.0139
+      },
+      {
+        "brand": "Johnson",
+        "count": 1,
+        "percentage": 0.0139
+      },
+      {
+        "brand": "Clearpay",
+        "count": 1,
+        "percentage": 0.0139
+      },
+      {
+        "brand": "White",
+        "count": 1,
+        "percentage": 0.0139
+      },
+      {
+        "brand": "A Bank",
+        "count": 1,
+        "percentage": 0.0139
+      },
+      {
+        "brand": "Brilliant",
+        "count": 1,
+        "percentage": 0.0139
+      },
+      {
+        "brand": "Brand",
+        "count": 1,
+        "percentage": 0.0139
+      },
+      {
+        "brand": "Spotify",
+        "count": 1,
+        "percentage": 0.0139
+      },
+      {
+        "brand": "To A Mobile Phone Brand",
+        "count": 1,
+        "percentage": 0.0139
+      },
+      {
+        "brand": "Banks",
+        "count": 1,
+        "percentage": 0.0139
+      }
+    ]
+  },
+  "Type": {
+    "total_responses": 231,
+    "skoda_percentage": 0.7706,
+    "dont_know_percentage": 0.0173,
+    "other_brands": [
+      {
+        "brand": "Starbucks",
+        "count": 3,
+        "percentage": 0.013
+      },
+      {
+        "brand": "Car",
+        "count": 3,
+        "percentage": 0.013
+      },
+      {
+        "brand": "Nike",
+        "count": 2,
+        "percentage": 0.0087
+      },
+      {
+        "brand": "Car Brand",
+        "count": 2,
+        "percentage": 0.0087
+      },
+      {
+        "brand": "Cars",
+        "count": 2,
+        "percentage": 0.0087
+      },
+      {
+        "brand": "Bra",
+        "count": 1,
+        "percentage": 0.0043
+      },
+      {
+        "brand": "Damage",
+        "count": 1,
+        "percentage": 0.0043
+      },
+      {
+        "brand": "The Goose",
+        "count": 1,
+        "percentage": 0.0043
+      },
+      {
+        "brand": "To That Of A Car",
+        "count": 1,
+        "percentage": 0.0043
+      },
+      {
+        "brand": "Fashion",
+        "count": 1,
+        "percentage": 0.0043
+      },
+      {
+        "brand": "Clothing Brand",
+        "count": 1,
+        "percentage": 0.0043
+      },
+      {
+        "brand": "Motor",
+        "count": 1,
+        "percentage": 0.0043
+      },
+      {
+        "brand": "Comfort",
+        "count": 1,
+        "percentage": 0.0043
+      },
+      {
+        "brand": "Care",
+        "count": 1,
+        "percentage": 0.0043
+      },
+      {
+        "brand": "Excellent Service",
+        "count": 1,
+        "percentage": 0.0043
+      }
+    ]
+  },
+  "Symbol": {
+    "total_responses": 73,
+    "skoda_percentage": 0.0548,
+    "dont_know_percentage": 0.0411,
+    "other_brands": [
+      {
+        "brand": "Samsung",
+        "count": 7,
+        "percentage": 0.0959
+      },
+      {
+        "brand": "Music",
+        "count": 3,
+        "percentage": 0.0411
+      },
+      {
+        "brand": "Sony",
+        "count": 2,
+        "percentage": 0.0274
+      },
+      {
+        "brand": "Car",
+        "count": 2,
+        "percentage": 0.0274
+      },
+      {
+        "brand": "Can'T Really Recall",
+        "count": 1,
+        "percentage": 0.0137
+      },
+      {
+        "brand": "Boots",
+        "count": 1,
+        "percentage": 0.0137
+      },
+      {
+        "brand": "Computer",
+        "count": 1,
+        "percentage": 0.0137
+      },
+      {
+        "brand": "Little Red Riding Hood Sparkling Wine",
+        "count": 1,
+        "percentage": 0.0137
+      },
+      {
+        "brand": "Newscast",
+        "count": 1,
+        "percentage": 0.0137
+      },
+      {
+        "brand": "Serious",
+        "count": 1,
+        "percentage": 0.0137
+      },
+      {
+        "brand": "Electronics",
+        "count": 1,
+        "percentage": 0.0137
+      },
+      {
+        "brand": "Nintendo",
+        "count": 1,
+        "percentage": 0.0137
+      },
+      {
+        "brand": "It Sounds Like Paramount Plus",
+        "count": 1,
+        "percentage": 0.0137
+      },
+      {
+        "brand": "Nonidea",
+        "count": 1,
+        "percentage": 0.0137
+      },
+      {
+        "brand": "Tenue",
+        "count": 1,
+        "percentage": 0.0137
+      }
+    ]
+  },
+  "Sonic": {
+    "total_responses": 115,
+    "skoda_percentage": 0.0261,
+    "dont_know_percentage": 0.0783,
+    "other_brands": [
+      {
+        "brand": "John Lewis",
+        "count": 5,
+        "percentage": 0.0435
+      },
+      {
+        "brand": "Cosmetics",
+        "count": 3,
+        "percentage": 0.0261
+      },
+      {
+        "brand": "Travel",
+        "count": 3,
+        "percentage": 0.0261
+      },
+      {
+        "brand": "Travel Agency",
+        "count": 3,
+        "percentage": 0.0261
+      },
+      {
+        "brand": "Lorem Ipsum",
+        "count": 3,
+        "percentage": 0.0261
+      },
+      {
+        "brand": "Clothing",
+        "count": 2,
+        "percentage": 0.0174
+      },
+      {
+        "brand": "Nike",
+        "count": 2,
+        "percentage": 0.0174
+      },
+      {
+        "brand": "Google",
+        "count": 2,
+        "percentage": 0.0174
+      },
+      {
+        "brand": "North Face",
+        "count": 2,
+        "percentage": 0.0174
+      },
+      {
+        "brand": "Welcome To The Home Page.",
+        "count": 2,
+        "percentage": 0.0174
+      },
+      {
+        "brand": "Banking",
+        "count": 1,
+        "percentage": 0.0087
+      },
+      {
+        "brand": "Outdoors",
+        "count": 1,
+        "percentage": 0.0087
+      },
+      {
+        "brand": "Kia",
+        "count": 1,
+        "percentage": 0.0087
+      },
+      {
+        "brand": "I Find It Very Positive And Appropriate, Really Interesting.",
+        "count": 1,
+        "percentage": 0.0087
+      },
+      {
+        "brand": "Medicines",
+        "count": 1,
+        "percentage": 0.0087
+      }
+    ]
+  },
+  "Wordmark": {
+    "total_responses": 137,
+    "skoda_percentage": 0.1095,
+    "dont_know_percentage": 0.0365,
+    "other_brands": [
+      {
+        "brand": "Compact",
+        "count": 9,
+        "percentage": 0.0657
+      },
+      {
+        "brand": "Dasok",
+        "count": 6,
+        "percentage": 0.0438
+      },
+      {
+        "brand": "Dacia",
+        "count": 3,
+        "percentage": 0.0219
+      },
+      {
+        "brand": "Car",
+        "count": 3,
+        "percentage": 0.0219
+      },
+      {
+        "brand": "Technology",
+        "count": 2,
+        "percentage": 0.0146
+      },
+      {
+        "brand": "Car Brand",
+        "count": 2,
+        "percentage": 0.0146
+      },
+      {
+        "brand": "Electronic Equipment",
+        "count": 2,
+        "percentage": 0.0146
+      },
+      {
+        "brand": "Cars",
+        "count": 2,
+        "percentage": 0.0146
+      },
+      {
+        "brand": "Clothing",
+        "count": 2,
+        "percentage": 0.0146
+      },
+      {
+        "brand": "It Doesn'T Belong To Any Brand",
+        "count": 1,
+        "percentage": 0.0073
+      },
+      {
+        "brand": "Amazon Prime",
+        "count": 1,
+        "percentage": 0.0073
+      },
+      {
+        "brand": "A Sports Brand",
+        "count": 1,
+        "percentage": 0.0073
+      },
+      {
+        "brand": "None",
+        "count": 1,
+        "percentage": 0.0073
+      },
+      {
+        "brand": "Artificial Intelligence",
+        "count": 1,
+        "percentage": 0.0073
+      },
+      {
+        "brand": "Some Technology",
+        "count": 1,
+        "percentage": 0.0073
+      }
+    ]
+  },
+  "Emerald Green": {
+    "total_responses": 0,
+    "note": "This element was shown later in the progressive sequence. Individual brand mentions cannot be isolated from the raw data as multiple elements were shown together.",
+    "skoda_percentage": 0,
+    "dont_know_percentage": 0,
+    "other_brands": []
+  },
+  "Hacek": {
+    "total_responses": 0,
+    "note": "This element was shown later in the progressive sequence. Individual brand mentions cannot be isolated from the raw data as multiple elements were shown together.",
+    "skoda_percentage": 0,
+    "dont_know_percentage": 0,
+    "other_brands": []
+  },
+  "Tagline": {
+    "total_responses": 0,
+    "note": "This element was shown later in the progressive sequence. Individual brand mentions cannot be isolated from the raw data as multiple elements were shown together.",
+    "skoda_percentage": 0,
+    "dont_know_percentage": 0,
+    "other_brands": []
+  }
+}

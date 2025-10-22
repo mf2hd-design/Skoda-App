@@ -1414,6 +1414,120 @@ with tab2:
         "Don't Know": '{:.0%}'
     }), use_container_width=True)
 
+    # Detailed Competitor Breakdown
+    st.markdown("---")
+    st.markdown("### 🔍 Detailed Competitor Breakdown")
+    st.caption("Top brands mentioned when consumers misattribute Škoda elements (from open-text responses)")
+
+    # Load detailed competitor data
+    try:
+        with open('q05_competitor_detail.json', 'r', encoding='utf-8') as f:
+            competitor_detail = json.load(f)
+
+        # Element selector for detailed view
+        detail_element = st.selectbox(
+            "Select element to view detailed competitor mentions:",
+            options=[e for e in research_data.keys() if e in competitor_detail],
+            key="detail_element"
+        )
+
+        if detail_element in competitor_detail:
+            detail_data = competitor_detail[detail_element]
+
+            if detail_data['total_responses'] > 0:
+                # Show summary metrics
+                col1, col2, col3, col4 = st.columns(4)
+                with col1:
+                    st.metric("Total Responses", detail_data['total_responses'])
+                with col2:
+                    st.metric("Škoda Attribution", f"{detail_data['skoda_percentage']:.1%}")
+                with col3:
+                    st.metric("Don't Know", f"{detail_data['dont_know_percentage']:.1%}")
+                with col4:
+                    other_pct = sum([b['percentage'] for b in detail_data['other_brands']])
+                    st.metric("Other Brands", f"{other_pct:.1%}")
+
+                # Show top competitor brands
+                if detail_data['other_brands']:
+                    st.markdown("#### Top Misattributed Brands")
+
+                    # Create DataFrame for visualization
+                    top_10 = detail_data['other_brands'][:10]
+                    competitor_df = pd.DataFrame(top_10)
+
+                    # Bar chart
+                    fig_competitors = px.bar(
+                        competitor_df,
+                        x='percentage',
+                        y='brand',
+                        orientation='h',
+                        title=f"Top 10 Brands Confused with {detail_element}",
+                        labels={'percentage': 'Percentage of Responses', 'brand': 'Brand Mentioned'},
+                        color='percentage',
+                        color_continuous_scale='Reds'
+                    )
+                    fig_competitors.update_layout(
+                        yaxis={'categoryorder': 'total ascending'},
+                        showlegend=False,
+                        height=400
+                    )
+                    fig_competitors.update_traces(
+                        texttemplate='%{x:.1%}',
+                        textposition='outside'
+                    )
+                    st.plotly_chart(fig_competitors, use_container_width=True)
+
+                    # Detailed table
+                    with st.expander("📋 View all competitor mentions"):
+                        full_competitor_df = pd.DataFrame(detail_data['other_brands'])
+                        full_competitor_df['percentage_display'] = full_competitor_df['percentage'].apply(lambda x: f"{x:.2%}")
+                        st.dataframe(
+                            full_competitor_df[['brand', 'count', 'percentage_display']].rename(columns={
+                                'brand': 'Brand',
+                                'count': 'Mentions',
+                                'percentage_display': 'Percentage'
+                            }),
+                            use_container_width=True,
+                            hide_index=True
+                        )
+
+                    # Insights
+                    st.markdown("#### 💡 Key Insights")
+
+                    # Categorize competitors
+                    automotive = [b for b in detail_data['other_brands'] if any(term in b['brand'].lower() for term in ['car', 'dacia', 'vauxhall', 'kia', 'vehicle', 'motor'])]
+                    tech = [b for b in detail_data['other_brands'] if any(term in b['brand'].lower() for term in ['samsung', 'sony', 'nike', 'tech', 'electronic', 'computer', 'nintendo'])]
+                    retail = [b for b in detail_data['other_brands'] if any(term in b['brand'].lower() for term in ['tesco', 'amazon', 'john lewis', 'starbucks', 'boots'])]
+
+                    col1, col2, col3 = st.columns(3)
+                    with col1:
+                        auto_pct = sum([b['percentage'] for b in automotive])
+                        st.metric("Automotive Brands", f"{auto_pct:.1%}", help="Mentions of car brands/automotive terms")
+                    with col2:
+                        tech_pct = sum([b['percentage'] for b in tech])
+                        st.metric("Tech/Sports Brands", f"{tech_pct:.1%}", help="Mentions of technology and sportswear brands")
+                    with col3:
+                        retail_pct = sum([b['percentage'] for b in retail])
+                        st.metric("Retail Brands", f"{retail_pct:.1%}", help="Mentions of retail/service brands")
+
+                    # Strategic insight
+                    if automotive:
+                        st.success(f"**Automotive competitors:** {', '.join([b['brand'] for b in automotive[:5]])} - These represent actual competitive threats in the automotive space.")
+                    else:
+                        st.info("**Low automotive confusion:** Very few automotive competitors mentioned - confusion is mostly with non-automotive brands, suggesting the element is distinctive from car competitors but lacks strong Škoda association.")
+                else:
+                    st.info("No other brand mentions recorded for this element.")
+            else:
+                if 'note' in detail_data:
+                    st.info(detail_data['note'])
+                else:
+                    st.info("No detailed competitor data available for this element.")
+
+    except FileNotFoundError:
+        st.warning("⚠️ Detailed competitor data file not found. Please ensure q05_competitor_detail.json is in the app directory.")
+    except Exception as e:
+        st.error(f"Error loading competitor detail data: {str(e)}")
+
 # ==================== TAB 3: STRATEGIC INSIGHTS ====================
 with tab3:
     st.header("Strategic Insights Dashboard")
