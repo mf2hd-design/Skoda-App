@@ -1380,8 +1380,8 @@ with tab2:
                 dont_know_val = row["Don't Know"]
                 st.write(f"• **{element}**: {dont_know_val:.0%} don't recognize")
 
-    # Redesign Priority Matrix
-    st.markdown("#### 📊 Redesign Priority Matrix")
+    # Confusion Matrix
+    st.markdown("#### 📊 Confusion Matrix")
 
     confusion_df['Brand_Confusion_Risk'] = confusion_df['Other Brands']
     confusion_df['Distinctiveness_Score'] = confusion_df['Škoda'] - confusion_df['Brand_Confusion_Risk']
@@ -1392,19 +1392,11 @@ with tab2:
         other_brands = confusion_df.loc[element, 'Other Brands']
         dont_know = confusion_df.loc[element, "Don't Know"]
 
-        if skoda_attr < 0.20 and other_brands > 0.20:
-            priority = "🔴 HIGH - Fix Now"
-        elif skoda_attr < 0.30 or other_brands > 0.20:
-            priority = "🟡 MEDIUM - Monitor"
-        else:
-            priority = "🟢 LOW - Maintain"
-
         threat_matrix.append({
             'Element': element,
             'Škoda Attribution': skoda_attr,
             'Other Brands': other_brands,
-            "Don't Know": dont_know,
-            'Priority': priority
+            "Don't Know": dont_know
         })
 
     threat_df = pd.DataFrame(threat_matrix).sort_values('Other Brands', ascending=False)
