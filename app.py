@@ -525,11 +525,12 @@ with tab1:
 
     with col3:
         st.metric(
-            "Highest Investment", 
+            "Highest Investment",
             highest_investment['Element'],
             help="Total investment represents the combined media spend across all campaigns where this element appears. Calculated from the comms audit data."
         )
-        st.info(f"**€{highest_investment['Total Investment']:,.0f}** invested across **{int(highest_investment['Overall Usage'] * 102)}** ads.")
+        num_ads_with_element = int(highest_investment['Overall Usage'] * len(audit_df))
+        st.info(f"**€{highest_investment['Total Investment']:,.0f}** invested in {num_ads_with_element} ads featuring {highest_investment['Element']} (out of {len(audit_df)} total campaigns).")
         with st.expander("💰 Why has this element received the most investment?"):
             # Calculate relative context
             median_usage = master_df['Overall Usage'].median()
