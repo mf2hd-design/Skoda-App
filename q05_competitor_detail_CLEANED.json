@@ -1,0 +1,347 @@
+{
+  "Electric Green": {
+    "total_responses": 98,
+    "skoda_percentage": 0.0204,
+    "dont_know_percentage": 0.0918,
+    "automotive_competitors": {
+      "count": 0,
+      "percentage": 0.0,
+      "brands": []
+    },
+    "non_automotive_brands": {
+      "count": 13,
+      "percentage": 0.1327,
+      "top_mentions": [
+        {
+          "brand": "Nike",
+          "count": 6
+        },
+        {
+          "brand": "Bolt",
+          "count": 2
+        },
+        {
+          "brand": "Tesco",
+          "count": 2
+        },
+        {
+          "brand": "Coke",
+          "count": 1
+        },
+        {
+          "brand": "Uber Eats",
+          "count": 1
+        }
+      ],
+      "description": "6 non-automotive brands mentioned"
+    },
+    "could_not_identify": {
+      "count": 13,
+      "percentage": 0.1327,
+      "description": "Generic/confused responses (Car, Green, unclear verbatims, etc.)"
+    },
+    "_data_quality_note": "Cleaned 2025-10-24: Recoded verbatim responses into meaningful categories",
+    "_coverage_note": "Coded responses account for 26.5% of this subset"
+  },
+  "Facets": {
+    "total_responses": 72,
+    "skoda_percentage": 0.0278,
+    "dont_know_percentage": 0.1806,
+    "automotive_competitors": {
+      "count": 0,
+      "percentage": 0.0,
+      "brands": []
+    },
+    "non_automotive_brands": {
+      "count": 14,
+      "percentage": 0.1944,
+      "top_mentions": [
+        {
+          "brand": "Leroy Merlin",
+          "count": 3
+        },
+        {
+          "brand": "Addidas",
+          "count": 1
+        },
+        {
+          "brand": "Bosch",
+          "count": 1
+        },
+        {
+          "brand": "Lloyds",
+          "count": 1
+        },
+        {
+          "brand": "Puma",
+          "count": 1
+        }
+      ],
+      "description": "12 non-automotive brands mentioned"
+    },
+    "could_not_identify": {
+      "count": 3,
+      "percentage": 0.0417,
+      "description": "Generic/confused responses (Car, Green, unclear verbatims, etc.)"
+    },
+    "_data_quality_note": "Cleaned 2025-10-24: Recoded verbatim responses into meaningful categories",
+    "_coverage_note": "Coded responses account for 23.6% of this subset"
+  },
+  "Type": {
+    "total_responses": 231,
+    "skoda_percentage": 0.7706,
+    "dont_know_percentage": 0.0173,
+    "automotive_competitors": {
+      "count": 0,
+      "percentage": 0.0,
+      "brands": []
+    },
+    "non_automotive_brands": {
+      "count": 11,
+      "percentage": 0.0476,
+      "top_mentions": [
+        {
+          "brand": "Starbucks",
+          "count": 3
+        },
+        {
+          "brand": "Nike",
+          "count": 2
+        },
+        {
+          "brand": "Damage",
+          "count": 1
+        },
+        {
+          "brand": "The Goose",
+          "count": 1
+        },
+        {
+          "brand": "Fashion",
+          "count": 1
+        }
+      ],
+      "description": "8 non-automotive brands mentioned"
+    },
+    "could_not_identify": {
+      "count": 11,
+      "percentage": 0.0476,
+      "description": "Generic/confused responses (Car, Green, unclear verbatims, etc.)"
+    },
+    "_data_quality_note": "Cleaned 2025-10-24: Recoded verbatim responses into meaningful categories",
+    "_coverage_note": "Coded responses account for 9.5% of this subset"
+  },
+  "Symbol": {
+    "total_responses": 73,
+    "skoda_percentage": 0.0548,
+    "dont_know_percentage": 0.0411,
+    "automotive_competitors": {
+      "count": 0,
+      "percentage": 0.0,
+      "brands": []
+    },
+    "non_automotive_brands": {
+      "count": 22,
+      "percentage": 0.3014,
+      "top_mentions": [
+        {
+          "brand": "Samsung",
+          "count": 7
+        },
+        {
+          "brand": "Music",
+          "count": 3
+        },
+        {
+          "brand": "Sony",
+          "count": 2
+        },
+        {
+          "brand": "Can'T Really Recall",
+          "count": 1
+        },
+        {
+          "brand": "Boots",
+          "count": 1
+        }
+      ],
+      "description": "13 non-automotive brands mentioned"
+    },
+    "could_not_identify": {
+      "count": 3,
+      "percentage": 0.0411,
+      "description": "Generic/confused responses (Car, Green, unclear verbatims, etc.)"
+    },
+    "_data_quality_note": "Cleaned 2025-10-24: Recoded verbatim responses into meaningful categories",
+    "_coverage_note": "Coded responses account for 34.2% of this subset"
+  },
+  "Sonic": {
+    "total_responses": 115,
+    "skoda_percentage": 0.0261,
+    "dont_know_percentage": 0.0783,
+    "automotive_competitors": {
+      "count": 1,
+      "percentage": 0.0087,
+      "brands": [
+        {
+          "brand": "Kia",
+          "count": 1,
+          "percentage": 0.0087
+        }
+      ]
+    },
+    "non_automotive_brands": {
+      "count": 31,
+      "percentage": 0.2696,
+      "top_mentions": [
+        {
+          "brand": "John Lewis",
+          "count": 5
+        },
+        {
+          "brand": "Cosmetics",
+          "count": 3
+        },
+        {
+          "brand": "Travel",
+          "count": 3
+        },
+        {
+          "brand": "Travel Agency",
+          "count": 3
+        },
+        {
+          "brand": "Lorem Ipsum",
+          "count": 3
+        }
+      ],
+      "description": "14 non-automotive brands mentioned"
+    },
+    "could_not_identify": {
+      "count": 0,
+      "percentage": 0.0,
+      "description": "Generic/confused responses (Car, Green, unclear verbatims, etc.)"
+    },
+    "_data_quality_note": "Cleaned 2025-10-24: Recoded verbatim responses into meaningful categories",
+    "_coverage_note": "Coded responses account for 27.8% of this subset"
+  },
+  "Wordmark": {
+    "total_responses": 137,
+    "skoda_percentage": 0.1095,
+    "dont_know_percentage": 0.0365,
+    "automotive_competitors": {
+      "count": 3,
+      "percentage": 0.0219,
+      "brands": [
+        {
+          "brand": "Dacia",
+          "count": 3,
+          "percentage": 0.0219
+        }
+      ]
+    },
+    "non_automotive_brands": {
+      "count": 24,
+      "percentage": 0.1752,
+      "top_mentions": [
+        {
+          "brand": "Compact",
+          "count": 9
+        },
+        {
+          "brand": "Dasok",
+          "count": 6
+        },
+        {
+          "brand": "Technology",
+          "count": 2
+        },
+        {
+          "brand": "Electronic Equipment",
+          "count": 2
+        },
+        {
+          "brand": "Clothing",
+          "count": 2
+        }
+      ],
+      "description": "8 non-automotive brands mentioned"
+    },
+    "could_not_identify": {
+      "count": 10,
+      "percentage": 0.073,
+      "description": "Generic/confused responses (Car, Green, unclear verbatims, etc.)"
+    },
+    "_data_quality_note": "Cleaned 2025-10-24: Recoded verbatim responses into meaningful categories",
+    "_coverage_note": "Coded responses account for 27.0% of this subset"
+  },
+  "Emerald Green": {
+    "total_responses": 0,
+    "skoda_percentage": 0,
+    "dont_know_percentage": 0,
+    "automotive_competitors": {
+      "count": 0,
+      "percentage": 0.0,
+      "brands": []
+    },
+    "non_automotive_brands": {
+      "count": 0,
+      "percentage": 0.0,
+      "top_mentions": [],
+      "description": "0 non-automotive brands mentioned"
+    },
+    "could_not_identify": {
+      "count": 0,
+      "percentage": 0.0,
+      "description": "Generic/confused responses (Car, Green, unclear verbatims, etc.)"
+    },
+    "_data_quality_note": "Cleaned 2025-10-24: Recoded verbatim responses into meaningful categories",
+    "_coverage_note": "No responses"
+  },
+  "Hacek": {
+    "total_responses": 0,
+    "skoda_percentage": 0,
+    "dont_know_percentage": 0,
+    "automotive_competitors": {
+      "count": 0,
+      "percentage": 0.0,
+      "brands": []
+    },
+    "non_automotive_brands": {
+      "count": 0,
+      "percentage": 0.0,
+      "top_mentions": [],
+      "description": "0 non-automotive brands mentioned"
+    },
+    "could_not_identify": {
+      "count": 0,
+      "percentage": 0.0,
+      "description": "Generic/confused responses (Car, Green, unclear verbatims, etc.)"
+    },
+    "_data_quality_note": "Cleaned 2025-10-24: Recoded verbatim responses into meaningful categories",
+    "_coverage_note": "No responses"
+  },
+  "Tagline": {
+    "total_responses": 0,
+    "skoda_percentage": 0,
+    "dont_know_percentage": 0,
+    "automotive_competitors": {
+      "count": 0,
+      "percentage": 0.0,
+      "brands": []
+    },
+    "non_automotive_brands": {
+      "count": 0,
+      "percentage": 0.0,
+      "top_mentions": [],
+      "description": "0 non-automotive brands mentioned"
+    },
+    "could_not_identify": {
+      "count": 0,
+      "percentage": 0.0,
+      "description": "Generic/confused responses (Car, Green, unclear verbatims, etc.)"
+    },
+    "_data_quality_note": "Cleaned 2025-10-24: Recoded verbatim responses into meaningful categories",
+    "_coverage_note": "No responses"
+  }
+}
