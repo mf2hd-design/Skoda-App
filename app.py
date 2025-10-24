@@ -69,156 +69,158 @@ st.set_page_config(
 
 # --- Brand Elements ---
 brand_elements = [
-    "Electric Green", "Dark Green", "Type", "Tagline", "Symbol",
+    "Electric Green", "Emerald Green", "Type", "Tagline", "Symbol",
     "Hacek", "Wordmark", "Facets", "Sonic"
 ]
 
 # Survey Base
 SURVEY_BASE = 2011  # Total respondents across UK, Spain, Germany, Poland
 
-# --- CORRECTED Research Data from P045556 Study (Actual Survey Results) ---
-# Data Source: 2025-10-06_P045556_-_Saffron_Brand_Assets_-_Final_-_V2_-_Private.xlsx
-# Recognition: Q02 (Have you seen/heard this element before?) - % who said "Yes"
-# Uniqueness: Q05 (Which brand do you think this belongs to?) - % who correctly said "Škoda"  
-# Personality traits: Q04 (7 semantic differential scales) - % with positive associations
-# Sentiment: Average positive personality associations
+# --- VERIFIED Research Data from P045556 Study (Actual Survey Results) ---
+# Data Source: P045556_ALL_Tables_20251020_Private.xlsx
+# Recognition: Q02 (Have you seen/heard this element before?) - % who said "Yes" (definitely + think so)
+# Uniqueness: Q05 (Which brand do you think this belongs to?) - % who correctly said "Škoda"
+# Personality traits: Q04 (7 semantic differential scales) - % T2B (Top 2 Box - positive associations)
+# Sentiment: Average positive personality associations across all 7 traits
 
-# CORRECTED VALUES based on actual survey data analysis:
-# - Overall recognition averages 20% (not 36-64% as previously)
-# - Symbol (Škoda logo) is the clear winner at 48% recognition
-# - Uniqueness averages 50% (half correctly identified as Škoda)
-# - Symbol uniqueness is highest at 65%
+# DATA VERIFIED FROM EXCEL FORENSIC AUDIT (2025-10-24):
+# - Overall recognition averages 40% (range: 36-64% across elements)
+# - Symbol (Škoda logo) is the clear winner at 64.3% recognition
+# - Uniqueness averages 19% (range: 16-39% across elements)
+# - Symbol uniqueness is highest at 38.5%
 
 research_data = {
     'Electric Green': {
-        'recognition': 0.20,  # CORRECTED from 0.38
-        'uniqueness': 0.32,   # CORRECTED from 0.17
-        'bold': 0.490, 'stylish': 0.460, 'modern': 0.500, 'simple': 0.500, 
-        'human': 0.450, 'exciting': 0.450, 'playful': 0.440, 
-        'positive_sentiment': 0.470, 
-        'negative_sentiment': 0.530, 
-        'net_sentiment': -0.060
+        'recognition': 0.376,  # VERIFIED from Excel Q02.1
+        'uniqueness': 0.174,   # VERIFIED from Excel Q05.1
+        'bold': 0.490, 'stylish': 0.463, 'modern': 0.499, 'simple': 0.502,
+        'human': 0.452, 'exciting': 0.450, 'playful': 0.443,
+        'positive_sentiment': 0.471,
+        'negative_sentiment': 0.529,
+        'net_sentiment': -0.057
     },
-    'Dark Green': {
-        'recognition': 0.21,  # CORRECTED from 0.39
-        'uniqueness': 0.35,   # CORRECTED from 0.19
-        'bold': 0.510, 'stylish': 0.490, 'modern': 0.520, 'simple': 0.530, 
-        'human': 0.460, 'exciting': 0.490, 'playful': 0.450, 
-        'positive_sentiment': 0.493,
-        'negative_sentiment': 0.507, 
-        'net_sentiment': -0.014
+    'Emerald Green': {
+        'recognition': 0.388,  # VERIFIED from Excel Q02.7
+        'uniqueness': 0.195,   # VERIFIED from Excel Q05.7
+        'bold': 0.510, 'stylish': 0.490, 'modern': 0.522, 'simple': 0.527,
+        'human': 0.462, 'exciting': 0.485, 'playful': 0.451,
+        'positive_sentiment': 0.492,
+        'negative_sentiment': 0.508,
+        'net_sentiment': -0.015
     },
     'Type': {
-        'recognition': 0.19,  # CORRECTED from 0.37
-        'uniqueness': 0.30,   # CORRECTED from 0.17
-        'bold': 0.470, 'stylish': 0.470, 'modern': 0.490, 'simple': 0.500, 
-        'human': 0.440, 'exciting': 0.450, 'playful': 0.410, 
-        'positive_sentiment': 0.461,
-        'negative_sentiment': 0.539, 
-        'net_sentiment': -0.077
+        'recognition': 0.374,  # VERIFIED from Excel Q02.3
+        'uniqueness': 0.169,   # VERIFIED from Excel Q05.3
+        'bold': 0.474, 'stylish': 0.473, 'modern': 0.491, 'simple': 0.499,
+        'human': 0.438, 'exciting': 0.448, 'playful': 0.412,
+        'positive_sentiment': 0.462,
+        'negative_sentiment': 0.538,
+        'net_sentiment': -0.076
     },
     'Tagline': {
-        'recognition': 0.19,  # CORRECTED from 0.36
-        'uniqueness': 0.31,   # CORRECTED from 0.17
-        'bold': 0.480, 'stylish': 0.480, 'modern': 0.510, 'simple': 0.500, 
-        'human': 0.460, 'exciting': 0.510, 'playful': 0.450, 
-        'positive_sentiment': 0.484,
-        'negative_sentiment': 0.516, 
-        'net_sentiment': -0.031
+        'recognition': 0.361,  # VERIFIED from Excel Q02.9
+        'uniqueness': 0.175,   # VERIFIED from Excel Q05.9
+        'bold': 0.482, 'stylish': 0.484, 'modern': 0.512, 'simple': 0.495,
+        'human': 0.464, 'exciting': 0.509, 'playful': 0.451,
+        'positive_sentiment': 0.485,
+        'negative_sentiment': 0.515,
+        'net_sentiment': -0.029
     },
     'Symbol': {
-        'recognition': 0.48,  # CORRECTED from 0.64 - Still highest but more realistic
-        'uniqueness': 0.65,   # CORRECTED from 0.38 - Increased to reflect it's most distinctive
-        'bold': 0.500, 'stylish': 0.500, 'modern': 0.550, 'simple': 0.540, 
-        'human': 0.460, 'exciting': 0.500, 'playful': 0.460, 
+        'recognition': 0.643,  # VERIFIED from Excel Q02.4 - Highest recognition
+        'uniqueness': 0.385,   # VERIFIED from Excel Q05.4 - Highest uniqueness
+        'bold': 0.498, 'stylish': 0.497, 'modern': 0.551, 'simple': 0.536,
+        'human': 0.464, 'exciting': 0.500, 'playful': 0.462,
         'positive_sentiment': 0.501,
-        'negative_sentiment': 0.499, 
-        'net_sentiment': 0.003
+        'negative_sentiment': 0.499,
+        'net_sentiment': 0.002
     },
     'Hacek': {
-        'recognition': 0.20,  # CORRECTED from 0.38
-        'uniqueness': 0.33,   # CORRECTED from 0.19
-        'bold': 0.460, 'stylish': 0.460, 'modern': 0.490, 'simple': 0.550, 
-        'human': 0.440, 'exciting': 0.440, 'playful': 0.420, 
+        'recognition': 0.377,  # VERIFIED from Excel Q02.8
+        'uniqueness': 0.186,   # VERIFIED from Excel Q05.8
+        'bold': 0.463, 'stylish': 0.456, 'modern': 0.488, 'simple': 0.549,
+        'human': 0.439, 'exciting': 0.442, 'playful': 0.422,
         'positive_sentiment': 0.466,
-        'negative_sentiment': 0.534, 
+        'negative_sentiment': 0.534,
         'net_sentiment': -0.069
     },
     'Wordmark': {
-        'recognition': 0.30,  # CORRECTED from 0.44 - Second highest  
-        'uniqueness': 0.48,   # CORRECTED from 0.28 - Second most distinctive
-        'bold': 0.490, 'stylish': 0.490, 'modern': 0.540, 'simple': 0.520, 
-        'human': 0.450, 'exciting': 0.480, 'playful': 0.450, 
+        'recognition': 0.447,  # VERIFIED from Excel Q02.6 - Second highest recognition
+        'uniqueness': 0.279,   # VERIFIED from Excel Q05.6 - Second highest uniqueness
+        'bold': 0.490, 'stylish': 0.492, 'modern': 0.537, 'simple': 0.519,
+        'human': 0.455, 'exciting': 0.485, 'playful': 0.448,
         'positive_sentiment': 0.489,
-        'negative_sentiment': 0.511, 
-        'net_sentiment': -0.023
+        'negative_sentiment': 0.511,
+        'net_sentiment': -0.021
     },
     'Facets': {
-        'recognition': 0.20,  # CORRECTED from 0.38
-        'uniqueness': 0.29,   # CORRECTED from 0.16
-        'bold': 0.500, 'stylish': 0.480, 'modern': 0.510, 'simple': 0.510, 
-        'human': 0.430, 'exciting': 0.460, 'playful': 0.460, 
+        'recognition': 0.384,  # VERIFIED from Excel Q02.2
+        'uniqueness': 0.158,   # VERIFIED from Excel Q05.2
+        'bold': 0.502, 'stylish': 0.484, 'modern': 0.514, 'simple': 0.508,
+        'human': 0.427, 'exciting': 0.458, 'playful': 0.461,
         'positive_sentiment': 0.479,
-        'negative_sentiment': 0.521, 
-        'net_sentiment': -0.043
+        'negative_sentiment': 0.521,
+        'net_sentiment': -0.042
     },
     'Sonic': {
-        'recognition': 0.22,  # CORRECTED from 0.40
-        'uniqueness': 0.34,   # CORRECTED from 0.17
-        'bold': 0.500, 'stylish': 0.490, 'modern': 0.550, 'simple': 0.550, 
-        'human': 0.460, 'exciting': 0.510, 'playful': 0.480, 
-        'positive_sentiment': 0.506,
-        'negative_sentiment': 0.494, 
-        'net_sentiment': 0.011
+        'recognition': 0.398,  # VERIFIED from Excel Q02.5
+        'uniqueness': 0.166,   # VERIFIED from Excel Q05.5
+        'bold': 0.502, 'stylish': 0.491, 'modern': 0.546, 'simple': 0.545,
+        'human': 0.462, 'exciting': 0.508, 'playful': 0.479,
+        'positive_sentiment': 0.505,
+        'negative_sentiment': 0.495,
+        'net_sentiment': 0.009
     },
 }
 
-# Recognition by Country - CORRECTED from actual survey data
-# Overall country averages: UK 19%, Spain 19.7%, Germany 17.5%, Poland 23.5%
+# Recognition by Country - VERIFIED from Excel Q02 tables (columns by country)
+# Overall country averages: UK 42%, Spain 43%, Germany 40%, Poland 45%
 recognition_by_country = {
-    'Electric Green': {'UK': 0.19, 'Spain': 0.20, 'Germany': 0.17, 'Poland': 0.24},
-    'Dark Green': {'UK': 0.20, 'Spain': 0.21, 'Germany': 0.18, 'Poland': 0.25},
-    'Type': {'UK': 0.18, 'Spain': 0.19, 'Germany': 0.17, 'Poland': 0.22},
-    'Tagline': {'UK': 0.18, 'Spain': 0.20, 'Germany': 0.16, 'Poland': 0.22},
-    'Symbol': {'UK': 0.45, 'Spain': 0.48, 'Germany': 0.44, 'Poland': 0.55},  # CORRECTED - Still highest across all countries
-    'Hacek': {'UK': 0.19, 'Spain': 0.20, 'Germany': 0.17, 'Poland': 0.24},
-    'Wordmark': {'UK': 0.28, 'Spain': 0.30, 'Germany': 0.27, 'Poland': 0.35},  # CORRECTED - Second highest
-    'Facets': {'UK': 0.19, 'Spain': 0.20, 'Germany': 0.18, 'Poland': 0.23},
-    'Sonic': {'UK': 0.21, 'Spain': 0.22, 'Germany': 0.20, 'Poland': 0.25},
+    'Electric Green': {'UK': 0.41, 'Spain': 0.377, 'Germany': 0.294, 'Poland': 0.436},
+    'Emerald Green': {'UK': 0.376, 'Spain': 0.383, 'Germany': 0.372, 'Poland': 0.413},
+    'Type': {'UK': 0.452, 'Spain': 0.368, 'Germany': 0.301, 'Poland': 0.373},
+    'Tagline': {'UK': 0.353, 'Spain': 0.394, 'Germany': 0.323, 'Poland': 0.364},
+    'Symbol': {'UK': 0.535, 'Spain': 0.661, 'Germany': 0.610, 'Poland': 0.765},  # Highest across all countries
+    'Hacek': {'UK': 0.353, 'Spain': 0.379, 'Germany': 0.354, 'Poland': 0.410},
+    'Wordmark': {'UK': 0.453, 'Spain': 0.462, 'Germany': 0.386, 'Poland': 0.485},  # Second highest
+    'Facets': {'UK': 0.413, 'Spain': 0.395, 'Germany': 0.369, 'Poland': 0.355},
+    'Sonic': {'UK': 0.391, 'Spain': 0.420, 'Germany': 0.386, 'Poland': 0.394},
 }
 
 # --- ADDITIONAL SURVEY METRICS (New Data) ---
 
 # Recognition Journey - QHiddenAwareness
-# Shows how recognition builds as respondents see more elements
+# Shows how recognition builds as respondents see more elements (CUMULATIVE)
 recognition_journey = {
-    'after_1_element': 0.103,   # 10.3% recognized Škoda after seeing just 1 element
-    'after_2_elements': 0.133,  # 13.3% after 2 elements  
-    'after_3_elements': 0.197,  # 19.7% after 3 elements
-    'after_4_elements': 0.247,  # 24.7% after 4 elements
-    'after_5_elements': 0.313,  # 31.3% after 5 elements
-    'after_all_6_elements': 0.401,  # 40.1% after seeing all 6 elements
-    'never_recognized': 0.563   # 56.3% NEVER identified it as Škoda
+    'after_1_element': 0.102,   # 10.2% recognized Škoda after seeing just 1 element - VERIFIED Table 117
+    'after_2_elements': 0.109,  # 10.9% after 2 elements - VERIFIED (cumulative)
+    'after_3_elements': 0.243,  # 24.3% after 3 elements - VERIFIED (cumulative)
+    'after_4_elements': 0.403,  # 40.3% after 4 elements - VERIFIED (cumulative)
+    'after_5_elements': 0.427,  # 42.7% after 5 elements - VERIFIED (cumulative)
+    'after_all_6_elements': 0.438,  # 43.8% after seeing all 6 elements - VERIFIED (cumulative)
+    'never_recognized': 0.562   # 56.2% NEVER identified it as Škoda - VERIFIED
 }
 
 # Post-Reveal Škoda Familiarity (Q27)
 # After revealing it's Škoda, how familiar are respondents?
 skoda_familiarity = {
-    'very_familiar': 0.08,      # 8% - Very familiar
-    'quite_familiar': 0.25,     # 25% - Quite familiar  
-    'heard_of_not_much': 0.46,  # 46% - Heard of but don't know much
-    'never_heard': 0.18,        # 18% - Never heard of Škoda
-    'not_sure': 0.03            # 3% - Not sure
+    'very_familiar': 0.214,     # 21.4% - Very familiar - VERIFIED Table 120
+    'quite_familiar': 0.386,    # 38.6% - Quite familiar - VERIFIED
+    'heard_of_not_much': 0.321, # 32.1% - Heard of but don't know much - VERIFIED
+    'never_heard': 0.045,       # 4.5% - Never heard of Škoda - VERIFIED
+    'not_sure': 0.034           # 3.4% - Not sure - VERIFIED
 }
 
 # Response to Learning It's Škoda (Q28)
-# How do people feel when they learn these are Škoda brand elements?
+# ⚠️ WARNING: Original app categories don't match Excel Table 121/122
+# Excel has: "Fits expectations" (56%), "Doesn't fit" (22%), "Had not heard of Škoda" (8%), "Don't know" (13%)
+# Below values are FABRICATED - no Excel mapping exists. Using Excel values instead:
 response_to_reveal = {
-    'positive_surprised': 0.12,     # 12% - Positively surprised
-    'makes_sense': 0.35,            # 35% - Makes sense/as expected
-    'neutral': 0.42,                # 42% - Don't feel strongly either way
-    'disappointed': 0.03,           # 3% - Disappointed/negatively surprised
-    'dont_know': 0.08               # 8% - Don't know
+    'fits_expectations': 0.560,     # 56% - Fits with what they know/expect of Škoda - VERIFIED Table 121
+    'does_not_fit': 0.222,          # 22% - Does not fit expectations - VERIFIED
+    'not_heard_of_skoda': 0.078,    # 7.8% - Had not heard of Škoda before - VERIFIED
+    'other': 0.007,                 # 0.7% - Other - VERIFIED
+    'dont_know': 0.133              # 13.3% - Don't know - VERIFIED
 }
 
 # Survey Demographics
@@ -236,8 +238,8 @@ demographics = {
         'range': '18-55'
     },
     'gender': {
-        'male': 0.49,
-        'female': 0.51
+        'male': 0.490,  # VERIFIED Table 6
+        'female': 0.507  # VERIFIED Table 6 (note: adds to 99.7% due to rounding/other)
     },
     'skoda_awareness': {
         'heard_of_skoda': 0.92,  # 92% have heard of Škoda
@@ -247,90 +249,91 @@ demographics = {
 
 # --- ADJECTIVE ASSOCIATIONS (Semantic Differential Scales) ---
 # Data Source: Q04 from P045556 study - 7 adjective pairs on 5-point scales
-# positive_net = % who chose positions 1 or 2 (positive end of scale)
-# negative_net = % who chose positions 4 or 5 (negative end of scale)
+# positive_net = % who chose positions 1 or 2 (positive end of scale) = T2B
+# negative_net = % who chose positions 4 or 5 (negative end of scale) = B2B
 # neutral = % who chose position 3 (middle/neutral)
+# VERIFIED from Tables 29-107 (2025-10-24 audit)
 adjective_data = {
     'Electric Green': {
-        'bold': {'positive_net': 0.460, 'negative_net': 0.140, 'neutral': 0.300, 'negative_adjective': 'Cautious'},
-        'stylish': {'positive_net': 0.500, 'negative_net': 0.220, 'neutral': 0.290, 'negative_adjective': 'Plain'},
-        'modern': {'positive_net': 0.440, 'negative_net': 0.180, 'neutral': 0.290, 'negative_adjective': 'Old-Fashioned'},
-        'playful': {'positive_net': 0.450, 'negative_net': 0.260, 'neutral': 0.290, 'negative_adjective': 'Serious'},
-        'exciting': {'positive_net': 0.450, 'negative_net': 0.240, 'neutral': 0.310, 'negative_adjective': 'Boring'},
-        'human': {'positive_net': 0.500, 'negative_net': 0.220, 'neutral': 0.280, 'negative_adjective': 'Cold'},
-        'simple': {'positive_net': 0.500, 'negative_net': 0.200, 'neutral': 0.300, 'negative_adjective': 'Complicated'},
+        'bold': {'positive_net': 0.490, 'negative_net': 0.218, 'neutral': 0.293, 'negative_adjective': 'Cautious'},
+        'stylish': {'positive_net': 0.463, 'negative_net': 0.144, 'neutral': 0.301, 'negative_adjective': 'Plain'},
+        'modern': {'positive_net': 0.499, 'negative_net': 0.216, 'neutral': 0.286, 'negative_adjective': 'Old-Fashioned'},
+        'playful': {'positive_net': 0.443, 'negative_net': 0.264, 'neutral': 0.293, 'negative_adjective': 'Serious'},  # Estimated neutral
+        'exciting': {'positive_net': 0.450, 'negative_net': 0.264, 'neutral': 0.287, 'negative_adjective': 'Boring'},
+        'human': {'positive_net': 0.452, 'negative_net': 0.243, 'neutral': 0.305, 'negative_adjective': 'Cold'},
+        'simple': {'positive_net': 0.502, 'negative_net': 0.218, 'neutral': 0.280, 'negative_adjective': 'Complicated'},
     },
     'Facets': {
-        'bold': {'positive_net': 0.480, 'negative_net': 0.250, 'neutral': 0.260, 'negative_adjective': 'Cautious'},
-        'stylish': {'positive_net': 0.520, 'negative_net': 0.200, 'neutral': 0.280, 'negative_adjective': 'Plain'},
-        'modern': {'positive_net': 0.460, 'negative_net': 0.240, 'neutral': 0.300, 'negative_adjective': 'Old-Fashioned'},
-        'playful': {'positive_net': 0.450, 'negative_net': 0.240, 'neutral': 0.300, 'negative_adjective': 'Serious'},
-        'exciting': {'positive_net': 0.430, 'negative_net': 0.150, 'neutral': 0.320, 'negative_adjective': 'Boring'},
-        'human': {'positive_net': 0.510, 'negative_net': 0.110, 'neutral': 0.280, 'negative_adjective': 'Cold'},
-        'simple': {'positive_net': 0.480, 'negative_net': 0.200, 'neutral': 0.300, 'negative_adjective': 'Complicated'},
+        'bold': {'positive_net': 0.502, 'negative_net': 0.216, 'neutral': 0.282, 'negative_adjective': 'Cautious'},
+        'stylish': {'positive_net': 0.484, 'negative_net': 0.255, 'neutral': 0.262, 'negative_adjective': 'Plain'},
+        'modern': {'positive_net': 0.514, 'negative_net': 0.204, 'neutral': 0.282, 'negative_adjective': 'Old-Fashioned'},
+        'playful': {'positive_net': 0.461, 'negative_net': 0.254, 'neutral': 0.285, 'negative_adjective': 'Serious'},  # Estimated neutral/neg
+        'exciting': {'positive_net': 0.458, 'negative_net': 0.239, 'neutral': 0.303, 'negative_adjective': 'Boring'},
+        'human': {'positive_net': 0.427, 'negative_net': 0.148, 'neutral': 0.318, 'negative_adjective': 'Cold'},
+        'simple': {'positive_net': 0.508, 'negative_net': 0.113, 'neutral': 0.282, 'negative_adjective': 'Complicated'},
     },
     'Type': {
-        'bold': {'positive_net': 0.480, 'negative_net': 0.230, 'neutral': 0.290, 'negative_adjective': 'Cautious'},
-        'stylish': {'positive_net': 0.490, 'negative_net': 0.220, 'neutral': 0.290, 'negative_adjective': 'Plain'},
-        'modern': {'positive_net': 0.410, 'negative_net': 0.180, 'neutral': 0.300, 'negative_adjective': 'Old-Fashioned'},
-        'playful': {'positive_net': 0.450, 'negative_net': 0.270, 'neutral': 0.280, 'negative_adjective': 'Serious'},
-        'exciting': {'positive_net': 0.440, 'negative_net': 0.240, 'neutral': 0.320, 'negative_adjective': 'Boring'},
-        'human': {'positive_net': 0.500, 'negative_net': 0.210, 'neutral': 0.290, 'negative_adjective': 'Cold'},
-        'simple': {'positive_net': 0.500, 'negative_net': 0.200, 'neutral': 0.300, 'negative_adjective': 'Complicated'},
+        'bold': {'positive_net': 0.474, 'negative_net': 0.222, 'neutral': 0.304, 'negative_adjective': 'Cautious'},
+        'stylish': {'positive_net': 0.473, 'negative_net': 0.234, 'neutral': 0.294, 'negative_adjective': 'Plain'},
+        'modern': {'positive_net': 0.491, 'negative_net': 0.222, 'neutral': 0.288, 'negative_adjective': 'Old-Fashioned'},
+        'playful': {'positive_net': 0.412, 'negative_net': 0.181, 'neutral': 0.304, 'negative_adjective': 'Serious'},
+        'exciting': {'positive_net': 0.448, 'negative_net': 0.272, 'neutral': 0.281, 'negative_adjective': 'Boring'},
+        'human': {'positive_net': 0.438, 'negative_net': 0.242, 'neutral': 0.320, 'negative_adjective': 'Cold'},
+        'simple': {'positive_net': 0.499, 'negative_net': 0.214, 'neutral': 0.288, 'negative_adjective': 'Complicated'},
     },
     'Symbol': {
-        'bold': {'positive_net': 0.500, 'negative_net': 0.220, 'neutral': 0.280, 'negative_adjective': 'Cautious'},
-        'stylish': {'positive_net': 0.560, 'negative_net': 0.130, 'neutral': 0.250, 'negative_adjective': 'Plain'},
-        'modern': {'positive_net': 0.460, 'negative_net': 0.240, 'neutral': 0.300, 'negative_adjective': 'Old-Fashioned'},
-        'playful': {'positive_net': 0.500, 'negative_net': 0.230, 'neutral': 0.270, 'negative_adjective': 'Serious'},
-        'exciting': {'positive_net': 0.460, 'negative_net': 0.220, 'neutral': 0.310, 'negative_adjective': 'Boring'},
-        'human': {'positive_net': 0.540, 'negative_net': 0.200, 'neutral': 0.270, 'negative_adjective': 'Cold'},
-        'simple': {'positive_net': 0.500, 'negative_net': 0.200, 'neutral': 0.300, 'negative_adjective': 'Complicated'},
+        'bold': {'positive_net': 0.498, 'negative_net': 0.201, 'neutral': 0.300, 'negative_adjective': 'Cautious'},
+        'stylish': {'positive_net': 0.497, 'negative_net': 0.219, 'neutral': 0.284, 'negative_adjective': 'Plain'},
+        'modern': {'positive_net': 0.551, 'negative_net': 0.129, 'neutral': 0.255, 'negative_adjective': 'Old-Fashioned'},
+        'playful': {'positive_net': 0.462, 'negative_net': 0.241, 'neutral': 0.297, 'negative_adjective': 'Serious'},
+        'exciting': {'positive_net': 0.500, 'negative_net': 0.229, 'neutral': 0.272, 'negative_adjective': 'Boring'},
+        'human': {'positive_net': 0.464, 'negative_net': 0.222, 'neutral': 0.314, 'negative_adjective': 'Cold'},
+        'simple': {'positive_net': 0.536, 'negative_net': 0.196, 'neutral': 0.268, 'negative_adjective': 'Complicated'},
     },
     'Sonic': {
-        'bold': {'positive_net': 0.490, 'negative_net': 0.230, 'neutral': 0.280, 'negative_adjective': 'Cautious'},
-        'stylish': {'positive_net': 0.550, 'negative_net': 0.200, 'neutral': 0.260, 'negative_adjective': 'Plain'},
-        'modern': {'positive_net': 0.470, 'negative_net': 0.240, 'neutral': 0.290, 'negative_adjective': 'Old-Fashioned'},
-        'playful': {'positive_net': 0.510, 'negative_net': 0.230, 'neutral': 0.270, 'negative_adjective': 'Serious'},
-        'exciting': {'positive_net': 0.460, 'negative_net': 0.230, 'neutral': 0.300, 'negative_adjective': 'Boring'},
-        'human': {'positive_net': 0.540, 'negative_net': 0.170, 'neutral': 0.280, 'negative_adjective': 'Cold'},
-        'simple': {'positive_net': 0.500, 'negative_net': 0.200, 'neutral': 0.300, 'negative_adjective': 'Complicated'},
+        'bold': {'positive_net': 0.502, 'negative_net': 0.192, 'neutral': 0.306, 'negative_adjective': 'Cautious'},
+        'stylish': {'positive_net': 0.491, 'negative_net': 0.227, 'neutral': 0.282, 'negative_adjective': 'Plain'},
+        'modern': {'positive_net': 0.546, 'negative_net': 0.197, 'neutral': 0.257, 'negative_adjective': 'Old-Fashioned'},
+        'playful': {'positive_net': 0.479, 'negative_net': 0.233, 'neutral': 0.287, 'negative_adjective': 'Serious'},
+        'exciting': {'positive_net': 0.508, 'negative_net': 0.227, 'neutral': 0.265, 'negative_adjective': 'Boring'},
+        'human': {'positive_net': 0.462, 'negative_net': 0.233, 'neutral': 0.305, 'negative_adjective': 'Cold'},
+        'simple': {'positive_net': 0.545, 'negative_net': 0.170, 'neutral': 0.285, 'negative_adjective': 'Complicated'},
     },
     'Wordmark': {
-        'bold': {'positive_net': 0.490, 'negative_net': 0.220, 'neutral': 0.280, 'negative_adjective': 'Cautious'},
-        'stylish': {'positive_net': 0.540, 'negative_net': 0.200, 'neutral': 0.260, 'negative_adjective': 'Plain'},
-        'modern': {'positive_net': 0.450, 'negative_net': 0.250, 'neutral': 0.300, 'negative_adjective': 'Old-Fashioned'},
-        'playful': {'positive_net': 0.480, 'negative_net': 0.240, 'neutral': 0.280, 'negative_adjective': 'Serious'},
-        'exciting': {'positive_net': 0.450, 'negative_net': 0.240, 'neutral': 0.310, 'negative_adjective': 'Boring'},
-        'human': {'positive_net': 0.520, 'negative_net': 0.210, 'neutral': 0.280, 'negative_adjective': 'Cold'},
-        'simple': {'positive_net': 0.500, 'negative_net': 0.200, 'neutral': 0.300, 'negative_adjective': 'Complicated'},
+        'bold': {'positive_net': 0.490, 'negative_net': 0.206, 'neutral': 0.304, 'negative_adjective': 'Cautious'},
+        'stylish': {'positive_net': 0.492, 'negative_net': 0.225, 'neutral': 0.282, 'negative_adjective': 'Plain'},
+        'modern': {'positive_net': 0.537, 'negative_net': 0.199, 'neutral': 0.264, 'negative_adjective': 'Old-Fashioned'},
+        'playful': {'positive_net': 0.448, 'negative_net': 0.255, 'neutral': 0.298, 'negative_adjective': 'Serious'},
+        'exciting': {'positive_net': 0.485, 'negative_net': 0.236, 'neutral': 0.279, 'negative_adjective': 'Boring'},
+        'human': {'positive_net': 0.455, 'negative_net': 0.234, 'neutral': 0.311, 'negative_adjective': 'Cold'},
+        'simple': {'positive_net': 0.519, 'negative_net': 0.205, 'neutral': 0.276, 'negative_adjective': 'Complicated'},
     },
-    'Dark Green': {
-        'bold': {'positive_net': 0.490, 'negative_net': 0.240, 'neutral': 0.270, 'negative_adjective': 'Cautious'},
-        'stylish': {'positive_net': 0.520, 'negative_net': 0.180, 'neutral': 0.300, 'negative_adjective': 'Plain'},
-        'modern': {'positive_net': 0.450, 'negative_net': 0.250, 'neutral': 0.300, 'negative_adjective': 'Old-Fashioned'},
-        'playful': {'positive_net': 0.480, 'negative_net': 0.230, 'neutral': 0.290, 'negative_adjective': 'Serious'},
-        'exciting': {'positive_net': 0.460, 'negative_net': 0.220, 'neutral': 0.320, 'negative_adjective': 'Boring'},
-        'human': {'positive_net': 0.520, 'negative_net': 0.200, 'neutral': 0.270, 'negative_adjective': 'Cold'},
-        'simple': {'positive_net': 0.460, 'negative_net': 0.220, 'neutral': 0.310, 'negative_adjective': 'Complicated'},
+    'Emerald Green': {
+        'bold': {'positive_net': 0.510, 'negative_net': 0.216, 'neutral': 0.274, 'negative_adjective': 'Cautious'},
+        'stylish': {'positive_net': 0.490, 'negative_net': 0.202, 'neutral': 0.308, 'negative_adjective': 'Plain'},  # Estimated neutral/neg
+        'modern': {'positive_net': 0.522, 'negative_net': 0.183, 'neutral': 0.295, 'negative_adjective': 'Old-Fashioned'},
+        'playful': {'positive_net': 0.451, 'negative_net': 0.246, 'neutral': 0.303, 'negative_adjective': 'Serious'},
+        'exciting': {'positive_net': 0.485, 'negative_net': 0.227, 'neutral': 0.288, 'negative_adjective': 'Boring'},
+        'human': {'positive_net': 0.462, 'negative_net': 0.214, 'neutral': 0.324, 'negative_adjective': 'Cold'},
+        'simple': {'positive_net': 0.527, 'negative_net': 0.203, 'neutral': 0.270, 'negative_adjective': 'Complicated'},
     },
     'Hacek': {
-        'bold': {'positive_net': 0.460, 'negative_net': 0.270, 'neutral': 0.280, 'negative_adjective': 'Cautious'},
-        'stylish': {'positive_net': 0.490, 'negative_net': 0.200, 'neutral': 0.300, 'negative_adjective': 'Plain'},
-        'modern': {'positive_net': 0.420, 'negative_net': 0.170, 'neutral': 0.320, 'negative_adjective': 'Old-Fashioned'},
-        'playful': {'positive_net': 0.440, 'negative_net': 0.270, 'neutral': 0.280, 'negative_adjective': 'Serious'},
-        'exciting': {'positive_net': 0.440, 'negative_net': 0.250, 'neutral': 0.310, 'negative_adjective': 'Boring'},
-        'human': {'positive_net': 0.550, 'negative_net': 0.170, 'neutral': 0.280, 'negative_adjective': 'Cold'},
-        'simple': {'positive_net': 0.480, 'negative_net': 0.200, 'neutral': 0.300, 'negative_adjective': 'Complicated'},
+        'bold': {'positive_net': 0.463, 'negative_net': 0.229, 'neutral': 0.308, 'negative_adjective': 'Cautious'},
+        'stylish': {'positive_net': 0.456, 'negative_net': 0.264, 'neutral': 0.279, 'negative_adjective': 'Plain'},
+        'modern': {'positive_net': 0.488, 'negative_net': 0.209, 'neutral': 0.303, 'negative_adjective': 'Old-Fashioned'},
+        'playful': {'positive_net': 0.422, 'negative_net': 0.167, 'neutral': 0.317, 'negative_adjective': 'Serious'},
+        'exciting': {'positive_net': 0.442, 'negative_net': 0.276, 'neutral': 0.281, 'negative_adjective': 'Boring'},
+        'human': {'positive_net': 0.439, 'negative_net': 0.255, 'neutral': 0.305, 'negative_adjective': 'Cold'},
+        'simple': {'positive_net': 0.549, 'negative_net': 0.176, 'neutral': 0.275, 'negative_adjective': 'Complicated'},
     },
     'Tagline': {
-        'bold': {'positive_net': 0.480, 'negative_net': 0.230, 'neutral': 0.290, 'negative_adjective': 'Cautious'},
-        'stylish': {'positive_net': 0.510, 'negative_net': 0.190, 'neutral': 0.300, 'negative_adjective': 'Plain'},
-        'modern': {'positive_net': 0.450, 'negative_net': 0.230, 'neutral': 0.320, 'negative_adjective': 'Old-Fashioned'},
-        'playful': {'positive_net': 0.510, 'negative_net': 0.230, 'neutral': 0.260, 'negative_adjective': 'Serious'},
-        'exciting': {'positive_net': 0.470, 'negative_net': 0.230, 'neutral': 0.300, 'negative_adjective': 'Boring'},
-        'human': {'positive_net': 0.490, 'negative_net': 0.200, 'neutral': 0.310, 'negative_adjective': 'Cold'},
-        'simple': {'positive_net': 0.500, 'negative_net': 0.200, 'neutral': 0.300, 'negative_adjective': 'Complicated'},
+        'bold': {'positive_net': 0.482, 'negative_net': 0.217, 'neutral': 0.301, 'negative_adjective': 'Cautious'},
+        'stylish': {'positive_net': 0.484, 'negative_net': 0.229, 'neutral': 0.287, 'negative_adjective': 'Plain'},
+        'modern': {'positive_net': 0.512, 'negative_net': 0.193, 'neutral': 0.295, 'negative_adjective': 'Old-Fashioned'},
+        'playful': {'positive_net': 0.451, 'negative_net': 0.227, 'neutral': 0.322, 'negative_adjective': 'Serious'},
+        'exciting': {'positive_net': 0.509, 'negative_net': 0.227, 'neutral': 0.264, 'negative_adjective': 'Boring'},  # Estimated neutral/neg
+        'human': {'positive_net': 0.464, 'negative_net': 0.232, 'neutral': 0.304, 'negative_adjective': 'Cold'},  # Estimated neutral/neg
+        'simple': {'positive_net': 0.495, 'negative_net': 0.199, 'neutral': 0.306, 'negative_adjective': 'Complicated'},
     },
 }
 
@@ -360,7 +363,7 @@ def calculate_metrics():
         # Comms Audit metrics
         usage_pct = len(element_df) / total_ads if total_ads > 0 else 0
         total_investment = element_df['Spend'].sum()
-        avg_investment = element_df['Spend'].mean() if len(element_df) > 0 else 0
+        avg_investment = element_df['Spend'].median() if len(element_df) > 0 else 0
 
         # Usage by medium
         usage_image = element_df[element_df['Medium'] == 'Image'].shape[0] / audit_df[audit_df['Medium'] == 'Image'].shape[0] if audit_df[audit_df['Medium'] == 'Image'].shape[0] > 0 else 0
