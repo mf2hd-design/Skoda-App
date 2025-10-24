@@ -1414,9 +1414,9 @@ with tab2:
     st.markdown("### 🔍 Detailed Competitor Breakdown")
     st.caption("Top brands mentioned when consumers misattribute Škoda elements (from open-text responses)")
 
-    # Load detailed competitor data
+    # Load detailed competitor data (CLEANED VERSION - verbatim responses recoded)
     try:
-        with open('q05_competitor_detail.json', 'r', encoding='utf-8') as f:
+        with open('q05_competitor_detail_CLEANED.json', 'r', encoding='utf-8') as f:
             competitor_detail = json.load(f)
 
         # Element selector for detailed view
@@ -1433,93 +1433,103 @@ with tab2:
                 # Show summary metrics
                 col1, col2, col3, col4 = st.columns(4)
                 with col1:
-                    st.metric("Total Responses", detail_data['total_responses'])
+                    st.metric("Verbatim Responses Coded", detail_data['total_responses'])
                 with col2:
                     st.metric("Škoda Attribution", f"{detail_data['skoda_percentage']:.1%}")
                 with col3:
                     st.metric("Don't Know", f"{detail_data['dont_know_percentage']:.1%}")
                 with col4:
-                    other_pct = sum([b['percentage'] for b in detail_data['other_brands']])
-                    st.metric("Other Brands", f"{other_pct:.1%}")
+                    auto_count = detail_data['automotive_competitors']['count']
+                    st.metric("🚗 Automotive Competitors", auto_count,
+                             help="Actual car brands mentioned - the real competitive threat")
 
-                # Show top competitor brands
-                if detail_data['other_brands']:
-                    st.markdown("#### Top Misattributed Brands")
+                # Show data quality note
+                if '_data_quality_note' in detail_data:
+                    st.caption(f"ℹ️ {detail_data['_data_quality_note']}")
 
-                    # Create DataFrame for visualization
-                    top_10 = detail_data['other_brands'][:10]
-                    competitor_df = pd.DataFrame(top_10)
+                # Key Insight Box
+                st.markdown("#### 💡 Key Finding")
+                auto_pct = detail_data['automotive_competitors']['percentage']
 
-                    # Bar chart
-                    fig_competitors = px.bar(
-                        competitor_df,
-                        x='percentage',
-                        y='brand',
-                        orientation='h',
-                        title=f"Top 10 Brands Confused with {detail_element}",
-                        labels={'percentage': 'Percentage of Responses', 'brand': 'Brand Mentioned'},
-                        color='percentage',
-                        color_continuous_scale='Reds'
-                    )
-                    fig_competitors.update_layout(
-                        yaxis={'categoryorder': 'total ascending'},
-                        showlegend=False,
-                        height=400
-                    )
-                    fig_competitors.update_traces(
-                        texttemplate='%{x:.1%}',
-                        textposition='outside'
-                    )
-                    st.plotly_chart(fig_competitors, use_container_width=True)
+                if auto_pct < 0.05:  # Less than 5%
+                    st.success(f"""
+                    **Minimal Automotive Confusion ({auto_pct:.1%})**
+                    This element shows very low confusion with competitor car brands. When misattributed,
+                    it's primarily to non-automotive brands or generic responses - not competitive threats.
+                    """)
+                elif auto_pct < 0.15:  # 5-15%
+                    st.warning(f"""
+                    **Moderate Automotive Confusion ({auto_pct:.1%})**
+                    Some confusion with competitor brands exists, but most misattribution is to non-automotive brands.
+                    """)
+                else:
+                    st.error(f"""
+                    **High Automotive Confusion ({auto_pct:.1%})**
+                    Significant confusion with competitor car brands - this element may be too generic or similar to competitors.
+                    """)
 
-                    # Detailed table
-                    with st.expander("📋 View all competitor mentions"):
-                        full_competitor_df = pd.DataFrame(detail_data['other_brands'])
-                        full_competitor_df['percentage_display'] = full_competitor_df['percentage'].apply(lambda x: f"{x:.2%}")
-                        st.dataframe(
-                            full_competitor_df[['brand', 'count', 'percentage_display']].rename(columns={
-                                'brand': 'Brand',
-                                'count': 'Mentions',
-                                'percentage_display': 'Percentage'
-                            }),
-                            use_container_width=True,
-                            hide_index=True
-                        )
+                # Breakdown by category
+                st.markdown("#### 📊 Misattribution Breakdown")
 
-                    # Insights
-                    st.markdown("#### 💡 Key Insights")
-
-                    # Categorize competitors
-                    automotive = [b for b in detail_data['other_brands'] if any(term in b['brand'].lower() for term in ['car', 'dacia', 'vauxhall', 'kia', 'vehicle', 'motor'])]
-                    tech = [b for b in detail_data['other_brands'] if any(term in b['brand'].lower() for term in ['samsung', 'sony', 'nike', 'tech', 'electronic', 'computer', 'nintendo'])]
-                    retail = [b for b in detail_data['other_brands'] if any(term in b['brand'].lower() for term in ['tesco', 'amazon', 'john lewis', 'starbucks', 'boots'])]
-
-                    col1, col2, col3 = st.columns(3)
-                    with col1:
-                        auto_pct = sum([b['percentage'] for b in automotive])
-                        st.metric("Automotive Brands", f"{auto_pct:.1%}", help="Mentions of car brands/automotive terms")
-                    with col2:
-                        tech_pct = sum([b['percentage'] for b in tech])
-                        st.metric("Tech/Sports Brands", f"{tech_pct:.1%}", help="Mentions of technology and sportswear brands")
-                    with col3:
-                        retail_pct = sum([b['percentage'] for b in retail])
-                        st.metric("Retail Brands", f"{retail_pct:.1%}", help="Mentions of retail/service brands")
-
-                    # Strategic insight
-                    if automotive:
-                        st.success(f"**Automotive competitors:** {', '.join([b['brand'] for b in automotive[:5]])} - These represent actual competitive threats in the automotive space.")
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    auto_data = detail_data['automotive_competitors']
+                    st.metric("🚗 Automotive Competitors",
+                             f"{auto_data['percentage']:.1%}",
+                             help="Car brands - real competitive threat")
+                    if auto_data['brands']:
+                        st.caption(f"{auto_data['count']} mentions: " +
+                                 ", ".join([f"{b['brand']} ({b['count']})" for b in auto_data['brands'][:3]]))
                     else:
-                        st.info("**Low automotive confusion:** Very few automotive competitors mentioned - confusion is mostly with non-automotive brands, suggesting the element is distinctive from car competitors but lacks strong Škoda association.")
-                else:
-                    st.info("No other brand mentions recorded for this element.")
+                        st.caption("No automotive brands mentioned ✅")
+
+                with col2:
+                    non_auto_data = detail_data['non_automotive_brands']
+                    st.metric("🏪 Non-Automotive Brands",
+                             f"{non_auto_data['percentage']:.1%}",
+                             help="Consumer brands outside automotive - not competitive threats")
+                    if non_auto_data.get('top_mentions'):
+                        top_brands = ", ".join([b['brand'] for b in non_auto_data['top_mentions'][:3]])
+                        st.caption(f"Top: {top_brands}")
+
+                with col3:
+                    confused_data = detail_data['could_not_identify']
+                    st.metric("❓ Generic/Confused",
+                             f"{confused_data['percentage']:.1%}",
+                             help="Non-brand responses (e.g., 'car', 'green', unclear answers)")
+                    st.caption(confused_data['description'])
+
+                # Automotive competitors detail (if any)
+                if detail_data['automotive_competitors']['brands']:
+                    st.markdown("#### 🚗 Automotive Competitor Details")
+                    st.error("⚠️ **These represent actual competitive threats in the automotive market:**")
+
+                    auto_df = pd.DataFrame(detail_data['automotive_competitors']['brands'])
+                    auto_df['percentage_display'] = auto_df['percentage'].apply(lambda x: f"{x:.2%}")
+
+                    st.dataframe(
+                        auto_df[['brand', 'count', 'percentage_display']].rename(columns={
+                            'brand': 'Competitor Brand',
+                            'count': 'Mentions',
+                            'percentage_display': '% of Responses'
+                        }),
+                        use_container_width=True,
+                        hide_index=True
+                    )
+
+                # Non-automotive brands (collapsed)
+                if detail_data['non_automotive_brands']['count'] > 0:
+                    with st.expander(f"📋 View non-automotive brands ({detail_data['non_automotive_brands']['count']} mentions)"):
+                        st.caption("These are not competitive threats - just brand confusion outside automotive sector")
+                        if detail_data['non_automotive_brands'].get('top_mentions'):
+                            for brand_data in detail_data['non_automotive_brands']['top_mentions']:
+                                st.write(f"- **{brand_data['brand']}**: {brand_data['count']} mentions")
+
             else:
-                if 'note' in detail_data:
-                    st.info(detail_data['note'])
-                else:
-                    st.info("No detailed competitor data available for this element.")
+                st.info("No verbatim responses coded for this element.")
 
     except FileNotFoundError:
-        st.warning("⚠️ Detailed competitor data file not found. Please ensure q05_competitor_detail.json is in the app directory.")
+        st.warning("⚠️ Detailed competitor data file not found. Please ensure q05_competitor_detail_CLEANED.json is in the app directory.")
     except Exception as e:
         st.error(f"Error loading competitor detail data: {str(e)}")
 
@@ -4359,10 +4369,10 @@ with tab8:
 
     with col1:
         response_data = pd.DataFrame([
-            {'Response': 'Positively surprised', 'Percentage': response_to_reveal['positive_surprised'], 'Sentiment': 'Positive'},
-            {'Response': 'Makes sense / Expected', 'Percentage': response_to_reveal['makes_sense'], 'Sentiment': 'Positive'},
-            {'Response': 'Neutral / No strong feeling', 'Percentage': response_to_reveal['neutral'], 'Sentiment': 'Neutral'},
-            {'Response': 'Disappointed', 'Percentage': response_to_reveal['disappointed'], 'Sentiment': 'Negative'},
+            {'Response': 'Fits expectations', 'Percentage': response_to_reveal['fits_expectations'], 'Sentiment': 'Positive'},
+            {'Response': 'Does not fit', 'Percentage': response_to_reveal['does_not_fit'], 'Sentiment': 'Negative'},
+            {'Response': 'Had not heard of Škoda', 'Percentage': response_to_reveal['not_heard_of_skoda'], 'Sentiment': 'Neutral'},
+            {'Response': 'Other', 'Percentage': response_to_reveal['other'], 'Sentiment': 'Neutral'},
             {'Response': 'Don\'t know', 'Percentage': response_to_reveal['dont_know'], 'Sentiment': 'Neutral'},
         ])
 
@@ -4393,13 +4403,12 @@ with tab8:
 
     with col2:
         st.markdown("#### 🎭 Response Summary")
-        
-        positive_total = response_to_reveal['positive_surprised'] + response_to_reveal['makes_sense']
-        st.metric("Positive Reactions", f"{positive_total:.0%}", "Surprised or expected")
-        
-        st.metric("Neutral/Indifferent", f"{response_to_reveal['neutral']:.0%}", "No emotional response")
-        
-        st.metric("Disappointed", f"{response_to_reveal['disappointed']:.0%}", "Negative reaction")
+
+        st.metric("Fits Expectations", f"{response_to_reveal['fits_expectations']:.0%}", "Aligns with Škoda brand")
+
+        st.metric("Does Not Fit", f"{response_to_reveal['does_not_fit']:.0%}", "Conflicts with brand perception")
+
+        st.metric("Unaware of Škoda", f"{response_to_reveal['not_heard_of_skoda']:.0%}", "No prior brand knowledge")
 
         st.markdown("---")
         
