@@ -1,0 +1,222 @@
+{
+  "Element 4 - Škoda Picture mark": {
+    "Total": {
+      "count": 901,
+      "percent": 0.49
+    },
+    "UK": {
+      "count": 183,
+      "percent": 0.41
+    },
+    "Spain": {
+      "count": 228,
+      "percent": 0.48
+    },
+    "Germany": {
+      "count": 190,
+      "percent": 0.43
+    },
+    "Poland": {
+      "count": 300,
+      "percent": 0.61
+    }
+  },
+  "Element 1 - Electric green background": {
+    "Total": {
+      "count": 88,
+      "percent": 0.1
+    },
+    "UK": {
+      "count": 22,
+      "percent": 0.09
+    },
+    "Spain": {
+      "count": 17,
+      "percent": 0.08
+    },
+    "Germany": {
+      "count": 38,
+      "percent": 0.15
+    },
+    "Poland": {
+      "count": 11,
+      "percent": 0.05
+    }
+  },
+  "Element 2 - Emerald green facets": {
+    "Total": {
+      "count": 70,
+      "percent": 0.08
+    },
+    "UK": {
+      "count": 23,
+      "percent": 0.09
+    },
+    "Spain": {
+      "count": 16,
+      "percent": 0.08
+    },
+    "Germany": {
+      "count": 16,
+      "percent": 0.06
+    },
+    "Poland": {
+      "count": 15,
+      "percent": 0.07
+    }
+  },
+  "Element 7 - Emerald green background": {
+    "Total": {
+      "count": 64,
+      "percent": 0.07
+    },
+    "UK": {
+      "count": 17,
+      "percent": 0.09
+    },
+    "Spain": {
+      "count": 21,
+      "percent": 0.08
+    },
+    "Germany": {
+      "count": 17,
+      "percent": 0.09
+    },
+    "Poland": {
+      "count": 9,
+      "percent": 0.03
+    }
+  },
+  "Element 6 - Škoda Wordmark": {
+    "Total": {
+      "count": 120,
+      "percent": 0.06
+    },
+    "UK": {
+      "count": 39,
+      "percent": 0.09
+    },
+    "Spain": {
+      "count": 33,
+      "percent": 0.07
+    },
+    "Germany": {
+      "count": 26,
+      "percent": 0.06
+    },
+    "Poland": {
+      "count": 22,
+      "percent": 0.05
+    }
+  },
+  "Element 9 - Škoda tagline": {
+    "Total": {
+      "count": 57,
+      "percent": 0.06
+    },
+    "UK": {
+      "count": 15,
+      "percent": 0.08
+    },
+    "Spain": {
+      "count": 17,
+      "percent": 0.06
+    },
+    "Germany": {
+      "count": 10,
+      "percent": 0.05
+    },
+    "Poland": {
+      "count": 15,
+      "percent": 0.05
+    }
+  },
+  "Element 8 - Electric green Hacek": {
+    "Total": {
+      "count": 47,
+      "percent": 0.05
+    },
+    "UK": {
+      "count": 14,
+      "percent": 0.07
+    },
+    "Spain": {
+      "count": 18,
+      "percent": 0.07
+    },
+    "Germany": {
+      "count": 5,
+      "percent": 0.03
+    },
+    "Poland": {
+      "count": 10,
+      "percent": 0.04
+    }
+  },
+  "Element 5 - Škoda Sonic": {
+    "Total": {
+      "count": 66,
+      "percent": 0.04
+    },
+    "UK": {
+      "count": 22,
+      "percent": 0.05
+    },
+    "Spain": {
+      "count": 15,
+      "percent": 0.03
+    },
+    "Germany": {
+      "count": 19,
+      "percent": 0.04
+    },
+    "Poland": {
+      "count": 10,
+      "percent": 0.02
+    }
+  },
+  "Element 3 - Type (Lorem Ipsum)": {
+    "Total": {
+      "count": 14,
+      "percent": 0.02
+    },
+    "UK": {
+      "count": 6,
+      "percent": 0.02
+    },
+    "Spain": {
+      "count": 1,
+      "percent": 0.0
+    },
+    "Germany": {
+      "count": 3,
+      "percent": 0.01
+    },
+    "Poland": {
+      "count": 4,
+      "percent": 0.02
+    }
+  },
+  "Columns Tested: a,b,c,d - a,b,c,d,e,f,g,h,i,j,k,l - a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s - a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p - a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p - a,b - a,b,c - a,b - a,b - a,b - a,b - a,b,c,d - a,b,c,d,e,f,g - a,b,c,d,e,f,g - a,b,c,d,e,f,g,h,i,j - a,b,c,d": {
+    "Total": {
+      "count": 0,
+      "percent": 0.0
+    },
+    "UK": {
+      "count": 0,
+      "percent": 0.0
+    },
+    "Spain": {
+      "count": 0,
+      "percent": 0.0
+    },
+    "Germany": {
+      "count": 0,
+      "percent": 0.0
+    },
+    "Poland": {
+      "count": 0,
+      "percent": 0.0
+    }
+  }
+}
