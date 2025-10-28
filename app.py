@@ -645,10 +645,9 @@ with tab1:
         else:
             tier = "🥉 Tier 3"
             action = "Optional/Redesign"
-        
+
         tier_summary.append({
             'Element': row['Element'],
-            'Tier': tier,
             'Recognition': row['Recognition'],
             'Uniqueness': row['Uniqueness'],
             'Net Sentiment': row['Net Sentiment'],
@@ -737,8 +736,8 @@ with tab1:
     st.markdown("---")
 
     # Brand Equity Matrix
-    st.markdown("#### Brand Equity Matrix: Fame vs. Uniqueness")
-    st.caption("Bubble size represents total investment. Color intensity shows brand attribution strength.")
+    st.markdown("#### Brand Equity Matrix: Fame vs. Uniqueness with First Recognition Trigger")
+    st.caption("Bubble size represents First Recognition Trigger strength (which asset triggers Škoda recognition first). Color intensity shows brand attribution.")
 
     # Add demographic selector for equity matrix
     st.markdown("#### 🎯 Filter by Demographics")
@@ -782,6 +781,15 @@ with tab1:
     # Create a copy of master_df for the equity matrix with demographic filters applied
     equity_matrix_df = master_df.copy()
 
+    # Add First Recognition Trigger Index data
+    equity_matrix_df['First_Trigger_Strength'] = 0.0
+    if first_recognition_trigger:
+        for element in brand_elements:
+            if element in first_recognition_trigger:
+                # Use percent_of_total_first_triggers as the trigger strength metric
+                trigger_strength = first_recognition_trigger[element].get('percent_of_total_first_triggers', 0)
+                equity_matrix_df.loc[equity_matrix_df['Element'] == element, 'First_Trigger_Strength'] = trigger_strength
+
     # Update recognition and uniqueness based on demographic selections
     if equity_age != "All Ages" or equity_gender != "All Genders":
         for element in brand_elements:
@@ -813,9 +821,9 @@ with tab1:
 
     with st.expander("📖 Understanding this matrix"):
         st.markdown("""
-        This chart maps the two critical dimensions of brand asset strength:
+        This chart maps the three critical dimensions of brand asset strength:
 
-        **Y-Axis (Recognition):** How many consumers have seen/heard this element
+        **Y-Axis (Recognition/Fame):** How many consumers have seen/heard this element
         - Higher = More familiar to consumers
         - Based on consumer survey responses: "Have you seen/heard this element before?"
 
@@ -823,27 +831,104 @@ with tab1:
         - Higher = Stronger brand attribution (consumers know it's Škoda, not a competitor)
         - Based on consumer survey: "Which brand does this element belong to?"
 
-        **Bubble Size:** Total investment in this element across all campaigns
+        **Bubble Size:** First Recognition Trigger Index
+        - Larger bubbles = This asset most frequently triggers FIRST recognition of Škoda
+        - When consumers see multiple brand elements, which one makes them think "Škoda" first?
+        - Critical for creative strategy: lead with high-trigger assets
 
-        **Ideal Position:** Top-right corner (high recognition + high uniqueness) = maximum brand equity
-        **Watch Out For:** Large bubbles in bottom-left = high investment with low brand-building impact
+        **Color:** Uniqueness intensity (darker green = more uniquely Škoda)
+
+        **Ideal Profile:** Top-right with large bubble = high fame, high uniqueness, triggers recognition first
+        **Strategic Insight:** Large bubbles show which assets to feature prominently; position in top-right quadrant validates brand equity
         """)
 
     fig_matrix = px.scatter(
         equity_matrix_df,
         x="Uniqueness",
         y="Recognition",
-        size="Total Investment",
+        size="First_Trigger_Strength",
         color="Uniqueness",  # Use uniqueness for color gradient
         text="Element",
-        size_max=60,
-        hover_data=['Total Investment', 'Average Investment', 'Overall Usage'],
+        size_max=80,
+        hover_data=['Total Investment', 'Average Investment', 'Overall Usage', 'First_Trigger_Strength'],
         color_continuous_scale='RdYlGn',
-        title="Fame vs. Uniqueness (Size by Total Investment)"
+        title="Fame vs. Uniqueness (Bubble Size = First Recognition Trigger Strength)"
     )
     fig_matrix.update_traces(textposition='top center')
     fig_matrix.update_layout(height=600)
     st.plotly_chart(fig_matrix, use_container_width=True)
+
+    # First Recognition Trigger Hierarchy
+    st.markdown("---")
+    st.markdown("#### 🎯 First Recognition Trigger Index")
+    st.caption("Which brand element makes consumers think 'Škoda' FIRST when seeing multiple assets?")
+
+    if first_recognition_trigger:
+        # Create trigger ranking
+        trigger_data = []
+        for element in brand_elements:
+            if element in first_recognition_trigger and first_recognition_trigger[element].get('count', 0) > 0:
+                trigger_data.append({
+                    'Element': element,
+                    'Trigger_Percentage': first_recognition_trigger[element]['percent_of_total_first_triggers'],
+                    'Recognition_Rate': first_recognition_trigger[element]['percent_recognized'],
+                    'Count': first_recognition_trigger[element]['count']
+                })
+
+        if trigger_data:
+            trigger_df = pd.DataFrame(trigger_data).sort_values('Trigger_Percentage', ascending=False)
+
+            col1, col2 = st.columns([3, 2])
+
+            with col1:
+                # Bar chart of trigger strength
+                fig_trigger = px.bar(
+                    trigger_df,
+                    x='Element',
+                    y='Trigger_Percentage',
+                    text='Trigger_Percentage',
+                    title="First Recognition Trigger Strength by Element",
+                    labels={'Trigger_Percentage': 'Share of First Triggers', 'Element': 'Brand Element'},
+                    color='Trigger_Percentage',
+                    color_continuous_scale='Greens'
+                )
+                fig_trigger.update_traces(texttemplate='%{text:.1%}', textposition='outside')
+                fig_trigger.update_layout(
+                    showlegend=False,
+                    yaxis_tickformat='.0%',
+                    height=400
+                )
+                st.plotly_chart(fig_trigger, use_container_width=True)
+
+            with col2:
+                st.markdown("**💡 Key Insights:**")
+
+                top_trigger = trigger_df.iloc[0]
+                st.success(f"""
+                **Top Trigger: {top_trigger['Element']}**
+                - {top_trigger['Trigger_Percentage']:.1%} of first recognitions
+                - {top_trigger['Recognition_Rate']:.0%} recognition when shown first
+                - **Strategy:** Feature prominently in opening frames
+                """)
+
+                if len(trigger_df) > 1:
+                    second_trigger = trigger_df.iloc[1]
+                    st.info(f"""
+                    **Runner-up: {second_trigger['Element']}**
+                    - {second_trigger['Trigger_Percentage']:.1%} of first recognitions
+                    - Strong secondary cue for brand recognition
+                    """)
+
+                # Calculate power duo
+                if len(trigger_df) >= 2:
+                    top_two_share = trigger_df.iloc[0]['Trigger_Percentage'] + trigger_df.iloc[1]['Trigger_Percentage']
+                    st.warning(f"""
+                    **Power Duo:**
+                    Top 2 elements account for **{top_two_share:.1%}** of all first recognitions.
+                    Combined use maximizes instant Škoda recognition.
+                    """)
+    else:
+        st.info("First recognition trigger data not available.")
 
     # Add interpretation of matrix patterns
     top_right = equity_matrix_df[(equity_matrix_df['Recognition'] >= equity_matrix_df['Recognition'].median()) &
@@ -1419,6 +1504,130 @@ with tab2:
     try:
         with open('q05_competitor_detail_CLEANED.json', 'r', encoding='utf-8') as f:
             competitor_detail = json.load(f)
+
+        # Global Summary: Top Automotive Competitors Across All Elements
+        st.markdown("#### 🌍 Global View: Top Automotive Competitor Mentions")
+        st.caption("Aggregated across all brand elements - which car brands are most confused with Škoda?")
+
+        # Aggregate all automotive competitor mentions
+        global_auto_competitors = {}
+        total_mentions = 0
+
+        for element, data in competitor_detail.items():
+            if 'automotive_competitors' in data and data['automotive_competitors']['brands']:
+                for brand in data['automotive_competitors']['brands']:
+                    brand_name = brand['brand']
+                    count = brand['count']
+                    global_auto_competitors[brand_name] = global_auto_competitors.get(brand_name, 0) + count
+                    total_mentions += count
+
+        if global_auto_competitors:
+            col1, col2 = st.columns([2, 1])
+
+            with col1:
+                # Create bar chart of top competitors
+                global_comp_df = pd.DataFrame([
+                    {'Brand': brand, 'Mentions': count}
+                    for brand, count in sorted(global_auto_competitors.items(), key=lambda x: x[1], reverse=True)
+                ])
+
+                fig_global_comp = px.bar(
+                    global_comp_df,
+                    x='Brand',
+                    y='Mentions',
+                    title="Global Automotive Competitor Confusion",
+                    labels={'Mentions': 'Total Mentions', 'Brand': 'Competitor Brand'},
+                    color='Mentions',
+                    color_continuous_scale='Reds'
+                )
+                fig_global_comp.update_traces(texttemplate='%{y}', textposition='outside')
+                fig_global_comp.update_layout(height=350, showlegend=False)
+                st.plotly_chart(fig_global_comp, use_container_width=True)
+
+            with col2:
+                st.markdown("**Key Findings:**")
+                st.metric("Total Automotive Mentions", total_mentions)
+                st.caption(f"Out of ~726 total verbatim responses")
+
+                top_competitor = max(global_auto_competitors.items(), key=lambda x: x[1])
+                st.metric("Top Competitor", top_competitor[0])
+                st.caption(f"{top_competitor[1]} mentions")
+
+                confusion_rate = (total_mentions / 726) * 100 if total_mentions > 0 else 0
+                st.success(f"""
+                **Overall Automotive Confusion: {confusion_rate:.1f}%**
+
+                Minimal competitive threat - Škoda elements are NOT being confused with competitor car brands.
+                """)
+        else:
+            st.success("✅ **Excellent News:** Zero automotive competitor mentions across all elements. No competitive brand confusion detected.")
+
+        st.markdown("---")
+
+        # Market-Level Breakdown using q05_confusion_by_country
+        if q05_confusion_by_country:
+            st.markdown("#### 🗺️ Market-Level Competitor Confusion")
+            st.caption("Automotive confusion breakdown by market (UK, Spain, Germany, Poland)")
+
+            # Calculate automotive confusion by market for each element
+            markets = ["UK", "Spain", "Germany", "Poland"]
+            market_confusion_data = []
+
+            for element in brand_elements:
+                if element in q05_confusion_by_country:
+                    for market in markets:
+                        if market in q05_confusion_by_country[element]:
+                            # "Other_mentions" includes all non-Skoda mentions (automotive + non-automotive + confused)
+                            other_pct = q05_confusion_by_country[element][market].get('Other', 0) or \
+                                       q05_confusion_by_country[element][market].get('Other_mentions', 0)
+
+                            market_confusion_data.append({
+                                'Element': element,
+                                'Market': market,
+                                'Other_Mentions': other_pct
+                            })
+
+            if market_confusion_data:
+                market_df = pd.DataFrame(market_confusion_data)
+
+                # Create heatmap
+                market_pivot = market_df.pivot(index='Element', columns='Market', values='Other_Mentions')
+
+                fig_market_heat = px.imshow(
+                    market_pivot,
+                    labels=dict(x="Market", y="Brand Element", color="Other Brand Mentions %"),
+                    text_auto='.0%',
+                    aspect="auto",
+                    color_continuous_scale='Reds',
+                    title="Non-Škoda Brand Mentions by Market (includes all misattributions)"
+                )
+                fig_market_heat.update_layout(height=450)
+                st.plotly_chart(fig_market_heat, use_container_width=True)
+
+                # Market insights
+                col1, col2, col3, col4 = st.columns(4)
+
+                for idx, market in enumerate(markets):
+                    with [col1, col2, col3, col4][idx]:
+                        market_data = market_df[market_df['Market'] == market]
+                        avg_confusion = market_data['Other_Mentions'].mean()
+
+                        st.metric(
+                            market,
+                            f"{avg_confusion:.0%}",
+                            help=f"Average 'Other brand' mentions across all elements in {market}"
+                        )
+
+                        # Find most confused element in this market
+                        most_confused = market_data.loc[market_data['Other_Mentions'].idxmax()]
+                        st.caption(f"Highest: {most_confused['Element']} ({most_confused['Other_Mentions']:.0%})")
+
+                st.info("""
+                **Note:** "Other Mentions" includes automotive competitors, non-automotive brands, and generic/confused responses.
+                Based on global data, only ~0.55% of these are actual automotive competitors - the vast majority are non-threats.
+                """)
+
+        st.markdown("---")
 
         # Element selector for detailed view
         detail_element = st.selectbox(
