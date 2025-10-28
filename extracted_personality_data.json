@@ -1,0 +1,110 @@
+{
+  "Electric Green": {
+    "bold": 0.49,
+    "stylish": 0.463,
+    "modern": 0.499,
+    "playful": 0.443,
+    "exciting": 0.45,
+    "human": 0.452,
+    "simple": 0.502,
+    "positive_sentiment": 0.471,
+    "negative_sentiment": 0.529,
+    "net_sentiment": -0.057
+  },
+  "Facets": {
+    "bold": 0.502,
+    "stylish": 0.484,
+    "modern": 0.514,
+    "playful": 0.461,
+    "exciting": 0.458,
+    "human": 0.427,
+    "simple": 0.508,
+    "positive_sentiment": 0.479,
+    "negative_sentiment": 0.521,
+    "net_sentiment": -0.042
+  },
+  "Type": {
+    "bold": 0.474,
+    "stylish": 0.473,
+    "modern": 0.491,
+    "playful": 0.412,
+    "exciting": 0.448,
+    "human": 0.438,
+    "simple": 0.499,
+    "positive_sentiment": 0.462,
+    "negative_sentiment": 0.538,
+    "net_sentiment": -0.076
+  },
+  "Symbol": {
+    "bold": 0.498,
+    "stylish": 0.497,
+    "modern": 0.551,
+    "playful": 0.462,
+    "exciting": 0.5,
+    "human": 0.464,
+    "simple": 0.536,
+    "positive_sentiment": 0.501,
+    "negative_sentiment": 0.499,
+    "net_sentiment": 0.002
+  },
+  "Sonic": {
+    "bold": 0.502,
+    "stylish": 0.491,
+    "modern": 0.546,
+    "playful": 0.479,
+    "exciting": 0.508,
+    "human": 0.462,
+    "simple": 0.545,
+    "positive_sentiment": 0.505,
+    "negative_sentiment": 0.495,
+    "net_sentiment": 0.009
+  },
+  "Wordmark": {
+    "bold": 0.49,
+    "stylish": 0.492,
+    "modern": 0.537,
+    "playful": 0.448,
+    "exciting": 0.485,
+    "human": 0.455,
+    "simple": 0.519,
+    "positive_sentiment": 0.489,
+    "negative_sentiment": 0.511,
+    "net_sentiment": -0.021
+  },
+  "Emerald Green": {
+    "bold": 0.51,
+    "stylish": 0.49,
+    "modern": 0.522,
+    "playful": 0.451,
+    "exciting": 0.485,
+    "human": 0.462,
+    "simple": 0.527,
+    "positive_sentiment": 0.492,
+    "negative_sentiment": 0.508,
+    "net_sentiment": -0.015
+  },
+  "Hacek": {
+    "bold": 0.463,
+    "stylish": 0.456,
+    "modern": 0.488,
+    "playful": 0.422,
+    "exciting": 0.442,
+    "human": 0.439,
+    "simple": 0.549,
+    "positive_sentiment": 0.466,
+    "negative_sentiment": 0.534,
+    "net_sentiment": -0.069
+  },
+  "Tagline": {
+    "bold": 0.482,
+    "stylish": 0.484,
+    "modern": 0.512,
+    "playful": 0.451,
+    "exciting": 0.509,
+    "human": 0.464,
+    "simple": 0.495,
+    "positive_sentiment": 0.485,
+    "negative_sentiment": 0.515,
+    "net_sentiment": -0.029
+  }
+}

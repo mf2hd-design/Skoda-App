@@ -1,0 +1,16 @@
+Subject: P045556 - Request for Detailed Competitor Mentions (Elements 7-9)
+
+Hi Savanta team,
+
+Regarding study P045556 (Skoda Brand Assets):
+
+We've identified that Tables 114-116 (Q05.7-Q05.9 for Emerald Green, Hacek, and Tagline) only contain aggregate "Other mentions" data, whereas Tables 108-113 (Elements 1-6) provide detailed competitor brand breakdowns.
+
+We understand this may be due to the progressive element exposure methodology - elements 7-9 were shown after respondents had already seen multiple elements, making it difficult to isolate which competitor brands were attributed to which specific element at that stage.
+
+**Question:** Is it possible to extract detailed competitor brand mentions for elements 7-9 from the raw Q17/Q21/Q25 responses, or does the survey structure prevent this level of granularity?
+
+If the detailed data can be provided in the same format as Elements 1-6, that would be valuable for our competitive analysis. If not possible due to methodology, we understand and will note this limitation.
+
+Thanks,
+[Your name]
