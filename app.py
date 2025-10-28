@@ -1104,32 +1104,6 @@ with tab1:
 
     st.markdown("---")
 
-    # Key Patterns Observed
-    top_3_performers = master_df.nlargest(3, 'Recognition ROI')
-    bottom_3_performers = master_df.nsmallest(3, 'Recognition ROI')
-
-    with st.container():
-        st.info(f"""
-💡 **Key Patterns Observed**
-
-**Performance Leaders:**
-- **{most_recognized['Element']}:** {most_recognized['Recognition']:.0%} recognition with {most_recognized['Recognition ROI']:.2f} ROI (highest in portfolio)
-- **{best_roi['Element']}:** {best_roi['Recognition']:.0%} recognition with {best_roi['Recognition ROI']:.2f} ROI (strongest efficiency)
-- These top performers account for {(most_recognized['Total Investment'] + best_roi['Total Investment']) / total_investment:.0%} of total portfolio investment
-
-**Efficiency Variation:**
-- ROI ranges from {master_df['Recognition ROI'].min():.2f} to {master_df['Recognition ROI'].max():.2f} per €1M across 9 elements
-- Top 3 performers show {top_3_performers['Recognition ROI'].mean() / bottom_3_performers['Recognition ROI'].mean():.1f}x higher average ROI than bottom 3
-- Investment concentration: Top 3 elements represent {(top_3_performers['Total Investment'].sum() / total_investment):.0%} of budget
-
-**Recognition Distribution:**
-- Spans {master_df['Recognition'].min():.0%} ({master_df.loc[master_df['Recognition'].idxmin()]['Element']}) to {master_df['Recognition'].max():.0%} ({master_df.loc[master_df['Recognition'].idxmax()]['Element']}) - a {master_df['Recognition'].max() / master_df['Recognition'].min():.1f}x range
-- Portfolio average: {master_df['Recognition'].mean():.0%} recognition
-- {len(master_df[(master_df['Recognition'] >= master_df['Recognition'].mean() * 0.9) & (master_df['Recognition'] <= master_df['Recognition'].mean() * 1.1)])} of 9 elements fall within ±10% of average
-""")
-
-    st.markdown("---")
-
     # Enhanced metric cards with detailed expanders
     col1, col2, col3, col4 = st.columns(4)
 
@@ -1202,6 +1176,32 @@ with tab1:
             st.markdown(f"**Uniqueness:** {best_roi['Uniqueness']:.0%}")
 
             st.info(f"**Investment Position:** Current investment of €{best_roi['Total Investment']:,.0f} is {abs(((best_roi['Total Investment'] / master_df['Total Investment'].median()) - 1) * 100):.0f}% {'below' if best_roi['Total Investment'] < master_df['Total Investment'].median() else 'above'} portfolio median.")
+
+    st.markdown("---")
+
+    # Key Patterns Observed
+    top_3_performers = master_df.nlargest(3, 'Recognition ROI')
+    bottom_3_performers = master_df.nsmallest(3, 'Recognition ROI')
+
+    with st.container():
+        st.info(f"""
+💡 **Key Patterns Observed**
+
+**Performance Leaders:**
+- **{most_recognized['Element']}:** {most_recognized['Recognition']:.0%} recognition with {most_recognized['Recognition ROI']:.2f} ROI (highest in portfolio)
+- **{best_roi['Element']}:** {best_roi['Recognition']:.0%} recognition with {best_roi['Recognition ROI']:.2f} ROI (strongest efficiency)
+- These top performers account for {(most_recognized['Total Investment'] + best_roi['Total Investment']) / total_investment:.0%} of total portfolio investment
+
+**Efficiency Variation:**
+- ROI ranges from {master_df['Recognition ROI'].min():.2f} to {master_df['Recognition ROI'].max():.2f} per €1M across 9 elements
+- Top 3 performers show {top_3_performers['Recognition ROI'].mean() / bottom_3_performers['Recognition ROI'].mean():.1f}x higher average ROI than bottom 3
+- Investment concentration: Top 3 elements represent {(top_3_performers['Total Investment'].sum() / total_investment):.0%} of budget
+
+**Recognition Distribution:**
+- Spans {master_df['Recognition'].min():.0%} ({master_df.loc[master_df['Recognition'].idxmin()]['Element']}) to {master_df['Recognition'].max():.0%} ({master_df.loc[master_df['Recognition'].idxmax()]['Element']}) - a {master_df['Recognition'].max() / master_df['Recognition'].min():.1f}x range
+- Portfolio average: {master_df['Recognition'].mean():.0%} recognition
+- {len(master_df[(master_df['Recognition'] >= master_df['Recognition'].mean() * 0.9) & (master_df['Recognition'] <= master_df['Recognition'].mean() * 1.1)])} of 9 elements fall within ±10% of average
+""")
 
     st.markdown("---")
 
