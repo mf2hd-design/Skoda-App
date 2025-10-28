@@ -425,18 +425,18 @@ MOBILE_STYLE = """
 
 # Glossary of Terms
 GLOSSARY = {
-    "Recognition": "The percentage of respondents who have seen or heard this brand element before (Q02: 'Have you seen/heard this element before?')",
-    "Uniqueness": "Brand attribution - the percentage of consumers who correctly identify an element as belonging to Škoda vs competitors or generic design (Q05: 'Which brand do you think this belongs to?')",
-    "Brand Equity": "Recognition × Uniqueness - measures both awareness and distinctive ownership of a brand asset",
-    "Brand Linkage (Q29)": "Percentage of consumers who feel this element is most strongly linked to the Škoda brand (Q29 MaxDiff ranking: 'Which elements are most strongly linked to Škoda?')",
-    "Top-of-Mind (Q30)": "Words that spontaneously come to mind when thinking of Škoda brand (Q30: 'What are the 3 words that come top of mind when thinking of Škoda?')",
-    "ROI per €1M": "Recognition achieved per million euros invested - efficiency metric showing brand awareness return on investment",
-    "Net Sentiment": "Positive personality associations minus negative associations - indicates emotional perception",
+    "Recognition": "How many people recognize this element - shows brand visibility and awareness",
+    "Uniqueness": "How many people know this belongs to Škoda (not competitors) - measures brand ownership strength",
+    "Brand Equity": "Recognition × Uniqueness - shows if an element is both famous AND identified as Škoda's",
+    "Brand Linkage": "How strongly people connect this element to Škoda - shows perceived brand ownership",
+    "Top-of-Mind": "Words people think of first when they hear 'Škoda' - reveals unprompted brand associations",
+    "ROI per €1M": "Recognition points gained per €1M spent - higher scores mean better value for money",
+    "Net Sentiment": "Positive associations minus negative - shows if people feel good or bad about this element",
     "Usage": "Percentage of advertising campaigns that include this brand element",
-    "T2B": "Top 2 Box - percentage who chose the top 2 positive responses on a 5-point scale",
-    "B2B": "Bottom 2 Box - percentage who chose the bottom 2 negative responses on a 5-point scale",
-    "Market Consistency": "Low variation across markets indicates universal appeal; high variation suggests market-specific performance",
-    "First Recognition Trigger": "Which elements are most effective at triggering immediate Škoda recognition when shown first",
+    "Most Positive (Most Positive)": "Percentage who gave one of the 2 most positive ratings (strongly agree or agree)",
+    "Most Negative (Most Negative)": "Percentage who gave one of the 2 most negative ratings (strongly disagree or disagree)",
+    "Market Consistency": "Low variation = works everywhere. High variation = tailor strategy by market",
+    "First Recognition Trigger": "Which elements make people think 'Škoda' first - best for grabbing attention quickly",
 }
 
 # =====================================================================
@@ -951,7 +951,7 @@ tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
 # =====================================================================
 with tab1:
     st.markdown("## Executive Summary")
-    st.caption("📌 Key performance metrics, brand equity matrix, and recognition patterns at a glance")
+    st.caption("Performance snapshot: which elements are strongest, and where to invest")
 
     # TL;DR Box
     most_recognized = master_df.nlargest(1, 'Recognition').iloc[0]
@@ -978,7 +978,7 @@ with tab1:
             "Most Recognized",
             most_recognized['Element'],
             delta=f"{most_recognized['Recognition']:.0%}",
-            help_text="% of consumers who have seen/heard this element",
+            help_text="% of people who have seen/heard this element",
             icon="⭐"
         )
 
@@ -1473,7 +1473,7 @@ This differs from Recognition (whether they've seen it) — it measures perceive
                 st.metric(
                     top_q29['Element'],
                     f"{top_q29['Ranked_1st_Pct']:.1%}",
-                    help="% of consumers who ranked this #1"
+                    help="% of people who ranked this #1"
                 )
                 st.caption(f"{top_q29['Ranked_1st_Count']:.0f} people ranked it #1")
 
@@ -1532,7 +1532,7 @@ This differs from Recognition (whether they've seen it) — it measures perceive
 
 with tab2:
     st.header("💚 Sentiment Analysis")
-    st.caption("Consumer perception analysis based on Q04 semantic differential scales")
+    st.caption("Consumer perception analysis based on Q04 rating questions")
 
     # TL;DR Box
     most_positive_sent = master_df.loc[master_df['Net Sentiment'].idxmax()]
@@ -1571,7 +1571,7 @@ with tab2:
             "Most Positive Element",
             most_positive_sent['Element'],
             f"+{most_positive_sent['Net Sentiment']:.1%}",
-            help="Net sentiment = % choosing positive descriptors minus % choosing negative descriptors."
+            help="Positive ratings minus negative ratings - shows overall feeling about this element"
         )
         st.success(f"{sentiment_emoji} **{most_positive_sent['Net Sentiment']:+.1%}** net positive perception")
         with st.expander("📊 What contributes to this score?"):
@@ -1629,7 +1629,7 @@ with tab2:
 
             1. **Performance Spread:** {sentiment_range:.1%} gap between {top_sentiment_el} and {low_sentiment_el}
             2. **Recognition vs Sentiment:** High recognition doesn't guarantee positive sentiment - these are independent measures
-            3. **Element-Specific Responses:** Different brand assets trigger distinct emotional responses from consumers
+            3. **Element-Specific Responses:** Different brand elements trigger distinct emotional responses from consumers
             4. **Consistency Observation:** Wide variation suggests differentiated emotional impact across the portfolio
             """)
 
@@ -1686,7 +1686,7 @@ with tab2:
 
     st.plotly_chart(fig_lollipop, use_container_width=True)
 
-    st.warning(f"**📊 Key Pattern:** {positive_count} of 9 elements show net positive sentiment. Average net sentiment across the portfolio is {avg_net:+.1%}, with a {sentiment_range:.1%} range indicating varied emotional responses to different brand assets.")
+    st.warning(f"**📊 Key Pattern:** {positive_count} of 9 elements show net positive sentiment. Average net sentiment across the portfolio is {avg_net:+.1%}, with a {sentiment_range:.1%} range indicating varied emotional responses to different brand elements.")
 
     st.markdown("---")
 
@@ -2013,7 +2013,7 @@ consumers gave these responses. This reveals the **unprompted brand associations
 
 with tab3:
     st.header("📈 Strategic Insights Dashboard")
-    st.caption("Advanced portfolio analytics organized into focused categories")
+    st.caption("Deep dive into element performance and strategy")
 
     # TL;DR Summary
     best_roi_elem = master_df.loc[master_df['Recognition ROI'].idxmax()]
@@ -2378,7 +2378,7 @@ with tab3:
             [
                 f"<b>{best_roi_elem['Element']}</b> delivers highest efficiency at {best_roi_elem['Recognition ROI']:.2f} recognition per €1M",
                 f"<b>{roi_range:.1f}x efficiency gap</b> exists between best ({best_roi_elem['Element']}) and lowest ({worst_roi_elem['Element']}) performers",
-                f"<b>4 efficiency metrics available</b>: Total Investment, Per-Ad, Average Investment, and Brand Equity Index"
+                f"<b>4 value for moneys available</b>: Total Investment, Per-Ad, Average Investment, and Brand Equity Index"
             ]
         )
 
@@ -2393,7 +2393,7 @@ with tab3:
 
         # ROI metric selector
         roi_metric = st.selectbox(
-            "Select efficiency metric:",
+            "Select value for money:",
             [
                 "Total Investment Efficiency",
                 "Per-Ad Recognition Efficiency",
@@ -2514,16 +2514,16 @@ with tab3:
             - **Median Uniqueness:** {master_df['Uniqueness'].median():.0%}
 
             **High Recognition + High Uniqueness:**
-            - Above-median on both consumer recognition and brand attribution
+            - Above-median on both consumer recognition and who it belongs to
 
             **High Recognition + Lower Uniqueness:**
-            - Above-median recognition but below-median brand attribution
+            - Above-median recognition but below-median who it belongs to
 
             **Lower Recognition + High Uniqueness:**
-            - Strong brand attribution but below-median recognition
+            - Strong who it belongs to but below-median recognition
 
             **Lower Recognition + Lower Uniqueness:**
-            - Below-median on both recognition and brand attribution
+            - Below-median on both recognition and who it belongs to
             """)
 
         # Calculate quadrants
@@ -2796,7 +2796,7 @@ with tab3:
     # ========== SUB-TAB 4: MARKET & CONSUMER INSIGHTS ==========
     with subtab4:
         st.markdown("### 🌍 Market Analysis & Consumer Language")
-        st.caption("Market consistency, consumer associations (Q03), and brand attribution (Q05)")
+        st.caption("Market consistency, consumer associations (Q03), and who it belongs to (Q05)")
 
         # Calculate metrics for insights
         markets_count = audit_df['Market'].nunique()
@@ -2816,9 +2816,9 @@ with tab3:
         render_tldr_box(
             "Key Insights at a Glance",
             [
-                f"<b>{markets_count} markets analyzed</b> for cross-market consistency in element deployment patterns",
+                f"<b>{markets_count} markets analyzed</b> for cross-market consistency in element use patterns",
                 f"<b>{most_consistent[0]}</b> shows most consistent usage across markets (lowest variation)",
-                f"<b>{most_variable[0]}</b> shows highest market variation suggesting localized deployment strategies"
+                f"<b>{most_variable[0]}</b> shows highest market variation suggesting localized use strategies"
             ]
         )
 
@@ -2826,7 +2826,7 @@ with tab3:
 
         # Market Consistency Analysis
         st.markdown("### 🌍 Cross-Market Element Usage")
-        st.caption("Consistency of brand element deployment across different markets")
+        st.caption("Consistency of brand element use across different markets")
 
         markets = sorted(audit_df['Market'].unique())
         selected_markets = st.multiselect("Select markets to compare:", markets, default=markets, key="market_selector")
@@ -2972,7 +2972,7 @@ with tab3:
 
         # Comparative sentiment analysis across all elements (Q04)
         st.markdown("### 📊 Sentiment Comparison Across All Elements")
-        st.caption("Based on Q04 adjective scales: Bold, Stylish, Modern vs Cautious, Plain, Old-Fashioned")
+        st.caption("Shows how people feel about each element: Bold, Stylish, Modern vs Cautious, Plain, Old-Fashioned")
 
         # Create sentiment comparison using research_data (Q04)
         all_sentiments = []
@@ -3115,10 +3115,10 @@ with tab3:
 
         # Brand Confusion Analysis (Q05)
         st.markdown("### 🎯 Brand Attribution Matrix (Q05)")
-        st.caption("Which brands do consumers think these elements belong to?")
+        st.caption("Do people think these belong to Škoda or competitors?")
 
         st.info("""
-💡 **What this shows:** Brand attribution analysis reveals competitive positioning. High Škoda attribution indicates distinctive brand assets. High competitor attribution or "Don't Know" responses indicate confusion or weak brand association.
+💡 **What this shows:** Brand attribution analysis reveals competitive positioning. High Škoda attribution indicates distinctive brand elements. High competitor attribution or "Don't Know" responses indicate confusion or weak brand association.
 """)
 
         # Demographic filters for confusion matrix
@@ -3302,7 +3302,7 @@ Pattern indicates minimal competitive confusion - Škoda elements are generally 
 
 with tab4:
     st.header("🎯 Asset Performance Framework")
-    st.caption("Data-driven categorization of brand elements by performance metrics")
+    st.caption("Which elements perform best and why")
 
     # Auto-generate categories based on data
     high_performers = master_df[
@@ -3357,12 +3357,12 @@ with tab4:
                     st.markdown("**Performance Profile:**")
                     st.write(f"• **Recognition:** {row['Recognition']:.0%} - Above 40% threshold indicating strong consumer familiarity")
                     st.write(f"• **Uniqueness:** {row['Uniqueness']:.0%} - Above 15% threshold showing distinctive Škoda attribution")
-                    st.write(f"• **Usage Pattern:** {row['Overall Usage']:.0%} of campaigns - High deployment frequency")
+                    st.write(f"• **Usage Pattern:** {row['Overall Usage']:.0%} of campaigns - High use frequency")
                     st.write(f"• **Investment:** €{row['Total Investment']:,.0f} delivering {row['Recognition']:.0%} recognition ({row['Recognition ROI']:.2f} ROI)")
                     st.write(f"• **Sentiment:** {row['Net Sentiment']:+.1%} net sentiment from consumer associations")
 
                     st.markdown("**Why These Metrics Indicate Strong Performance:**")
-                    st.write(f"Combined recognition ({row['Recognition']:.0%}) and uniqueness ({row['Uniqueness']:.0%}) create brand equity score of {equity_score:.3f}. High usage ({row['Overall Usage']:.0%}) demonstrates established deployment patterns across campaigns.")
+                    st.write(f"Combined recognition ({row['Recognition']:.0%}) and uniqueness ({row['Uniqueness']:.0%}) create brand equity score of {equity_score:.3f}. High usage ({row['Overall Usage']:.0%}) demonstrates established use patterns across campaigns.")
         else:
             st.info("No elements currently meet all Category 1 criteria")
 
@@ -3482,7 +3482,7 @@ with tab4:
 
 with tab5:
     st.header("🔮 Growth Opportunity Analysis")
-    st.caption("Identification of underutilized assets and investment efficiency patterns")
+    st.caption("Find hidden opportunities and improve spend efficiency")
 
     # High Potential Assets (underutilized)
     high_potential = master_df[
@@ -3503,7 +3503,7 @@ with tab5:
     if most_consistent is not None:
         insights.append(f"<b>{most_consistent['Element']}</b> demonstrates most consistent cross-market performance")
     else:
-        insights.append(f"Cross-market analysis identifies opportunities for standardized vs. localized deployment")
+        insights.append(f"Cross-market analysis identifies opportunities for standardized vs. localized use")
 
     render_tldr_box("Key Insights at a Glance", insights)
 
@@ -3542,7 +3542,7 @@ with tab5:
                     st.write(f"• Investment at €{row['Total Investment']:,.0f} (above median €{median_investment:,.0f})")
 
                 st.markdown("**Opportunity Pattern:**")
-                st.write(f"High distinctiveness ({row['Uniqueness']:.0%} uniqueness) combined with below-median deployment ({row['Overall Usage']:.0%} usage) represents potential for increased utilization while maintaining brand attribution strength")
+                st.write(f"High distinctiveness ({row['Uniqueness']:.0%} uniqueness) combined with below-median use ({row['Overall Usage']:.0%} usage) represents potential for increased use while maintaining who it belongs to strength")
 
                 if row['Recognition ROI'] >= master_df['Recognition ROI'].median():
                     st.write(f"ROI of {row['Recognition ROI']:.2f} is above median, indicating efficient performance relative to investment")
@@ -3613,7 +3613,7 @@ with tab5:
                 if row['Recognition'] < 0.40:
                     st.write(f"Recognition at {row['Recognition']:.0%} relative to investment level")
                 if row['Uniqueness'] < 0.20:
-                    st.write(f"Uniqueness at {row['Uniqueness']:.0%} indicates lower brand attribution")
+                    st.write(f"Uniqueness at {row['Uniqueness']:.0%} indicates lower who it belongs to")
                 st.write("**Possible factors:** Recent launch timing, creative visibility, or distinctiveness challenges")
 
     st.markdown("---")
@@ -3681,7 +3681,7 @@ with tab5:
         st.metric(
             "Underutilized High-Uniqueness",
             len(high_potential),
-            help="Elements with uniqueness ≥25% and usage <40%"
+            help="Distinctive but underused"
         )
 
     with col2:
@@ -3703,7 +3703,7 @@ with tab5:
 # ==================== TAB 6: DEEP DIVE ANALYSIS ====================
 with tab6:
     st.header("🔍 Deep Dive Analysis")
-    st.caption("Detailed breakdowns and custom filtering")
+    st.caption("Explore data your way with filters")
 
     # Calculate key metrics for insights
     total_ads = len(audit_df)
@@ -3806,7 +3806,7 @@ with tab6:
 
     with st.expander("💡 About personality attributes"):
         st.markdown("""
-        These 7 personality dimensions (Bold, Stylish, Modern, Simple, Human, Exciting, Playful) reveal the **emotional character** of each brand asset.
+        These 7 personality dimensions (Bold, Stylish, Modern, Simple, Human, Exciting, Playful) reveal the **emotional character** of each brand element.
 
         **What the scores show:**
         - **Emotional connection** patterns beyond rational features
@@ -4109,7 +4109,7 @@ with tab6:
 
         with st.expander("📖 About market-level uniqueness"):
             st.markdown("""
-            **Uniqueness** measures brand attribution - the % of consumers who correctly identify an element as belonging to Škoda (vs competitors or generic design).
+            **Uniqueness** measures who it belongs to - the % of people who correctly identify an element as belonging to Škoda (vs competitors or generic design).
 
             **Why market variations matter:**
             - **Significant differences exist** between markets (e.g., Symbol: UK 23% vs Poland 55%)
@@ -4357,13 +4357,13 @@ with tab6:
 # ==================== TAB 7: RECOGNITION JOURNEY ====================
 with tab7:
     st.header("🧭 Recognition Journey & Brand Discovery")
-    st.caption("How consumers discover and recognize Škoda through brand elements")
+    st.caption("How people discover and connect with Škoda")
 
     # Key Insights Box
     render_tldr_box(
         "Key Insights at a Glance",
         [
-            f"<b>56.3% never recognized</b> these elements as Škoda even after seeing 6 different brand assets",
+            f"<b>56.3% never recognized</b> these elements as Škoda even after seeing 6 different brand elements",
             f"<b>Only 10.3% recognize</b> Škoda from a single element; recognition builds to 40.1% after all 6 elements",
             f"<b>33% familiar with Škoda</b> while 46% have heard the name but lack knowledge — revealing brand education opportunity"
         ]
@@ -4372,13 +4372,13 @@ with tab7:
     # Critical finding callout
     st.error("""
     ### ⚠️ Critical Research Finding
-    **56.3% of respondents never recognized these elements as Škoda** — even after seeing 6 different brand assets.
+    **56.3% of respondents never recognized these elements as Škoda** — even after seeing 6 different brand elements.
 
     This finding reveals:
     - The challenge of brand recognition in the automotive market
     - The significance of the Symbol (48% recognition) as the primary brand carrier
     - The importance of multiple touchpoints working together
-    - The potential to strengthen brand identity through strategic asset deployment
+    - The potential to strengthen brand identity through strategic asset use
     """)
 
     st.markdown("---")
@@ -4578,7 +4578,7 @@ with tab7:
                 - **Different age groups** may recognize different brand elements first
                 - **Recognition rates** for the same element vary by cohort (e.g., younger audiences may respond to modern elements)
                 - **Distinctiveness (uniqueness)** also varies - what feels "Škoda" to 18-30 may differ from 43-55
-                - **Strategic application:** Tailor asset deployment to target demographics
+                - **Strategic application:** Tailor asset use to target demographics
 
                 This analysis shows:
                 1. Which elements resonate with each age group
@@ -5115,8 +5115,8 @@ if st.session_state.show_raw_data:
         st.info("""
         **Survey Design:**
         - Each respondent was shown 6 out of 9 brand elements in randomized order
-        - Elements were shown individually without brand identification
-        - After viewing, respondents were asked if they recognized it as Škoda
+        - Elements saw individually without brand identification
+        - After viewing, we asked people if they recognized it as Škoda
         - Finally, the Škoda brand was revealed and post-reveal questions were asked
         """)
 
