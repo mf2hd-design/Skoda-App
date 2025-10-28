@@ -933,6 +933,98 @@ st.markdown("---")
 master_df, audit_df = calculate_metrics()
 
 # =====================================================================
+# RAW DATA EXPLORER (CONDITIONAL DISPLAY)
+# =====================================================================
+
+if st.session_state.show_raw_data:
+    st.markdown("---")
+    st.markdown("---")
+    st.header("📄 Data Explorer")
+    st.caption("Raw data access and detailed views")
+
+    col1, col2 = st.columns([6, 1])
+    with col2:
+        if st.button("✖️ Close", use_container_width=True):
+            st.session_state.show_raw_data = False
+            st.rerun()
+
+    st.markdown("---")
+
+    tab_a, tab_b, tab_c, tab_d = st.tabs(["Comms Audit Data", "Research Data", "Combined Metrics", "Survey Demographics"])
+
+    with tab_a:
+        st.markdown("### Comms Audit Data (102 Ads)")
+        st.dataframe(audit_df, use_container_width=True)
+
+        csv = audit_df.to_csv(index=False)
+        st.download_button(
+            label="📥 Download Comms Audit CSV",
+            data=csv,
+            file_name="skoda_comms_audit.csv",
+            mime="text/csv"
+        )
+
+    with tab_b:
+        st.markdown("### Research Data (9 Elements)")
+        st.dataframe(master_df, use_container_width=True)
+
+        csv = master_df.to_csv(index=False)
+        st.download_button(
+            label="📥 Download Research CSV",
+            data=csv,
+            file_name="skoda_research_data.csv",
+            mime="text/csv"
+        )
+
+    with tab_c:
+        st.markdown("### Combined Metrics View")
+
+        # Show key metrics
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            st.metric("Total Ads Analyzed", len(audit_df))
+
+        with col2:
+            st.metric("Brand Elements", len(master_df))
+
+        with col3:
+            total_spend = audit_df['Spend (£)'].sum() if 'Spend (£)' in audit_df.columns else 0
+            st.metric("Total Ad Spend", f"£{total_spend:,.0f}")
+
+        st.markdown("---")
+
+        # Combine relevant data
+        st.markdown("#### Recognition vs. Ad Spend")
+        st.caption("How brand element recognition relates to advertising investment")
+
+        if 'Element' in master_df.columns and 'Recognition_Total' in master_df.columns:
+            combined = master_df[['Element', 'Recognition_Total', 'Uniqueness_Total', 'Brand_Equity']].copy()
+            st.dataframe(combined, use_container_width=True)
+
+    with tab_d:
+        st.markdown("### Survey Demographics")
+        st.caption("Sample composition across markets")
+
+        # Sample sizes per country
+        sample_data = {
+            'Market': ['UK', 'Spain', 'Germany', 'Poland', 'Total'],
+            'Sample Size': [450, 475, 440, 490, 1855],
+            'Aware of Škoda': [324, 380, 352, 441, 1497],
+            'Aware %': ['72%', '80%', '80%', '90%', '81%']
+        }
+
+        import pandas as pd
+        sample_df = pd.DataFrame(sample_data)
+        st.dataframe(sample_df, use_container_width=True)
+
+        st.markdown("---")
+        st.caption("Data collected: October 2025")
+        st.caption("Research method: Online quantitative survey")
+
+    st.stop()
+
+# =====================================================================
 # TAB NAVIGATION
 # =====================================================================
 
@@ -4892,235 +4984,6 @@ with tab7:
 
 
 # =====================================================================
-
-# =====================================================================
-# RAW DATA EXPLORER (CONDITIONAL DISPLAY)
-# =====================================================================
-
-if st.session_state.show_raw_data:
-    st.markdown("---")
-    st.markdown("---")
-    st.header("📄 Data Explorer")
-    st.caption("Raw data access and detailed views")
-
-
-    col1, col2 = st.columns([6, 1])
-    with col2:
-        if st.button("✖️ Close", use_container_width=True):
-            st.session_state.show_raw_data = False
-            st.rerun()
-
-    st.markdown("---")
-
-    tab_a, tab_b, tab_c, tab_d = st.tabs(["Comms Audit Data", "Research Data", "Combined Metrics", "Survey Demographics"])
-
-    with tab_a:
-        st.markdown("### Comms Audit Data (102 Ads)")
-        st.dataframe(audit_df, use_container_width=True)
-
-        csv = audit_df.to_csv(index=False)
-        st.download_button(
-            label="📥 Download Comms Audit CSV",
-            data=csv,
-            file_name="skoda_comms_audit.csv",
-            mime="text/csv",
-            key="download_btn_audit_modal"
-        )
-
-    with tab_b:
-        st.markdown("### Research Data (P045556 - Saffron Brand Assets)")
-
-        research_view = st.radio(
-            "Select view:",
-            ["Core Metrics", "Extended Personality (7 Dimensions)", "Recognition by Country"],
-            horizontal=True,
-            key="research_view_modal"
-        )
-
-        if research_view == "Core Metrics":
-            research_display = []
-            for element, data in research_data.items():
-                research_display.append({
-                    'Element': element,
-                    'Recognition': data['recognition'],
-                    'Uniqueness': data['uniqueness']
-                })
-            research_display_df = pd.DataFrame(research_display)
-
-            st.dataframe(research_display_df.style.format({
-                'Recognition': '{:.1%}',
-                'Uniqueness': '{:.1%}'
-            }), use_container_width=True)
-
-        elif research_view == "Extended Personality (7 Dimensions)":
-            personality_display = []
-            for element, data in research_data.items():
-                personality_display.append({
-                    'Element': element,
-                    'Bold': data['bold'],
-                    'Stylish': data['stylish'],
-                    'Modern': data['modern'],
-                    'Simple': data['simple'],
-                    'Human': data['human'],
-                    'Exciting': data['exciting'],
-                    'Playful': data['playful']
-                })
-            personality_display_df = pd.DataFrame(personality_display)
-
-            st.dataframe(personality_display_df.style.format({
-                'Bold': '{:.1%}',
-                'Stylish': '{:.1%}',
-                'Modern': '{:.1%}',
-                'Simple': '{:.1%}',
-                'Human': '{:.1%}',
-                'Exciting': '{:.1%}',
-                'Playful': '{:.1%}'
-            }), use_container_width=True)
-
-        else:  # Recognition by Country
-            country_display = []
-            for element in brand_elements:
-                row_data = {'Element': element}
-                row_data.update(recognition_by_country[element])
-                country_display.append(row_data)
-            country_display_df = pd.DataFrame(country_display)
-
-            st.dataframe(country_display_df.style.format({
-                'UK': '{:.1%}',
-                'Spain': '{:.1%}',
-                'Germany': '{:.1%}',
-                'Poland': '{:.1%}'
-            }), use_container_width=True)
-
-    with tab_c:
-        st.markdown("### Combined Metrics")
-        st.dataframe(master_df, use_container_width=True)
-
-        csv = master_df.to_csv(index=False)
-        st.download_button(
-            label="📥 Download Combined Metrics CSV",
-            data=csv,
-            file_name="skoda_combined_metrics.csv",
-            mime="text/csv",
-            key="download_btn_combined_modal"
-        )
-
-    with tab_d:
-        st.markdown("### Survey Demographics (n=2,011)")
-        st.caption("P045556 - Saffron Brand Assets Study")
-
-        col1, col2 = st.columns(2)
-
-        with col1:
-            st.markdown("#### 🌍 Sample by Country")
-            country_data = pd.DataFrame({
-                'Country': ['UK', 'Spain', 'Germany', 'Poland'],
-                'Respondents': [
-                    demographics['countries']['UK'],
-                    demographics['countries']['Spain'],
-                    demographics['countries']['Germany'],
-                    demographics['countries']['Poland']
-                ],
-                'Percentage': [
-                    demographics['countries']['UK'] / demographics['total_respondents'],
-                    demographics['countries']['Spain'] / demographics['total_respondents'],
-                    demographics['countries']['Germany'] / demographics['total_respondents'],
-                    demographics['countries']['Poland'] / demographics['total_respondents']
-                ]
-            })
-
-            st.dataframe(country_data.style.format({
-                'Respondents': '{:,.0f}',
-                'Percentage': '{:.1%}'
-            }), use_container_width=True)
-
-            # Country chart
-            fig_countries = px.pie(
-                country_data,
-                values='Respondents',
-                names='Country',
-                title='Sample Distribution by Country',
-                color_discrete_sequence=['#4CAF50', '#66BB6A', '#81C784', '#A5D6A7']
-            )
-            st.plotly_chart(fig_countries, use_container_width=True, config=get_standard_chart_config())
-
-        with col2:
-            st.markdown("#### 👥 Demographics")
-
-            # Age
-            st.metric("Age Range", demographics['age']['range'])
-            st.caption(f"Mean: {demographics['age']['mean']} years | Median: {demographics['age']['median']} years")
-
-            # Gender
-            st.markdown("**Gender Split:**")
-            gender_data = pd.DataFrame({
-                'Gender': ['Male', 'Female'],
-                'Percentage': [demographics['gender']['male'], demographics['gender']['female']]
-            })
-            fig_gender = go.Figure(go.Bar(
-                x=gender_data['Gender'],
-                y=gender_data['Percentage'],
-                marker_color=['#2196F3', '#E91E63'],
-                text=gender_data['Percentage'].apply(lambda x: f'{x:.0%}'),
-                textposition='outside'
-            ))
-            fig_gender.update_layout(
-                yaxis_tickformat='.0%',
-                height=300,
-                showlegend=False
-            )
-            st.plotly_chart(fig_gender, use_container_width=True, config=get_standard_chart_config())
-
-            # Škoda Awareness
-            st.markdown("**Škoda Brand Awareness:**")
-            awareness_data = pd.DataFrame({
-                'Status': ['Heard of Škoda', 'Unaware'],
-                'Percentage': [
-                    demographics['skoda_awareness']['heard_of_skoda'],
-                    demographics['skoda_awareness']['unaware']
-                ]
-            })
-            fig_awareness = go.Figure(go.Bar(
-                x=awareness_data['Status'],
-                y=awareness_data['Percentage'],
-                marker_color=['#4CAF50', '#F44336'],
-                text=awareness_data['Percentage'].apply(lambda x: f'{x:.0%}'),
-                textposition='outside'
-            ))
-            fig_awareness.update_layout(
-                yaxis_tickformat='.0%',
-                height=300,
-                showlegend=False
-            )
-            st.plotly_chart(fig_awareness, use_container_width=True, config=get_standard_chart_config())
-
-        st.markdown("---")
-
-        # Summary stats
-        st.markdown("#### 📊 Survey Summary")
-        col1, col2, col3, col4 = st.columns(4)
-
-        with col1:
-            st.metric("Total Respondents", f"{demographics['total_respondents']:,}")
-
-        with col2:
-            st.metric("Countries", "4", "UK, Spain, Germany, Poland")
-
-        with col3:
-            st.metric("Mean Age", f"{demographics['age']['mean']} years")
-
-        with col4:
-            st.metric("Škoda Awareness", f"{demographics['skoda_awareness']['heard_of_skoda']:.0%}")
-
-        st.info("""
-        **Survey Design:**
-        - Each respondent was shown 6 out of 9 brand elements in randomized order
-        - Elements saw individually without brand identification
-        - After viewing, we asked people if they recognized it as Škoda
-        - Finally, the Škoda brand was revealed and post-reveal questions were asked
-        """)
-
-
 # FOOTER
 # =====================================================================
 
