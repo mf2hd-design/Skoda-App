@@ -1102,8 +1102,6 @@ with tab1:
             icon="📈"
         )
 
-    st.markdown("---")
-
     # Enhanced metric cards with detailed expanders
     col1, col2, col3, col4 = st.columns(4)
 
