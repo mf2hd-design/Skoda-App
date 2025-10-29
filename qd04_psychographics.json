@@ -1,0 +1,42 @@
+[
+  {
+    "statement": "Lifelong learning is important to me",
+    "category": "Learning-Oriented",
+    "Total_count": 940,
+    "Total_percent": 0.47,
+    "UK_percent": 0.47,
+    "Spain_percent": 0.48,
+    "Germany_percent": 0.45,
+    "Poland_percent": 0.47
+  },
+  {
+    "statement": "I enjoy a life filled with challenges, novelty, and change",
+    "category": "Adventure-Seeking",
+    "Total_count": 808,
+    "Total_percent": 0.4,
+    "UK_percent": 0.39,
+    "Spain_percent": 0.45,
+    "Germany_percent": 0.4,
+    "Poland_percent": 0.38
+  },
+  {
+    "statement": "I have a strong sense of adventure",
+    "category": "Adventure-Seeking",
+    "Total_count": 770,
+    "Total_percent": 0.38,
+    "UK_percent": 0.43,
+    "Spain_percent": 0.38,
+    "Germany_percent": 0.36,
+    "Poland_percent": 0.36
+  },
+  {
+    "statement": "I value traditional customs and beliefs",
+    "category": "Traditional-Values",
+    "Total_count": 815,
+    "Total_percent": 0.41,
+    "UK_percent": 0.41,
+    "Spain_percent": 0.41,
+    "Germany_percent": 0.34,
+    "Poland_percent": 0.46
+  }
+]
