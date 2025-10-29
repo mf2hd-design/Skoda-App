@@ -1,0 +1,68 @@
+[
+  {
+    "familiarity_label": "NET: Have heard of Škoda",
+    "familiarity_level": "Total Awareness",
+    "order": 0,
+    "Total_count": 1852,
+    "Total_percent": 0.92,
+    "UK_percent": 0.89,
+    "Spain_percent": 0.94,
+    "Germany_percent": 0.88,
+    "Poland_percent": 0.97
+  },
+  {
+    "familiarity_label": "I know a lot about Škoda",
+    "familiarity_level": "High Knowledge",
+    "order": 1,
+    "Total_count": 430,
+    "Total_percent": 0.21,
+    "UK_percent": 0.16,
+    "Spain_percent": 0.23,
+    "Germany_percent": 0.09,
+    "Poland_percent": 0.38
+  },
+  {
+    "familiarity_label": "I know some things about Škoda",
+    "familiarity_level": "Medium Knowledge",
+    "order": 2,
+    "Total_count": 776,
+    "Total_percent": 0.39,
+    "UK_percent": 0.39,
+    "Spain_percent": 0.4,
+    "Germany_percent": 0.28,
+    "Poland_percent": 0.48
+  },
+  {
+    "familiarity_label": "I have heard the name, but don't know anything about Škoda",
+    "familiarity_level": "Heard Name Only",
+    "order": 3,
+    "Total_count": 646,
+    "Total_percent": 0.32,
+    "UK_percent": 0.35,
+    "Spain_percent": 0.31,
+    "Germany_percent": 0.51,
+    "Poland_percent": 0.12
+  },
+  {
+    "familiarity_label": "I have never heard of Škoda",
+    "familiarity_level": "Never Heard",
+    "order": 4,
+    "Total_count": 91,
+    "Total_percent": 0.05,
+    "UK_percent": 0.07,
+    "Spain_percent": 0.04,
+    "Germany_percent": 0.06,
+    "Poland_percent": 0.01
+  },
+  {
+    "familiarity_label": "Don't know",
+    "familiarity_level": "Unknown",
+    "order": 5,
+    "Total_count": 68,
+    "Total_percent": 0.03,
+    "UK_percent": 0.03,
+    "Spain_percent": 0.02,
+    "Germany_percent": 0.06,
+    "Poland_percent": 0.02
+  }
+]
