@@ -1,0 +1,52 @@
+[
+  {
+    "response_category": "This fits with what I know and expect of Škoda",
+    "Total_count": 1126,
+    "Total_percent": 0.56,
+    "UK_percent": 0.51,
+    "Spain_percent": 0.65,
+    "Germany_percent": 0.42,
+    "Poland_percent": 0.67,
+    "sentiment_category": "Positive"
+  },
+  {
+    "response_category": "This does not fit with what I know and expect of Škoda",
+    "Total_count": 447,
+    "Total_percent": 0.22,
+    "UK_percent": 0.27,
+    "Spain_percent": 0.15,
+    "Germany_percent": 0.26,
+    "Poland_percent": 0.21,
+    "sentiment_category": "Negative"
+  },
+  {
+    "response_category": "I had not heard of Škoda before today",
+    "Total_count": 156,
+    "Total_percent": 0.08,
+    "UK_percent": 0.09,
+    "Spain_percent": 0.08,
+    "Germany_percent": 0.1,
+    "Poland_percent": 0.04,
+    "sentiment_category": "Neutral"
+  },
+  {
+    "response_category": "Other",
+    "Total_count": 15,
+    "Total_percent": 0.01,
+    "UK_percent": 0,
+    "Spain_percent": 0.01,
+    "Germany_percent": 0.01,
+    "Poland_percent": 0,
+    "sentiment_category": "Neutral"
+  },
+  {
+    "response_category": "Don't know",
+    "Total_count": 267,
+    "Total_percent": 0.13,
+    "UK_percent": 0.13,
+    "Spain_percent": 0.11,
+    "Germany_percent": 0.22,
+    "Poland_percent": 0.08,
+    "sentiment_category": "Neutral"
+  }
+]

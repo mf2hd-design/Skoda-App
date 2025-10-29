@@ -1,0 +1,29 @@
+[
+  {
+    "attribution_category": "Škoda",
+    "Total_count": 864,
+    "Total_percent": 0.43,
+    "UK_percent": 0.26,
+    "Spain_percent": 0.47,
+    "Germany_percent": 0.35,
+    "Poland_percent": 0.64
+  },
+  {
+    "attribution_category": "Other mentions",
+    "Total_count": 243,
+    "Total_percent": 0.12,
+    "UK_percent": 0.22,
+    "Spain_percent": 0.12,
+    "Germany_percent": 0.09,
+    "Poland_percent": 0.05
+  },
+  {
+    "attribution_category": "Don't know",
+    "Total_count": 904,
+    "Total_percent": 0.45,
+    "UK_percent": 0.52,
+    "Spain_percent": 0.41,
+    "Germany_percent": 0.56,
+    "Poland_percent": 0.31
+  }
+]

@@ -140,6 +140,17 @@ except Exception as e:
     st.error(f"Error loading Q30 data: {e}")
     q30_word_associations = []
 
+# Load Q28 Emotional Response to Reveal
+try:
+    if os.path.exists('q28_emotional_response.json'):
+        with open('q28_emotional_response.json', 'r', encoding='utf-8') as f:
+            q28_emotional_response = json.load(f)
+    else:
+        q28_emotional_response = []
+except Exception as e:
+    st.error(f"Error loading Q28 data: {e}")
+    q28_emotional_response = []
+
 from comms_data import comms_audit_data
 
 # --- Brand Elements ---
@@ -1951,6 +1962,156 @@ with tab2:
         st.write(f"• Average net sentiment: **{avg_net:+.1%}** across portfolio")
         st.write(f"• Net sentiment range: {sentiment_range:.1%} from lowest to highest")
         st.write(f"• Average negative associations: {master_df['Negative Sentiment'].mean():.1%}")
+
+    st.markdown("---")
+
+    # Q28 Emotional Response to Brand Reveal
+    if q28_emotional_response and len(q28_emotional_response) > 0:
+        st.markdown("### 🎯 Response to Brand Reveal (Q28)")
+        st.caption("How people respond when learning these elements are Škoda's")
+
+        # Calculate sentiment totals
+        total_positive = sum([item['Total_percent'] for item in q28_emotional_response if item['sentiment_category'] == 'Positive'])
+        total_negative = sum([item['Total_percent'] for item in q28_emotional_response if item['sentiment_category'] == 'Negative'])
+        total_neutral = sum([item['Total_percent'] for item in q28_emotional_response if item['sentiment_category'] == 'Neutral'])
+
+        # Key insight box
+        positive_response = next((item for item in q28_emotional_response if item['sentiment_category'] == 'Positive'), None)
+        negative_response = next((item for item in q28_emotional_response if item['sentiment_category'] == 'Negative'), None)
+
+        if positive_response and negative_response:
+            st.info(f"""
+💡 **Key Patterns Observed**
+
+- **{positive_response['Total_percent']:.0%}** of people say the brand elements "fit with what I know and expect of Škoda"
+- **{negative_response['Total_percent']:.0%}** say the elements "do not fit" with their expectations
+- **{positive_response['Total_percent'] / negative_response['Total_percent']:.1f}x** more positive than negative responses
+- Highest alignment in **Poland** ({positive_response['Poland_percent']:.0%}%), lowest in **Germany** ({positive_response['Germany_percent']:.0%}%)
+            """)
+
+        # Stacked bar chart: Response distribution
+        col1, col2 = st.columns([2, 1])
+
+        with col1:
+            # Create data for stacked bar
+            response_chart_data = []
+            for item in q28_emotional_response:
+                if item['Total_percent'] > 0.02:  # Only show responses >2%
+                    response_chart_data.append({
+                        'Category': item['response_category'],
+                        'Percentage': item['Total_percent'],
+                        'Sentiment': item['sentiment_category']
+                    })
+
+            if response_chart_data:
+                df_response = pd.DataFrame(response_chart_data)
+
+                # Create horizontal stacked bar
+                color_map = {'Positive': '#4CAF50', 'Negative': '#F44336', 'Neutral': '#9E9E9E'}
+
+                fig_response = go.Figure()
+
+                for sentiment in ['Positive', 'Negative', 'Neutral']:
+                    df_segment = df_response[df_response['Sentiment'] == sentiment]
+                    if len(df_segment) > 0:
+                        fig_response.add_trace(go.Bar(
+                            y=[0] * len(df_segment),
+                            x=df_segment['Percentage'],
+                            name=sentiment,
+                            orientation='h',
+                            marker_color=color_map[sentiment],
+                            text=df_segment['Category'],
+                            textposition='inside',
+                            hovertemplate='<b>%{text}</b><br>%{x:.1%}<extra></extra>'
+                        ))
+
+                fig_response.update_layout(
+                    barmode='stack',
+                    xaxis_tickformat='.0%',
+                    xaxis_title="Percentage of Respondents",
+                    yaxis=dict(showticklabels=False),
+                    height=200,
+                    showlegend=True,
+                    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+                    margin=dict(l=0, r=0, t=40, b=0)
+                )
+
+                st.plotly_chart(fig_response, use_container_width=True, config=get_standard_chart_config())
+
+        with col2:
+            st.markdown("#### Response Summary")
+            st.metric("Fits Expectations", f"{total_positive:.0%}", help="Positive responses")
+            st.metric("Doesn't Fit", f"{total_negative:.0%}", help="Negative responses")
+            st.metric("Neutral/Unknown", f"{total_neutral:.0%}", help="Neutral responses")
+
+        # Country comparison in expander
+        with st.expander("🌍 **Response by Market** (Click to expand)"):
+            st.markdown("#### Market-Level Response Patterns")
+
+            # Create country comparison data
+            if positive_response and negative_response:
+                country_response_data = {
+                    'Market': ['UK', 'Spain', 'Germany', 'Poland'],
+                    'Fits Expectations': [
+                        positive_response['UK_percent'],
+                        positive_response['Spain_percent'],
+                        positive_response['Germany_percent'],
+                        positive_response['Poland_percent']
+                    ],
+                    'Doesn\'t Fit': [
+                        negative_response['UK_percent'],
+                        negative_response['Spain_percent'],
+                        negative_response['Germany_percent'],
+                        negative_response['Poland_percent']
+                    ]
+                }
+
+                df_country_response = pd.DataFrame(country_response_data)
+
+                # Grouped bar chart
+                fig_country_response = go.Figure()
+
+                fig_country_response.add_trace(go.Bar(
+                    x=df_country_response['Market'],
+                    y=df_country_response['Fits Expectations'],
+                    name='Fits Expectations',
+                    marker_color='#4CAF50',
+                    text=df_country_response['Fits Expectations'].apply(lambda x: f'{x:.0%}'),
+                    textposition='outside'
+                ))
+
+                fig_country_response.add_trace(go.Bar(
+                    x=df_country_response['Market'],
+                    y=df_country_response['Doesn\'t Fit'],
+                    name='Doesn\'t Fit',
+                    marker_color='#F44336',
+                    text=df_country_response['Doesn\'t Fit'].apply(lambda x: f'{x:.0%}'),
+                    textposition='outside'
+                ))
+
+                fig_country_response.update_layout(
+                    barmode='group',
+                    yaxis_tickformat='.0%',
+                    yaxis_title="Response Rate",
+                    xaxis_title="Market",
+                    height=400,
+                    showlegend=True
+                )
+
+                st.plotly_chart(fig_country_response, use_container_width=True, config=get_standard_chart_config())
+
+                # Market insights
+                max_positive_market = df_country_response.loc[df_country_response['Fits Expectations'].idxmax(), 'Market']
+                max_positive_value = df_country_response['Fits Expectations'].max()
+                min_positive_market = df_country_response.loc[df_country_response['Fits Expectations'].idxmin(), 'Market']
+                min_positive_value = df_country_response['Fits Expectations'].min()
+
+                st.markdown(f"""
+**Market Variance:**
+- **{max_positive_market}** shows highest positive response ({max_positive_value:.0%})
+- **{min_positive_market}** shows lowest positive response ({min_positive_value:.0%})
+- **{max_positive_value - min_positive_value:.0%}** percentage point difference between markets
+                """)
 
     st.markdown("---")
 
