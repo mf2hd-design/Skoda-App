@@ -151,6 +151,17 @@ except Exception as e:
     st.error(f"Error loading Q28 data: {e}")
     q28_emotional_response = []
 
+# Load Q26 Unaided Brand Attribution
+try:
+    if os.path.exists('q26_unaided_attribution.json'):
+        with open('q26_unaided_attribution.json', 'r', encoding='utf-8') as f:
+            q26_unaided_attribution = json.load(f)
+    else:
+        q26_unaided_attribution = []
+except Exception as e:
+    st.error(f"Error loading Q26 data: {e}")
+    q26_unaided_attribution = []
+
 from comms_data import comms_audit_data
 
 # --- Brand Elements ---
@@ -4604,6 +4615,195 @@ with tab6:
     - Market-specific support plans may be beneficial
     - Localized creative adaptations could be considered
     """)
+
+    st.markdown("---")
+
+    # Q26 Brand Clarity: Unaided Attribution
+    if q26_unaided_attribution and len(q26_unaided_attribution) > 0:
+        st.markdown("### 🎯 Brand Clarity (Q26)")
+        st.caption("How well people identify brand elements as Škoda's before being told")
+
+        # Get attribution data
+        skoda_correct = next((item for item in q26_unaided_attribution if item['attribution_category'] == 'Škoda'), None)
+        other_brands = next((item for item in q26_unaided_attribution if item['attribution_category'] == 'Other mentions'), None)
+        dont_know = next((item for item in q26_unaided_attribution if item['attribution_category'] == "Don't know"), None)
+
+        if skoda_correct and other_brands and dont_know:
+            # Key insight box
+            st.info(f"""
+💡 **Key Patterns Observed**
+
+- **{skoda_correct['Total_percent']:.0%}** correctly identify elements as Škoda's without prompting
+- **{dont_know['Total_percent']:.0%}** say "don't know" which brand these elements belong to
+- **{other_brands['Total_percent']:.0%}** attribute to other car brands (competitive confusion)
+- **{skoda_correct['Poland_percent'] / skoda_correct['UK_percent']:.1f}x** difference between highest (Poland {skoda_correct['Poland_percent']:.0%}%) and lowest (UK {skoda_correct['UK_percent']:.0%}%) clarity markets
+            """)
+
+            # Attribution breakdown chart
+            col1, col2 = st.columns([2, 1])
+
+            with col1:
+                # Stacked horizontal bar showing attribution
+                attribution_chart_data = {
+                    'Category': ['Unaided Attribution'],
+                    'Škoda': [skoda_correct['Total_percent']],
+                    'Other Brands': [other_brands['Total_percent']],
+                    "Don't Know": [dont_know['Total_percent']]
+                }
+
+                fig_attribution = go.Figure()
+
+                colors = {'Škoda': '#4CAF50', 'Other Brands': '#FF9800', "Don't Know": '#9E9E9E'}
+
+                for category, color in colors.items():
+                    fig_attribution.add_trace(go.Bar(
+                        y=attribution_chart_data['Category'],
+                        x=attribution_chart_data[category],
+                        name=category,
+                        orientation='h',
+                        marker_color=color,
+                        text=[f"{attribution_chart_data[category][0]:.0%}"],
+                        textposition='inside',
+                        hovertemplate=f'<b>{category}</b><br>%{{x:.1%}}<extra></extra>'
+                    ))
+
+                fig_attribution.update_layout(
+                    barmode='stack',
+                    xaxis_tickformat='.0%',
+                    xaxis_title="Attribution Rate",
+                    yaxis=dict(showticklabels=False),
+                    height=150,
+                    showlegend=True,
+                    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+                    margin=dict(l=0, r=0, t=40, b=40)
+                )
+
+                st.plotly_chart(fig_attribution, use_container_width=True, config=get_standard_chart_config())
+
+                st.caption("Respondents were shown the elements and asked which car brand they belong to, **before** Škoda was revealed")
+
+            with col2:
+                st.markdown("#### Attribution Summary")
+                st.metric("Correct Attribution", f"{skoda_correct['Total_percent']:.0%}",
+                         delta=f"{skoda_correct['Total_percent'] - 0.50:.0%} vs 50%",
+                         delta_color="normal" if skoda_correct['Total_percent'] >= 0.5 else "inverse",
+                         help="Percentage who correctly identified as Škoda")
+                st.metric("Competitive Confusion", f"{other_brands['Total_percent']:.0%}",
+                         help="Attributed to other car brands")
+                st.metric("No Attribution", f"{dont_know['Total_percent']:.0%}",
+                         help="Couldn't identify brand owner")
+
+            # Market comparison in expander
+            with st.expander("🌍 **Brand Clarity by Market** (Click to expand)"):
+                st.markdown("#### Market-Level Attribution Patterns")
+
+                # Create market comparison data
+                market_clarity_data = {
+                    'Market': ['UK', 'Spain', 'Germany', 'Poland'],
+                    'Correct (Škoda)': [
+                        skoda_correct['UK_percent'],
+                        skoda_correct['Spain_percent'],
+                        skoda_correct['Germany_percent'],
+                        skoda_correct['Poland_percent']
+                    ],
+                    'Other Brands': [
+                        other_brands['UK_percent'],
+                        other_brands['Spain_percent'],
+                        other_brands['Germany_percent'],
+                        other_brands['Poland_percent']
+                    ],
+                    "Don't Know": [
+                        dont_know['UK_percent'],
+                        dont_know['Spain_percent'],
+                        dont_know['Germany_percent'],
+                        dont_know['Poland_percent']
+                    ]
+                }
+
+                df_market_clarity = pd.DataFrame(market_clarity_data)
+
+                # Stacked bar chart by market
+                fig_market_clarity = go.Figure()
+
+                colors_market = {'Correct (Škoda)': '#4CAF50', 'Other Brands': '#FF9800', "Don't Know": '#9E9E9E'}
+
+                for category, color in colors_market.items():
+                    fig_market_clarity.add_trace(go.Bar(
+                        x=df_market_clarity['Market'],
+                        y=df_market_clarity[category],
+                        name=category,
+                        marker_color=color,
+                        text=df_market_clarity[category].apply(lambda x: f'{x:.0%}'),
+                        textposition='inside'
+                    ))
+
+                fig_market_clarity.update_layout(
+                    barmode='stack',
+                    yaxis_tickformat='.0%',
+                    yaxis_title="Attribution Rate",
+                    xaxis_title="Market",
+                    height=450,
+                    showlegend=True
+                )
+
+                st.plotly_chart(fig_market_clarity, use_container_width=True, config=get_standard_chart_config())
+
+                # Market insights
+                max_clarity_market = df_market_clarity.loc[df_market_clarity['Correct (Škoda)'].idxmax(), 'Market']
+                max_clarity_value = df_market_clarity['Correct (Škoda)'].max()
+                min_clarity_market = df_market_clarity.loc[df_market_clarity['Correct (Škoda)'].idxmin(), 'Market']
+                min_clarity_value = df_market_clarity['Correct (Škoda)'].min()
+
+                max_confusion_market = df_market_clarity.loc[df_market_clarity['Other Brands'].idxmax(), 'Market']
+                max_confusion_value = df_market_clarity['Other Brands'].max()
+
+                st.markdown(f"""
+**Market Variance:**
+- **{max_clarity_market}** shows highest brand clarity ({max_clarity_value:.0%} correct attribution)
+- **{min_clarity_market}** shows lowest brand clarity ({min_clarity_value:.0%} correct attribution)
+- **{max_clarity_value - min_clarity_value:.0%}** percentage point gap between markets
+- **{max_confusion_market}** has highest competitive confusion ({max_confusion_value:.0%} attribute to other brands)
+                """)
+
+                # Aided vs. Unaided comparison
+                st.markdown("---")
+                st.markdown("#### Unaided vs. Aided Recognition")
+                st.caption("Comparing spontaneous attribution (Q26) to recognition after reveal")
+
+                # Get aided recognition from master_df (average across elements)
+                avg_aided_recognition = master_df['Recognition'].mean()
+
+                comparison_data = {
+                    'Metric': ['Unaided Attribution\n(Before reveal)', 'Aided Recognition\n(After reveal)'],
+                    'Percentage': [skoda_correct['Total_percent'], avg_aided_recognition]
+                }
+
+                df_comparison = pd.DataFrame(comparison_data)
+
+                fig_comparison = go.Figure(go.Bar(
+                    x=df_comparison['Metric'],
+                    y=df_comparison['Percentage'],
+                    marker_color=['#FF9800', '#4CAF50'],
+                    text=df_comparison['Percentage'].apply(lambda x: f'{x:.0%}'),
+                    textposition='outside'
+                ))
+
+                fig_comparison.update_layout(
+                    yaxis_tickformat='.0%',
+                    yaxis_title="Recognition/Attribution Rate",
+                    height=350,
+                    showlegend=False
+                )
+
+                st.plotly_chart(fig_comparison, use_container_width=True, config=get_standard_chart_config())
+
+                clarity_gap = avg_aided_recognition - skoda_correct['Total_percent']
+                st.markdown(f"""
+**Attribution Gap:**
+- **{clarity_gap:.0%}** gap between unaided attribution ({skoda_correct['Total_percent']:.0%}) and aided recognition ({avg_aided_recognition:.0%})
+- People recognize elements when prompted, but don't spontaneously connect them to Škoda
+- Indicates opportunity to strengthen brand linkage in communications
+                """)
 
 # ==================== TAB 7: RECOGNITION JOURNEY ====================
 with tab7:
