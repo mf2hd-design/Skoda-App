@@ -162,6 +162,17 @@ except Exception as e:
     st.error(f"Error loading Q26 data: {e}")
     q26_unaided_attribution = []
 
+# Load Q27 Škoda Familiarity Scale
+try:
+    if os.path.exists('q27_familiarity.json'):
+        with open('q27_familiarity.json', 'r', encoding='utf-8') as f:
+            q27_familiarity = json.load(f)
+    else:
+        q27_familiarity = []
+except Exception as e:
+    st.error(f"Error loading Q27 data: {e}")
+    q27_familiarity = []
+
 from comms_data import comms_audit_data
 
 # --- Brand Elements ---
@@ -5340,6 +5351,242 @@ with tab7:
         mime="text/csv",
         key="download_btn_journey"
     )
+
+    st.markdown("---")
+
+    # Q27 Familiarity Analysis
+    if q27_familiarity and len(q27_familiarity) > 0:
+        st.markdown("### 📚 Brand Familiarity Depth (Q27)")
+        st.caption("How well people know Škoda beyond just awareness")
+
+        # Get familiarity levels (excluding NET total)
+        familiarity_levels = [item for item in q27_familiarity if item['familiarity_level'] != 'Total Awareness']
+        net_awareness = next((item for item in q27_familiarity if item['familiarity_level'] == 'Total Awareness'), None)
+
+        if familiarity_levels and net_awareness:
+            # Calculate knowledge depth
+            high_knowledge = next((item for item in familiarity_levels if item['familiarity_level'] == 'High Knowledge'), None)
+            medium_knowledge = next((item for item in familiarity_levels if item['familiarity_level'] == 'Medium Knowledge'), None)
+            heard_only = next((item for item in familiarity_levels if item['familiarity_level'] == 'Heard Name Only'), None)
+
+            # Key insight box
+            if high_knowledge and medium_knowledge and heard_only:
+                knowledge_depth = high_knowledge['Total_percent'] + medium_knowledge['Total_percent']
+                awareness_gap = net_awareness['Total_percent'] - knowledge_depth
+
+                st.info(f"""
+💡 **Key Patterns Observed**
+
+- **{net_awareness['Total_percent']:.0%}** have heard of Škoda (total awareness)
+- **{knowledge_depth:.0%}** have actual knowledge about the brand ({high_knowledge['Total_percent']:.0%} high + {medium_knowledge['Total_percent']:.0%} medium)
+- **{heard_only['Total_percent']:.0%}** heard the name but know nothing - the "awareness without knowledge" gap
+- **{high_knowledge['Poland_percent'] / high_knowledge['Germany_percent']:.1f}x** difference in deep knowledge between Poland ({high_knowledge['Poland_percent']:.0%}%) and Germany ({high_knowledge['Germany_percent']:.0%}%)
+                """)
+
+            # Familiarity distribution chart
+            col1, col2 = st.columns([2, 1])
+
+            with col1:
+                # Stacked horizontal bar showing familiarity levels
+                familiarity_chart_data = []
+                colors_map = {
+                    'High Knowledge': '#1B5E20',
+                    'Medium Knowledge': '#4CAF50',
+                    'Heard Name Only': '#FFB74D',
+                    'Never Heard': '#F44336',
+                    'Unknown': '#9E9E9E'
+                }
+
+                fig_familiarity = go.Figure()
+
+                for item in familiarity_levels:
+                    if item['Total_percent'] > 0.01:  # Only show if >1%
+                        fig_familiarity.add_trace(go.Bar(
+                            y=['Familiarity Distribution'],
+                            x=[item['Total_percent']],
+                            name=item['familiarity_level'],
+                            orientation='h',
+                            marker_color=colors_map.get(item['familiarity_level'], '#9E9E9E'),
+                            text=[f"{item['Total_percent']:.0%}"],
+                            textposition='inside',
+                            hovertemplate=f"<b>{item['familiarity_level']}</b><br>%{{x:.1%}}<extra></extra>"
+                        ))
+
+                fig_familiarity.update_layout(
+                    barmode='stack',
+                    xaxis_tickformat='.0%',
+                    xaxis_title="Percentage of Respondents",
+                    yaxis=dict(showticklabels=False),
+                    height=150,
+                    showlegend=True,
+                    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+                    margin=dict(l=0, r=0, t=40, b=40)
+                )
+
+                st.plotly_chart(fig_familiarity, use_container_width=True, config=get_standard_chart_config())
+
+                st.caption("Familiarity scale from 'know a lot' to 'never heard' - reveals depth of brand knowledge")
+
+            with col2:
+                st.markdown("#### Knowledge Depth")
+                if high_knowledge and medium_knowledge and heard_only:
+                    st.metric("Total Awareness", f"{net_awareness['Total_percent']:.0%}",
+                             help="Have heard of Škoda")
+                    st.metric("Have Knowledge", f"{knowledge_depth:.0%}",
+                             help="Know a lot or some things")
+                    st.metric("Awareness Gap", f"{awareness_gap:.0%}",
+                             delta=f"-{awareness_gap:.0%}",
+                             delta_color="inverse",
+                             help="Heard name but know nothing")
+
+            # Market comparison in expander
+            with st.expander("🌍 **Familiarity by Market** (Click to expand)"):
+                st.markdown("#### Market-Level Knowledge Depth")
+
+                if high_knowledge and medium_knowledge and heard_only:
+                    # Create market comparison data
+                    market_familiarity_data = {
+                        'Market': ['UK', 'Spain', 'Germany', 'Poland'],
+                        'High Knowledge': [
+                            high_knowledge['UK_percent'],
+                            high_knowledge['Spain_percent'],
+                            high_knowledge['Germany_percent'],
+                            high_knowledge['Poland_percent']
+                        ],
+                        'Medium Knowledge': [
+                            medium_knowledge['UK_percent'],
+                            medium_knowledge['Spain_percent'],
+                            medium_knowledge['Germany_percent'],
+                            medium_knowledge['Poland_percent']
+                        ],
+                        'Heard Name Only': [
+                            heard_only['UK_percent'],
+                            heard_only['Spain_percent'],
+                            heard_only['Germany_percent'],
+                            heard_only['Poland_percent']
+                        ]
+                    }
+
+                    df_market_familiarity = pd.DataFrame(market_familiarity_data)
+
+                    # Stacked bar chart by market
+                    fig_market_familiarity = go.Figure()
+
+                    colors_market_fam = {
+                        'High Knowledge': '#1B5E20',
+                        'Medium Knowledge': '#4CAF50',
+                        'Heard Name Only': '#FFB74D'
+                    }
+
+                    for category, color in colors_market_fam.items():
+                        fig_market_familiarity.add_trace(go.Bar(
+                            x=df_market_familiarity['Market'],
+                            y=df_market_familiarity[category],
+                            name=category,
+                            marker_color=color,
+                            text=df_market_familiarity[category].apply(lambda x: f'{x:.0%}'),
+                            textposition='inside'
+                        ))
+
+                    fig_market_familiarity.update_layout(
+                        barmode='stack',
+                        yaxis_tickformat='.0%',
+                        yaxis_title="Percentage",
+                        xaxis_title="Market",
+                        height=450,
+                        showlegend=True
+                    )
+
+                    st.plotly_chart(fig_market_familiarity, use_container_width=True, config=get_standard_chart_config())
+
+                    # Market insights
+                    max_knowledge_market = df_market_familiarity.loc[df_market_familiarity['High Knowledge'].idxmax(), 'Market']
+                    max_knowledge_value = df_market_familiarity['High Knowledge'].max()
+                    min_knowledge_market = df_market_familiarity.loc[df_market_familiarity['High Knowledge'].idxmin(), 'Market']
+                    min_knowledge_value = df_market_familiarity['High Knowledge'].min()
+
+                    # Calculate total knowledge (high + medium)
+                    df_market_familiarity['Total Knowledge'] = df_market_familiarity['High Knowledge'] + df_market_familiarity['Medium Knowledge']
+                    max_total_knowledge_market = df_market_familiarity.loc[df_market_familiarity['Total Knowledge'].idxmax(), 'Market']
+                    max_total_knowledge_value = df_market_familiarity['Total Knowledge'].max()
+
+                    st.markdown(f"""
+**Market Knowledge Depth:**
+- **{max_knowledge_market}** shows highest deep knowledge ({max_knowledge_value:.0%} "know a lot")
+- **{min_knowledge_market}** shows lowest deep knowledge ({min_knowledge_value:.0%} "know a lot")
+- **{max_knowledge_value / min_knowledge_value:.1f}x** gap between highest and lowest knowledge markets
+- **{max_total_knowledge_market}** has strongest overall brand knowledge ({max_total_knowledge_value:.0%} combined high + medium)
+                    """)
+
+                    # Awareness vs Knowledge comparison
+                    st.markdown("---")
+                    st.markdown("#### Awareness vs. Knowledge Gap")
+                    st.caption("Comparing brand awareness to actual brand knowledge")
+
+                    # Calculate awareness vs knowledge gap by market
+                    gap_data = {
+                        'Market': ['UK', 'Spain', 'Germany', 'Poland'],
+                        'Total Awareness': [
+                            net_awareness['UK_percent'],
+                            net_awareness['Spain_percent'],
+                            net_awareness['Germany_percent'],
+                            net_awareness['Poland_percent']
+                        ],
+                        'Have Knowledge': [
+                            high_knowledge['UK_percent'] + medium_knowledge['UK_percent'],
+                            high_knowledge['Spain_percent'] + medium_knowledge['Spain_percent'],
+                            high_knowledge['Germany_percent'] + medium_knowledge['Germany_percent'],
+                            high_knowledge['Poland_percent'] + medium_knowledge['Poland_percent']
+                        ]
+                    }
+
+                    df_gap = pd.DataFrame(gap_data)
+                    df_gap['Awareness Gap'] = df_gap['Total Awareness'] - df_gap['Have Knowledge']
+
+                    fig_gap = go.Figure()
+
+                    fig_gap.add_trace(go.Bar(
+                        x=df_gap['Market'],
+                        y=df_gap['Total Awareness'],
+                        name='Total Awareness',
+                        marker_color='#2196F3',
+                        text=df_gap['Total Awareness'].apply(lambda x: f'{x:.0%}'),
+                        textposition='outside'
+                    ))
+
+                    fig_gap.add_trace(go.Bar(
+                        x=df_gap['Market'],
+                        y=df_gap['Have Knowledge'],
+                        name='Have Knowledge',
+                        marker_color='#4CAF50',
+                        text=df_gap['Have Knowledge'].apply(lambda x: f'{x:.0%}'),
+                        textposition='outside'
+                    ))
+
+                    fig_gap.update_layout(
+                        barmode='group',
+                        yaxis_tickformat='.0%',
+                        yaxis_title="Percentage",
+                        xaxis_title="Market",
+                        height=400,
+                        showlegend=True
+                    )
+
+                    st.plotly_chart(fig_gap, use_container_width=True, config=get_standard_chart_config())
+
+                    # Gap insights
+                    max_gap_market = df_gap.loc[df_gap['Awareness Gap'].idxmax(), 'Market']
+                    max_gap_value = df_gap['Awareness Gap'].max()
+                    min_gap_market = df_gap.loc[df_gap['Awareness Gap'].idxmin(), 'Market']
+                    min_gap_value = df_gap['Awareness Gap'].min()
+
+                    st.markdown(f"""
+**Knowledge Building Opportunity:**
+- **{max_gap_market}** has largest awareness-knowledge gap ({max_gap_value:.0%} heard but don't know)
+- **{min_gap_market}** has smallest gap ({min_gap_value:.0%} - best conversion of awareness to knowledge)
+- Average gap across all markets: **{df_gap['Awareness Gap'].mean():.0%}**
+- Indicates opportunity to convert brand awareness into brand knowledge through communications
+                    """)
 
 
 # =====================================================================
