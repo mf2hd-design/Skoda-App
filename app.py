@@ -111,6 +111,17 @@ try:
 except Exception as e:
     competitor_detail = {}
 
+# Load Q03 associations by demographics
+try:
+    if os.path.exists('q03_associations_by_demographics.json'):
+        with open('q03_associations_by_demographics.json', 'r', encoding='utf-8') as f:
+            q03_demographics = json.load(f)
+    else:
+        q03_demographics = {}
+except Exception as e:
+    st.error(f"Error loading Q03 demographic data: {e}")
+    q03_demographics = {}
+
 # Load Q29 MaxDiff Asset Power Rankings
 try:
     if os.path.exists('q29_rankings_first.json'):
@@ -787,34 +798,43 @@ def apply_demographic_filters(df, filters, elements):
     df = df.copy()
 
     # Apply recognition filters (age/gender)
-    if filters['age'] != "All Ages" or filters['gender'] != "All Genders":
-        for element in elements:
-            if element in recognition_by_age_gender:
-                age_key = filters['age'] if filters['age'] != "All Ages" else None
-                gender_key = filters['gender'] if filters['gender'] != "All Genders" else None
+    for element in elements:
+        if element in recognition_by_age_gender:
+            element_data = recognition_by_age_gender[element]
 
-                if age_key and gender_key:
-                    key = f"{age_key}_{gender_key}"
-                    if key in recognition_by_age_gender[element]:
-                        df.loc[df['Element'] == element, 'Recognition'] = recognition_by_age_gender[element][key]
-                elif age_key:
-                    for key, val in recognition_by_age_gender[element].items():
-                        if age_key in key:
-                            df.loc[df['Element'] == element, 'Recognition'] = val
-                            break
-                elif gender_key:
-                    for key, val in recognition_by_age_gender[element].items():
-                        if gender_key in key:
-                            df.loc[df['Element'] == element, 'Recognition'] = val
-                            break
+            # Check if we need to apply age filter
+            if filters['age'] != "All Ages" and 'age' in element_data:
+                age_key = filters['age']
+                if age_key in element_data['age']:
+                    df.loc[df['Element'] == element, 'Recognition'] = element_data['age'][age_key]
 
-    # Apply uniqueness filters (country)
-    if filters['country'] != "All Countries":
-        for element in elements:
-            if element in uniqueness_by_country:
-                country_key = filters['country']
-                if country_key in uniqueness_by_country[element]:
-                    df.loc[df['Element'] == element, 'Uniqueness'] = uniqueness_by_country[element][country_key]
+            # Check if we need to apply gender filter
+            elif filters['gender'] != "All Genders" and 'gender' in element_data:
+                gender_key = filters['gender'].lower()  # Convert "Male" to "male"
+                if gender_key in element_data['gender']:
+                    df.loc[df['Element'] == element, 'Recognition'] = element_data['gender'][gender_key]
+
+    # Apply uniqueness filters
+    for element in elements:
+        # Apply age filter to uniqueness
+        if filters['age'] != "All Ages" and element in uniqueness_by_age_gender:
+            if 'age' in uniqueness_by_age_gender[element]:
+                age_key = filters['age']
+                if age_key in uniqueness_by_age_gender[element]['age']:
+                    df.loc[df['Element'] == element, 'Uniqueness'] = uniqueness_by_age_gender[element]['age'][age_key]
+
+        # Apply gender filter to uniqueness
+        elif filters['gender'] != "All Genders" and element in uniqueness_by_age_gender:
+            if 'gender' in uniqueness_by_age_gender[element]:
+                gender_key = filters['gender'].lower()
+                if gender_key in uniqueness_by_age_gender[element]['gender']:
+                    df.loc[df['Element'] == element, 'Uniqueness'] = uniqueness_by_age_gender[element]['gender'][gender_key]
+
+        # Apply country filter to uniqueness
+        elif filters['country'] != "All Countries" and element in uniqueness_by_country:
+            country_key = filters['country']
+            if country_key in uniqueness_by_country[element]:
+                df.loc[df['Element'] == element, 'Uniqueness'] = uniqueness_by_country[element][country_key]
 
     return df
 
@@ -1761,9 +1781,6 @@ with tab2:
     # Positive vs Negative Lollipop Chart
     st.markdown("### Positive vs Negative Sentiment Comparison")
     st.caption("Lollipop chart showing positive (green) and negative (red) sentiment levels")
-
-    # Add global demographic filters
-    filters = render_demographic_filters("tab2")
 
     # Prepare data for lollipop chart (side-by-side dots)
     sentiment_comparison = master_df[['Element', 'Positive Sentiment', 'Negative Sentiment', 'Net Sentiment']].copy()
@@ -3159,75 +3176,197 @@ with tab3:
 💡 **What this shows:** Analysis of open-ended responses revealing how consumers naturally describe Škoda brand elements in their own words (not predefined scales).
 """)
 
-        # Element selector
-        selected_element_q03 = st.selectbox(
-            "Select element to analyze:",
-            list(q03_associations_data.keys()),
-            key="q03_element_selector"
-        )
+        # Element selector and demographic filters
+        col_selector, col_demo = st.columns([1, 1])
 
-        # Demographic filters for consumer language
-        language_filters = render_demographic_filters("language")
+        with col_selector:
+            selected_element_q03 = st.selectbox(
+                "Select element to analyze:",
+                list(q03_associations_data.keys()),
+                key="q03_element_selector"
+            )
+
+        with col_demo:
+            # Demographic filter for Q03
+            if selected_element_q03 in q03_demographics:
+                demo_type = st.selectbox(
+                    "View by demographic:",
+                    ["Overall", "By Gender", "By Age"],
+                    key="q03_demo_filter"
+                )
+            else:
+                demo_type = "Overall"
+                st.info("Demographic breakdowns available for this element")
 
         element_data = q03_associations_data[selected_element_q03]
 
-        col1, col2 = st.columns([2, 1])
+        # Determine which data to show based on filter
+        if demo_type == "Overall" or selected_element_q03 not in q03_demographics:
+            # Show overall data
+            col1, col2 = st.columns([2, 1])
 
-        with col1:
-            # Top words bar chart
-            st.markdown(f"#### Top 10 Words for {selected_element_q03}")
+            with col1:
+                # Top words bar chart
+                st.markdown(f"#### Top 10 Words for {selected_element_q03}")
 
-            words_df = pd.DataFrame({
-                'Word': element_data['top_words'],
-                'Frequency': element_data['frequencies']
-            })
+                words_df = pd.DataFrame({
+                    'Word': element_data['top_words'],
+                    'Frequency': element_data['frequencies']
+                })
 
-            fig_words = px.bar(
-                words_df,
-                x='Frequency',
-                y='Word',
-                orientation='h',
-                title=f'Most Common Words: {selected_element_q03}',
-                text=words_df['Frequency'].apply(lambda x: f'{x:.0%}'),
-                color='Frequency',
-                color_continuous_scale='Blues',
-                hover_data={'Frequency': ':.1%'}
-            )
-            fig_words = apply_standard_chart_styling(fig_words, "")
-            fig_words.update_layout(height=400, showlegend=False, xaxis_tickformat='.0%')
-            fig_words.update_traces(textposition='outside')
-            st.plotly_chart(fig_words, use_container_width=True, config=get_standard_chart_config())
+                fig_words = px.bar(
+                    words_df,
+                    x='Frequency',
+                    y='Word',
+                    orientation='h',
+                    title=f'Most Common Words: {selected_element_q03}',
+                    text=words_df['Frequency'].apply(lambda x: f'{x:.0%}'),
+                    color='Frequency',
+                    color_continuous_scale='Blues',
+                    hover_data={'Frequency': ':.1%'}
+                )
+                fig_words = apply_standard_chart_styling(fig_words, "")
+                fig_words.update_layout(height=400, showlegend=False, xaxis_tickformat='.0%')
+                fig_words.update_traces(textposition='outside')
+                st.plotly_chart(fig_words, use_container_width=True, config=get_standard_chart_config())
 
-        with col2:
-            # Sentiment analysis from Q04 adjective scales
-            st.markdown("#### Sentiment (Q04 Adjectives)")
+        elif demo_type == "By Gender":
+            # Show gender comparison
+            st.markdown(f"#### Top Associations by Gender - {selected_element_q03}")
 
-            # Get sentiment data from research_data (Q04)
-            sentiment_data_source = research_data[selected_element_q03]
+            demo_data = q03_demographics[selected_element_q03]['gender']
 
-            sentiment_df = pd.DataFrame({
-                'Sentiment': ['Positive', 'Negative'],
-                'Percentage': [
-                    sentiment_data_source['positive_sentiment'],
-                    sentiment_data_source['negative_sentiment']
-                ]
-            })
+            # Get top 10 words for each gender
+            male_words = sorted(demo_data['male'].items(), key=lambda x: x[1], reverse=True)[:10]
+            female_words = sorted(demo_data['female'].items(), key=lambda x: x[1], reverse=True)[:10]
 
-            fig_sentiment = px.pie(
-                sentiment_df,
-                values='Percentage',
-                names='Sentiment',
-                title='Adjective Sentiment',
-                color='Sentiment',
-                color_discrete_map={'Positive': '#4CAF50', 'Negative': '#F44336'}
-            )
-            st.plotly_chart(fig_sentiment, use_container_width=True)
+            col_m, col_f = st.columns(2)
 
-            st.metric("Net Sentiment",
-                     f"{sentiment_data_source['net_sentiment']:+.1%}",
-                     "Positive - Negative")
+            with col_m:
+                st.markdown("**Male**")
+                male_df = pd.DataFrame(male_words, columns=['Word', 'Frequency'])
+                fig_male = px.bar(
+                    male_df,
+                    x='Frequency',
+                    y='Word',
+                    orientation='h',
+                    text=male_df['Frequency'].apply(lambda x: f'{x:.0%}'),
+                    color_discrete_sequence=['#4A90E2']
+                )
+                fig_male = apply_standard_chart_styling(fig_male, "")
+                fig_male.update_layout(height=400, showlegend=False, xaxis_tickformat='.0%')
+                fig_male.update_traces(textposition='outside')
+                st.plotly_chart(fig_male, use_container_width=True, config=get_standard_chart_config())
 
-            st.caption("From Q04: Bold, Stylish, Modern, etc.")
+            with col_f:
+                st.markdown("**Female**")
+                female_df = pd.DataFrame(female_words, columns=['Word', 'Frequency'])
+                fig_female = px.bar(
+                    female_df,
+                    x='Frequency',
+                    y='Word',
+                    orientation='h',
+                    text=female_df['Frequency'].apply(lambda x: f'{x:.0%}'),
+                    color_discrete_sequence=['#E24A90']
+                )
+                fig_female = apply_standard_chart_styling(fig_female, "")
+                fig_female.update_layout(height=400, showlegend=False, xaxis_tickformat='.0%')
+                fig_female.update_traces(textposition='outside')
+                st.plotly_chart(fig_female, use_container_width=True, config=get_standard_chart_config())
+
+        elif demo_type == "By Age":
+            # Show age comparison
+            st.markdown(f"#### Top Associations by Age Group - {selected_element_q03}")
+
+            demo_data = q03_demographics[selected_element_q03]['age']
+
+            # Get top 10 words for each age group
+            age_18_30 = sorted(demo_data['18-30'].items(), key=lambda x: x[1], reverse=True)[:10]
+            age_31_42 = sorted(demo_data['31-42'].items(), key=lambda x: x[1], reverse=True)[:10]
+            age_43_55 = sorted(demo_data['43-55'].items(), key=lambda x: x[1], reverse=True)[:10]
+
+            col_y, col_m, col_o = st.columns(3)
+
+            with col_y:
+                st.markdown("**18-30**")
+                age_18_30_df = pd.DataFrame(age_18_30, columns=['Word', 'Frequency'])
+                fig_18_30 = px.bar(
+                    age_18_30_df,
+                    x='Frequency',
+                    y='Word',
+                    orientation='h',
+                    text=age_18_30_df['Frequency'].apply(lambda x: f'{x:.0%}'),
+                    color_discrete_sequence=['#7C4DFF']
+                )
+                fig_18_30 = apply_standard_chart_styling(fig_18_30, "")
+                fig_18_30.update_layout(height=400, showlegend=False, xaxis_tickformat='.0%')
+                fig_18_30.update_traces(textposition='outside')
+                st.plotly_chart(fig_18_30, use_container_width=True, config=get_standard_chart_config())
+
+            with col_m:
+                st.markdown("**31-42**")
+                age_31_42_df = pd.DataFrame(age_31_42, columns=['Word', 'Frequency'])
+                fig_31_42 = px.bar(
+                    age_31_42_df,
+                    x='Frequency',
+                    y='Word',
+                    orientation='h',
+                    text=age_31_42_df['Frequency'].apply(lambda x: f'{x:.0%}'),
+                    color_discrete_sequence=['#FF6F00']
+                )
+                fig_31_42 = apply_standard_chart_styling(fig_31_42, "")
+                fig_31_42.update_layout(height=400, showlegend=False, xaxis_tickformat='.0%')
+                fig_31_42.update_traces(textposition='outside')
+                st.plotly_chart(fig_31_42, use_container_width=True, config=get_standard_chart_config())
+
+            with col_o:
+                st.markdown("**43-55**")
+                age_43_55_df = pd.DataFrame(age_43_55, columns=['Word', 'Frequency'])
+                fig_43_55 = px.bar(
+                    age_43_55_df,
+                    x='Frequency',
+                    y='Word',
+                    orientation='h',
+                    text=age_43_55_df['Frequency'].apply(lambda x: f'{x:.0%}'),
+                    color_discrete_sequence=['#00C853']
+                )
+                fig_43_55 = apply_standard_chart_styling(fig_43_55, "")
+                fig_43_55.update_layout(height=400, showlegend=False, xaxis_tickformat='.0%')
+                fig_43_55.update_traces(textposition='outside')
+                st.plotly_chart(fig_43_55, use_container_width=True, config=get_standard_chart_config())
+
+        # Continue with col2 content from original (if not in demographic view)
+        if demo_type == "Overall" or selected_element_q03 not in q03_demographics:
+            with col2:
+                # Sentiment analysis from Q04 adjective scales
+                st.markdown("#### Sentiment (Q04 Adjectives)")
+
+                # Get sentiment data from research_data (Q04)
+                sentiment_data_source = research_data[selected_element_q03]
+
+                sentiment_df = pd.DataFrame({
+                    'Sentiment': ['Positive', 'Negative'],
+                    'Percentage': [
+                        sentiment_data_source['positive_sentiment'],
+                        sentiment_data_source['negative_sentiment']
+                    ]
+                })
+
+                fig_sentiment = px.pie(
+                    sentiment_df,
+                    values='Percentage',
+                    names='Sentiment',
+                    title='Adjective Sentiment',
+                    color='Sentiment',
+                    color_discrete_map={'Positive': '#4CAF50', 'Negative': '#F44336'}
+                )
+                st.plotly_chart(fig_sentiment, use_container_width=True)
+
+                st.metric("Net Sentiment",
+                         f"{sentiment_data_source['net_sentiment']:+.1%}",
+                         "Positive - Negative")
+
+                st.caption("From Q04: Bold, Stylish, Modern, etc.")
 
         # Word associations table
         st.markdown(f"#### All Associations for {selected_element_q03}")
@@ -3393,9 +3532,6 @@ with tab3:
         st.info("""
 💡 **What this shows:** Brand attribution analysis reveals competitive positioning. High Škoda attribution indicates distinctive brand elements. High competitor attribution or "Don't Know" responses indicate confusion or weak brand association.
 """)
-
-        # Demographic filters for confusion matrix
-        confusion_filters = render_demographic_filters("confusion")
 
         # Create confusion matrix using Q05 data
         confusion_df = pd.DataFrame(q05_confusion_data).T
@@ -4309,9 +4445,6 @@ with tab6:
     # ============ RECOGNITION BY MARKET ============
     st.markdown("### 🌍 Recognition by Market")
     st.caption("How brand elements perform across different countries")
-
-    # Add demographic selector for market recognition
-    filters_market = render_demographic_filters(prefix="market_deep", use_global=False)
 
     col1, col2 = st.columns([2, 1])
 
