@@ -464,6 +464,9 @@ GLOSSARY = {
     "ROI per €1M": "Recognition points gained per €1M spent - higher scores mean better value for money",
     "Net Sentiment": "Positive associations minus negative - shows if people feel good or bad about this element",
     "Usage": "Percentage of advertising campaigns that include this brand element",
+    "Number of Ads": "Total count of advertising campaigns that featured this brand element",
+    "Total Investment": "Total campaign spend across all ads featuring this element",
+    "Average per Ad": "Average cost per ad placement when this element is used (Total Investment ÷ Number of Ads)",
     "Most Positive (Most Positive)": "Percentage who gave one of the 2 most positive ratings (strongly agree or agree)",
     "Most Negative (Most Negative)": "Percentage who gave one of the 2 most negative ratings (strongly disagree or disagree)",
     "Market Consistency": "Low variation = works everywhere. High variation = tailor strategy by market",
@@ -540,9 +543,18 @@ def calculate_metrics():
         if element in audit_df.columns:
             ads_with_element = audit_df[audit_df[element] == True]
             total_investment = ads_with_element['Spend'].sum() if len(ads_with_element) > 0 else 0
+            num_ads = len(ads_with_element)
         else:
             total_investment = 0
+            num_ads = 0
         master_df.loc[master_df['Element'] == element, 'Total Investment'] = total_investment
+        master_df.loc[master_df['Element'] == element, 'Number of Ads'] = num_ads
+
+    # Calculate average investment per ad
+    master_df['Average per Ad'] = master_df.apply(
+        lambda row: (row['Total Investment'] / row['Number of Ads']) if row['Number of Ads'] > 0 else 0,
+        axis=1
+    )
 
     # Calculate ROI metrics
     master_df['Recognition ROI'] = master_df.apply(
@@ -1231,11 +1243,12 @@ with tab1:
 
         st.dataframe(
             display_df[['Element', 'Recognition', 'Uniqueness', 'Overall Usage',
-                       'Total Investment', 'Recognition ROI', 'Net Sentiment', 'Brand Equity Score']]
+                       'Number of Ads', 'Total Investment', 'Average per Ad', 'Recognition ROI', 'Net Sentiment', 'Brand Equity Score']]
             .set_index('Element')
             .T.style
             .format("{:.1%}", subset=(pd.IndexSlice[['Recognition', 'Uniqueness', 'Overall Usage', 'Net Sentiment']], slice(None)))
-            .format("€{:,.0f}", subset=(pd.IndexSlice[['Total Investment']], slice(None)))
+            .format("{:.0f}", subset=(pd.IndexSlice[['Number of Ads']], slice(None)))
+            .format("€{:,.0f}", subset=(pd.IndexSlice[['Total Investment', 'Average per Ad']], slice(None)))
             .format("{:.2f}", subset=(pd.IndexSlice[['Recognition ROI']], slice(None)))
             .format("{:.3f}", subset=(pd.IndexSlice[['Brand Equity Score']], slice(None)))
             .background_gradient(cmap='RdYlGn', axis=1, subset=(pd.IndexSlice[['Recognition', 'Uniqueness', 'Net Sentiment']], slice(None))),
