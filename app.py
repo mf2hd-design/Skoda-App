@@ -23,19 +23,6 @@ st.set_page_config(
 # SESSION STATE INITIALIZATION
 # =====================================================================
 
-# Initialize session state for global filters
-if 'global_filters_enabled' not in st.session_state:
-    st.session_state.global_filters_enabled = False
-
-if 'global_country' not in st.session_state:
-    st.session_state.global_country = "All Countries"
-
-if 'global_age' not in st.session_state:
-    st.session_state.global_age = "All Ages"
-
-if 'global_gender' not in st.session_state:
-    st.session_state.global_gender = "All Genders"
-
 if 'comparison_mode' not in st.session_state:
     st.session_state.comparison_mode = False
 
@@ -522,12 +509,6 @@ def render_empty_state(title="No Data Found", suggestions=None):
         for suggestion in suggestions:
             st.markdown(f"• {suggestion}")
 
-    if st.button("🔄 Reset All Filters", key=f"reset_{title}"):
-        st.session_state.global_country = "All Countries"
-        st.session_state.global_age = "All Ages"
-        st.session_state.global_gender = "All Genders"
-        st.toast("✅ Filters reset!", icon="✅")
-        st.rerun()
 
 @st.cache_data(ttl=3600)  # Cache for 1 hour
 def calculate_metrics():
@@ -720,68 +701,58 @@ def apply_standard_chart_styling(fig, title=""):
 # FILTER LOGIC
 # =====================================================================
 
-def render_demographic_filters(prefix="", use_global=False):
+def render_demographic_filters(prefix=""):
     """
-    Render demographic filters - can use global or local
+    Render demographic filters
 
     Args:
         prefix: Unique prefix for widget keys
-        use_global: If True, use global session state filters
 
     Returns:
         dict with country, age, gender, and context_text
     """
-    if use_global and st.session_state.global_filters_enabled:
-        # Use global filters
-        return {
-            'country': st.session_state.global_country,
-            'age': st.session_state.global_age,
-            'gender': st.session_state.global_gender,
-            'context_text': f"{st.session_state.global_country} | {st.session_state.global_age} | {st.session_state.global_gender}"
-        }
-    else:
-        # Render local filters
-        st.markdown("#### 🎯 Filter by Demographics")
-        col1, col2, col3 = st.columns(3)
+    # Render local filters
+    st.markdown("#### 🎯 Filter by Demographics")
+    col1, col2, col3 = st.columns(3)
 
-        with col1:
-            country = st.selectbox(
-                "Country:",
-                ["All Countries", "UK", "Spain", "Germany", "Poland"],
-                key=f"{prefix}_country"
-            )
+    with col1:
+        country = st.selectbox(
+            "Country:",
+            ["All Countries", "UK", "Spain", "Germany", "Poland"],
+            key=f"{prefix}_country"
+        )
 
-        with col2:
-            age = st.selectbox(
-                "Age Group:",
-                ["All Ages", "18-30", "31-42", "43-55"],
-                key=f"{prefix}_age"
-            )
+    with col2:
+        age = st.selectbox(
+            "Age Group:",
+            ["All Ages", "18-30", "31-42", "43-55"],
+            key=f"{prefix}_age"
+        )
 
-        with col3:
-            gender = st.selectbox(
-                "Gender:",
-                ["All Genders", "Male", "Female"],
-                key=f"{prefix}_gender"
-            )
+    with col3:
+        gender = st.selectbox(
+            "Gender:",
+            ["All Genders", "Male", "Female"],
+            key=f"{prefix}_gender"
+        )
 
-        # Build context text
-        context_parts = []
-        if country != "All Countries":
-            context_parts.append(f"**{country}**")
-        if age != "All Ages":
-            context_parts.append(f"**{age}**")
-        if gender != "All Genders":
-            context_parts.append(f"**{gender}**")
+    # Build context text
+    context_parts = []
+    if country != "All Countries":
+        context_parts.append(f"**{country}**")
+    if age != "All Ages":
+        context_parts.append(f"**{age}**")
+    if gender != "All Genders":
+        context_parts.append(f"**{gender}**")
 
-        context_text = " | ".join(context_parts) if context_parts else "**All Demographics**"
+    context_text = " | ".join(context_parts) if context_parts else "**All Demographics**"
 
-        return {
-            'country': country,
-            'age': age,
-            'gender': gender,
-            'context_text': context_text
-        }
+    return {
+        'country': country,
+        'age': age,
+        'gender': gender,
+        'context_text': context_text
+    }
 
 def apply_demographic_filters(df, filters, elements):
     """
@@ -844,55 +815,6 @@ def apply_demographic_filters(df, filters, elements):
 
 with st.sidebar:
     st.markdown("# 🎛️ Control Panel")
-    st.markdown("---")
-
-    # Global Filters Section
-    st.markdown("### 🌍 Global Filters")
-    st.caption("Apply filters across all tabs")
-
-    enable_global = st.toggle(
-        "Enable Global Filters",
-        value=st.session_state.global_filters_enabled,
-        help="When enabled, filters apply to all tabs automatically"
-    )
-    st.session_state.global_filters_enabled = enable_global
-
-    if enable_global:
-        st.session_state.global_country = st.selectbox(
-            "Country",
-            ["All Countries", "UK", "Spain", "Germany", "Poland"],
-            key="sidebar_country"
-        )
-
-        st.session_state.global_age = st.selectbox(
-            "Age Group",
-            ["All Ages", "18-30", "31-42", "43-55"],
-            key="sidebar_age"
-        )
-
-        st.session_state.global_gender = st.selectbox(
-            "Gender",
-            ["All Genders", "Male", "Female"],
-            key="sidebar_gender"
-        )
-
-        # Show active filters
-        st.success(f"""
-        **Active Filters:**
-        - {st.session_state.global_country}
-        - {st.session_state.global_age}
-        - {st.session_state.global_gender}
-        """)
-
-        if st.button("🔄 Reset All Filters"):
-            st.session_state.global_country = "All Countries"
-            st.session_state.global_age = "All Ages"
-            st.session_state.global_gender = "All Genders"
-            st.toast("✅ All filters reset successfully!", icon="✅")
-            st.rerun()
-    else:
-        st.info("Global filters disabled. Use local filters in each tab.")
-
     st.markdown("---")
 
     # Comparison Mode Section
@@ -960,20 +882,6 @@ with st.sidebar:
     st.markdown("---")
     st.caption("Škoda Brand Intelligence Dashboard")
     st.caption("© 2025 Saffron Brand Consultants")
-
-# =====================================================================
-# PERSISTENT HEADER BAR
-# =====================================================================
-
-# Show active filters in header if global filters enabled
-if st.session_state.global_filters_enabled:
-    filter_text = f"🎯 Active: {st.session_state.global_country} | {st.session_state.global_age} | {st.session_state.global_gender}"
-    st.markdown(f"""
-    <div style='background-color: #e3f2fd; padding: 10px 20px; border-radius: 8px;
-                margin-bottom: 20px; text-align: center; border: 2px solid #2196F3;'>
-        <strong>{filter_text}</strong>
-    </div>
-    """, unsafe_allow_html=True)
 
 # =====================================================================
 # APP HEADER
@@ -1353,16 +1261,8 @@ with tab1:
         color="#2196F3"
     )
 
-    # Use global filters if enabled, otherwise show local filters
-    if st.session_state.global_filters_enabled:
-        equity_filters = {
-            'country': st.session_state.global_country,
-            'age': st.session_state.global_age,
-            'gender': st.session_state.global_gender
-        }
-        st.info(f"🌍 Using global filters: {st.session_state.global_country} | {st.session_state.global_age} | {st.session_state.global_gender}")
-    else:
-        equity_filters = render_demographic_filters("equity", use_global=False)
+    # Render demographic filters
+    equity_filters = render_demographic_filters("equity")
 
     # Apply filters to matrix data
     equity_matrix_df = apply_demographic_filters(master_df.copy(), equity_filters, brand_elements)
