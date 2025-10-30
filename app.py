@@ -1330,11 +1330,21 @@ with tab1:
         st.markdown("#### ⚠️ Top-Left: Famous Generics")
         st.caption("High Recognition + Lower Uniqueness")
         if len(top_left) > 0:
+            st.info("""
+**💡 Why this happens:** People have seen these elements, but don't strongly connect them to Škoda.
+They're "DEPENDENT ASSETS" - work best when paired with other brand cues (Symbol, Wordmark).
+
+**What to do:** Never use these alone. Always combine with high-uniqueness elements to build attribution.
+            """)
             for idx, row in top_left.iterrows():
+                # Calculate attribution gap
+                attr_gap = row['Recognition'] - row['Uniqueness']
+
                 st.warning(f"""
 **{row['Element']}:**
 - {row['Recognition']:.0%} recognition (above median)
 - {row['Uniqueness']:.0%} uniqueness (below median)
+- **Attribution Gap:** {attr_gap:.1%} have seen it but don't know it's Škoda's
 - **Pattern:** High visibility with {((row['Recognition'] / row['Uniqueness']) if row['Uniqueness'] > 0 else 0):.1f}x recognition-to-uniqueness ratio
                 """)
         else:
@@ -1394,6 +1404,27 @@ with tab1:
             "Which element makes consumers think 'Škoda' FIRST when seeing multiple assets",
             color="#4CAF50"
         )
+
+        st.info("""
+**📌 Understanding "High Trigger" vs "Low Recognition"**
+
+**First Recognition Trigger** and **Recognition** measure different things:
+
+- **Recognition:** "Have you seen this element?" (asked to EVERYONE)
+- **First Trigger:** "Which element made you think of Škoda FIRST?" (asked only to those who recognize at least ONE element)
+
+**Example:** Electric Green might have:
+- 38% Recognition (not many people have seen it)
+- 23% First Trigger (but those who HAVE seen it, strongly associate it with Škoda)
+
+Think of it like a distinctive smell from a bakery:
+- Not everyone has been to the bakery (low recognition)
+- But for those who have, the smell is what made them notice it first (high trigger)
+
+**High Trigger + Low Uniqueness = "DEPENDENT ASSET"**
+These elements trigger recognition when paired WITH other Škoda cues, but don't work well alone.
+        """)
+
 
         trigger_data = []
         for element in brand_elements:
@@ -3432,6 +3463,25 @@ with tab3:
         st.info("""
 💡 **What this shows:** Brand attribution analysis reveals competitive positioning. High Škoda attribution indicates distinctive brand elements. High competitor attribution or "Don't Know" responses indicate confusion or weak brand association.
 """)
+
+        st.warning("""
+**📌 Understanding the Attribution Gap**
+
+**High "Don't Know" + Low Škoda Attribution = Weak Ownership**
+
+When people say "Don't Know" whose element it is:
+- They've likely SEEN it (it's memorable)
+- But they don't connect it to Škoda (it's not distinctive)
+
+**Example:** Electric Green has 61% "Don't Know" because:
+- Green is used by many automotive brands (VW, Tesla, BP, etc.)
+- Without other Škoda cues, people can't tell whose green it is
+
+**Strategic Fix:**
+- Pair these elements with Symbol or Wordmark to build attribution
+- Use consistently in branded contexts
+- Never use alone in advertising
+        """)
 
         # Create confusion matrix using Q05 data
         confusion_df = pd.DataFrame(q05_confusion_data).T
