@@ -1005,7 +1005,7 @@ tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
     "📊 Overview",
     "💚 Brand Perception",
     "📈 Portfolio Strategy",
-    "🎯 Performance Tiers",
+    "💰 Investment Efficiency",
     "🔮 Growth Opportunities",
     "🔍 Market Analysis",
     "🧭 Consumer Journey"
@@ -1267,10 +1267,10 @@ with tab1:
 
     st.markdown("---")
 
-    # Brand Equity Matrix
+    # Distinctive Asset Grid
     render_section_header(
-        "Brand Equity Matrix: Recognition vs Uniqueness",
-        "Bubble size = First Recognition Trigger strength | Larger bubbles trigger Škoda recognition first",
+        "Distinctive Asset Grid: Fame vs Uniqueness",
+        "Research-validated framework | Bubble size = First Recognition Trigger strength",
         color="#2196F3"
     )
 
@@ -1326,9 +1326,9 @@ with tab1:
 
     st.plotly_chart(fig_matrix, use_container_width=True, config=get_standard_chart_config())
 
-    # Quadrant-by-Quadrant Breakdown (2x2 Table Layout)
-    st.markdown("### 📊 Quadrant-by-Quadrant Breakdown")
-    st.caption("Elements positioned as they appear in the chart above")
+    # Distinctive Asset Grid Breakdown (2x2 Table Layout)
+    st.markdown("### 📊 Distinctive Asset Grid: Strategic Positioning")
+    st.caption("Research-validated categories with strategic recommendations")
 
     # Get quadrant data
     top_right = equity_matrix_df[(equity_matrix_df['Recognition'] >= median_rec) & (equity_matrix_df['Uniqueness'] >= median_uniq)]
@@ -1340,14 +1340,14 @@ with tab1:
     col_left, col_right = st.columns(2)
 
     with col_left:
-        st.markdown("#### ⚠️ Top-Left: Famous Generics")
-        st.caption("High Recognition + Lower Uniqueness")
+        st.markdown("#### 🔴 Top-Left: AVOID")
+        st.caption("High Fame + Low Uniqueness")
         if len(top_left) > 0:
-            st.info("""
-**💡 Why this happens:** People have seen these elements, but don't strongly connect them to Škoda.
-They're "DEPENDENT ASSETS" - work best when paired with other brand cues (Symbol, Wordmark).
+            st.error("""
+**⚠️ Strategic Guidance:**
+Highly likely to evoke competitors, so best avoided. If it must be used, it needs a very strong direct brand accompaniment (Symbol, Wordmark).
 
-**What to do:** Never use these alone. Always combine with high-uniqueness elements to build attribution.
+**Why:** High fame but low uniqueness means consumers recognize the element but don't strongly connect it to Škoda—making it a competitive risk.
             """)
             for idx, row in top_left.iterrows():
                 # Calculate attribution gap
@@ -1355,24 +1355,32 @@ They're "DEPENDENT ASSETS" - work best when paired with other brand cues (Symbol
 
                 st.warning(f"""
 **{row['Element']}:**
-- {row['Recognition']:.0%} recognition (above median)
+- {row['Recognition']:.0%} fame (above median)
 - {row['Uniqueness']:.0%} uniqueness (below median)
 - **Attribution Gap:** {attr_gap:.1%} have seen it but don't know it's Škoda's
-- **Pattern:** High visibility with {((row['Recognition'] / row['Uniqueness']) if row['Uniqueness'] > 0 else 0):.1f}x recognition-to-uniqueness ratio
+- **Risk:** {((row['Recognition'] / row['Uniqueness']) if row['Uniqueness'] > 0 else 0):.1f}x fame-to-uniqueness ratio indicates competitor ambush potential
+- €{row['Total Investment']:,.0f} invested | {row['Recognition ROI']:.2f} ROI
                 """)
         else:
             st.info("No elements in this quadrant")
 
     with col_right:
-        st.markdown("#### 🏆 Top-Right: Brand Icons")
-        st.caption("High Recognition + High Uniqueness")
+        st.markdown("#### 🟢 Top-Right: USE OR LOSE")
+        st.caption("High Fame + High Uniqueness")
         if len(top_right) > 0:
+            st.success("""
+**✅ Strategic Guidance:**
+Can be used to supplement or potentially replace the brand name in advertising. But don't neglect further building and watch out for decay if you don't use it.
+
+**Why:** Strong distinctive assets that consumers both recognize AND attribute to Škoda—but require ongoing investment to maintain.
+            """)
             for idx, row in top_right.iterrows():
                 st.success(f"""
 **{row['Element']}:**
-- {row['Recognition']:.0%} recognition | {row['Uniqueness']:.0%} uniqueness
-- €{row['Total Investment']:,.0f} invested | {row['Recognition ROI']:.2f} ROI
-- **Context:** {(row['Total Investment'] / equity_matrix_df['Total Investment'].sum()) * 100:.0f}% of portfolio investment with above-median performance
+- {row['Recognition']:.0%} fame | {row['Uniqueness']:.0%} uniqueness
+- €{row['Total Investment']:,.0f} invested ({(row['Total Investment'] / equity_matrix_df['Total Investment'].sum()) * 100:.0f}% of portfolio) | {row['Recognition ROI']:.2f} ROI
+- **Usage:** {row['Overall Usage']:.0%} of campaigns | **Sentiment:** {row['Net Sentiment']:+.1%}
+- **Maintenance Required:** Continue consistent usage to prevent decay
                 """)
         else:
             st.info("No elements in this quadrant")
@@ -1381,29 +1389,46 @@ They're "DEPENDENT ASSETS" - work best when paired with other brand cues (Symbol
     col_left, col_right = st.columns(2)
 
     with col_left:
-        st.markdown("#### 🔴 Bottom-Left: Development Opportunity")
-        st.caption("Lower Recognition + Lower Uniqueness")
+        st.markdown("#### 🔵 Bottom-Left: IGNORE OR TEST")
+        st.caption("Low Fame + Low Uniqueness")
         if len(bottom_left) > 0:
+            st.info("""
+**🔍 Strategic Guidance:**
+Not known at all in the market. Needs considerable work to develop any value.
+
+**Decision Point:** Evaluate whether investment to build these assets is worthwhile, or if resources should be redirected to strengthen existing distinctive assets.
+            """)
             for idx, row in bottom_left.iterrows():
-                st.error(f"""
+                st.info(f"""
 **{row['Element']}:**
-- {row['Recognition']:.0%} recognition (below median)
+- {row['Recognition']:.0%} fame (below median)
 - {row['Uniqueness']:.0%} uniqueness (below median)
-- **Context:** €{row['Total Investment']:,.0f} invested ({(row['Total Investment'] / equity_matrix_df['Total Investment'].sum()) * 100:.0f}% of portfolio) | {row['Recognition ROI']:.2f} ROI
+- €{row['Total Investment']:,.0f} invested ({(row['Total Investment'] / equity_matrix_df['Total Investment'].sum()) * 100:.0f}% of portfolio) | {row['Recognition ROI']:.2f} ROI
+- **Usage:** {row['Overall Usage']:.0%} of campaigns
+- **Assessment:** Requires significant investment to build awareness and attribution
                 """)
         else:
             st.info("No elements in this quadrant")
 
     with col_right:
-        st.markdown("#### 💎 Bottom-Right: Hidden Gems")
-        st.caption("Lower Recognition + High Uniqueness")
+        st.markdown("#### 🟡 Bottom-Right: INVEST POTENTIAL")
+        st.caption("Low Fame + High Uniqueness")
         if len(bottom_right) > 0:
+            st.warning("""
+**💡 Strategic Guidance:**
+Has potential but needs wider, more consistent use and linkage to the brand name. Monitor for competitor ambushing.
+
+**Why:** Strong distinctiveness but low awareness—these assets uniquely belong to Škoda in consumers' minds, they just need more exposure.
+            """)
             for idx, row in bottom_right.iterrows():
-                st.info(f"""
+                st.warning(f"""
 **{row['Element']}:**
-- {row['Uniqueness']:.0%} uniqueness (above median)
-- {row['Recognition']:.0%} recognition (below median)
-- **Context:** Used in {row['Overall Usage']:.0%} of campaigns | €{row['Total Investment']:,.0f} investment
+- {row['Uniqueness']:.0%} uniqueness (above median) ✅
+- {row['Recognition']:.0%} fame (below median)
+- €{row['Total Investment']:,.0f} investment | {row['Recognition ROI']:.2f} ROI
+- **Usage:** {row['Overall Usage']:.0%} of campaigns
+- **Opportunity:** Scale up usage to convert distinctive potential into fame
+- **Risk:** Monitor for competitor use while awareness is building
                 """)
         else:
             st.info("No elements in this quadrant")
@@ -2299,6 +2324,23 @@ with tab3:
                 f"<b>Three matrix views</b> analyze Recognition vs Investment, Usage vs Recognition, and Uniqueness vs ROI positioning"
             ]
         )
+
+        # Investment Attribution Methodology Explanation
+        st.info("""
+📊 **Understanding Investment Attribution**
+
+Investment is split equally among all elements present in each campaign:
+
+**Example from the data:**
+- **Type** appears in 86 campaigns (most frequent) but often in lower-budget campaigns (€11,449 median spend per campaign)
+- **Electric Green** appears in 81 campaigns with higher median spend per campaign (€16,743)
+- When multiple elements appear together (e.g., Type + Wordmark + Tagline + Electric Green in a TVC), the campaign's investment is divided equally among all elements present
+
+**Why this matters:**
+A €1M campaign featuring 5 elements attributes €200K to each element. This explains why high-usage elements may show lower total attributed investment than less-frequently-used elements that appear in higher-budget campaigns.
+
+**Type's specific case:** Type appears in the Tagline ("SIMPLY ELECTRIC"), so it's present in many campaigns but often shares investment with multiple other elements in each appearance.
+        """)
 
         st.markdown("---")
 
@@ -3673,181 +3715,248 @@ Pattern indicates minimal competitive confusion - Škoda elements are generally 
             st.warning("⚠️ Detailed competitor data file not found (q05_competitor_detail_CLEANED.json)")
 
 with tab4:
-    st.header("🎯 Asset Performance Framework")
-    st.caption("Which elements perform best and why")
+    st.header("🎯 Investment Efficiency Analysis")
+    st.caption("ROI and resource allocation across the portfolio")
 
-    # Auto-generate categories based on data
-    high_performers = master_df[
-        (master_df['Recognition'] >= 0.40) &
-        (master_df['Uniqueness'] >= 0.15) &
-        (master_df['Overall Usage'] >= 0.50)
-    ].sort_values('Recognition', ascending=False)
+    # Cross-reference to Distinctive Asset Grid
+    st.info("""
+💡 **Strategic Context:** This analysis focuses on investment efficiency and ROI. For strategic positioning and guidance on how to use each asset, see the **Distinctive Asset Grid** in the Overview tab.
+    """)
 
-    strong_potential = master_df[
-        ((master_df['Recognition'] >= 0.35) | (master_df['Uniqueness'] >= 0.25))
-    ].sort_values(['Recognition', 'Uniqueness'], ascending=False)
-    strong_potential = strong_potential[~strong_potential['Element'].isin(high_performers['Element'])]
+    # Calculate brand equity score and portfolio metrics
+    master_df['Brand Equity Score'] = master_df['Recognition'] * master_df['Uniqueness']
+    median_investment = master_df['Total Investment'].median()
+    median_roi = master_df['Recognition ROI'].median()
+    median_equity = master_df['Brand Equity Score'].median()
 
-    development_opportunity = master_df[
-        (master_df['Recognition'] < 0.40) &
-        (master_df['Total Investment'] > master_df['Total Investment'].median())
-    ]
+    # Define consistent tiers based on investment efficiency
+    # Tier 1: High Efficiency - Strong performance + Good ROI
+    tier1_high_efficiency = master_df[
+        (master_df['Brand Equity Score'] > median_equity) &
+        (master_df['Recognition ROI'] > median_roi)
+    ].sort_values('Recognition ROI', ascending=False)
+
+    # Tier 2: Investment Opportunity - High potential but underinvested
+    tier2_investment_opportunity = master_df[
+        ((master_df['Recognition'] > 0.35) | (master_df['Uniqueness'] > 0.25)) &
+        (master_df['Total Investment'] < median_investment) &
+        (~master_df['Element'].isin(tier1_high_efficiency['Element']))
+    ].sort_values('Brand Equity Score', ascending=False)
+
+    # Tier 3: Optimization Needed - High investment but below-average performance
+    tier3_optimization = master_df[
+        (master_df['Total Investment'] > median_investment) &
+        (master_df['Brand Equity Score'] < median_equity)
+    ].sort_values('Total Investment', ascending=False)
 
     # Key Insights Box
-    hp_list = ", ".join(high_performers['Element'].tolist()) if len(high_performers) > 0 else "None"
+    tier1_list = ", ".join(tier1_high_efficiency['Element'].tolist()) if len(tier1_high_efficiency) > 0 else "None"
+    tier2_list = ", ".join(tier2_investment_opportunity['Element'].tolist()) if len(tier2_investment_opportunity) > 0 else "None"
+
     render_tldr_box(
         "Key Insights at a Glance",
         [
-            f"<b>{len(high_performers)} High Performers</b> meet all criteria: {hp_list}",
-            f"<b>{len(strong_potential)} elements</b> show strong potential with above-average recognition or uniqueness",
-            f"<b>{len(development_opportunity)} elements</b> require optimization despite receiving above-median investment"
+            f"<b>{len(tier1_high_efficiency)} High Efficiency Assets:</b> {tier1_list}",
+            f"<b>{len(tier2_investment_opportunity)} Investment Opportunities:</b> Strong performance with below-median investment",
+            f"<b>{len(tier3_optimization)} assets</b> require optimization despite above-median investment",
+            f"<b>Median ROI:</b> {median_roi:.2f} per €1M | <b>Median Brand Equity:</b> {median_equity:.3f}"
         ]
     )
+
+    # Visualization: Investment Efficiency Matrix
+    st.markdown("### 📊 Investment Efficiency Matrix")
+    st.caption("ROI vs Investment positioning with Brand Equity Score sizing")
+
+    fig_efficiency = px.scatter(
+        master_df,
+        x='Total Investment',
+        y='Recognition ROI',
+        size='Brand Equity Score',
+        color='Uniqueness',
+        text='Element',
+        size_max=60,
+        color_continuous_scale='RdYlGn',
+        hover_data={
+            'Element': True,
+            'Recognition': ':.0%',
+            'Uniqueness': ':.0%',
+            'Total Investment': ':,.0f',
+            'Recognition ROI': ':.2f',
+            'Brand Equity Score': ':.3f',
+            'Overall Usage': ':.0%'
+        }
+    )
+
+    # Add median lines to create zones
+    fig_efficiency.add_hline(y=median_roi, line_dash="dash", line_color="gray", opacity=0.5, annotation_text="Median ROI")
+    fig_efficiency.add_vline(x=median_investment, line_dash="dash", line_color="gray", opacity=0.5, annotation_text="Median Investment")
+
+    fig_efficiency = apply_standard_chart_styling(fig_efficiency, "")
+    fig_efficiency.update_traces(textposition='top center', textfont_size=10)
+    fig_efficiency.update_layout(height=600)
+    fig_efficiency.update_xaxes(title="Total Investment (€)")
+    fig_efficiency.update_yaxes(title="Recognition ROI (per €1M)")
+    st.plotly_chart(fig_efficiency, use_container_width=True, config=get_standard_chart_config())
+
+    st.markdown("---")
 
     # Display categories
     col1, col2 = st.columns([2, 1])
 
     with col1:
-        st.markdown("### 🟢 Category 1: High Performers")
-        st.success(f"**{len(high_performers)} elements** meet all criteria: Recognition ≥40%, Uniqueness ≥15%, Usage ≥50%")
+        st.markdown("### 🟢 Tier 1: High Efficiency Assets")
+        st.success(f"**{len(tier1_high_efficiency)} elements** deliver strong performance with efficient ROI")
+        st.caption("Criteria: Brand Equity Score > median AND ROI > median")
 
-        if len(high_performers) > 0:
-            for idx, row in high_performers.iterrows():
-                with st.expander(f"**{row['Element']}** - Recognition: {row['Recognition']:.0%} | Usage: {row['Overall Usage']:.0%}"):
+        if len(tier1_high_efficiency) > 0:
+            for idx, row in tier1_high_efficiency.iterrows():
+                with st.expander(f"**{row['Element']}** - ROI: {row['Recognition ROI']:.2f} | Equity: {row['Brand Equity Score']:.3f}"):
                     col_a, col_b, col_c = st.columns(3)
                     with col_a:
                         st.metric("Recognition", f"{row['Recognition']:.0%}")
                         st.metric("Uniqueness", f"{row['Uniqueness']:.0%}")
                     with col_b:
-                        st.metric("Usage", f"{row['Overall Usage']:.0%}")
-                        st.metric("Investment", f"€{row['Total Investment']:,.0f}")
-                    with col_c:
-                        equity_score = row['Recognition'] * row['Uniqueness']
-                        st.metric("Brand Equity", f"{equity_score:.3f}")
+                        st.metric("Brand Equity", f"{row['Brand Equity Score']:.3f}")
                         st.metric("ROI", f"{row['Recognition ROI']:.2f}")
+                    with col_c:
+                        st.metric("Investment", f"€{row['Total Investment']:,.0f}")
+                        st.metric("Usage", f"{row['Overall Usage']:.0%}")
 
-                    st.markdown("**Performance Profile:**")
-                    st.write(f"• **Recognition:** {row['Recognition']:.0%} - Above 40% threshold indicating strong consumer familiarity")
-                    st.write(f"• **Uniqueness:** {row['Uniqueness']:.0%} - Above 15% threshold showing distinctive Škoda attribution")
-                    st.write(f"• **Usage Pattern:** {row['Overall Usage']:.0%} of campaigns - High use frequency")
-                    st.write(f"• **Investment:** €{row['Total Investment']:,.0f} delivering {row['Recognition']:.0%} recognition ({row['Recognition ROI']:.2f} ROI)")
-                    st.write(f"• **Sentiment:** {row['Net Sentiment']:+.1%} net sentiment from consumer associations")
-
-                    st.markdown("**Why These Metrics Indicate Strong Performance:**")
-                    st.write(f"Combined recognition ({row['Recognition']:.0%}) and uniqueness ({row['Uniqueness']:.0%}) create brand equity score of {equity_score:.3f}. High usage ({row['Overall Usage']:.0%}) demonstrates established use patterns across campaigns.")
+                    st.markdown("**Efficiency Profile:**")
+                    roi_vs_median = ((row['Recognition ROI'] / median_roi) - 1) * 100
+                    equity_vs_median = ((row['Brand Equity Score'] / median_equity) - 1) * 100
+                    st.write(f"• **ROI:** {row['Recognition ROI']:.2f} per €1M ({roi_vs_median:+.0f}% vs median)")
+                    st.write(f"• **Brand Equity:** {row['Brand Equity Score']:.3f} ({equity_vs_median:+.0f}% vs median)")
+                    st.write(f"• **Investment Efficiency:** €{row['Total Investment']:,.0f} delivering {row['Recognition']:.0%} recognition")
+                    st.write(f"• **Usage Pattern:** {row['Overall Usage']:.0%} of campaigns")
+                    st.write(f"• **Sentiment:** {row['Net Sentiment']:+.1%}")
         else:
-            st.info("No elements currently meet all Category 1 criteria")
+            st.info("No elements currently in Tier 1")
 
         st.markdown("---")
 
-        st.markdown("### 🟡 Category 2: Strong Potential")
-        st.info(f"**{len(strong_potential)} elements** show strong performance on recognition OR uniqueness metrics")
+        st.markdown("### 🟡 Tier 2: Investment Opportunities")
+        st.warning(f"**{len(tier2_investment_opportunity)} elements** show strong potential with below-median investment")
+        st.caption("Criteria: (Recognition > 35% OR Uniqueness > 25%) AND Investment < median")
 
-        if len(strong_potential) > 0:
-            for idx, row in strong_potential.iterrows():
+        if len(tier2_investment_opportunity) > 0:
+            for idx, row in tier2_investment_opportunity.iterrows():
                 with st.expander(f"**{row['Element']}** - Recognition: {row['Recognition']:.0%} | Uniqueness: {row['Uniqueness']:.0%}"):
                     st.markdown("**Performance Strengths:**")
-                    if row['Recognition'] >= 0.35:
-                        st.write(f"• ✅ Recognition at {row['Recognition']:.0%} (above 35% threshold)")
-                    if row['Uniqueness'] >= 0.25:
-                        st.write(f"• ✅ Uniqueness at {row['Uniqueness']:.0%} (above 25% threshold)")
-                    st.write(f"• Current usage: {row['Overall Usage']:.0%} of campaigns")
-                    st.write(f"• Investment: €{row['Total Investment']:,.0f}")
+                    if row['Recognition'] > 0.35:
+                        st.write(f"• ✅ Recognition at {row['Recognition']:.0%} (above 35%)")
+                    if row['Uniqueness'] > 0.25:
+                        st.write(f"• ✅ Uniqueness at {row['Uniqueness']:.0%} (above 25%)")
+                    st.write(f"• Brand Equity Score: {row['Brand Equity Score']:.3f}")
+                    st.write(f"• Current investment: €{row['Total Investment']:,.0f} (below median of €{median_investment:,.0f})")
                     st.write(f"• ROI: {row['Recognition ROI']:.2f} per €1M")
+                    st.write(f"• Usage: {row['Overall Usage']:.0%} of campaigns")
 
-                    st.markdown("**Performance Context:**")
-                    if row['Recognition'] >= 0.35 and row['Uniqueness'] < 0.25:
-                        st.write(f"High recognition ({row['Recognition']:.0%}) with uniqueness at {row['Uniqueness']:.0%} - Strong awareness with moderate attribution")
-                    elif row['Uniqueness'] >= 0.25 and row['Recognition'] < 0.40:
-                        st.write(f"Strong uniqueness ({row['Uniqueness']:.0%}) with recognition at {row['Recognition']:.0%} - Distinctive attribution with growing awareness")
-                    else:
-                        st.write(f"Balanced performance across recognition ({row['Recognition']:.0%}) and uniqueness ({row['Uniqueness']:.0%})")
+                    st.markdown("**Investment Opportunity:**")
+                    investment_gap = median_investment - row['Total Investment']
+                    st.write(f"• **Scale-up potential:** €{investment_gap:,.0f} below median investment")
+                    st.write(f"• **Current efficiency:** Achieving {row['Recognition']:.0%} recognition with modest resources")
+                    if row['Uniqueness'] > 0.25:
+                        st.write(f"• **Distinctive advantage:** {row['Uniqueness']:.0%} uniqueness provides strong brand attribution")
         else:
-            st.info("No elements in Category 2")
+            st.info("No elements in Tier 2")
 
         st.markdown("---")
 
-        st.markdown("### 🔴 Category 3: Development Opportunities")
-        st.warning(f"**{len(development_opportunity)} elements** show recognition below 40% despite above-median investment")
+        st.markdown("### 🔴 Tier 3: Optimization Needed")
+        st.error(f"**{len(tier3_optimization)} elements** require optimization despite above-median investment")
+        st.caption("Criteria: Investment > median AND Brand Equity Score < median")
 
-        if len(development_opportunity) > 0:
-            for idx, row in development_opportunity.iterrows():
-                with st.expander(f"**{row['Element']}** - Recognition: {row['Recognition']:.0%} | Investment: €{row['Total Investment']:,.0f}"):
-                    st.markdown("**Current Performance Metrics:**")
-                    st.write(f"• Recognition: {row['Recognition']:.0%} (below 40% threshold)")
-                    st.write(f"• Investment: €{row['Total Investment']:,.0f} (above median of €{master_df['Total Investment'].median():,.0f})")
-                    st.write(f"• Usage: {row['Overall Usage']:.0%} of campaigns")
+        if len(tier3_optimization) > 0:
+            for idx, row in tier3_optimization.iterrows():
+                with st.expander(f"**{row['Element']}** - Investment: €{row['Total Investment']:,.0f} | Equity: {row['Brand Equity Score']:.3f}"):
+                    st.markdown("**Performance Metrics:**")
+                    st.write(f"• Recognition: {row['Recognition']:.0%}")
                     st.write(f"• Uniqueness: {row['Uniqueness']:.0%}")
+                    st.write(f"• Brand Equity Score: {row['Brand Equity Score']:.3f} (below median of {median_equity:.3f})")
+                    st.write(f"• Investment: €{row['Total Investment']:,.0f} (above median of €{median_investment:,.0f})")
                     st.write(f"• ROI: {row['Recognition ROI']:.2f} per €1M")
+                    st.write(f"• Usage: {row['Overall Usage']:.0%} of campaigns")
 
-                    st.markdown("**Performance Context:**")
-                    st.write(f"Investment of €{row['Total Investment']:,.0f} is {((row['Total Investment'] / master_df['Total Investment'].median()) - 1) * 100:+.0f}% vs median")
-                    st.write(f"Recognition ROI of {row['Recognition ROI']:.2f} compares to portfolio best of {master_df['Recognition ROI'].max():.2f}")
+                    st.markdown("**Optimization Analysis:**")
+                    investment_vs_median = ((row['Total Investment'] / median_investment) - 1) * 100
+                    roi_vs_best = ((row['Recognition ROI'] / master_df['Recognition ROI'].max()) - 1) * 100
+                    st.write(f"• **Investment level:** {investment_vs_median:+.0f}% above median")
+                    st.write(f"• **ROI efficiency:** {roi_vs_best:+.0f}% vs portfolio best")
+                    st.write(f"• **Potential factors:** Timing, creative execution, prominence, or competitive confusion")
 
-                    st.markdown("**Possible Contributing Factors:**")
-                    st.write("• Recent investment timing (recognition building over time)")
-                    st.write("• Attribution complexity (generic appearance reducing distinctiveness)")
-                    st.write("• Deployment patterns (frequency, prominence, or placement)")
-                    st.write("• Creative execution (visibility within campaign materials)")
-
-                    st.markdown("**Performance Pattern:**")
+                    st.markdown("**Recommendations:**")
                     if row['Uniqueness'] < 0.20:
-                        st.write(f"Uniqueness at {row['Uniqueness']:.0%} suggests attribution challenges - element may not be strongly distinctive")
+                        st.write("• ⚠️ Low uniqueness suggests attribution issues - consider pairing with distinctive elements")
+                    if row['Overall Usage'] > 0.60:
+                        st.write("• High usage with modest results - evaluate creative execution and prominence")
                     else:
-                        st.write(f"Uniqueness at {row['Uniqueness']:.0%} indicates some distinctiveness - recognition may improve with time or increased prominence")
+                        st.write("• Moderate usage - may need more consistent deployment or stronger brand linkage")
         else:
-            st.info("No elements in Category 3")
+            st.info("No elements in Tier 3")
 
     with col2:
         st.markdown("### 📊 Framework Overview")
 
-        # Category definitions
-        with st.expander("📖 Category Criteria"):
+        # Tier definitions
+        with st.expander("📖 Tier Criteria"):
             st.markdown("""
-**Category 1 Criteria:**
-- Recognition ≥ 40%
-- Uniqueness ≥ 15%
-- Usage ≥ 50%
+**Tier 1: High Efficiency**
+- Brand Equity Score > median
+- ROI > median
 
-**Category 2 Criteria:**
-- Recognition ≥ 35% OR
-- Uniqueness ≥ 25%
-(Excluding Category 1 elements)
+**Tier 2: Investment Opportunity**
+- Recognition > 35% OR Uniqueness > 25%
+- Investment < median
+- (Excluding Tier 1 elements)
 
-**Category 3 Criteria:**
-- Recognition < 40% AND
-- Investment > Portfolio Median
+**Tier 3: Optimization Needed**
+- Investment > median
+- Brand Equity Score < median
+
+**Metrics Definitions:**
+- Brand Equity Score = Recognition × Uniqueness
+- ROI = Recognition per €1M invested
 """)
+
+        # Key portfolio metrics
+        with st.expander("📈 Portfolio Benchmarks"):
+            st.metric("Median Investment", f"€{median_investment:,.0f}")
+            st.metric("Median ROI", f"{median_roi:.2f}")
+            st.metric("Median Brand Equity", f"{median_equity:.3f}")
+            st.metric("Best ROI", f"{master_df['Recognition ROI'].max():.2f}")
+            st.metric("Highest Brand Equity", f"{master_df['Brand Equity Score'].max():.3f}")
 
         # Download framework data
         framework_data = []
         for idx, row in master_df.iterrows():
-            if row['Element'] in high_performers['Element'].values:
-                category = "Category 1: High Performer"
-            elif row['Element'] in strong_potential['Element'].values:
-                category = "Category 2: Strong Potential"
-            elif row['Element'] in development_opportunity['Element'].values:
-                category = "Category 3: Development"
+            if row['Element'] in tier1_high_efficiency['Element'].values:
+                tier = "Tier 1: High Efficiency"
+            elif row['Element'] in tier2_investment_opportunity['Element'].values:
+                tier = "Tier 2: Investment Opportunity"
+            elif row['Element'] in tier3_optimization['Element'].values:
+                tier = "Tier 3: Optimization Needed"
             else:
-                category = "Not Categorized"
+                tier = "Not Categorized"
 
             framework_data.append({
                 'Element': row['Element'],
-                'Category': category,
+                'Tier': tier,
                 'Recognition': f"{row['Recognition']:.0%}",
                 'Uniqueness': f"{row['Uniqueness']:.0%}",
-                'Usage': f"{row['Overall Usage']:.0%}",
+                'Brand Equity Score': f"{row['Brand Equity Score']:.3f}",
                 'Investment': f"€{row['Total Investment']:,.0f}",
-                'ROI': f"{row['Recognition ROI']:.2f}"
+                'ROI': f"{row['Recognition ROI']:.2f}",
+                'Usage': f"{row['Overall Usage']:.0%}"
             })
 
         framework_df = pd.DataFrame(framework_data)
         framework_csv = framework_df.to_csv(index=False)
 
         st.download_button(
-            label="📥 Download Framework (CSV)",
+            label="📥 Download Efficiency Analysis (CSV)",
             data=framework_csv,
-            file_name="skoda_asset_performance_framework.csv",
+            file_name="skoda_investment_efficiency_analysis.csv",
             mime="text/csv",
             key="download_btn_tab4"
         )
