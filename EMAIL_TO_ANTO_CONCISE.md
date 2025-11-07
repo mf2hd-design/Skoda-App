@@ -15,10 +15,15 @@ Thank you for your feedback on the Iconic Assets analysis. **You were right to f
 ### **1. ROI Metrics → "Investment Efficiency Indicators"**
 **Your point:** *"Those metrics aren't reliable at this stage"*
 
+**You're right.** Our calculations and data are correct (verified research + campaign spend), but reliability as "ROI" suffers from:
+- **Causality issues:** Symbol's 64% recognition built over 10+ years, not from €241K recent spend
+- **Attribution limits:** Equal spend splits can't capture that Symbol drives more recognition than supporting elements
+- **Timing mismatch:** Háček's high "efficiency" includes 10-month novelty effects, not sustainable performance
+
 **Fixed:**
-- Added methodology disclaimer explaining these are directional indicators, not causal ROI
-- Clarifies that Symbol's high "efficiency" reflects 10+ years of recognition, not recent campaign performance
-- Heritage assets vs. new assets now clearly distinguished
+- Renamed to "Investment Efficiency Indicators" (more accurate)
+- Added methodology disclaimer: directional signals for portfolio comparison, not causal predictions
+- Heritage vs. new assets now clearly distinguished in interpretation
 
 ### **2. Asset Maturity Timeline**
 **Your point:** *"Háček only started January 2025... timing logic ignored"*
