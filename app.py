@@ -179,6 +179,20 @@ brand_elements = [
     "Hacek", "Wordmark", "Facets", "Sonic"
 ]
 
+# --- Asset Maturity Context ---
+# Provides timing context for interpreting efficiency metrics
+asset_maturity = {
+    'Symbol': {'status': 'Heritage Asset', 'years': '10+', 'note': 'Established brand marque with legacy recognition'},
+    'Wordmark': {'status': 'Heritage Asset', 'years': '10+', 'note': 'Core brand identifier with long-term recognition'},
+    'Tagline': {'status': 'Established', 'years': '3-5', 'note': 'Let\'s Explore tagline introduced ~2019-2020'},
+    'Electric Green': {'status': 'Established', 'years': '3-5', 'note': 'Part of electric vehicle sub-brand rollout'},
+    'Emerald Green': {'status': 'Established', 'years': '3-5', 'note': 'Core brand color in current identity system'},
+    'Type': {'status': 'Established', 'years': '3-5', 'note': 'Typography system in current brand guidelines'},
+    'Facets': {'status': 'Established', 'years': '3-5', 'note': 'Crystalline design element in current identity'},
+    'Sonic': {'status': 'Established', 'years': '2-3', 'note': 'Audio branding element introduced recently'},
+    'Hacek': {'status': 'New Asset (Rollout)', 'years': '<1', 'note': 'Launched January 2025 (10 months ago) - early-stage recognition'}
+}
+
 # Survey Base
 SURVEY_BASE = 2011  # Total respondents across UK, Spain, Germany, Poland
 
@@ -461,7 +475,7 @@ GLOSSARY = {
     "Brand Equity": "Recognition × Uniqueness - shows if an element is both famous AND identified as Škoda's",
     "Brand Linkage": "How strongly people connect this element to Škoda - shows perceived brand ownership",
     "Top-of-Mind": "Words people think of first when they hear 'Škoda' - reveals unprompted brand associations",
-    "ROI per €1M": "Recognition points gained per €1M spent - higher scores mean better value for money",
+    "Investment Efficiency": "Recognition density per €1M attributed spend - directional indicator comparing current recognition to recent campaign investment (see methodology notes for interpretation guidance)",
     "Net Sentiment": "Positive associations minus negative - shows if people feel good or bad about this element",
     "Usage": "Percentage of advertising campaigns that include this brand element",
     "Number of Ads": "Total count of advertising campaigns that featured this brand element",
@@ -556,7 +570,9 @@ def calculate_metrics():
         axis=1
     )
 
-    # Calculate ROI metrics
+    # Calculate Investment Efficiency metrics
+    # Note: This is recognition density per €1M, not causal ROI
+    # Heritage assets show inflated scores; new assets may show novelty effects
     master_df['Recognition ROI'] = master_df.apply(
         lambda row: (row['Recognition'] / (row['Total Investment'] / 1_000_000)) if row['Total Investment'] > 0 else 0,
         axis=1
@@ -2889,6 +2905,15 @@ A €1M campaign featuring 5 elements attributes €200K to each element. This e
         st.markdown("### 🔗 Element Combinations Analysis")
         st.caption("How elements perform when appearing together in campaigns")
 
+        # Key Context Box
+        st.info("""
+💡 **Why Combinations Matter:**
+Anto's feedback: "On Colour, it's never used in isolation; what's missing is the combination logic in the study."
+
+This analysis shows how elements function as **system components**, not solo heroes. Colors especially require
+companion elements (Symbol, Wordmark) to drive brand attribution.
+        """)
+
         # Calculate metrics for insights
         avg_elements = audit_df[brand_elements].sum(axis=1).mean()
         most_paired = None
@@ -2985,6 +3010,65 @@ A €1M campaign featuring 5 elements attributes €200K to each element. This e
         fig_cooccur = apply_standard_chart_styling(fig_cooccur, "")
         fig_cooccur.update_layout(height=600)
         st.plotly_chart(fig_cooccur, use_container_width=True, config=get_standard_chart_config())
+
+        st.markdown("---")
+
+        # COLOR-SPECIFIC COMBINATION ANALYSIS
+        st.markdown("#### 🎨 Color Usage Patterns: Never in Isolation")
+        st.caption("Analysis of how Electric Green and Emerald Green appear with other brand elements")
+
+        # Calculate color combination statistics
+        color_combo_stats = []
+        for color in ['Electric Green', 'Emerald Green']:
+            if color in audit_df.columns:
+                color_campaigns = audit_df[audit_df[color] == True]
+                total_color_campaigns = len(color_campaigns)
+
+                if total_color_campaigns > 0:
+                    # Count companion elements
+                    companions = {}
+                    solo_count = 0
+
+                    for idx, row in color_campaigns.iterrows():
+                        elements_in_campaign = [e for e in brand_elements if e != color and row.get(e, False)]
+                        if len(elements_in_campaign) == 0:
+                            solo_count += 1
+                        else:
+                            for elem in elements_in_campaign:
+                                companions[elem] = companions.get(elem, 0) + 1
+
+                    # Calculate stats
+                    avg_companions = color_campaigns[brand_elements].sum(axis=1).mean() - 1  # Subtract the color itself
+
+                    color_combo_stats.append({
+                        'Color': color,
+                        'Total Campaigns': total_color_campaigns,
+                        'Solo Usage': solo_count,
+                        'Solo %': (solo_count / total_color_campaigns) * 100 if total_color_campaigns > 0 else 0,
+                        'Avg Companions': avg_companions,
+                        'Top Companion': max(companions.items(), key=lambda x: x[1])[0] if companions else 'N/A',
+                        'Top Companion %': (max(companions.values()) / total_color_campaigns * 100) if companions else 0
+                    })
+
+        if color_combo_stats:
+            col1, col2 = st.columns(2)
+
+            for idx, stats in enumerate(color_combo_stats):
+                with col1 if idx == 0 else col2:
+                    st.markdown(f"**{stats['Color']}:**")
+                    st.metric("Appears in", f"{stats['Total Campaigns']} campaigns")
+                    st.metric("Used Alone", f"{stats['Solo %']:.1f}%",
+                             delta="Almost never isolated" if stats['Solo %'] < 5 else None)
+                    st.metric("Avg Companion Elements", f"{stats['Avg Companions']:.1f}")
+                    st.caption(f"Most paired with: **{stats['Top Companion']}** ({stats['Top Companion %']:.0f}% of time)")
+
+            st.success(f"""
+✅ **Key Finding:** Both greens appear with an average of {sum(s['Avg Companions'] for s in color_combo_stats) / len(color_combo_stats):.1f} other elements per campaign.
+
+**Implication for "ROI":** Low standalone efficiency scores for colors don't indicate poor performance—they reflect
+that colors function as **system enablers**, not primary brand drivers. Their value comes from combination effects,
+which current attribution methodology cannot isolate.
+            """)
 
         st.markdown("---")
 
@@ -3716,12 +3800,79 @@ Pattern indicates minimal competitive confusion - Škoda elements are generally 
 
 with tab4:
     st.header("🎯 Investment Efficiency Analysis")
-    st.caption("ROI and resource allocation across the portfolio")
+    st.caption("Comparative efficiency metrics and resource allocation across the portfolio")
+
+    # METHODOLOGY DISCLAIMER
+    st.warning("""
+⚠️ **Methodology & Interpretation Guidance**
+
+**What these metrics measure:**
+These "efficiency scores" compare current recognition levels to attributed campaign investment. They are **directional indicators**, not causal ROI.
+
+**Investment attribution methodology:**
+- Campaign spend is split equally among all elements present
+- Example: €1M TVC with Symbol + Wordmark + Tagline = €333K attributed to each
+
+**Critical limitations:**
+
+1. **Causality assumption**: Metrics assume recognition was built by measured spend, but:
+   - Heritage assets (Symbol: 10+ years) have recognition from lifetime use, not recent campaigns
+   - New assets (Háček: 10 months) include launch/novelty effects beyond paid spend
+   - Recognition timing unknown (could predate measured campaigns)
+
+2. **Equal attribution assumption**: Splits spend equally across elements, but:
+   - Symbol likely drives more recognition than supporting elements in same campaign
+   - Cannot isolate individual element contribution from combination effects
+
+3. **Sample size variation**:
+   - Symbol: 5 campaigns (€241K) → unstable estimates
+   - Electric Green: 81 campaigns (€4.2M) → more reliable
+
+**Use these metrics to:**
+✓ Compare relative efficiency within portfolio
+✓ Identify potential diminishing returns (high spend, modest recognition)
+✓ Flag under-invested distinctive assets
+
+**Do NOT use to:**
+✗ Predict future recognition from incremental spend
+✗ Make causal claims about element performance
+✗ Compare heritage vs. new assets directly
+""")
 
     # Cross-reference to Distinctive Asset Grid
     st.info("""
 💡 **Strategic Context:** This analysis focuses on investment efficiency and ROI. For strategic positioning and guidance on how to use each asset, see the **Distinctive Asset Grid** in the Overview tab.
     """)
+
+    # Asset Maturity Context
+    with st.expander("📅 Asset Maturity Timeline - Critical for Interpretation"):
+        st.markdown("""
+**Asset Age Significantly Affects Efficiency Metrics:**
+
+Understanding how long each asset has been in market is critical for interpreting efficiency scores.
+New assets show inflated "efficiency" due to novelty/launch effects, while heritage assets reflect
+lifetime recognition built over years, not just recent spend.
+        """)
+
+        maturity_data = []
+        for element in brand_elements:
+            if element in asset_maturity:
+                maturity_data.append({
+                    'Element': element,
+                    'Status': asset_maturity[element]['status'],
+                    'Years Active': asset_maturity[element]['years'],
+                    'Context': asset_maturity[element]['note']
+                })
+
+        df_maturity = pd.DataFrame(maturity_data)
+        st.dataframe(df_maturity, use_container_width=True, hide_index=True)
+
+        st.info("""
+**Interpretation Impact:**
+- **Heritage Assets (Symbol, Wordmark):** High efficiency scores reflect lifetime recognition, not campaign ROI
+- **Established Assets (3-5 years):** Efficiency reflects mature performance with diminishing returns
+- **New Assets (Háček):** Extremely high efficiency scores include launch novelty effects - not sustainable
+        """)
 
     # Calculate brand equity score and portfolio metrics
     master_df['Brand Equity Score'] = master_df['Recognition'] * master_df['Uniqueness']
@@ -4206,14 +4357,19 @@ with tab6:
 
     # ============ FILTERS ============
     st.markdown("### 🎯 Filters")
-    col1, col2, col3 = st.columns(3)
+    st.caption("Filter by market, media type, placement, and campaign objective to understand context-specific performance")
+
+    col1, col2, col3, col4 = st.columns(4)
 
     with col1:
-        selected_market = st.selectbox("Market", ['All'] + sorted(audit_df['Market'].unique().tolist()))
+        selected_market = st.selectbox("Market", ['All'] + sorted(audit_df['Market'].unique().tolist()), key='inv_market')
     with col2:
-        selected_medium = st.selectbox("Medium", ['All'] + sorted(audit_df['Medium'].unique().tolist()))
+        selected_medium = st.selectbox("Medium", ['All'] + sorted(audit_df['Medium'].unique().tolist()), key='inv_medium')
     with col3:
-        selected_placement = st.selectbox("Placement", ['All'] + sorted(audit_df['Placement'].unique().tolist()))
+        selected_placement = st.selectbox("Placement", ['All'] + sorted(audit_df['Placement'].unique().tolist()), key='inv_placement')
+    with col4:
+        selected_outcome = st.selectbox("Campaign Objective", ['All', 'Brand', 'Product'], key='inv_outcome',
+                                       help="Brand = Awareness campaigns, Product = Conversion campaigns")
 
     # Apply filters
     filtered_df = audit_df.copy()
@@ -4223,8 +4379,22 @@ with tab6:
         filtered_df = filtered_df[filtered_df['Medium'] == selected_medium]
     if selected_placement != 'All':
         filtered_df = filtered_df[filtered_df['Placement'] == selected_placement]
+    if selected_outcome != 'All':
+        filtered_df = filtered_df[filtered_df['Outcome'] == selected_outcome]
 
-    st.info(f"Showing {len(filtered_df)} of {len(audit_df)} ads")
+    # Show filter context
+    filter_active = (selected_market != 'All' or selected_medium != 'All' or
+                    selected_placement != 'All' or selected_outcome != 'All')
+
+    if filter_active:
+        filter_desc = []
+        if selected_market != 'All': filter_desc.append(f"Market: {selected_market}")
+        if selected_medium != 'All': filter_desc.append(f"Medium: {selected_medium}")
+        if selected_placement != 'All': filter_desc.append(f"Placement: {selected_placement}")
+        if selected_outcome != 'All': filter_desc.append(f"Objective: {selected_outcome}")
+        st.success(f"📊 Showing {len(filtered_df)} of {len(audit_df)} ads | Filters: {' | '.join(filter_desc)}")
+    else:
+        st.info(f"Showing all {len(filtered_df)} ads")
 
     st.markdown("---")
 
