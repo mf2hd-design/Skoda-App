@@ -1772,77 +1772,103 @@ with tab2:
 
     st.markdown("---")
 
-    # Diverging Bar Chart - Net Sentiment
-    st.markdown("### Net Sentiment: Positive vs Negative Balance")
-    st.caption("Diverging bar chart showing how positive sentiment outweighs negative for all elements")
+    # Stacked Bar Chart - Complete Sentiment Breakdown
+    st.markdown("### Sentiment Composition: Positive, Neutral & Negative")
+    st.caption("Stacked bar chart showing the complete sentiment breakdown for each element (100% scale)")
 
     # Prepare data sorted by net sentiment
     sentiment_comparison = master_df[['Element', 'Positive Sentiment', 'Negative Sentiment', 'Net Sentiment']].copy()
-    sentiment_comparison = sentiment_comparison.sort_values('Net Sentiment', ascending=True)
+    sentiment_comparison = sentiment_comparison.sort_values('Net Sentiment', ascending=False)  # Descending for better visual
 
-    # Calculate neutral for hover info
+    # Calculate neutral
     sentiment_comparison['Neutral Sentiment'] = 1 - sentiment_comparison['Positive Sentiment'] - sentiment_comparison['Negative Sentiment']
 
-    fig_diverging = go.Figure()
+    fig_stacked = go.Figure()
 
-    # Add negative bars (extending left from zero)
-    fig_diverging.add_trace(go.Bar(
-        y=sentiment_comparison['Element'],
-        x=-sentiment_comparison['Negative Sentiment'],  # Negative to extend left
-        name='Negative',
-        orientation='h',
-        marker=dict(color='#FF6B6B', opacity=0.7),
-        text=sentiment_comparison['Negative Sentiment'].apply(lambda x: f'{x:.1%}'),
-        textposition='inside',
-        textfont=dict(color='white', size=11),
-        hovertemplate='<b>%{y}</b><br>Negative: %{text}<extra></extra>',
-        customdata=sentiment_comparison['Negative Sentiment']
-    ))
-
-    # Add positive bars (extending right from zero)
-    fig_diverging.add_trace(go.Bar(
+    # Add Positive bar (first, on the left)
+    fig_stacked.add_trace(go.Bar(
         y=sentiment_comparison['Element'],
         x=sentiment_comparison['Positive Sentiment'],
         name='Positive',
         orientation='h',
-        marker=dict(color='#4ECDC4', opacity=0.8),
+        marker=dict(color='#4ECDC4', line=dict(color='white', width=1)),
         text=sentiment_comparison['Positive Sentiment'].apply(lambda x: f'{x:.1%}'),
         textposition='inside',
-        textfont=dict(color='white', size=11),
-        hovertemplate='<b>%{y}</b><br>Positive: %{text}<extra></extra>',
-        customdata=sentiment_comparison['Positive Sentiment']
+        textfont=dict(color='white', size=12, family='Arial Black'),
+        hovertemplate='<b>Positive</b>: %{x:.1%}<extra></extra>'
     ))
 
-    # Update layout for diverging style
-    fig_diverging.update_layout(
-        title='Sentiment Balance: All Elements Show Strong Positive Performance',
-        xaxis_title='← Negative    |    Positive →',
+    # Add Neutral bar (middle)
+    fig_stacked.add_trace(go.Bar(
+        y=sentiment_comparison['Element'],
+        x=sentiment_comparison['Neutral Sentiment'],
+        name='Neutral',
+        orientation='h',
+        marker=dict(color='#E8E8E8', line=dict(color='white', width=1)),
+        text=sentiment_comparison['Neutral Sentiment'].apply(lambda x: f'{x:.1%}'),
+        textposition='inside',
+        textfont=dict(color='#666', size=11),
+        hovertemplate='<b>Neutral</b>: %{x:.1%}<extra></extra>'
+    ))
+
+    # Add Negative bar (last, on the right)
+    fig_stacked.add_trace(go.Bar(
+        y=sentiment_comparison['Element'],
+        x=sentiment_comparison['Negative Sentiment'],
+        name='Negative',
+        orientation='h',
+        marker=dict(color='#FFB6B9', line=dict(color='white', width=1)),
+        text=sentiment_comparison['Negative Sentiment'].apply(lambda x: f'{x:.1%}'),
+        textposition='inside',
+        textfont=dict(color='#666', size=11),
+        hovertemplate='<b>Negative</b>: %{x:.1%}<extra></extra>'
+    ))
+
+    # Update layout for stacked style
+    fig_stacked.update_layout(
+        title='Complete Sentiment Breakdown: Positive Dominates Across All Elements',
+        xaxis_title='Percentage of Respondents',
         yaxis_title='Brand Element',
         xaxis=dict(
             tickformat='.0%',
-            zeroline=True,
-            zerolinewidth=2,
-            zerolinecolor='#333',
-            range=[-0.3, 0.6]  # Asymmetric to show positive dominance
+            range=[0, 1],
+            dtick=0.1
         ),
-        height=500,
-        barmode='relative',
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-        hovermode='y unified'
+        height=550,
+        barmode='stack',
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="center",
+            x=0.5,
+            title=None
+        ),
+        hovermode='y unified',
+        plot_bgcolor='white'
     )
 
-    st.plotly_chart(fig_diverging, use_container_width=True)
+    st.plotly_chart(fig_stacked, use_container_width=True)
 
-    # Updated insight with neutral context
+    # Updated insight with complete breakdown context
     avg_neutral = (sentiment_comparison['Neutral Sentiment'].mean())
     min_net = sentiment_comparison['Net Sentiment'].min()
     max_net = sentiment_comparison['Net Sentiment'].max()
     avg_pos = sentiment_comparison['Positive Sentiment'].mean()
     avg_neg = sentiment_comparison['Negative Sentiment'].mean()
 
-    st.success(f"**✨ Key Insight:** ALL 9 elements show strong net positive sentiment (+{min_net:.1%} to +{max_net:.1%}). On average, {avg_pos:.1%} of respondents chose positive descriptors vs only {avg_neg:.1%} negative — a **{avg_pos / avg_neg:.1f}:1 positive-to-negative ratio**.")
+    # Add legend explanation
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("Average Positive", f"{avg_pos:.1%}", help="% choosing positive descriptors (Bold, Stylish, Modern, etc.)")
+    with col2:
+        st.metric("Average Neutral", f"{avg_neutral:.1%}", help="% with no strong opinion (midpoint on 5-point scale)")
+    with col3:
+        st.metric("Average Negative", f"{avg_neg:.1%}", help="% choosing negative descriptors (Cautious, Plain, Old-Fashioned, etc.)")
 
-    st.info(f"**💡 Opportunity:** ~{avg_neutral:.1%} of respondents gave neutral ratings across elements, representing a significant conversion opportunity to shift neutral perceptions toward positive associations.")
+    st.success(f"**✨ Key Insight:** The teal bars (positive) dominate across ALL elements, consistently taking up ~{avg_pos:.1%} of each bar. With a **{avg_pos / avg_neg:.1f}:1 positive-to-negative ratio**, brand sentiment is strongly favorable. Net sentiment ranges from +{min_net:.1%} to +{max_net:.1%}.")
+
+    st.info(f"**💡 Conversion Opportunity:** The gray middle section (~{avg_neutral:.1%}) represents respondents who gave neutral ratings. These {avg_neutral*100:.0f}% are neither positive nor negative — they're persuadable! Focusing communication on neutral audiences could shift sentiment further positive.")
 
     st.markdown("---")
 
