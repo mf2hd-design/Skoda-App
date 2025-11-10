@@ -2781,7 +2781,7 @@ A €1M campaign featuring 5 elements attributes €200K to each element. This e
 
         elif density_metric == "Average Investment Efficiency":
             master_df_density['Selected Density'] = master_df_density.apply(
-                lambda x: (x['Recognition'] / x['Average Investment'] * 1_000_000) if x['Average Investment'] > 0 else 0, axis=1
+                lambda x: (x['Recognition'] / x['Average per Ad'] * 1_000_000) if x['Average per Ad'] > 0 else 0, axis=1
             )
             metric_label = "Recognition % per €1M Average Placement Investment"
             insight_text = "**What this shows:** Recognition density relative to typical ad placement budget for this element. Directional indicator."
