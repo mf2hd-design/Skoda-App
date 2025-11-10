@@ -477,7 +477,7 @@ GLOSSARY = {
     "Brand Equity": "Recognition × Uniqueness - shows if an element is both famous AND identified as Škoda's",
     "Brand Linkage": "How strongly people connect this element to Škoda - shows perceived brand ownership",
     "Top-of-Mind": "Words people think of first when they hear 'Škoda' - reveals unprompted brand associations",
-    "Investment Efficiency": "Recognition density per €1M attributed spend - directional indicator comparing current recognition to recent campaign investment (see methodology notes for interpretation guidance)",
+    "Recognition Density": "Recognition percentage per €1M attributed spend - DIRECTIONAL INDICATOR only, NOT causal ROI. Compares current recognition to cumulative attributed investment. Heritage assets show inflated scores (see methodology notes)",
     "Net Sentiment": "Positive associations minus negative - shows if people feel good or bad about this element",
     "Usage": "Percentage of advertising campaigns that include this brand element",
     "Number of Ads": "Total count of advertising campaigns that featured this brand element",
@@ -572,10 +572,12 @@ def calculate_metrics():
         axis=1
     )
 
-    # Calculate Investment Efficiency metrics
-    # Note: This is recognition density per €1M, not causal ROI
-    # Heritage assets show inflated scores; new assets may show novelty effects
-    master_df['Recognition ROI'] = master_df.apply(
+    # Calculate Recognition Density metrics
+    # Note: This is recognition density per €1M attributed spend, NOT causal ROI
+    # Heritage assets (Symbol: 100+ years) show inflated scores from lifetime recognition
+    # New assets (Háček: <1 year) may show novelty/launch effects
+    # This metric is for directional comparison only - not predictive or causal
+    master_df['Recognition Density'] = master_df.apply(
         lambda row: (row['Recognition'] / (row['Total Investment'] / 1_000_000)) if row['Total Investment'] > 0 else 0,
         axis=1
     )
@@ -1023,7 +1025,7 @@ tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
     "📊 Overview",
     "💚 Brand Perception",
     "📈 Portfolio Strategy",
-    "💰 Investment Efficiency",
+    "💰 Spend Analysis",
     "🔮 Growth Opportunities",
     "🔍 Market Analysis",
     "🧭 Consumer Journey"
@@ -1038,18 +1040,18 @@ with tab1:
 
     # TL;DR Box
     most_recognized = master_df.nlargest(1, 'Recognition').iloc[0]
-    lowest_roi = master_df.nsmallest(1, 'Recognition ROI').iloc[0]
+    lowest_rec = master_df.nsmallest(1, 'Recognition').iloc[0]
     total_investment = master_df['Total Investment'].sum()
 
-    best_roi = master_df.nlargest(1, 'Recognition ROI').iloc[0]
-    worst_roi = master_df.nsmallest(1, 'Recognition ROI').iloc[0]
+    best_density = master_df.nlargest(1, 'Recognition Density').iloc[0]
+    worst_density = master_df.nsmallest(1, 'Recognition Density').iloc[0]
 
     render_tldr_box(
         "Key Insights at a Glance",
         [
             f"<b>{most_recognized['Element']}</b> demonstrates the highest performance: {most_recognized['Recognition']:.0%} recognition and {most_recognized['Uniqueness']:.0%} uniqueness",
-            f"<b>€{total_investment:,.0f}</b> total investment across 9 brand elements with efficiency ranging from {worst_roi['Recognition ROI']:.2f} to {best_roi['Recognition ROI']:.2f} ROI per €1M",
-            f"<b>Recognition range:</b> {lowest_roi['Recognition']:.0%} ({lowest_roi['Element']}) to {most_recognized['Recognition']:.0%} ({most_recognized['Element']}) showing varied brand awareness levels"
+            f"<b>€{total_investment:,.0f}</b> total attributed investment across 9 brand elements with recognition density ranging from {worst_density['Recognition Density']:.2f} to {best_density['Recognition Density']:.2f} per €1M (see maturity context)",
+            f"<b>Recognition range:</b> {lowest_rec['Recognition']:.0%} ({lowest_rec['Element']}) to {most_recognized['Recognition']:.0%} ({most_recognized['Element']}) showing varied brand awareness levels"
         ]
     )
 
@@ -1084,12 +1086,13 @@ with tab1:
         )
 
     with col4:
-        best_roi = master_df.nlargest(1, 'Recognition ROI').iloc[0]
+        best_density = master_df.nlargest(1, 'Recognition Density').iloc[0]
+        maturity = asset_maturity.get(best_density['Element'], {}).get('years', '?')
         render_metric_card_enhanced(
-            "Best ROI",
-            best_roi['Element'],
-            delta=f"{best_roi['Recognition ROI']:.2f}x",
-            help_text="Recognition points per €1M spent",
+            "Highest Recognition Density",
+            best_density['Element'],
+            delta=f"{best_density['Recognition Density']:.2f}x ({maturity} in market)",
+            help_text="Recognition % per €1M attributed spend - directional indicator only (see maturity context)",
             icon="📈"
         )
 
@@ -1111,8 +1114,8 @@ with tab1:
             if most_recognized['Overall Usage'] >= median_usage:
                 factors.append(f"**High Campaign Frequency:** Used in {most_recognized['Overall Usage']:.0%} of campaigns")
 
-            if most_recognized['Recognition ROI'] >= master_df['Recognition ROI'].median():
-                factors.append(f"**Strong ROI:** {most_recognized['Recognition ROI']:.2f} recognition points per €1M")
+            if most_recognized['Recognition Density'] >= master_df['Recognition Density'].median():
+                factors.append(f"**High Recognition Density:** {most_recognized['Recognition Density']:.2f} recognition points per €1M (cumulative investment)")
 
             if most_recognized['Uniqueness'] >= master_df['Uniqueness'].median():
                 factors.append(f"**Distinctive Design:** {most_recognized['Uniqueness']:.0%} uniqueness reinforces attribution")
@@ -1133,8 +1136,8 @@ with tab1:
             if uniqueness_gap >= 0.15:
                 factors.append(f"**Exceptional Distinctiveness:** {uniqueness_gap:.0%} points above median")
 
-            if most_unique['Recognition ROI'] >= master_df['Recognition ROI'].median():
-                factors.append(f"**Efficient Performance:** {most_unique['Recognition ROI']:.2f} ROI per €1M")
+            if most_unique['Recognition Density'] >= master_df['Recognition Density'].median():
+                factors.append(f"**High Recognition Density:** {most_unique['Recognition Density']:.2f} per €1M")
 
             st.markdown("**Distinctiveness Factors:**")
             for i, factor in enumerate(factors, 1):
@@ -1150,40 +1153,43 @@ with tab1:
             st.markdown(f"**Investment:** €{highest_investment['Total Investment']:,.0f} ({inv_vs_median:.0f}% above median)")
             st.markdown(f"**Usage:** {highest_investment['Overall Usage']:.0%} of campaigns ({num_ads} ads)")
             st.markdown(f"**Recognition Achieved:** {highest_investment['Recognition']:.0%}")
-            st.markdown(f"**ROI:** {highest_investment['Recognition ROI']:.2f} per €1M")
+            st.markdown(f"**Recognition Density:** {highest_investment['Recognition Density']:.2f} per €1M")
 
-            roi_ratio = highest_investment['Recognition ROI'] / best_roi['Recognition ROI'] if best_roi['Recognition ROI'] > 0 else 0
-            st.info(f"**Relative Efficiency:** This element's ROI of {highest_investment['Recognition ROI']:.2f} represents {roi_ratio:.0%} of the portfolio's best performer ({best_roi['Element']} at {best_roi['Recognition ROI']:.2f}).")
+            density_ratio = highest_investment['Recognition Density'] / best_density['Recognition Density'] if best_density['Recognition Density'] > 0 else 0
+            st.info(f"**Relative Density:** This element's recognition density of {highest_investment['Recognition Density']:.2f} represents {density_ratio:.0%} of the portfolio's highest ({best_density['Element']} at {best_density['Recognition Density']:.2f}).")
 
     with col4:
-        with st.expander(f"⚡ Why is **{best_roi['Element']}** most efficient?"):
-            roi_vs_median = ((best_roi['Recognition ROI'] / master_df['Recognition ROI'].median()) - 1) * 100
+        maturity_info = asset_maturity.get(best_density['Element'], {})
+        with st.expander(f"⚡ Why does **{best_density['Element']}** show highest recognition density?"):
+            density_vs_median = ((best_density['Recognition Density'] / master_df['Recognition Density'].median()) - 1) * 100
 
-            st.markdown(f"**ROI Leadership:** {best_roi['Recognition ROI']:.2f} per €1M ({roi_vs_median:.0f}% above median)")
-            st.markdown(f"**Investment:** €{best_roi['Total Investment']:,.0f}")
-            st.markdown(f"**Recognition:** {best_roi['Recognition']:.0%}")
-            st.markdown(f"**Uniqueness:** {best_roi['Uniqueness']:.0%}")
+            st.markdown(f"**Recognition Density:** {best_density['Recognition Density']:.2f} per €1M ({density_vs_median:.0f}% above median)")
+            st.markdown(f"**Investment:** €{best_density['Total Investment']:,.0f}")
+            st.markdown(f"**Recognition:** {best_density['Recognition']:.0%}")
+            st.markdown(f"**Asset Maturity:** {maturity_info.get('years', '?')} - {maturity_info.get('status', 'Unknown')}")
 
-            st.info(f"**Investment Position:** Current investment of €{best_roi['Total Investment']:,.0f} is {abs(((best_roi['Total Investment'] / master_df['Total Investment'].median()) - 1) * 100):.0f}% {'below' if best_roi['Total Investment'] < master_df['Total Investment'].median() else 'above'} portfolio median.")
+            st.info(f"**Investment Position:** Current investment of €{best_density['Total Investment']:,.0f} is {abs(((best_density['Total Investment'] / master_df['Total Investment'].median()) - 1) * 100):.0f}% {'below' if best_density['Total Investment'] < master_df['Total Investment'].median() else 'above'} portfolio median.")
+
+            st.warning(f"⚠️ **Maturity Context:** This element has been in market for {maturity_info.get('years', '?')}. High density scores for heritage assets reflect lifetime recognition, not recent campaign efficiency.")
 
     st.markdown("---")
 
     # Key Patterns Observed
-    top_3_performers = master_df.nlargest(3, 'Recognition ROI')
-    bottom_3_performers = master_df.nsmallest(3, 'Recognition ROI')
+    top_3_performers = master_df.nlargest(3, 'Recognition Density')
+    bottom_3_performers = master_df.nsmallest(3, 'Recognition Density')
 
     with st.container():
         st.info(f"""
 💡 **Key Patterns Observed**
 
 **Performance Leaders:**
-- **{most_recognized['Element']}:** {most_recognized['Recognition']:.0%} recognition with {most_recognized['Recognition ROI']:.2f} ROI (highest in portfolio)
-- **{best_roi['Element']}:** {best_roi['Recognition']:.0%} recognition with {best_roi['Recognition ROI']:.2f} ROI (strongest efficiency)
+- **{most_recognized['Element']}:** {most_recognized['Recognition']:.0%} recognition with {most_recognized['Recognition Density']:.2f} recognition density (highest in portfolio)
+- **{best_roi['Element']}:** {best_roi['Recognition']:.0%} recognition with {best_roi['Recognition Density']:.2f} recognition density (strongest current efficiency indicator)
 - These top performers account for {(most_recognized['Total Investment'] + best_roi['Total Investment']) / total_investment:.0%} of total portfolio investment
 
-**Efficiency Variation:**
-- ROI ranges from {master_df['Recognition ROI'].min():.2f} to {master_df['Recognition ROI'].max():.2f} per €1M across 9 elements
-- Top 3 performers show {top_3_performers['Recognition ROI'].mean() / bottom_3_performers['Recognition ROI'].mean():.1f}x higher average ROI than bottom 3
+**Recognition Density Variation:**
+- Recognition density ranges from {master_df['Recognition Density'].min():.2f} to {master_df['Recognition Density'].max():.2f} per €1M across 9 elements
+- Top 3 performers show {top_3_performers['Recognition Density'].mean() / bottom_3_performers['Recognition Density'].mean():.1f}x higher average recognition density than bottom 3
 - Investment concentration: Top 3 elements represent {(top_3_performers['Total Investment'].sum() / total_investment):.0%} of budget
 
 **Recognition Distribution:**
@@ -1203,7 +1209,7 @@ with tab1:
                 'Recognition': row['Recognition'],
                 'Uniqueness': row['Uniqueness'],
                 'Net Sentiment': row['Net Sentiment'],
-                'ROI': row['Recognition ROI'],
+                'Density': row['Recognition Density'],
                 'Investment': row['Total Investment']
             })
 
@@ -1214,7 +1220,7 @@ with tab1:
                 'Recognition': '{:.0%}',
                 'Uniqueness': '{:.0%}',
                 'Net Sentiment': '{:+.1%}',
-                'ROI': '{:.2f}',
+                'Density': '{:.2f}',
                 'Investment': '€{:,.0f}'
             }).background_gradient(subset=['Recognition', 'Uniqueness'], cmap='RdYlGn'),
             use_container_width=True,
@@ -1234,16 +1240,16 @@ with tab1:
 **Top Performers:**
 """
     for i, row in top_3.iterrows():
-        takeaways_text += f"- **{row['Element']}:** {row['Recognition']:.0%} recognition, {row['Uniqueness']:.0%} uniqueness, {row['Recognition ROI']:.2f} ROI\n"
+        takeaways_text += f"- **{row['Element']}:** {row['Recognition']:.0%} recognition, {row['Uniqueness']:.0%} uniqueness, {row['Recognition Density']:.2f} recognition density\n"
 
     takeaways_text += f"""
 **Portfolio Characteristics:**
 - Average recognition across all elements: {avg_recognition:.0%}
 - {negative_sentiment_count} of {len(master_df)} elements show negative net sentiment
-- ROI variation of {master_df['Recognition ROI'].max() / master_df['Recognition ROI'].min():.1f}x observed across portfolio
+- Recognition density variation of {master_df['Recognition Density'].max() / master_df['Recognition Density'].min():.1f}x observed across portfolio
 
 **Notable Pattern:**
-**{top_3.iloc[0]['Element']}** demonstrates the strongest combined performance with {top_3.iloc[0]['Recognition']:.0%} recognition and {top_3.iloc[0]['Recognition ROI']:.2f} ROI
+**{top_3.iloc[0]['Element']}** demonstrates the strongest combined performance with {top_3.iloc[0]['Recognition']:.0%} recognition and {top_3.iloc[0]['Recognition Density']:.2f} recognition density
 """
 
     st.success(takeaways_text)
@@ -1261,13 +1267,13 @@ with tab1:
 
         st.dataframe(
             display_df[['Element', 'Recognition', 'Uniqueness', 'Overall Usage',
-                       'Number of Ads', 'Total Investment', 'Average per Ad', 'Recognition ROI', 'Net Sentiment', 'Brand Equity Score']]
+                       'Number of Ads', 'Total Investment', 'Average per Ad', 'Recognition Density', 'Net Sentiment', 'Brand Equity Score']]
             .set_index('Element')
             .T.style
             .format("{:.1%}", subset=(pd.IndexSlice[['Recognition', 'Uniqueness', 'Overall Usage', 'Net Sentiment']], slice(None)))
             .format("{:.0f}", subset=(pd.IndexSlice[['Number of Ads']], slice(None)))
             .format("€{:,.0f}", subset=(pd.IndexSlice[['Total Investment', 'Average per Ad']], slice(None)))
-            .format("{:.2f}", subset=(pd.IndexSlice[['Recognition ROI']], slice(None)))
+            .format("{:.2f}", subset=(pd.IndexSlice[['Recognition Density']], slice(None)))
             .format("{:.3f}", subset=(pd.IndexSlice[['Brand Equity Score']], slice(None)))
             .background_gradient(cmap='RdYlGn', axis=1, subset=(pd.IndexSlice[['Recognition', 'Uniqueness', 'Net Sentiment']], slice(None))),
             use_container_width=True
@@ -1321,7 +1327,7 @@ with tab1:
             'Uniqueness': ':.1%',
             'Total Investment': ':,.0f',
             'Overall Usage': ':.0%',
-            'Recognition ROI': ':.2f',
+            'Recognition Density': ':.2f',
             'Net Sentiment': ':+.1%',
             'First_Trigger_Strength': ':.1%'
         },
@@ -1377,7 +1383,7 @@ Highly likely to evoke competitors, so best avoided. If it must be used, it need
 - {row['Uniqueness']:.0%} uniqueness (below median)
 - **Attribution Gap:** {attr_gap:.1%} have seen it but don't know it's Škoda's
 - **Risk:** {((row['Recognition'] / row['Uniqueness']) if row['Uniqueness'] > 0 else 0):.1f}x fame-to-uniqueness ratio indicates competitor ambush potential
-- €{row['Total Investment']:,.0f} invested | {row['Recognition ROI']:.2f} ROI
+- €{row['Total Investment']:,.0f} invested | {row['Recognition Density']:.2f} recognition density
                 """)
         else:
             st.info("No elements in this quadrant")
@@ -1396,7 +1402,7 @@ Can be used to supplement or potentially replace the brand name in advertising. 
                 st.success(f"""
 **{row['Element']}:**
 - {row['Recognition']:.0%} fame | {row['Uniqueness']:.0%} uniqueness
-- €{row['Total Investment']:,.0f} invested ({(row['Total Investment'] / equity_matrix_df['Total Investment'].sum()) * 100:.0f}% of portfolio) | {row['Recognition ROI']:.2f} ROI
+- €{row['Total Investment']:,.0f} invested ({(row['Total Investment'] / equity_matrix_df['Total Investment'].sum()) * 100:.0f}% of portfolio) | {row['Recognition Density']:.2f} recognition density
 - **Usage:** {row['Overall Usage']:.0%} of campaigns | **Sentiment:** {row['Net Sentiment']:+.1%}
 - **Maintenance Required:** Continue consistent usage to prevent decay
                 """)
@@ -1421,7 +1427,7 @@ Not known at all in the market. Needs considerable work to develop any value.
 **{row['Element']}:**
 - {row['Recognition']:.0%} fame (below median)
 - {row['Uniqueness']:.0%} uniqueness (below median)
-- €{row['Total Investment']:,.0f} invested ({(row['Total Investment'] / equity_matrix_df['Total Investment'].sum()) * 100:.0f}% of portfolio) | {row['Recognition ROI']:.2f} ROI
+- €{row['Total Investment']:,.0f} invested ({(row['Total Investment'] / equity_matrix_df['Total Investment'].sum()) * 100:.0f}% of portfolio) | {row['Recognition Density']:.2f} recognition density
 - **Usage:** {row['Overall Usage']:.0%} of campaigns
 - **Assessment:** Requires significant investment to build awareness and attribution
                 """)
@@ -1443,7 +1449,7 @@ Has potential but needs wider, more consistent use and linkage to the brand name
 **{row['Element']}:**
 - {row['Uniqueness']:.0%} uniqueness (above median) ✅
 - {row['Recognition']:.0%} fame (below median)
-- €{row['Total Investment']:,.0f} investment | {row['Recognition ROI']:.2f} ROI
+- €{row['Total Investment']:,.0f} investment | {row['Recognition Density']:.2f} recognition density
 - **Usage:** {row['Overall Usage']:.0%} of campaigns
 - **Opportunity:** Scale up usage to convert distinctive potential into fame
 - **Risk:** Monitor for competitor use while awareness is building
@@ -2293,15 +2299,15 @@ with tab3:
     st.caption("Deep dive into element performance and strategy")
 
     # TL;DR Summary
-    best_roi_elem = master_df.loc[master_df['Recognition ROI'].idxmax()]
+    best_density_elem = master_df.loc[master_df['Recognition Density'].idxmax()]
     best_equity_elem = master_df.loc[(master_df['Recognition'] * master_df['Uniqueness']).idxmax()]
 
     render_tldr_box(
         "Key Insights at a Glance",
         [
-            f"<b>Efficiency Leaders:</b> {best_roi_elem['Element']} shows highest ROI at {best_roi_elem['Recognition ROI']:.2f} per €1M",
+            f"<b>Recognition Density Leaders:</b> {best_density_elem['Element']} shows highest recognition density at {best_density_elem['Recognition Density']:.2f} per €1M (directional indicator - see maturity context)",
             f"<b>Brand Equity Champion:</b> {best_equity_elem['Element']} delivers strongest combined recognition ({best_equity_elem['Recognition']:.0%}) and uniqueness ({best_equity_elem['Uniqueness']:.0%})",
-            f"<b>Portfolio Distribution:</b> 9 elements analyzed across investment, efficiency, and brand equity dimensions"
+            f"<b>Portfolio Distribution:</b> 9 elements analyzed across investment, efficiency indicators, and brand equity dimensions"
         ]
     )
 
@@ -2310,7 +2316,7 @@ with tab3:
     # Create 4 focused sub-tabs
     subtab1, subtab2, subtab3, subtab4 = st.tabs([
         "🎯 Portfolio Strategy",
-        "💰 Efficiency & ROI",
+        "💰 Recognition Density Analysis",
         "🔗 Combinations & Synergies",
         "🌍 Market & Consumer Insights"
     ])
@@ -2328,7 +2334,7 @@ with tab3:
         median_investment = matrix_df['Total Investment'].median()
         median_uniqueness = matrix_df['Uniqueness'].median()
         median_usage = matrix_df['Overall Usage'].median()
-        median_roi = matrix_df['Recognition ROI'].median()
+        median_density = matrix_df['Recognition Density'].median()
 
         # Key Insights Box
         high_rec_high_inv = matrix_df[(matrix_df['Recognition'] > median_recognition) & (matrix_df['Total Investment'] > median_investment)]
@@ -2339,7 +2345,7 @@ with tab3:
             [
                 f"<b>{len(high_rec_high_inv)} elements</b> in high recognition + high investment quadrant (Stars)",
                 f"<b>{len(high_rec_low_inv)} elements</b> achieve high recognition with below-median investment (Efficient performers)",
-                f"<b>Three matrix views</b> analyze Recognition vs Investment, Usage vs Recognition, and Uniqueness vs ROI positioning"
+                f"<b>Three matrix views</b> analyze Recognition vs Investment, Usage vs Recognition, and Uniqueness vs Recognition Density positioning"
             ]
         )
 
@@ -2475,7 +2481,7 @@ A €1M campaign featuring 5 elements attributes €200K to each element. This e
                 x='Uniqueness',
                 y='Recognition',
                 size='Total Investment',
-                color='Recognition ROI',
+                color='Recognition Density',
                 hover_name='Element',
                 text='Element',
                 title='Recognition vs Uniqueness',
@@ -2485,7 +2491,7 @@ A €1M campaign featuring 5 elements attributes €200K to each element. This e
                     'Recognition': ':.0%',
                     'Uniqueness': ':.0%',
                     'Total Investment': ':,.0f',
-                    'Recognition ROI': ':.2f'
+                    'Recognition Density': ':.2f'
                 }
             )
 
@@ -2561,9 +2567,9 @@ A €1M campaign featuring 5 elements attributes €200K to each element. This e
 
         st.markdown("---")
 
-        # Matrix 3: Usage vs ROI
-        st.markdown("#### 3️⃣ Usage vs ROI Matrix")
-        st.caption("Campaign efficiency analysis comparing usage frequency and return on investment")
+        # Matrix 3: Usage vs Recognition Density
+        st.markdown("#### 3️⃣ Usage vs Recognition Density Matrix")
+        st.caption("Campaign efficiency analysis comparing usage frequency and recognition density indicators")
 
         col1, col2 = st.columns([3, 1])
 
@@ -2571,59 +2577,59 @@ A €1M campaign featuring 5 elements attributes €200K to each element. This e
             fig_efficiency = px.scatter(
                 matrix_df,
                 x='Overall Usage',
-                y='Recognition ROI',
+                y='Recognition Density',
                 size='Recognition',
                 color='Net Sentiment',
                 hover_name='Element',
                 text='Element',
-                title='Usage vs ROI',
+                title='Usage vs Recognition Density',
                 color_continuous_scale='RdYlGn',
                 size_max=30,
                 hover_data={
                     'Overall Usage': ':.0%',
-                    'Recognition ROI': ':.2f',
+                    'Recognition Density': ':.2f',
                     'Recognition': ':.0%',
                     'Net Sentiment': ':+.1%'
                 }
             )
 
             # Add quadrant lines
-            fig_efficiency.add_hline(y=median_roi, line_dash="dash", line_color="gray", opacity=0.5)
+            fig_efficiency.add_hline(y=median_density, line_dash="dash", line_color="gray", opacity=0.5)
             fig_efficiency.add_vline(x=median_usage, line_dash="dash", line_color="gray", opacity=0.5)
 
             # Add neutral quadrant labels
             fig_efficiency.add_annotation(
                 x=matrix_df['Overall Usage'].max() * 0.85,
-                y=matrix_df['Recognition ROI'].max() * 0.95,
-                text="High Usage<br>High ROI",
+                y=matrix_df['Recognition Density'].max() * 0.95,
+                text="High Usage<br>High Density",
                 showarrow=False,
                 font=dict(size=10, color="darkgreen")
             )
             fig_efficiency.add_annotation(
                 x=matrix_df['Overall Usage'].min() * 1.5,
-                y=matrix_df['Recognition ROI'].max() * 0.95,
-                text="Low Usage<br>High ROI",
+                y=matrix_df['Recognition Density'].max() * 0.95,
+                text="Low Usage<br>High Density",
                 showarrow=False,
                 font=dict(size=10, color="blue")
             )
             fig_efficiency.add_annotation(
                 x=matrix_df['Overall Usage'].max() * 0.85,
-                y=matrix_df['Recognition ROI'].min() * 1.5,
-                text="High Usage<br>Low ROI",
+                y=matrix_df['Recognition Density'].min() * 1.5,
+                text="High Usage<br>Low Density",
                 showarrow=False,
                 font=dict(size=10, color="red")
             )
             fig_efficiency.add_annotation(
                 x=matrix_df['Overall Usage'].min() * 1.5,
-                y=matrix_df['Recognition ROI'].min() * 1.5,
-                text="Low Usage<br>Low ROI",
+                y=matrix_df['Recognition Density'].min() * 1.5,
+                text="Low Usage<br>Low Density",
                 showarrow=False,
                 font=dict(size=10, color="orange")
             )
 
             fig_efficiency = apply_standard_chart_styling(fig_efficiency, "")
             fig_efficiency.update_traces(textposition='top center')
-            fig_efficiency.update_layout(height=500, xaxis_title="Campaign Usage", yaxis_title="Recognition ROI (per €1M)")
+            fig_efficiency.update_layout(height=500, xaxis_title="Campaign Usage", yaxis_title="Recognition Density (per €1M)")
             fig_efficiency.update_xaxes(tickformat='.0%')
             st.plotly_chart(fig_efficiency, use_container_width=True, config=get_standard_chart_config())
 
@@ -2631,63 +2637,63 @@ A €1M campaign featuring 5 elements attributes €200K to each element. This e
             st.markdown("#### Efficiency Groups")
 
             # Categorize elements
-            high_use_high_roi = matrix_df[(matrix_df['Overall Usage'] >= median_usage) & (matrix_df['Recognition ROI'] >= median_roi)]
-            low_use_high_roi = matrix_df[(matrix_df['Overall Usage'] < median_usage) & (matrix_df['Recognition ROI'] >= median_roi)]
-            high_use_low_roi = matrix_df[(matrix_df['Overall Usage'] >= median_usage) & (matrix_df['Recognition ROI'] < median_roi)]
-            low_use_low_roi = matrix_df[(matrix_df['Overall Usage'] < median_usage) & (matrix_df['Recognition ROI'] < median_roi)]
+            high_use_high_density = matrix_df[(matrix_df['Overall Usage'] >= median_usage) & (matrix_df['Recognition Density'] >= median_density)]
+            low_use_high_density = matrix_df[(matrix_df['Overall Usage'] < median_usage) & (matrix_df['Recognition Density'] >= median_density)]
+            high_use_low_density = matrix_df[(matrix_df['Overall Usage'] >= median_usage) & (matrix_df['Recognition Density'] < median_density)]
+            low_use_low_density = matrix_df[(matrix_df['Overall Usage'] < median_usage) & (matrix_df['Recognition Density'] < median_density)]
 
-            if len(high_use_high_roi) > 0:
-                st.success(f"**High Use + High ROI ({len(high_use_high_roi)})**")
-                for _, row in high_use_high_roi.iterrows():
-                    st.write(f"• {row['Element']}: {row['Overall Usage']:.0%} usage | {row['Recognition ROI']:.2f} ROI")
+            if len(high_use_high_density) > 0:
+                st.success(f"**High Use + High Density ({len(high_use_high_density)})**")
+                for _, row in high_use_high_density.iterrows():
+                    st.write(f"• {row['Element']}: {row['Overall Usage']:.0%} usage | {row['Recognition Density']:.2f} density")
 
-            if len(low_use_high_roi) > 0:
-                st.info(f"**Low Use + High ROI ({len(low_use_high_roi)})**")
-                for _, row in low_use_high_roi.iterrows():
-                    st.write(f"• {row['Element']}: {row['Overall Usage']:.0%} usage | {row['Recognition ROI']:.2f} ROI")
+            if len(low_use_high_density) > 0:
+                st.info(f"**Low Use + High Density ({len(low_use_high_density)})**")
+                for _, row in low_use_high_density.iterrows():
+                    st.write(f"• {row['Element']}: {row['Overall Usage']:.0%} usage | {row['Recognition Density']:.2f} density")
 
-            if len(high_use_low_roi) > 0:
-                st.error(f"**High Use + Low ROI ({len(high_use_low_roi)})**")
-                for _, row in high_use_low_roi.iterrows():
-                    st.write(f"• {row['Element']}: {row['Overall Usage']:.0%} usage | {row['Recognition ROI']:.2f} ROI")
+            if len(high_use_low_density) > 0:
+                st.error(f"**High Use + Low Density ({len(high_use_low_density)})**")
+                for _, row in high_use_low_density.iterrows():
+                    st.write(f"• {row['Element']}: {row['Overall Usage']:.0%} usage | {row['Recognition Density']:.2f} density")
 
-            if len(low_use_low_roi) > 0:
-                st.warning(f"**Low Use + Low ROI ({len(low_use_low_roi)})**")
-                for _, row in low_use_low_roi.iterrows():
-                    st.write(f"• {row['Element']}: {row['Overall Usage']:.0%} usage | {row['Recognition ROI']:.2f} ROI")
+            if len(low_use_low_density) > 0:
+                st.warning(f"**Low Use + Low Density ({len(low_use_low_density)})**")
+                for _, row in low_use_low_density.iterrows():
+                    st.write(f"• {row['Element']}: {row['Overall Usage']:.0%} usage | {row['Recognition Density']:.2f} density")
 
-    # ========== SUB-TAB 2: EFFICIENCY & ROI ==========
+    # ========== SUB-TAB 2: RECOGNITION DENSITY ANALYSIS ==========
     with subtab2:
-        st.markdown("### 💡 Multi-Dimensional ROI Analysis")
-        st.caption("Compare efficiency across different investment and performance metrics")
+        st.markdown("### 💡 Multi-Dimensional Recognition Density Analysis")
+        st.caption("Compare recognition efficiency across different investment and performance metrics - directional indicators only")
 
         # Calculate for insights
-        best_roi_elem = master_df.loc[master_df['Recognition ROI'].idxmax()]
-        worst_roi_elem = master_df.loc[master_df['Recognition ROI'].idxmin()]
-        roi_range = best_roi_elem['Recognition ROI'] / worst_roi_elem['Recognition ROI']
+        best_density_elem = master_df.loc[master_df['Recognition Density'].idxmax()]
+        worst_density_elem = master_df.loc[master_df['Recognition Density'].idxmin()]
+        density_range = best_density_elem['Recognition Density'] / worst_density_elem['Recognition Density']
 
         # Key Insights Box
         render_tldr_box(
             "Key Insights at a Glance",
             [
-                f"<b>{best_roi_elem['Element']}</b> delivers highest efficiency at {best_roi_elem['Recognition ROI']:.2f} recognition per €1M",
-                f"<b>{roi_range:.1f}x efficiency gap</b> exists between best ({best_roi_elem['Element']}) and lowest ({worst_roi_elem['Element']}) performers",
-                f"<b>4 value for moneys available</b>: Total Investment, Per-Ad, Average Investment, and Brand Equity Index"
+                f"<b>{best_density_elem['Element']}</b> shows highest recognition density at {best_density_elem['Recognition Density']:.2f} recognition per €1M (see maturity context)",
+                f"<b>{density_range:.1f}x density range</b> exists between highest ({best_density_elem['Element']}) and lowest ({worst_density_elem['Element']}) performers",
+                f"<b>4 efficiency views available</b>: Total Investment, Per-Ad, Average Investment, and Brand Equity Index"
             ]
         )
 
         # Summary cards
         col1, col2 = st.columns(2)
         with col1:
-            st.metric("🏆 Highest Efficiency", best_roi_elem['Element'], f"{best_roi_elem['Recognition ROI']:.2f} per €1M")
+            st.metric("🏆 Highest Recognition Density", best_density_elem['Element'], f"{best_density_elem['Recognition Density']:.2f} per €1M")
         with col2:
-            st.metric("📊 Lowest Efficiency", worst_roi_elem['Element'], f"{worst_roi_elem['Recognition ROI']:.2f} per €1M")
+            st.metric("📊 Lowest Recognition Density", worst_density_elem['Element'], f"{worst_density_elem['Recognition Density']:.2f} per €1M")
 
         st.markdown("---")
 
-        # ROI metric selector
-        roi_metric = st.selectbox(
-            "Select value for money:",
+        # Recognition density metric selector
+        density_metric = st.selectbox(
+            "Select efficiency indicator view:",
             [
                 "Total Investment Efficiency",
                 "Per-Ad Recognition Efficiency",
@@ -2696,75 +2702,75 @@ A €1M campaign featuring 5 elements attributes €200K to each element. This e
             ]
         )
 
-        # Calculate different ROI metrics
-        master_df_roi = master_df.copy()
+        # Calculate different recognition density metrics
+        master_df_density = master_df.copy()
 
         # Add number of ads per element
-        for idx, row in master_df_roi.iterrows():
+        for idx, row in master_df_density.iterrows():
             element = row['Element']
             num_ads = audit_df[audit_df[element] == True].shape[0]
-            master_df_roi.at[idx, 'Num Ads'] = num_ads
+            master_df_density.at[idx, 'Num Ads'] = num_ads
 
-        if roi_metric == "Total Investment Efficiency":
-            master_df_roi['Selected ROI'] = master_df_roi['Recognition ROI']
+        if density_metric == "Total Investment Efficiency":
+            master_df_density['Selected Density'] = master_df_density['Recognition Density']
             metric_label = "Recognition % per €1M Total Investment"
-            insight_text = "**What this shows:** Recognition achieved relative to total campaign spend across all placements featuring this element."
+            insight_text = "**What this shows:** Current recognition level relative to total cumulative attributed campaign spend. Directional indicator only - not causal."
 
-        elif roi_metric == "Per-Ad Recognition Efficiency":
-            master_df_roi['Selected ROI'] = master_df_roi.apply(
+        elif density_metric == "Per-Ad Recognition Efficiency":
+            master_df_density['Selected Density'] = master_df_density.apply(
                 lambda x: (x['Recognition'] / x['Num Ads'] * 100) if x['Num Ads'] > 0 else 0, axis=1
             )
             metric_label = "Recognition % per Ad Placement"
-            insight_text = "**What this shows:** Average recognition gained per individual ad placement - indicates how quickly each element builds awareness."
+            insight_text = "**What this shows:** Average recognition level per individual ad placement featuring this element. Directional comparison only."
 
-        elif roi_metric == "Average Investment Efficiency":
-            master_df_roi['Selected ROI'] = master_df_roi.apply(
+        elif density_metric == "Average Investment Efficiency":
+            master_df_density['Selected Density'] = master_df_density.apply(
                 lambda x: (x['Recognition'] / x['Average Investment'] * 1_000_000) if x['Average Investment'] > 0 else 0, axis=1
             )
             metric_label = "Recognition % per €1M Average Placement Investment"
-            insight_text = "**What this shows:** Cost-effectiveness per typical ad placement budget for this element."
+            insight_text = "**What this shows:** Recognition density relative to typical ad placement budget for this element. Directional indicator."
 
         else:  # Brand Equity Efficiency Index
-            master_df_roi['Selected ROI'] = master_df_roi.apply(
+            master_df_density['Selected Density'] = master_df_density.apply(
                 lambda x: (x['Recognition'] * x['Uniqueness']) / (x['Total Investment'] / 1_000_000) if x['Total Investment'] > 0 else 0, axis=1
             )
             metric_label = "Brand Equity Index (Recognition × Uniqueness) per €1M"
-            insight_text = "**What this shows:** Combined efficiency of building both fame (recognition) and differentiation (uniqueness) per euro invested."
+            insight_text = "**What this shows:** Combined brand equity (recognition × uniqueness) relative to attributed investment. Directional comparison only."
 
         st.info(insight_text)
 
         col1, col2 = st.columns([2, 1])
 
         with col1:
-            roi_df = master_df_roi.sort_values('Selected ROI', ascending=True)
-            fig_roi = px.bar(
-                roi_df,
+            density_df = master_df_density.sort_values('Selected Density', ascending=True)
+            fig_density = px.bar(
+                density_df,
                 y='Element',
-                x='Selected ROI',
+                x='Selected Density',
                 orientation='h',
-                title=f'Efficiency Comparison: {metric_label}',
-                text=roi_df['Selected ROI'].apply(lambda x: f'{x:.2f}'),
-                color='Selected ROI',
+                title=f'Recognition Density Comparison: {metric_label}',
+                text=density_df['Selected Density'].apply(lambda x: f'{x:.2f}'),
+                color='Selected Density',
                 color_continuous_scale='RdYlGn',
                 hover_data={
                     'Element': True,
-                    'Selected ROI': ':.2f',
+                    'Selected Density': ':.2f',
                     'Recognition': ':.0%',
                     'Total Investment': ':,.0f'
                 }
             )
-            fig_roi = apply_standard_chart_styling(fig_roi, "")
-            fig_roi.update_traces(textposition='outside')
-            fig_roi.update_layout(height=500, showlegend=False)
-            st.plotly_chart(fig_roi, use_container_width=True, config=get_standard_chart_config())
+            fig_density = apply_standard_chart_styling(fig_density, "")
+            fig_density.update_traces(textposition='outside')
+            fig_density.update_layout(height=500, showlegend=False)
+            st.plotly_chart(fig_density, use_container_width=True, config=get_standard_chart_config())
 
         with col2:
             st.markdown("#### Top 3 Performers")
-            top_3_roi = roi_df.nlargest(3, 'Selected ROI')
-            for idx, row in top_3_roi.iterrows():
-                st.success(f"**{row['Element']}**: {row['Selected ROI']:.2f}")
+            top_3_density = density_df.nlargest(3, 'Selected Density')
+            for idx, row in top_3_density.iterrows():
+                st.success(f"**{row['Element']}**: {row['Selected Density']:.2f}")
                 with st.expander(f"Performance breakdown"):
-                    if roi_metric == "Brand Equity Efficiency Index":
+                    if density_metric == "Brand Equity Efficiency Index":
                         equity = row['Recognition'] * row['Uniqueness']
                         st.write(f"**Recognition:** {row['Recognition']:.0%}")
                         st.write(f"**Uniqueness:** {row['Uniqueness']:.0%}")
@@ -2778,11 +2784,11 @@ A €1M campaign featuring 5 elements attributes €200K to each element. This e
                         st.write(f"**Pattern:** {row['Recognition']:.0%} recognition from €{row['Total Investment']:,.0f} investment across {row['Overall Usage']:.0%} of campaigns")
 
             st.markdown("#### Bottom 3 Performers")
-            bottom_3_roi = roi_df.nsmallest(3, 'Selected ROI')
-            for idx, row in bottom_3_roi.iterrows():
-                st.warning(f"**{row['Element']}**: {row['Selected ROI']:.2f}")
+            bottom_3_density = density_df.nsmallest(3, 'Selected Density')
+            for idx, row in bottom_3_density.iterrows():
+                st.warning(f"**{row['Element']}**: {row['Selected Density']:.2f}")
                 with st.expander(f"Performance breakdown"):
-                    if roi_metric == "Brand Equity Efficiency Index":
+                    if density_metric == "Brand Equity Efficiency Index":
                         equity = row['Recognition'] * row['Uniqueness']
                         st.write(f"**Recognition:** {row['Recognition']:.0%}")
                         st.write(f"**Uniqueness:** {row['Uniqueness']:.0%}")
@@ -2856,7 +2862,7 @@ A €1M campaign featuring 5 elements attributes €200K to each element. This e
                 'Recognition': ':.0%',
                 'Uniqueness': ':.0%',
                 'Total Investment': ':,.0f',
-                'Recognition ROI': ':.2f'
+                'Recognition Density': ':.2f'
             }
         )
 
@@ -3067,7 +3073,7 @@ companion elements (Symbol, Wordmark) to drive brand attribution.
             st.success(f"""
 ✅ **Key Finding:** Both greens appear with an average of {sum(s['Avg Companions'] for s in color_combo_stats) / len(color_combo_stats):.1f} other elements per campaign.
 
-**Implication for "ROI":** Low standalone efficiency scores for colors don't indicate poor performance—they reflect
+**Implication for "Recognition Density":** Low standalone recognition density scores for colors don't indicate poor performance—they reflect
 that colors function as **system enablers**, not primary brand drivers. Their value comes from combination effects,
 which current attribution methodology cannot isolate.
             """)
@@ -3809,7 +3815,7 @@ with tab4:
 ⚠️ **Methodology & Interpretation Guidance**
 
 **What these metrics measure:**
-These "efficiency scores" compare current recognition levels to attributed campaign investment. They are **directional indicators**, not causal ROI.
+These "recognition density scores" compare current recognition levels to attributed campaign investment. They are **directional indicators**, not causal ROI.
 
 **Investment attribution methodology:**
 - Campaign spend is split equally among all elements present
@@ -3843,7 +3849,7 @@ These "efficiency scores" compare current recognition levels to attributed campa
 
     # Cross-reference to Distinctive Asset Grid
     st.info("""
-💡 **Strategic Context:** This analysis focuses on investment efficiency and ROI. For strategic positioning and guidance on how to use each asset, see the **Distinctive Asset Grid** in the Overview tab.
+💡 **Strategic Context:** This analysis focuses on recognition density and investment efficiency indicators. For strategic positioning and guidance on how to use each asset, see the **Distinctive Asset Grid** in the Overview tab.
     """)
 
     # Asset Maturity Context
@@ -3871,23 +3877,23 @@ lifetime recognition built over years, not just recent spend.
 
         st.info("""
 **Interpretation Impact:**
-- **Heritage Assets (Symbol, Wordmark):** High efficiency scores reflect lifetime recognition, not campaign ROI
-- **Established Assets (3-5 years):** Efficiency reflects mature performance with diminishing returns
-- **New Assets (Háček):** Extremely high efficiency scores include launch novelty effects - not sustainable
+- **Heritage Assets (Symbol, Wordmark):** High recognition density scores reflect lifetime recognition, not recent campaign efficiency
+- **Established Assets (3-5 years):** Recognition density reflects mature performance with diminishing returns
+- **New Assets (Háček):** Extremely high recognition density scores include launch novelty effects - not sustainable
         """)
 
     # Calculate brand equity score and portfolio metrics
     master_df['Brand Equity Score'] = master_df['Recognition'] * master_df['Uniqueness']
     median_investment = master_df['Total Investment'].median()
-    median_roi = master_df['Recognition ROI'].median()
+    median_density = master_df['Recognition Density'].median()
     median_equity = master_df['Brand Equity Score'].median()
 
     # Define consistent tiers based on investment efficiency
-    # Tier 1: High Efficiency - Strong performance + Good ROI
+    # Tier 1: High Efficiency - Strong performance + High Recognition Density
     tier1_high_efficiency = master_df[
         (master_df['Brand Equity Score'] > median_equity) &
-        (master_df['Recognition ROI'] > median_roi)
-    ].sort_values('Recognition ROI', ascending=False)
+        (master_df['Recognition Density'] > median_density)
+    ].sort_values('Recognition Density', ascending=False)
 
     # Tier 2: Investment Opportunity - High potential but underinvested
     tier2_investment_opportunity = master_df[
@@ -3912,18 +3918,18 @@ lifetime recognition built over years, not just recent spend.
             f"<b>{len(tier1_high_efficiency)} High Efficiency Assets:</b> {tier1_list}",
             f"<b>{len(tier2_investment_opportunity)} Investment Opportunities:</b> Strong performance with below-median investment",
             f"<b>{len(tier3_optimization)} assets</b> require optimization despite above-median investment",
-            f"<b>Median ROI:</b> {median_roi:.2f} per €1M | <b>Median Brand Equity:</b> {median_equity:.3f}"
+            f"<b>Median Recognition Density:</b> {median_density:.2f} per €1M | <b>Median Brand Equity:</b> {median_equity:.3f}"
         ]
     )
 
     # Visualization: Investment Efficiency Matrix
-    st.markdown("### 📊 Investment Efficiency Matrix")
-    st.caption("ROI vs Investment positioning with Brand Equity Score sizing")
+    st.markdown("### 📊 Recognition Density vs Investment Matrix")
+    st.caption("Recognition Density vs Investment positioning with Brand Equity Score sizing")
 
     fig_efficiency = px.scatter(
         master_df,
         x='Total Investment',
-        y='Recognition ROI',
+        y='Recognition Density',
         size='Brand Equity Score',
         color='Uniqueness',
         text='Element',
@@ -3934,21 +3940,21 @@ lifetime recognition built over years, not just recent spend.
             'Recognition': ':.0%',
             'Uniqueness': ':.0%',
             'Total Investment': ':,.0f',
-            'Recognition ROI': ':.2f',
+            'Recognition Density': ':.2f',
             'Brand Equity Score': ':.3f',
             'Overall Usage': ':.0%'
         }
     )
 
     # Add median lines to create zones
-    fig_efficiency.add_hline(y=median_roi, line_dash="dash", line_color="gray", opacity=0.5, annotation_text="Median ROI")
+    fig_efficiency.add_hline(y=median_density, line_dash="dash", line_color="gray", opacity=0.5, annotation_text="Median Recognition Density")
     fig_efficiency.add_vline(x=median_investment, line_dash="dash", line_color="gray", opacity=0.5, annotation_text="Median Investment")
 
     fig_efficiency = apply_standard_chart_styling(fig_efficiency, "")
     fig_efficiency.update_traces(textposition='top center', textfont_size=10)
     fig_efficiency.update_layout(height=600)
     fig_efficiency.update_xaxes(title="Total Investment (€)")
-    fig_efficiency.update_yaxes(title="Recognition ROI (per €1M)")
+    fig_efficiency.update_yaxes(title="Recognition Density (per €1M)")
     st.plotly_chart(fig_efficiency, use_container_width=True, config=get_standard_chart_config())
 
     st.markdown("---")
@@ -3958,29 +3964,29 @@ lifetime recognition built over years, not just recent spend.
 
     with col1:
         st.markdown("### 🟢 Tier 1: High Efficiency Assets")
-        st.success(f"**{len(tier1_high_efficiency)} elements** deliver strong performance with efficient ROI")
-        st.caption("Criteria: Brand Equity Score > median AND ROI > median")
+        st.success(f"**{len(tier1_high_efficiency)} elements** show strong performance with high recognition density")
+        st.caption("Criteria: Brand Equity Score > median AND Recognition Density > median")
 
         if len(tier1_high_efficiency) > 0:
             for idx, row in tier1_high_efficiency.iterrows():
-                with st.expander(f"**{row['Element']}** - ROI: {row['Recognition ROI']:.2f} | Equity: {row['Brand Equity Score']:.3f}"):
+                with st.expander(f"**{row['Element']}** - Density: {row['Recognition Density']:.2f} | Equity: {row['Brand Equity Score']:.3f}"):
                     col_a, col_b, col_c = st.columns(3)
                     with col_a:
                         st.metric("Recognition", f"{row['Recognition']:.0%}")
                         st.metric("Uniqueness", f"{row['Uniqueness']:.0%}")
                     with col_b:
                         st.metric("Brand Equity", f"{row['Brand Equity Score']:.3f}")
-                        st.metric("ROI", f"{row['Recognition ROI']:.2f}")
+                        st.metric("Recognition Density", f"{row['Recognition Density']:.2f}")
                     with col_c:
                         st.metric("Investment", f"€{row['Total Investment']:,.0f}")
                         st.metric("Usage", f"{row['Overall Usage']:.0%}")
 
                     st.markdown("**Efficiency Profile:**")
-                    roi_vs_median = ((row['Recognition ROI'] / median_roi) - 1) * 100
+                    density_vs_median = ((row['Recognition Density'] / median_density) - 1) * 100
                     equity_vs_median = ((row['Brand Equity Score'] / median_equity) - 1) * 100
-                    st.write(f"• **ROI:** {row['Recognition ROI']:.2f} per €1M ({roi_vs_median:+.0f}% vs median)")
+                    st.write(f"• **Recognition Density:** {row['Recognition Density']:.2f} per €1M ({density_vs_median:+.0f}% vs median)")
                     st.write(f"• **Brand Equity:** {row['Brand Equity Score']:.3f} ({equity_vs_median:+.0f}% vs median)")
-                    st.write(f"• **Investment Efficiency:** €{row['Total Investment']:,.0f} delivering {row['Recognition']:.0%} recognition")
+                    st.write(f"• **Current State:** €{row['Total Investment']:,.0f} attributed investment, {row['Recognition']:.0%} recognition")
                     st.write(f"• **Usage Pattern:** {row['Overall Usage']:.0%} of campaigns")
                     st.write(f"• **Sentiment:** {row['Net Sentiment']:+.1%}")
         else:
@@ -4002,13 +4008,13 @@ lifetime recognition built over years, not just recent spend.
                         st.write(f"• ✅ Uniqueness at {row['Uniqueness']:.0%} (above 25%)")
                     st.write(f"• Brand Equity Score: {row['Brand Equity Score']:.3f}")
                     st.write(f"• Current investment: €{row['Total Investment']:,.0f} (below median of €{median_investment:,.0f})")
-                    st.write(f"• ROI: {row['Recognition ROI']:.2f} per €1M")
+                    st.write(f"• Recognition Density: {row['Recognition Density']:.2f} per €1M")
                     st.write(f"• Usage: {row['Overall Usage']:.0%} of campaigns")
 
                     st.markdown("**Investment Opportunity:**")
                     investment_gap = median_investment - row['Total Investment']
-                    st.write(f"• **Scale-up potential:** €{investment_gap:,.0f} below median investment")
-                    st.write(f"• **Current efficiency:** Achieving {row['Recognition']:.0%} recognition with modest resources")
+                    st.write(f"• **Scale-up potential:** €{investment_gap:,.0f} below median attributed investment")
+                    st.write(f"• **Current state:** {row['Recognition']:.0%} recognition with below-median attributed investment")
                     if row['Uniqueness'] > 0.25:
                         st.write(f"• **Distinctive advantage:** {row['Uniqueness']:.0%} uniqueness provides strong brand attribution")
         else:
@@ -4028,14 +4034,14 @@ lifetime recognition built over years, not just recent spend.
                     st.write(f"• Uniqueness: {row['Uniqueness']:.0%}")
                     st.write(f"• Brand Equity Score: {row['Brand Equity Score']:.3f} (below median of {median_equity:.3f})")
                     st.write(f"• Investment: €{row['Total Investment']:,.0f} (above median of €{median_investment:,.0f})")
-                    st.write(f"• ROI: {row['Recognition ROI']:.2f} per €1M")
+                    st.write(f"• Recognition Density: {row['Recognition Density']:.2f} per €1M")
                     st.write(f"• Usage: {row['Overall Usage']:.0%} of campaigns")
 
                     st.markdown("**Optimization Analysis:**")
                     investment_vs_median = ((row['Total Investment'] / median_investment) - 1) * 100
-                    roi_vs_best = ((row['Recognition ROI'] / master_df['Recognition ROI'].max()) - 1) * 100
+                    density_vs_best = ((row['Recognition Density'] / master_df['Recognition Density'].max()) - 1) * 100
                     st.write(f"• **Investment level:** {investment_vs_median:+.0f}% above median")
-                    st.write(f"• **ROI efficiency:** {roi_vs_best:+.0f}% vs portfolio best")
+                    st.write(f"• **Recognition density:** {density_vs_best:+.0f}% vs portfolio best")
                     st.write(f"• **Potential factors:** Timing, creative execution, prominence, or competitive confusion")
 
                     st.markdown("**Recommendations:**")
@@ -4056,7 +4062,7 @@ lifetime recognition built over years, not just recent spend.
             st.markdown("""
 **Tier 1: High Efficiency**
 - Brand Equity Score > median
-- ROI > median
+- Recognition Density > median
 
 **Tier 2: Investment Opportunity**
 - Recognition > 35% OR Uniqueness > 25%
@@ -4069,15 +4075,15 @@ lifetime recognition built over years, not just recent spend.
 
 **Metrics Definitions:**
 - Brand Equity Score = Recognition × Uniqueness
-- ROI = Recognition per €1M invested
+- Recognition Density = Recognition % per €1M attributed investment (directional indicator)
 """)
 
         # Key portfolio metrics
         with st.expander("📈 Portfolio Benchmarks"):
             st.metric("Median Investment", f"€{median_investment:,.0f}")
-            st.metric("Median ROI", f"{median_roi:.2f}")
+            st.metric("Median Recognition Density", f"{median_density:.2f}")
             st.metric("Median Brand Equity", f"{median_equity:.3f}")
-            st.metric("Best ROI", f"{master_df['Recognition ROI'].max():.2f}")
+            st.metric("Highest Recognition Density", f"{master_df['Recognition Density'].max():.2f}")
             st.metric("Highest Brand Equity", f"{master_df['Brand Equity Score'].max():.3f}")
 
         # Download framework data
@@ -4099,7 +4105,7 @@ lifetime recognition built over years, not just recent spend.
                 'Uniqueness': f"{row['Uniqueness']:.0%}",
                 'Brand Equity Score': f"{row['Brand Equity Score']:.3f}",
                 'Investment': f"€{row['Total Investment']:,.0f}",
-                'ROI': f"{row['Recognition ROI']:.2f}",
+                'Recognition Density': f"{row['Recognition Density']:.2f}",
                 'Usage': f"{row['Overall Usage']:.0%}"
             })
 
@@ -4126,12 +4132,12 @@ with tab5:
 
     # Key Insights Box
     underutilized_list = ", ".join(high_potential['Element'].tolist()) if len(high_potential) > 0 else "None identified"
-    best_roi_elem = master_df.nlargest(1, 'Recognition ROI').iloc[0]
+    best_density_elem = master_df.nlargest(1, 'Recognition Density').iloc[0]
     most_consistent = master_df.nsmallest(1, 'Cross-Market Variation').iloc[0] if 'Cross-Market Variation' in master_df.columns else None
 
     insights = [
         f"<b>{len(high_potential)} underutilized elements</b> with high uniqueness (≥25%) but low usage (<40%): {underutilized_list}",
-        f"<b>{best_roi_elem['Element']}</b> shows best ROI efficiency at {best_roi_elem['Recognition ROI']:.2f} per €1M invested"
+        f"<b>{best_density_elem['Element']}</b> shows highest recognition density at {best_density_elem['Recognition Density']:.2f} per €1M"
     ]
 
     if most_consistent is not None:
@@ -4158,7 +4164,7 @@ with tab5:
                 with col2:
                     st.metric("Brand Equity", f"{(row['Recognition'] * row['Uniqueness']):.3f}")
                     st.metric("Current Investment", f"€{row['Total Investment']:,.0f}")
-                    st.metric("Recognition ROI", f"{row['Recognition ROI']:.2f}")
+                    st.metric("Recognition Density", f"{row['Recognition Density']:.2f}")
 
                 # Calculate relative context
                 median_usage = master_df['Overall Usage'].median()
@@ -4178,8 +4184,8 @@ with tab5:
                 st.markdown("**Opportunity Pattern:**")
                 st.write(f"High distinctiveness ({row['Uniqueness']:.0%} uniqueness) combined with below-median use ({row['Overall Usage']:.0%} usage) represents potential for increased use while maintaining who it belongs to strength")
 
-                if row['Recognition ROI'] >= master_df['Recognition ROI'].median():
-                    st.write(f"ROI of {row['Recognition ROI']:.2f} is above median, indicating efficient performance relative to investment")
+                if row['Recognition Density'] >= master_df['Recognition Density'].median():
+                    st.write(f"Recognition density of {row['Recognition Density']:.2f} is above median, indicating strong current recognition relative to attributed investment")
     else:
         st.info("No elements meet criteria: uniqueness ≥25% and usage <40%")
 
