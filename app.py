@@ -204,64 +204,64 @@ research_data = {
         'recognition': 0.376, 'uniqueness': 0.174,
         'bold': 0.490, 'stylish': 0.463, 'modern': 0.499, 'simple': 0.502,
         'human': 0.452, 'exciting': 0.450, 'playful': 0.443,
-        'positive_sentiment': 0.471, 'negative_sentiment': 0.529,
-        'net_sentiment': -0.057
+        'positive_sentiment': 0.471, 'negative_sentiment': 0.186,
+        'net_sentiment': 0.285
     },
     'Emerald Green': {
         'recognition': 0.393, 'uniqueness': 0.195,
         'bold': 0.493, 'stylish': 0.473, 'modern': 0.503, 'simple': 0.513,
         'human': 0.453, 'exciting': 0.460, 'playful': 0.453,
-        'positive_sentiment': 0.478, 'negative_sentiment': 0.522,
-        'net_sentiment': -0.044
+        'positive_sentiment': 0.492, 'negative_sentiment': 0.184,
+        'net_sentiment': 0.308
     },
     'Type': {
         'recognition': 0.365, 'uniqueness': 0.169,
         'bold': 0.514, 'stylish': 0.476, 'modern': 0.516, 'simple': 0.533,
         'human': 0.469, 'exciting': 0.482, 'playful': 0.475,
-        'positive_sentiment': 0.495, 'negative_sentiment': 0.505,
-        'net_sentiment': -0.010
+        'positive_sentiment': 0.462, 'negative_sentiment': 0.227,
+        'net_sentiment': 0.235
     },
     'Tagline': {
         'recognition': 0.383, 'uniqueness': 0.175,
         'bold': 0.498, 'stylish': 0.478, 'modern': 0.507, 'simple': 0.527,
         'human': 0.494, 'exciting': 0.478, 'playful': 0.483,
-        'positive_sentiment': 0.495, 'negative_sentiment': 0.505,
-        'net_sentiment': -0.010
+        'positive_sentiment': 0.485, 'negative_sentiment': 0.152,
+        'net_sentiment': 0.333
     },
     'Symbol': {
         'recognition': 0.643, 'uniqueness': 0.385,
         'bold': 0.488, 'stylish': 0.492, 'modern': 0.507, 'simple': 0.558,
         'human': 0.481, 'exciting': 0.476, 'playful': 0.489,
-        'positive_sentiment': 0.499, 'negative_sentiment': 0.501,
-        'net_sentiment': -0.002
+        'positive_sentiment': 0.501, 'negative_sentiment': 0.205,
+        'net_sentiment': 0.296
     },
     'Hacek': {
         'recognition': 0.362, 'uniqueness': 0.186,
         'bold': 0.499, 'stylish': 0.476, 'modern': 0.506, 'simple': 0.525,
         'human': 0.480, 'exciting': 0.480, 'playful': 0.483,
-        'positive_sentiment': 0.493, 'negative_sentiment': 0.507,
-        'net_sentiment': -0.014
+        'positive_sentiment': 0.466, 'negative_sentiment': 0.225,
+        'net_sentiment': 0.241
     },
     'Wordmark': {
         'recognition': 0.456, 'uniqueness': 0.279,
         'bold': 0.507, 'stylish': 0.472, 'modern': 0.504, 'simple': 0.547,
         'human': 0.475, 'exciting': 0.472, 'playful': 0.478,
-        'positive_sentiment': 0.493, 'negative_sentiment': 0.507,
-        'net_sentiment': -0.013
+        'positive_sentiment': 0.489, 'negative_sentiment': 0.223,
+        'net_sentiment': 0.266
     },
     'Facets': {
         'recognition': 0.414, 'uniqueness': 0.158,
         'bold': 0.507, 'stylish': 0.493, 'modern': 0.516, 'simple': 0.526,
         'human': 0.471, 'exciting': 0.488, 'playful': 0.483,
-        'positive_sentiment': 0.498, 'negative_sentiment': 0.502,
-        'net_sentiment': -0.004
+        'positive_sentiment': 0.479, 'negative_sentiment': 0.168,
+        'net_sentiment': 0.311
     },
     'Sonic': {
         'recognition': 0.513, 'uniqueness': 0.227,
         'bold': 0.490, 'stylish': 0.472, 'modern': 0.497, 'simple': 0.533,
         'human': 0.490, 'exciting': 0.477, 'playful': 0.480,
-        'positive_sentiment': 0.491, 'negative_sentiment': 0.509,
-        'net_sentiment': -0.018
+        'positive_sentiment': 0.505, 'negative_sentiment': 0.211,
+        'net_sentiment': 0.294
     }
 }
 

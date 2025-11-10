@@ -8,8 +8,8 @@
     "human": 0.452,
     "simple": 0.502,
     "positive_sentiment": 0.471,
-    "negative_sentiment": 0.529,
-    "net_sentiment": -0.057
+    "negative_sentiment": 0.186,
+    "net_sentiment": 0.285
   },
   "Facets": {
     "bold": 0.502,
@@ -20,8 +20,8 @@
     "human": 0.427,
     "simple": 0.508,
     "positive_sentiment": 0.479,
-    "negative_sentiment": 0.521,
-    "net_sentiment": -0.042
+    "negative_sentiment": 0.168,
+    "net_sentiment": 0.311
   },
   "Type": {
     "bold": 0.474,
@@ -32,8 +32,8 @@
     "human": 0.438,
     "simple": 0.499,
     "positive_sentiment": 0.462,
-    "negative_sentiment": 0.538,
-    "net_sentiment": -0.076
+    "negative_sentiment": 0.227,
+    "net_sentiment": 0.235
   },
   "Symbol": {
     "bold": 0.498,
@@ -44,8 +44,8 @@
     "human": 0.464,
     "simple": 0.536,
     "positive_sentiment": 0.501,
-    "negative_sentiment": 0.499,
-    "net_sentiment": 0.002
+    "negative_sentiment": 0.205,
+    "net_sentiment": 0.296
   },
   "Sonic": {
     "bold": 0.502,
@@ -56,8 +56,8 @@
     "human": 0.462,
     "simple": 0.545,
     "positive_sentiment": 0.505,
-    "negative_sentiment": 0.495,
-    "net_sentiment": 0.009
+    "negative_sentiment": 0.211,
+    "net_sentiment": 0.294
   },
   "Wordmark": {
     "bold": 0.49,
@@ -68,8 +68,8 @@
     "human": 0.455,
     "simple": 0.519,
     "positive_sentiment": 0.489,
-    "negative_sentiment": 0.511,
-    "net_sentiment": -0.021
+    "negative_sentiment": 0.223,
+    "net_sentiment": 0.266
   },
   "Emerald Green": {
     "bold": 0.51,
@@ -80,8 +80,8 @@
     "human": 0.462,
     "simple": 0.527,
     "positive_sentiment": 0.492,
-    "negative_sentiment": 0.508,
-    "net_sentiment": -0.015
+    "negative_sentiment": 0.184,
+    "net_sentiment": 0.308
   },
   "Hacek": {
     "bold": 0.463,
@@ -92,8 +92,8 @@
     "human": 0.439,
     "simple": 0.549,
     "positive_sentiment": 0.466,
-    "negative_sentiment": 0.534,
-    "net_sentiment": -0.069
+    "negative_sentiment": 0.225,
+    "net_sentiment": 0.241
   },
   "Tagline": {
     "bold": 0.482,
@@ -104,7 +104,7 @@
     "human": 0.464,
     "simple": 0.495,
     "positive_sentiment": 0.485,
-    "negative_sentiment": 0.515,
-    "net_sentiment": -0.029
+    "negative_sentiment": 0.152,
+    "net_sentiment": 0.333
   }
 }

@@ -1,0 +1,479 @@
+{
+  "Electric Green": {
+    "adjectives": {
+      "bold": {
+        "t2b": 0.4896,
+        "neutral": 0.2925,
+        "b2b": 0.2179,
+        "net": 0.2716
+      },
+      "stylish": {
+        "t2b": 0.4627,
+        "neutral": 0.3015,
+        "b2b": 0.1444,
+        "net": 0.3183
+      },
+      "modern": {
+        "t2b": 0.4985,
+        "neutral": 0.2856,
+        "b2b": 0.2159,
+        "net": 0.2826
+      },
+      "playful": {
+        "t2b": 0.4428,
+        "neutral": 0.0003,
+        "b2b": 0.0002,
+        "net": 0.4425
+      },
+      "exciting": {
+        "t2b": 0.4498,
+        "neutral": 0.2866,
+        "b2b": 0.2637,
+        "net": 0.1861
+      },
+      "human": {
+        "t2b": 0.4517,
+        "neutral": 0.3055,
+        "b2b": 0.2428,
+        "net": 0.209
+      },
+      "simple": {
+        "t2b": 0.5025,
+        "neutral": 0.2796,
+        "b2b": 0.2179,
+        "net": 0.2846
+      }
+    },
+    "base_n": 1005,
+    "averages": {
+      "positive_sentiment": 0.4711,
+      "neutral_sentiment": 0.2502,
+      "negative_sentiment": 0.1861,
+      "net_sentiment": 0.285
+    }
+  },
+  "Facets": {
+    "adjectives": {
+      "bold": {
+        "t2b": 0.5025,
+        "neutral": 0.2816,
+        "b2b": 0.2159,
+        "net": 0.2866
+      },
+      "stylish": {
+        "t2b": 0.4836,
+        "neutral": 0.2617,
+        "b2b": 0.2547,
+        "net": 0.2289
+      },
+      "modern": {
+        "t2b": 0.5144,
+        "neutral": 0.2816,
+        "b2b": 0.204,
+        "net": 0.3104
+      },
+      "playful": {
+        "t2b": 0.4607,
+        "neutral": 0.0003,
+        "b2b": 0.0002,
+        "net": 0.4604
+      },
+      "exciting": {
+        "t2b": 0.4577,
+        "neutral": 0.3035,
+        "b2b": 0.2388,
+        "net": 0.2189
+      },
+      "human": {
+        "t2b": 0.4269,
+        "neutral": 0.3184,
+        "b2b": 0.1484,
+        "net": 0.2785
+      },
+      "simple": {
+        "t2b": 0.5085,
+        "neutral": 0.2816,
+        "b2b": 0.1125,
+        "net": 0.3959
+      }
+    },
+    "base_n": 1005,
+    "averages": {
+      "positive_sentiment": 0.4792,
+      "neutral_sentiment": 0.247,
+      "negative_sentiment": 0.1678,
+      "net_sentiment": 0.3114
+    }
+  },
+  "Type": {
+    "adjectives": {
+      "bold": {
+        "t2b": 0.4736,
+        "neutral": 0.3045,
+        "b2b": 0.2219,
+        "net": 0.2517
+      },
+      "stylish": {
+        "t2b": 0.4726,
+        "neutral": 0.2935,
+        "b2b": 0.2338,
+        "net": 0.2388
+      },
+      "modern": {
+        "t2b": 0.4905,
+        "neutral": 0.2876,
+        "b2b": 0.2219,
+        "net": 0.2687
+      },
+      "playful": {
+        "t2b": 0.4119,
+        "neutral": 0.3045,
+        "b2b": 0.1812,
+        "net": 0.2307
+      },
+      "exciting": {
+        "t2b": 0.4478,
+        "neutral": 0.2806,
+        "b2b": 0.2716,
+        "net": 0.1761
+      },
+      "human": {
+        "t2b": 0.4378,
+        "neutral": 0.3204,
+        "b2b": 0.2418,
+        "net": 0.196
+      },
+      "simple": {
+        "t2b": 0.4985,
+        "neutral": 0.2876,
+        "b2b": 0.2139,
+        "net": 0.2846
+      }
+    },
+    "base_n": 1005,
+    "averages": {
+      "positive_sentiment": 0.4618,
+      "neutral_sentiment": 0.297,
+      "negative_sentiment": 0.2266,
+      "net_sentiment": 0.2352
+    }
+  },
+  "Symbol": {
+    "adjectives": {
+      "bold": {
+        "t2b": 0.4983,
+        "neutral": 0.3003,
+        "b2b": 0.2014,
+        "net": 0.2969
+      },
+      "stylish": {
+        "t2b": 0.4968,
+        "neutral": 0.2839,
+        "b2b": 0.2193,
+        "net": 0.2775
+      },
+      "modern": {
+        "t2b": 0.5515,
+        "neutral": 0.2546,
+        "b2b": 0.1288,
+        "net": 0.4226
+      },
+      "playful": {
+        "t2b": 0.462,
+        "neutral": 0.2974,
+        "b2b": 0.2407,
+        "net": 0.2213
+      },
+      "exciting": {
+        "t2b": 0.4998,
+        "neutral": 0.2715,
+        "b2b": 0.2287,
+        "net": 0.271
+      },
+      "human": {
+        "t2b": 0.4639,
+        "neutral": 0.3143,
+        "b2b": 0.2218,
+        "net": 0.2422
+      },
+      "simple": {
+        "t2b": 0.5356,
+        "neutral": 0.268,
+        "b2b": 0.1964,
+        "net": 0.3391
+      }
+    },
+    "base_n": 2011,
+    "averages": {
+      "positive_sentiment": 0.5011,
+      "neutral_sentiment": 0.2843,
+      "negative_sentiment": 0.2053,
+      "net_sentiment": 0.2958
+    }
+  },
+  "Sonic": {
+    "adjectives": {
+      "bold": {
+        "t2b": 0.5017,
+        "neutral": 0.3058,
+        "b2b": 0.1924,
+        "net": 0.3093
+      },
+      "stylish": {
+        "t2b": 0.4908,
+        "neutral": 0.2819,
+        "b2b": 0.2273,
+        "net": 0.2636
+      },
+      "modern": {
+        "t2b": 0.546,
+        "neutral": 0.2571,
+        "b2b": 0.1969,
+        "net": 0.3491
+      },
+      "playful": {
+        "t2b": 0.4794,
+        "neutral": 0.2874,
+        "b2b": 0.2332,
+        "net": 0.2461
+      },
+      "exciting": {
+        "t2b": 0.5082,
+        "neutral": 0.265,
+        "b2b": 0.2268,
+        "net": 0.2815
+      },
+      "human": {
+        "t2b": 0.462,
+        "neutral": 0.3048,
+        "b2b": 0.2332,
+        "net": 0.2287
+      },
+      "simple": {
+        "t2b": 0.545,
+        "neutral": 0.2849,
+        "b2b": 0.1701,
+        "net": 0.3749
+      }
+    },
+    "base_n": 2011,
+    "averages": {
+      "positive_sentiment": 0.5047,
+      "neutral_sentiment": 0.2838,
+      "negative_sentiment": 0.2114,
+      "net_sentiment": 0.2933
+    }
+  },
+  "Wordmark": {
+    "adjectives": {
+      "bold": {
+        "t2b": 0.4903,
+        "neutral": 0.3038,
+        "b2b": 0.2059,
+        "net": 0.2844
+      },
+      "stylish": {
+        "t2b": 0.4923,
+        "neutral": 0.2824,
+        "b2b": 0.2253,
+        "net": 0.267
+      },
+      "modern": {
+        "t2b": 0.5365,
+        "neutral": 0.264,
+        "b2b": 0.1994,
+        "net": 0.3371
+      },
+      "playful": {
+        "t2b": 0.4475,
+        "neutral": 0.2979,
+        "b2b": 0.2546,
+        "net": 0.1929
+      },
+      "exciting": {
+        "t2b": 0.4848,
+        "neutral": 0.279,
+        "b2b": 0.2362,
+        "net": 0.2486
+      },
+      "human": {
+        "t2b": 0.455,
+        "neutral": 0.3113,
+        "b2b": 0.2337,
+        "net": 0.2213
+      },
+      "simple": {
+        "t2b": 0.5186,
+        "neutral": 0.2765,
+        "b2b": 0.2049,
+        "net": 0.3138
+      }
+    },
+    "base_n": 2011,
+    "averages": {
+      "positive_sentiment": 0.4893,
+      "neutral_sentiment": 0.2878,
+      "negative_sentiment": 0.2229,
+      "net_sentiment": 0.2664
+    }
+  },
+  "Emerald Green": {
+    "adjectives": {
+      "bold": {
+        "t2b": 0.5099,
+        "neutral": 0.2744,
+        "b2b": 0.2157,
+        "net": 0.2942
+      },
+      "stylish": {
+        "t2b": 0.4901,
+        "neutral": 0.0003,
+        "b2b": 0.0002,
+        "net": 0.4898
+      },
+      "modern": {
+        "t2b": 0.5219,
+        "neutral": 0.2952,
+        "b2b": 0.1829,
+        "net": 0.339
+      },
+      "playful": {
+        "t2b": 0.4513,
+        "neutral": 0.3032,
+        "b2b": 0.2455,
+        "net": 0.2058
+      },
+      "exciting": {
+        "t2b": 0.4851,
+        "neutral": 0.2883,
+        "b2b": 0.2266,
+        "net": 0.2584
+      },
+      "human": {
+        "t2b": 0.4622,
+        "neutral": 0.3241,
+        "b2b": 0.2137,
+        "net": 0.2485
+      },
+      "simple": {
+        "t2b": 0.5268,
+        "neutral": 0.2704,
+        "b2b": 0.2028,
+        "net": 0.3241
+      }
+    },
+    "base_n": 1006,
+    "averages": {
+      "positive_sentiment": 0.4925,
+      "neutral_sentiment": 0.2508,
+      "negative_sentiment": 0.1839,
+      "net_sentiment": 0.3086
+    }
+  },
+  "Hacek": {
+    "adjectives": {
+      "bold": {
+        "t2b": 0.4632,
+        "neutral": 0.3082,
+        "b2b": 0.2286,
+        "net": 0.2346
+      },
+      "stylish": {
+        "t2b": 0.4563,
+        "neutral": 0.2793,
+        "b2b": 0.2644,
+        "net": 0.1918
+      },
+      "modern": {
+        "t2b": 0.4881,
+        "neutral": 0.3032,
+        "b2b": 0.2087,
+        "net": 0.2793
+      },
+      "playful": {
+        "t2b": 0.4225,
+        "neutral": 0.3171,
+        "b2b": 0.1671,
+        "net": 0.2554
+      },
+      "exciting": {
+        "t2b": 0.4423,
+        "neutral": 0.2813,
+        "b2b": 0.2763,
+        "net": 0.166
+      },
+      "human": {
+        "t2b": 0.4394,
+        "neutral": 0.3052,
+        "b2b": 0.2555,
+        "net": 0.1839
+      },
+      "simple": {
+        "t2b": 0.5487,
+        "neutral": 0.2753,
+        "b2b": 0.1759,
+        "net": 0.3728
+      }
+    },
+    "base_n": 1006,
+    "averages": {
+      "positive_sentiment": 0.4658,
+      "neutral_sentiment": 0.2957,
+      "negative_sentiment": 0.2252,
+      "net_sentiment": 0.2406
+    }
+  },
+  "Tagline": {
+    "adjectives": {
+      "bold": {
+        "t2b": 0.4821,
+        "neutral": 0.3012,
+        "b2b": 0.2167,
+        "net": 0.2654
+      },
+      "stylish": {
+        "t2b": 0.4841,
+        "neutral": 0.2873,
+        "b2b": 0.2286,
+        "net": 0.2555
+      },
+      "modern": {
+        "t2b": 0.5119,
+        "neutral": 0.2952,
+        "b2b": 0.1928,
+        "net": 0.3191
+      },
+      "playful": {
+        "t2b": 0.4513,
+        "neutral": 0.3221,
+        "b2b": 0.2266,
+        "net": 0.2247
+      },
+      "exciting": {
+        "t2b": 0.5089,
+        "neutral": 0.0003,
+        "b2b": 0.0002,
+        "net": 0.5087
+      },
+      "human": {
+        "t2b": 0.4642,
+        "neutral": 0.0003,
+        "b2b": 0.0002,
+        "net": 0.464
+      },
+      "simple": {
+        "t2b": 0.495,
+        "neutral": 0.3062,
+        "b2b": 0.1988,
+        "net": 0.2962
+      }
+    },
+    "base_n": 1006,
+    "averages": {
+      "positive_sentiment": 0.4854,
+      "neutral_sentiment": 0.2161,
+      "negative_sentiment": 0.152,
+      "net_sentiment": 0.3334
+    }
+  }
+}
