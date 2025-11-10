@@ -181,16 +181,18 @@ brand_elements = [
 
 # --- Asset Maturity Context ---
 # Provides timing context for interpreting efficiency metrics
+# CLIENT CLARIFICATION (Nov 2025): Symbol/Picture Mark is 100+ years old;
+# all other assets began rolling out January 2023, except Háček which started Q1 2025
 asset_maturity = {
-    'Symbol': {'status': 'Heritage Asset', 'years': '10+', 'note': 'Established brand marque with legacy recognition'},
-    'Wordmark': {'status': 'Heritage Asset', 'years': '10+', 'note': 'Core brand identifier with long-term recognition'},
-    'Tagline': {'status': 'Established', 'years': '3-5', 'note': 'Let\'s Explore tagline introduced ~2019-2020'},
-    'Electric Green': {'status': 'Established', 'years': '3-5', 'note': 'Part of electric vehicle sub-brand rollout'},
-    'Emerald Green': {'status': 'Established', 'years': '3-5', 'note': 'Core brand color in current identity system'},
-    'Type': {'status': 'Established', 'years': '3-5', 'note': 'Typography system in current brand guidelines'},
-    'Facets': {'status': 'Established', 'years': '3-5', 'note': 'Crystalline design element in current identity'},
-    'Sonic': {'status': 'Established', 'years': '2-3', 'note': 'Audio branding element introduced recently'},
-    'Hacek': {'status': 'New Asset (Rollout)', 'years': '<1', 'note': 'Launched January 2025 (10 months ago) - early-stage recognition'}
+    'Symbol': {'status': 'Heritage Asset', 'years': '100+', 'note': 'Symbol/Picture Mark established 100+ years ago'},
+    'Wordmark': {'status': 'Established', 'years': '~3', 'note': 'Current wordmark began rollout January 2023'},
+    'Tagline': {'status': 'Established', 'years': '~3', 'note': '"Let\'s Explore" tagline began rollout January 2023'},
+    'Electric Green': {'status': 'Established', 'years': '~3', 'note': 'Electric Green began rollout January 2023'},
+    'Emerald Green': {'status': 'Established', 'years': '~3', 'note': 'Emerald Green began rollout January 2023'},
+    'Type': {'status': 'Established', 'years': '~3', 'note': 'Typography system began rollout January 2023'},
+    'Facets': {'status': 'Established', 'years': '~3', 'note': 'Facets design element began rollout January 2023'},
+    'Sonic': {'status': 'Established', 'years': '~3', 'note': 'Sonic branding began rollout January 2023'},
+    'Hacek': {'status': 'New Asset (Rollout)', 'years': '<1', 'note': 'Háček began rollout Q1 2025 (currently ~9 months into market)'}
 }
 
 # Survey Base
