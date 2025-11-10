@@ -1772,55 +1772,72 @@ with tab2:
 
     st.markdown("---")
 
-    # Positive vs Negative Lollipop Chart
-    st.markdown("### Positive vs Negative Sentiment Comparison")
-    st.caption("Lollipop chart showing positive (green) and negative (red) sentiment levels")
+    # Diverging Bar Chart - Net Sentiment
+    st.markdown("### Net Sentiment: Positive vs Negative Balance")
+    st.caption("Diverging bar chart showing how positive sentiment outweighs negative for all elements")
 
-    # Prepare data for lollipop chart (side-by-side dots)
+    # Prepare data sorted by net sentiment
     sentiment_comparison = master_df[['Element', 'Positive Sentiment', 'Negative Sentiment', 'Net Sentiment']].copy()
     sentiment_comparison = sentiment_comparison.sort_values('Net Sentiment', ascending=True)
 
-    fig_lollipop = go.Figure()
+    # Calculate neutral for hover info
+    sentiment_comparison['Neutral Sentiment'] = 1 - sentiment_comparison['Positive Sentiment'] - sentiment_comparison['Negative Sentiment']
 
-    # Add positive sentiment lollipops
-    fig_lollipop.add_trace(go.Scatter(
+    fig_diverging = go.Figure()
+
+    # Add negative bars (extending left from zero)
+    fig_diverging.add_trace(go.Bar(
+        y=sentiment_comparison['Element'],
+        x=-sentiment_comparison['Negative Sentiment'],  # Negative to extend left
+        name='Negative',
+        orientation='h',
+        marker=dict(color='#FF6B6B', opacity=0.7),
+        text=sentiment_comparison['Negative Sentiment'].apply(lambda x: f'{x:.1%}'),
+        textposition='inside',
+        textfont=dict(color='white', size=11),
+        hovertemplate='<b>%{y}</b><br>Negative: %{text}<extra></extra>',
+        customdata=sentiment_comparison['Negative Sentiment']
+    ))
+
+    # Add positive bars (extending right from zero)
+    fig_diverging.add_trace(go.Bar(
+        y=sentiment_comparison['Element'],
         x=sentiment_comparison['Positive Sentiment'],
-        y=sentiment_comparison['Element'],
-        mode='markers+lines',
-        name='Positive Sentiment',
-        marker=dict(size=12, color='#4CAF50'),
-        line=dict(width=2, color='#4CAF50'),
+        name='Positive',
         orientation='h',
-        showlegend=True,
-        hovertemplate='<b>%{y}</b><br>Positive: %{x:.1%}<extra></extra>'
+        marker=dict(color='#4ECDC4', opacity=0.8),
+        text=sentiment_comparison['Positive Sentiment'].apply(lambda x: f'{x:.1%}'),
+        textposition='inside',
+        textfont=dict(color='white', size=11),
+        hovertemplate='<b>%{y}</b><br>Positive: %{text}<extra></extra>',
+        customdata=sentiment_comparison['Positive Sentiment']
     ))
 
-    # Add negative sentiment lollipops
-    fig_lollipop.add_trace(go.Scatter(
-        x=sentiment_comparison['Negative Sentiment'],
-        y=sentiment_comparison['Element'],
-        mode='markers+lines',
-        name='Negative Sentiment',
-        marker=dict(size=12, color='#F44336'),
-        line=dict(width=2, color='#F44336'),
-        orientation='h',
-        showlegend=True,
-        hovertemplate='<b>%{y}</b><br>Negative: %{x:.1%}<extra></extra>'
-    ))
-
-    fig_lollipop.update_layout(
-        title='Positive vs Negative Sentiment by Brand Element',
-        xaxis_title='Sentiment Score',
+    # Update layout for diverging style
+    fig_diverging.update_layout(
+        title='Sentiment Balance: All Elements Show Strong Positive Performance',
+        xaxis_title='← Negative    |    Positive →',
         yaxis_title='Brand Element',
-        xaxis_tickformat='.0%',
+        xaxis=dict(
+            tickformat='.0%',
+            zeroline=True,
+            zerolinewidth=2,
+            zerolinecolor='#333',
+            range=[-0.3, 0.6]  # Asymmetric to show positive dominance
+        ),
         height=500,
+        barmode='relative',
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-        hovermode='y'
+        hovermode='y unified'
     )
 
-    st.plotly_chart(fig_lollipop, use_container_width=True)
+    st.plotly_chart(fig_diverging, use_container_width=True)
 
-    st.warning(f"**📊 Key Pattern:** {positive_count} of 9 elements show net positive sentiment. Average net sentiment across the portfolio is {avg_net:+.1%}, with a {sentiment_range:.1%} range indicating varied emotional responses to different brand elements.")
+    # Updated insight with neutral context
+    avg_neutral = (sentiment_comparison['Neutral Sentiment'].mean())
+    st.success(f"**✨ Key Insight:** ALL 9 elements show strong net positive sentiment (+{sentiment_ranked['Net Sentiment'].min():.1%} to +{sentiment_ranked['Net Sentiment'].max():.1%}). On average, {sentiment_comparison['Positive Sentiment'].mean():.1%} of respondents chose positive descriptors vs only {sentiment_comparison['Negative Sentiment'].mean():.1%} negative — a **{sentiment_comparison['Positive Sentiment'].mean() / sentiment_comparison['Negative Sentiment'].mean():.1f}:1 positive-to-negative ratio**.")
+
+    st.info(f"**💡 Opportunity:** ~{avg_neutral:.1%} of respondents gave neutral ratings across elements, representing a significant conversion opportunity to shift neutral perceptions toward positive associations.")
 
     st.markdown("---")
 
@@ -1830,16 +1847,16 @@ with tab2:
 
     sentiment_ranked = master_df.sort_values('Net Sentiment', ascending=True)
 
-    # Add emoji indicators based on sentiment thresholds
+    # Add emoji indicators based on sentiment thresholds (updated for positive range)
     def get_sentiment_emoji(net_sent):
-        if net_sent >= 0.01:
+        if net_sent >= 0.30:  # Excellent (30%+)
+            return "🌟"
+        elif net_sent >= 0.27:  # Very Good (27-30%)
             return "😊"
-        elif net_sent >= -0.02:
+        elif net_sent >= 0.24:  # Good (24-27%)
+            return "🙂"
+        else:  # Acceptable (23-24%)
             return "😐"
-        elif net_sent >= -0.05:
-            return "😕"
-        else:
-            return "😟"
 
     sentiment_ranked['Emoji'] = sentiment_ranked['Net Sentiment'].apply(get_sentiment_emoji)
 
@@ -1857,7 +1874,9 @@ with tab2:
             hoverinfo='skip'
         ))
 
-    # Add dots
+    # Add dots with enhanced hover showing all three components
+    sentiment_ranked['Neutral Calc'] = 1 - sentiment_ranked['Positive Sentiment'] - sentiment_ranked['Negative Sentiment']
+
     fig_net.add_trace(go.Scatter(
         x=sentiment_ranked['Net Sentiment'],
         y=sentiment_ranked['Element'],
@@ -1865,14 +1884,19 @@ with tab2:
         marker=dict(
             size=14,
             color=sentiment_ranked['Net Sentiment'],
-            colorscale='RdYlGn',
+            colorscale=[[0, '#95E1D3'], [0.5, '#4ECDC4'], [1, '#38A3A5']],  # All positive gradient
             showscale=True,
             colorbar=dict(title="Net Sentiment", tickformat='.0%')
         ),
         text=sentiment_ranked['Net Sentiment'].apply(lambda x: f'{x:+.1%}'),
         textposition='middle right',
         showlegend=False,
-        hovertemplate='<b>%{y}</b><br>Net Sentiment: %{x:.1%}<extra></extra>'
+        customdata=sentiment_ranked[['Positive Sentiment', 'Neutral Calc', 'Negative Sentiment']],
+        hovertemplate='<b>%{y}</b><br>' +
+                      'Positive: %{customdata[0]:.1%}<br>' +
+                      'Neutral: %{customdata[1]:.1%}<br>' +
+                      'Negative: %{customdata[2]:.1%}<br>' +
+                      '<b>Net: %{x:+.1%}</b><extra></extra>'
     ))
 
     fig_net.update_layout(
