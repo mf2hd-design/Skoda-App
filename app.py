@@ -1835,7 +1835,12 @@ with tab2:
 
     # Updated insight with neutral context
     avg_neutral = (sentiment_comparison['Neutral Sentiment'].mean())
-    st.success(f"**✨ Key Insight:** ALL 9 elements show strong net positive sentiment (+{sentiment_ranked['Net Sentiment'].min():.1%} to +{sentiment_ranked['Net Sentiment'].max():.1%}). On average, {sentiment_comparison['Positive Sentiment'].mean():.1%} of respondents chose positive descriptors vs only {sentiment_comparison['Negative Sentiment'].mean():.1%} negative — a **{sentiment_comparison['Positive Sentiment'].mean() / sentiment_comparison['Negative Sentiment'].mean():.1f}:1 positive-to-negative ratio**.")
+    min_net = sentiment_comparison['Net Sentiment'].min()
+    max_net = sentiment_comparison['Net Sentiment'].max()
+    avg_pos = sentiment_comparison['Positive Sentiment'].mean()
+    avg_neg = sentiment_comparison['Negative Sentiment'].mean()
+
+    st.success(f"**✨ Key Insight:** ALL 9 elements show strong net positive sentiment (+{min_net:.1%} to +{max_net:.1%}). On average, {avg_pos:.1%} of respondents chose positive descriptors vs only {avg_neg:.1%} negative — a **{avg_pos / avg_neg:.1f}:1 positive-to-negative ratio**.")
 
     st.info(f"**💡 Opportunity:** ~{avg_neutral:.1%} of respondents gave neutral ratings across elements, representing a significant conversion opportunity to shift neutral perceptions toward positive associations.")
 
