@@ -1184,8 +1184,8 @@ with tab1:
 
 **Performance Leaders:**
 - **{most_recognized['Element']}:** {most_recognized['Recognition']:.0%} recognition with {most_recognized['Recognition Density']:.2f} recognition density (highest in portfolio)
-- **{best_roi['Element']}:** {best_roi['Recognition']:.0%} recognition with {best_roi['Recognition Density']:.2f} recognition density (strongest current efficiency indicator)
-- These top performers account for {(most_recognized['Total Investment'] + best_roi['Total Investment']) / total_investment:.0%} of total portfolio investment
+- **{best_density['Element']}:** {best_density['Recognition']:.0%} recognition with {best_density['Recognition Density']:.2f} recognition density (strongest current efficiency indicator)
+- These top performers account for {(most_recognized['Total Investment'] + best_density['Total Investment']) / total_investment:.0%} of total portfolio investment
 
 **Recognition Density Variation:**
 - Recognition density ranges from {master_df['Recognition Density'].min():.2f} to {master_df['Recognition Density'].max():.2f} per €1M across 9 elements
