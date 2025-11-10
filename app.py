@@ -192,7 +192,7 @@ asset_maturity = {
     'Type': {'status': 'Established', 'years': '~3', 'note': 'Typography system began rollout January 2023'},
     'Facets': {'status': 'Established', 'years': '~3', 'note': 'Facets design element began rollout January 2023'},
     'Sonic': {'status': 'Established', 'years': '~3', 'note': 'Sonic branding began rollout January 2023'},
-    'Hacek': {'status': 'New Asset (Rollout)', 'years': '<1', 'note': 'Háček began rollout Q1 2025 (currently ~9 months into market)'}
+    'Hacek': {'status': 'New Asset (Rollout)', 'years': '<1 year', 'note': 'Háček began rollout Q1 2025 (currently ~9 months into market)'}
 }
 
 # Survey Base
@@ -1088,10 +1088,11 @@ with tab1:
     with col4:
         best_density = master_df.nlargest(1, 'Recognition Density').iloc[0]
         maturity = asset_maturity.get(best_density['Element'], {}).get('years', '?')
+        maturity_display = f"{maturity} years" if maturity not in ['<1 year', '?'] else maturity
         render_metric_card_enhanced(
             "Highest Recognition Density",
             best_density['Element'],
-            delta=f"{best_density['Recognition Density']:.2f}x ({maturity} in market)",
+            delta=f"{best_density['Recognition Density']:.2f}x ({maturity_display} in market)",
             help_text="Recognition % per €1M attributed spend - directional indicator only (see maturity context)",
             icon="📈"
         )
