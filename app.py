@@ -2981,12 +2981,13 @@ A €1M campaign featuring 5 elements attributes €200K to each element. This e
                 st.info("""
 💡 **About This Analysis:**
 This uses Savanta's **additive testing methodology** (P045556). Respondents saw brand elements **sequentially**
-(one at a time) and were asked at each step whether they recognized the brand. This reveals which **combinations**
-drive recognition, not just which appeared together in historical campaigns.
+(one at a time) and were asked at each step: *"Which brand do you think these elements belong to?"*
+
+**What "Recognition" Means:** Correct brand attribution (spontaneous identification as Škoda), not just exposure or familiarity.
 
 **Sample:** 2,011 respondents across UK, Spain, Germany, Poland
 **Method:** 2 groups of 6 elements each, shown in randomized sequences
-**Insight:** Reveals which element combinations drive recognition across different audiences
+**Insight:** Reveals which element combinations drive spontaneous brand attribution across different audiences
                 """)
 
                 # Executive Summary Dashboard
@@ -3360,14 +3361,23 @@ element justifies the added creative complexity.
 This analysis is based on Savanta's research (Study P045556) using an **additive testing design**:
 
 1. **Sequential element exposure**: Respondents saw brand elements one at a time (not all at once)
-2. **Recognition tracking**: After each element, respondents were asked if they recognized the brand
+2. **Brand attribution tracking**: After each element, respondents were asked: *"Which brand do you think these elements belong to?"* (open text field)
 3. **Randomized sequences**: 12 different element orders to control for sequence effects
 4. **Two element groups**: Group 1 (elements 1-6) and Group 2 (elements 7-9 + 4-6)
 
+### What "Recognition" Measures
+
+**Recognition = Correct brand attribution**, not just exposure:
+- Respondents typed "Škoda" (or variants: Skoda, škoda, Scoda) in response to brand attribution questions
+- This is **spontaneous identification** (no hints given until final question)
+- NOT asking "Have you seen this before?" (that was a separate question: Q02)
+- Measures: "At what point did people correctly identify this as Škoda?"
+
 ### Key Variables
 
-- **QHiddenAwareness**: Tracks at which step (1-6 elements) respondent recognized Škoda
-- **Q09, Q13, Q17, Q21, Q25**: Brand attribution questions at steps 2, 3, 4, 5, 6
+- **QHiddenAwareness**: Tracks at which step (1-6 elements) respondent **correctly identified** Škoda
+- **Q09, Q13, Q17, Q21, Q25**: Open text brand attribution questions: "Which brand do you think these elements belong to?"
+- **Q26**: Final reveal with hint: "These are for a car brand. Which one?" (not used in main recognition metric)
 - **Demographics**: Age, country, car ownership, Škoda familiarity
 
 ### Sample Composition
