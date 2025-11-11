@@ -3156,98 +3156,101 @@ Recognized by {count} respondents ({rate:.1%} of those who recognized Škoda in 
 
                 st.markdown("---")
 
-                # Element Combination Analysis by Size
+                # Element Combination Analysis by Size (FILTERED BY SEGMENT)
                 st.markdown("#### 🔗 Best Element Combinations by Size")
-                st.caption("Analysis of most effective element pairings, triplets, and quartets")
+                st.caption(f"Analysis of most effective element pairings, triplets, and quartets for {segment_key}")
 
-                # Create tabs for different combination sizes
-                combo_tab1, combo_tab2, combo_tab3 = st.tabs(["2-Element Pairs", "3-Element Triplets", "4-Element Quartets"])
+                # Get segment-specific combinations and filter by size
+                if segment_key in metrics['top_combos_by_segment']:
+                    segment_combos = metrics['top_combos_by_segment'][segment_key]
 
-                with combo_tab1:
-                    st.markdown("##### Most Effective 2-Element Pairs")
+                    # Separate combinations by size
+                    pairs = [c for c in segment_combos if len(c['elements']) == 2]
+                    triplets = [c for c in segment_combos if len(c['elements']) == 3]
+                    quartets = [c for c in segment_combos if len(c['elements']) == 4]
 
-                    pair_metrics = metrics.get('pair_metrics', [])
+                    # Create tabs for different combination sizes
+                    combo_tab1, combo_tab2, combo_tab3 = st.tabs(["2-Element Pairs", "3-Element Triplets", "4-Element Quartets"])
 
-                    if len(pair_metrics) > 0:
-                        # Create a table
-                        pair_df = pd.DataFrame([
-                            {
-                                'Pair': p['pair'],
-                                'Recognitions': p['recognition_count'],
-                                'Top Audience': max(p.get('ownership_breakdown', {}).items(), key=lambda x: x[1])[0] if p.get('ownership_breakdown') else 'N/A'
-                            }
-                            for p in pair_metrics[:10]
-                        ])
+                    with combo_tab1:
+                        st.markdown("##### Most Effective 2-Element Pairs")
 
-                        st.dataframe(pair_df, use_container_width=True, hide_index=True)
+                        if len(pairs) > 0:
+                            # Create a table
+                            pair_df = pd.DataFrame([
+                                {
+                                    'Pair': c['combination'],
+                                    'Recognitions': c['count'],
+                                    'Recognition Rate': f"{c['rate']:.1%}"
+                                }
+                                for c in pairs[:10]
+                            ])
 
-                        # Add insight callout
-                        if len(pair_metrics) > 0:
-                            top_pair = pair_metrics[0]
+                            st.dataframe(pair_df, use_container_width=True, hide_index=True)
+
+                            # Add insight callout
+                            top_pair = pairs[0]
                             st.info(f"""
-💡 **Key Insight**: {top_pair['pair']} is the foundation combination, achieving {top_pair['recognition_count']}
-direct recognitions. This pair establishes clear brand identity with minimal complexity.
+💡 **Key Insight for {segment_key}**: {top_pair['combination']} is the most effective 2-element combination,
+achieving {top_pair['count']} recognitions ({top_pair['rate']:.1%} of this segment). This pair establishes
+clear brand identity with minimal complexity.
                             """)
-                    else:
-                        st.info("Pair analysis shows Symbol + Wordmark is the most effective 2-element combination (11 recognitions)")
+                        else:
+                            st.warning(f"No 2-element combinations found for {segment_key} segment.")
 
-                with combo_tab2:
-                    st.markdown("##### Most Effective 3-Element Triplets")
+                    with combo_tab2:
+                        st.markdown("##### Most Effective 3-Element Triplets")
 
-                    triplet_metrics = metrics.get('triplet_metrics', [])
+                        if len(triplets) > 0:
+                            # Create a table
+                            triplet_df = pd.DataFrame([
+                                {
+                                    'Triplet': c['combination'],
+                                    'Recognitions': c['count'],
+                                    'Recognition Rate': f"{c['rate']:.1%}"
+                                }
+                                for c in triplets[:10]
+                            ])
 
-                    if len(triplet_metrics) > 0:
-                        # Create a table
-                        triplet_df = pd.DataFrame([
-                            {
-                                'Triplet': t['triplet'],
-                                'Recognitions': t['recognition_count'],
-                                'Top Audience': max(t.get('ownership_breakdown', {}).items(), key=lambda x: x[1])[0] if t.get('ownership_breakdown') else 'N/A'
-                            }
-                            for t in triplet_metrics[:10]
-                        ])
+                            st.dataframe(triplet_df, use_container_width=True, hide_index=True)
 
-                        st.dataframe(triplet_df, use_container_width=True, hide_index=True)
-
-                        # Add insight callout
-                        if len(triplet_metrics) > 0:
-                            top_triplet = triplet_metrics[0]
+                            # Add insight callout
+                            top_triplet = triplets[0]
                             st.info(f"""
-💡 **Key Insight**: {top_triplet['triplet']} achieves {top_triplet['recognition_count']} recognitions—the most
-effective 3-element combination. Adding Sonic to Symbol creates a multi-sensory brand signature that significantly
-boosts recognition when paired with green backgrounds.
+💡 **Key Insight for {segment_key}**: {top_triplet['combination']} achieves {top_triplet['count']} recognitions
+({top_triplet['rate']:.1%} of this segment)—the most effective 3-element combination. Adding a third element
+creates a richer brand signature that boosts recognition.
                             """)
-                    else:
-                        st.warning("No 3-element combination data available for this segment.")
+                        else:
+                            st.warning(f"No 3-element combinations found for {segment_key} segment.")
 
-                with combo_tab3:
-                    st.markdown("##### Most Effective 4-Element Quartets")
+                    with combo_tab3:
+                        st.markdown("##### Most Effective 4-Element Quartets")
 
-                    quartet_metrics = metrics.get('quartet_metrics', [])
+                        if len(quartets) > 0:
+                            # Create a table
+                            quartet_df = pd.DataFrame([
+                                {
+                                    'Quartet': c['combination'],
+                                    'Recognitions': c['count'],
+                                    'Recognition Rate': f"{c['rate']:.1%}"
+                                }
+                                for c in quartets[:10]
+                            ])
 
-                    if len(quartet_metrics) > 0:
-                        # Create a table
-                        quartet_df = pd.DataFrame([
-                            {
-                                'Quartet': q['quartet'],
-                                'Recognitions': q['recognition_count'],
-                                'Top Audience': max(q.get('ownership_breakdown', {}).items(), key=lambda x: x[1])[0] if q.get('ownership_breakdown') else 'N/A'
-                            }
-                            for q in quartet_metrics[:10]
-                        ])
+                            st.dataframe(quartet_df, use_container_width=True, hide_index=True)
 
-                        st.dataframe(quartet_df, use_container_width=True, hide_index=True)
-
-                        # Add insight callout
-                        if len(quartet_metrics) > 0:
-                            top_quartet = quartet_metrics[0]
+                            # Add insight callout
+                            top_quartet = quartets[0]
                             st.info(f"""
-💡 **Key Insight**: {top_quartet['quartet']} achieves {top_quartet['recognition_count']} recognitions. However,
-recognition plateaus at 4 elements (44% cumulative recognition) with diminishing returns from additional complexity.
-Consider if the incremental lift justifies the creative complexity.
+💡 **Key Insight for {segment_key}**: {top_quartet['combination']} achieves {top_quartet['count']} recognitions
+({top_quartet['rate']:.1%} of this segment). Consider whether the incremental recognition lift from a 4th
+element justifies the added creative complexity.
                             """)
-                    else:
-                        st.warning("No 4-element combination data available for this segment.")
+                        else:
+                            st.warning(f"No 4-element combinations found for {segment_key} segment.")
+                else:
+                    st.warning(f"No combination data available for {segment_key} segment.")
 
                 st.markdown("---")
 
