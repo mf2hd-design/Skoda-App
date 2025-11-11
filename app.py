@@ -181,7 +181,7 @@ brand_elements = [
 
 # --- Asset Maturity Context ---
 # Provides timing context for interpreting efficiency metrics
-# CLIENT CLARIFICATION (Nov 2025): Symbol/Picture Mark is 100+ years old;
+# Symbol/Picture Mark is 100+ years old;
 # all other assets began rolling out January 2023, except Háček which started Q1 2025
 asset_maturity = {
     'Symbol': {'status': 'Heritage Asset', 'years': '100+', 'note': 'Symbol/Picture Mark established 100+ years ago'},
@@ -2986,7 +2986,7 @@ drive recognition, not just which appeared together in historical campaigns.
 
 **Sample:** 2,011 respondents across UK, Spain, Germany, Poland
 **Method:** 2 groups of 6 elements each, shown in randomized sequences
-**Insight:** Directly answers Anto's critique about "missing combination logic"
+**Insight:** Reveals which element combinations drive recognition across different audiences
                 """)
 
                 # Executive Summary Dashboard
