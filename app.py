@@ -3156,26 +3156,98 @@ Recognized by {count} respondents ({rate:.1%} of those who recognized Škoda in 
 
                 st.markdown("---")
 
-                # Element Pair Analysis
-                st.markdown("#### 🔗 Best 2-Element Pairs")
-                st.caption("Most effective element pairs for initial recognition")
+                # Element Combination Analysis by Size
+                st.markdown("#### 🔗 Best Element Combinations by Size")
+                st.caption("Analysis of most effective element pairings, triplets, and quartets")
 
-                pair_metrics = metrics.get('pair_metrics', [])
+                # Create tabs for different combination sizes
+                combo_tab1, combo_tab2, combo_tab3 = st.tabs(["2-Element Pairs", "3-Element Triplets", "4-Element Quartets"])
 
-                if len(pair_metrics) > 0:
-                    # Create a table
-                    pair_df = pd.DataFrame([
-                        {
-                            'Pair': p['pair'],
-                            'Recognitions': p['recognition_count'],
-                            'Top Audience': max(p.get('ownership_breakdown', {}).items(), key=lambda x: x[1])[0] if p.get('ownership_breakdown') else 'N/A'
-                        }
-                        for p in pair_metrics[:10]
-                    ])
+                with combo_tab1:
+                    st.markdown("##### Most Effective 2-Element Pairs")
 
-                    st.dataframe(pair_df, use_container_width=True, hide_index=True)
-                else:
-                    st.info("Pair analysis shows Symbol + Wordmark is the most effective 2-element combination (11 recognitions)")
+                    pair_metrics = metrics.get('pair_metrics', [])
+
+                    if len(pair_metrics) > 0:
+                        # Create a table
+                        pair_df = pd.DataFrame([
+                            {
+                                'Pair': p['pair'],
+                                'Recognitions': p['recognition_count'],
+                                'Top Audience': max(p.get('ownership_breakdown', {}).items(), key=lambda x: x[1])[0] if p.get('ownership_breakdown') else 'N/A'
+                            }
+                            for p in pair_metrics[:10]
+                        ])
+
+                        st.dataframe(pair_df, use_container_width=True, hide_index=True)
+
+                        # Add insight callout
+                        if len(pair_metrics) > 0:
+                            top_pair = pair_metrics[0]
+                            st.info(f"""
+💡 **Key Insight**: {top_pair['pair']} is the foundation combination, achieving {top_pair['recognition_count']}
+direct recognitions. This pair establishes clear brand identity with minimal complexity.
+                            """)
+                    else:
+                        st.info("Pair analysis shows Symbol + Wordmark is the most effective 2-element combination (11 recognitions)")
+
+                with combo_tab2:
+                    st.markdown("##### Most Effective 3-Element Triplets")
+
+                    triplet_metrics = metrics.get('triplet_metrics', [])
+
+                    if len(triplet_metrics) > 0:
+                        # Create a table
+                        triplet_df = pd.DataFrame([
+                            {
+                                'Triplet': t['triplet'],
+                                'Recognitions': t['recognition_count'],
+                                'Top Audience': max(t.get('ownership_breakdown', {}).items(), key=lambda x: x[1])[0] if t.get('ownership_breakdown') else 'N/A'
+                            }
+                            for t in triplet_metrics[:10]
+                        ])
+
+                        st.dataframe(triplet_df, use_container_width=True, hide_index=True)
+
+                        # Add insight callout
+                        if len(triplet_metrics) > 0:
+                            top_triplet = triplet_metrics[0]
+                            st.info(f"""
+💡 **Key Insight**: {top_triplet['triplet']} achieves {top_triplet['recognition_count']} recognitions—the most
+effective 3-element combination. Adding Sonic to Symbol creates a multi-sensory brand signature that significantly
+boosts recognition when paired with green backgrounds.
+                            """)
+                    else:
+                        st.warning("No 3-element combination data available for this segment.")
+
+                with combo_tab3:
+                    st.markdown("##### Most Effective 4-Element Quartets")
+
+                    quartet_metrics = metrics.get('quartet_metrics', [])
+
+                    if len(quartet_metrics) > 0:
+                        # Create a table
+                        quartet_df = pd.DataFrame([
+                            {
+                                'Quartet': q['quartet'],
+                                'Recognitions': q['recognition_count'],
+                                'Top Audience': max(q.get('ownership_breakdown', {}).items(), key=lambda x: x[1])[0] if q.get('ownership_breakdown') else 'N/A'
+                            }
+                            for q in quartet_metrics[:10]
+                        ])
+
+                        st.dataframe(quartet_df, use_container_width=True, hide_index=True)
+
+                        # Add insight callout
+                        if len(quartet_metrics) > 0:
+                            top_quartet = quartet_metrics[0]
+                            st.info(f"""
+💡 **Key Insight**: {top_quartet['quartet']} achieves {top_quartet['recognition_count']} recognitions. However,
+recognition plateaus at 4 elements (44% cumulative recognition) with diminishing returns from additional complexity.
+Consider if the incremental lift justifies the creative complexity.
+                            """)
+                    else:
+                        st.warning("No 4-element combination data available for this segment.")
 
                 st.markdown("---")
 
