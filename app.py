@@ -3116,8 +3116,8 @@ drive recognition, not just which appeared together in historical campaigns.
                         hovermode='x unified',
                         height=400
                     )
-                    fig_journey.update_xaxis(tickmode='linear', tick0=1, dtick=1)
-                    fig_journey.update_yaxis(range=[0, 100])
+                    fig_journey.update_xaxes(tickmode='linear', tick0=1, dtick=1)
+                    fig_journey.update_yaxes(range=[0, 100])
 
                     fig_journey = apply_standard_chart_styling(fig_journey, "")
                     st.plotly_chart(fig_journey, use_container_width=True, config=get_standard_chart_config())
