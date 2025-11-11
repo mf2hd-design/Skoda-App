@@ -3164,10 +3164,55 @@ Recognized by {count} respondents ({rate:.1%} of those who recognized Škoda in 
                 if segment_key in metrics['top_combos_by_segment']:
                     segment_combos = metrics['top_combos_by_segment'][segment_key]
 
-                    # Separate combinations by size
+                    # Separate combinations by size from top_combos
                     pairs = [c for c in segment_combos if len(c['elements']) == 2]
                     triplets = [c for c in segment_combos if len(c['elements']) == 3]
                     quartets = [c for c in segment_combos if len(c['elements']) == 4]
+
+                    # Fallback: If no pairs in top combos, try to extract from global pair_metrics
+                    # and filter by ownership breakdown
+                    if len(pairs) == 0 and segment_key in ['Škoda owner', 'Non-Škoda owner', 'No car']:
+                        pair_metrics = metrics.get('pair_metrics', [])
+                        for p in pair_metrics:
+                            ownership_breakdown = p.get('ownership_breakdown', {})
+                            if segment_key in ownership_breakdown and ownership_breakdown[segment_key] > 0:
+                                # Convert to same format as segment_combos
+                                pairs.append({
+                                    'combination': p['pair'],
+                                    'elements': p['elements'],
+                                    'count': ownership_breakdown[segment_key],
+                                    'rate': ownership_breakdown[segment_key] / metrics['recognition_journey'][segment_key][2]['total_respondents']
+                                })
+
+                    # Similar fallback for triplets and quartets
+                    if len(triplets) == 0 and segment_key in ['Škoda owner', 'Non-Škoda owner', 'No car']:
+                        triplet_metrics = metrics.get('triplet_metrics', [])
+                        for t in triplet_metrics:
+                            ownership_breakdown = t.get('ownership_breakdown', {})
+                            if segment_key in ownership_breakdown and ownership_breakdown[segment_key] > 0:
+                                triplets.append({
+                                    'combination': t['triplet'],
+                                    'elements': t['elements'],
+                                    'count': ownership_breakdown[segment_key],
+                                    'rate': ownership_breakdown[segment_key] / metrics['recognition_journey'][segment_key][3]['total_respondents']
+                                })
+
+                    if len(quartets) == 0 and segment_key in ['Škoda owner', 'Non-Škoda owner', 'No car']:
+                        quartet_metrics = metrics.get('quartet_metrics', [])
+                        for q in quartet_metrics:
+                            ownership_breakdown = q.get('ownership_breakdown', {})
+                            if segment_key in ownership_breakdown and ownership_breakdown[segment_key] > 0:
+                                quartets.append({
+                                    'combination': q['quartet'],
+                                    'elements': q['elements'],
+                                    'count': ownership_breakdown[segment_key],
+                                    'rate': ownership_breakdown[segment_key] / metrics['recognition_journey'][segment_key][4]['total_respondents']
+                                })
+
+                    # Sort by count (descending)
+                    pairs.sort(key=lambda x: x['count'], reverse=True)
+                    triplets.sort(key=lambda x: x['count'], reverse=True)
+                    quartets.sort(key=lambda x: x['count'], reverse=True)
 
                     # Create tabs for different combination sizes
                     combo_tab1, combo_tab2, combo_tab3 = st.tabs(["2-Element Pairs", "3-Element Triplets", "4-Element Quartets"])
