@@ -1175,6 +1175,89 @@ with tab1:
 
     st.markdown("---")
 
+    # COMPARISON MODE - Side-by-Side Element Comparison
+    if st.session_state.comparison_mode and len(st.session_state.selected_elements) >= 2:
+        st.markdown("### 🔄 Element Comparison Dashboard")
+        st.caption(f"Comparing {len(st.session_state.selected_elements)} selected elements across key performance metrics")
+
+        # Filter to selected elements
+        comparison_df = master_df[master_df['Element'].isin(st.session_state.selected_elements)].copy()
+
+        # Side-by-side comparison cards
+        cols = st.columns(len(st.session_state.selected_elements))
+        for idx, (_, row) in enumerate(comparison_df.iterrows()):
+            with cols[idx]:
+                st.markdown(f"### {row['Element']}")
+                st.metric("Recognition", f"{row['Recognition']:.0%}")
+                st.metric("Uniqueness", f"{row['Uniqueness']:.0%}")
+                st.metric("Net Sentiment", f"{row['Net Sentiment']:+.1%}")
+                st.metric("Investment", f"€{row['Total Investment']:,.0f}")
+                st.metric("Usage", f"{row['Overall Usage']:.0%}")
+                st.metric("Recognition Density", f"{row['Recognition Density']:.2f}")
+
+        st.markdown("---")
+
+        # Comparative analysis table
+        st.markdown("#### 📊 Detailed Comparison")
+
+        comparison_table = comparison_df[['Element', 'Recognition', 'Uniqueness', 'Net Sentiment', 'Total Investment', 'Overall Usage', 'Recognition Density']].copy()
+        comparison_table = comparison_table.sort_values('Recognition', ascending=False)
+
+        st.dataframe(
+            comparison_table.style.format({
+                'Recognition': '{:.0%}',
+                'Uniqueness': '{:.0%}',
+                'Net Sentiment': '{:+.1%}',
+                'Total Investment': '€{:,.0f}',
+                'Overall Usage': '{:.0%}',
+                'Recognition Density': '{:.2f}'
+            }).background_gradient(subset=['Recognition', 'Uniqueness', 'Recognition Density'], cmap='Greens'),
+            use_container_width=True,
+            hide_index=True
+        )
+
+        # Performance gaps
+        st.markdown("#### 🎯 Performance Gaps")
+        cols = st.columns(3)
+
+        max_rec = comparison_df['Recognition'].max()
+        min_rec = comparison_df['Recognition'].min()
+        max_rec_elem = comparison_df.loc[comparison_df['Recognition'].idxmax(), 'Element']
+        min_rec_elem = comparison_df.loc[comparison_df['Recognition'].idxmin(), 'Element']
+
+        with cols[0]:
+            st.metric(
+                "Recognition Gap",
+                f"{(max_rec - min_rec):.0%}",
+                delta=f"{max_rec_elem} vs {min_rec_elem}"
+            )
+
+        max_uniq = comparison_df['Uniqueness'].max()
+        min_uniq = comparison_df['Uniqueness'].min()
+        max_uniq_elem = comparison_df.loc[comparison_df['Uniqueness'].idxmax(), 'Element']
+        min_uniq_elem = comparison_df.loc[comparison_df['Uniqueness'].idxmin(), 'Element']
+
+        with cols[1]:
+            st.metric(
+                "Uniqueness Gap",
+                f"{(max_uniq - min_uniq):.0%}",
+                delta=f"{max_uniq_elem} vs {min_uniq_elem}"
+            )
+
+        max_sent = comparison_df['Net Sentiment'].max()
+        min_sent = comparison_df['Net Sentiment'].min()
+        max_sent_elem = comparison_df.loc[comparison_df['Net Sentiment'].idxmax(), 'Element']
+        min_sent_elem = comparison_df.loc[comparison_df['Net Sentiment'].idxmin(), 'Element']
+
+        with cols[2]:
+            st.metric(
+                "Sentiment Gap",
+                f"{(max_sent - min_sent):.1%}",
+                delta=f"{max_sent_elem} vs {min_sent_elem}"
+            )
+
+        st.markdown("---")
+
     # Key Patterns Observed
     top_3_performers = master_df.nlargest(3, 'Recognition Density')
     bottom_3_performers = master_df.nsmallest(3, 'Recognition Density')
@@ -1872,6 +1955,101 @@ with tab2:
 
     st.markdown("---")
 
+    # COMPARISON MODE - Side-by-Side Sentiment Comparison
+    if st.session_state.comparison_mode and len(st.session_state.selected_elements) >= 2:
+        st.markdown("### 🔄 Element Comparison: Sentiment Profiles")
+        st.caption(f"Comparing {len(st.session_state.selected_elements)} selected elements side-by-side")
+
+        # Filter to selected elements
+        comparison_df = master_df[master_df['Element'].isin(st.session_state.selected_elements)].copy()
+        comparison_df = comparison_df.sort_values('Net Sentiment', ascending=False)
+
+        # Side-by-side metric cards
+        cols = st.columns(len(st.session_state.selected_elements))
+        for idx, (_, row) in enumerate(comparison_df.iterrows()):
+            with cols[idx]:
+                sentiment_emoji = "😊" if row['Net Sentiment'] > 0 else ("😐" if row['Net Sentiment'] > -0.02 else "😟")
+                st.markdown(f"#### {row['Element']}")
+                st.metric("Net Sentiment", f"{row['Net Sentiment']:+.1%}")
+                st.markdown(f"{sentiment_emoji}")
+                st.progress(row['Positive Sentiment'])
+                st.caption(f"Positive: {row['Positive Sentiment']:.1%}")
+                st.caption(f"Negative: {row['Negative Sentiment']:.1%}")
+                st.caption(f"Recognition: {row['Recognition']:.0%}")
+
+        st.markdown("---")
+
+        # Grouped bar chart for direct comparison
+        fig_comparison = go.Figure()
+
+        fig_comparison.add_trace(go.Bar(
+            name='Positive',
+            x=comparison_df['Element'],
+            y=comparison_df['Positive Sentiment'],
+            marker_color='#4ECDC4',
+            text=comparison_df['Positive Sentiment'].apply(lambda x: f'{x:.1%}'),
+            textposition='outside'
+        ))
+
+        fig_comparison.add_trace(go.Bar(
+            name='Negative',
+            x=comparison_df['Element'],
+            y=comparison_df['Negative Sentiment'],
+            marker_color='#FFB6B9',
+            text=comparison_df['Negative Sentiment'].apply(lambda x: f'{x:.1%}'),
+            textposition='outside'
+        ))
+
+        fig_comparison.add_trace(go.Bar(
+            name='Net Sentiment',
+            x=comparison_df['Element'],
+            y=comparison_df['Net Sentiment'],
+            marker_color='#2196F3',
+            text=comparison_df['Net Sentiment'].apply(lambda x: f'{x:+.1%}'),
+            textposition='outside'
+        ))
+
+        fig_comparison.update_layout(
+            title='Sentiment Comparison: Positive vs Negative vs Net',
+            barmode='group',
+            yaxis_tickformat='.0%',
+            yaxis_title="Sentiment Score",
+            xaxis_title="Element",
+            height=450,
+            hovermode='x unified'
+        )
+
+        st.plotly_chart(fig_comparison, use_container_width=True, config=get_standard_chart_config())
+
+        # Performance gaps table
+        st.markdown("#### 📊 Performance Gaps")
+        gap_data = []
+        for i in range(len(comparison_df) - 1):
+            elem1 = comparison_df.iloc[i]
+            elem2 = comparison_df.iloc[i + 1]
+            gap_data.append({
+                'Comparison': f"{elem1['Element']} vs {elem2['Element']}",
+                'Net Sentiment Gap': elem1['Net Sentiment'] - elem2['Net Sentiment'],
+                'Positive Gap': elem1['Positive Sentiment'] - elem2['Positive Sentiment'],
+                'Negative Gap': elem1['Negative Sentiment'] - elem2['Negative Sentiment']
+            })
+
+        if gap_data:
+            gap_df = pd.DataFrame(gap_data)
+            st.dataframe(
+                gap_df.style.format({
+                    'Net Sentiment Gap': '{:+.1%}',
+                    'Positive Gap': '{:+.1%}',
+                    'Negative Gap': '{:+.1%}'
+                }),
+                use_container_width=True,
+                hide_index=True
+            )
+
+        st.markdown("---")
+
+    st.markdown("---")
+
     # Net Sentiment Ranking Chart (Lollipop style)
     st.markdown("### Net Sentiment Ranking")
     st.caption("Elements ranked by net sentiment score with color-coded performance indicators")
@@ -2431,24 +2609,74 @@ A €1M campaign featuring 5 elements attributes €200K to each element. This e
         col1, col2 = st.columns([3, 1])
 
         with col1:
-            fig_bcg = px.scatter(
-                matrix_df,
-                x='Total Investment',
-                y='Recognition',
-                size='Uniqueness',
-                color='Net Sentiment',
-                hover_name='Element',
-                text='Element',
-                title='Recognition vs Investment',
-                color_continuous_scale='RdYlGn',
-                size_max=30,
-                hover_data={
-                    'Recognition': ':.0%',
-                    'Total Investment': ':,.0f',
-                    'Uniqueness': ':.0%',
-                    'Net Sentiment': ':+.1%'
-                }
-            )
+            # COMPARISON MODE: Highlight selected elements
+            if st.session_state.comparison_mode and len(st.session_state.selected_elements) >= 2:
+                # Split data into selected and non-selected
+                selected_df = matrix_df[matrix_df['Element'].isin(st.session_state.selected_elements)]
+                non_selected_df = matrix_df[~matrix_df['Element'].isin(st.session_state.selected_elements)]
+
+                fig_bcg = go.Figure()
+
+                # Add non-selected elements (faded)
+                if len(non_selected_df) > 0:
+                    fig_bcg.add_trace(go.Scatter(
+                        x=non_selected_df['Total Investment'],
+                        y=non_selected_df['Recognition'],
+                        mode='markers+text',
+                        name='Other Elements',
+                        marker=dict(size=10, color='lightgray', opacity=0.3),
+                        text=non_selected_df['Element'],
+                        textposition='top center',
+                        textfont=dict(color='gray', size=9),
+                        hovertemplate='<b>%{text}</b><br>Investment: €%{x:,.0f}<br>Recognition: %{y:.0%}<extra></extra>'
+                    ))
+
+                # Add selected elements (highlighted)
+                colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8']
+                for idx, (_, row) in enumerate(selected_df.iterrows()):
+                    fig_bcg.add_trace(go.Scatter(
+                        x=[row['Total Investment']],
+                        y=[row['Recognition']],
+                        mode='markers+text',
+                        name=row['Element'],
+                        marker=dict(size=20, color=colors[idx % len(colors)], line=dict(width=2, color='white')),
+                        text=[row['Element']],
+                        textposition='top center',
+                        textfont=dict(size=12, color='black'),
+                        hovertemplate=f'<b>{row["Element"]}</b><br>Investment: €{row["Total Investment"]:,.0f}<br>Recognition: {row["Recognition"]:.0%}<br>Uniqueness: {row["Uniqueness"]:.0%}<br>Net Sentiment: {row["Net Sentiment"]:+.1%}<extra></extra>'
+                    ))
+
+                fig_bcg.update_layout(
+                    title='Recognition vs Investment (Comparison Mode)',
+                    xaxis_title="Total Investment (€)",
+                    yaxis_title="Recognition",
+                    height=500,
+                    showlegend=True
+                )
+                fig_bcg.update_yaxes(tickformat='.0%')
+            else:
+                # Regular view
+                fig_bcg = px.scatter(
+                    matrix_df,
+                    x='Total Investment',
+                    y='Recognition',
+                    size='Uniqueness',
+                    color='Net Sentiment',
+                    hover_name='Element',
+                    text='Element',
+                    title='Recognition vs Investment',
+                    color_continuous_scale='RdYlGn',
+                    size_max=30,
+                    hover_data={
+                        'Recognition': ':.0%',
+                        'Total Investment': ':,.0f',
+                        'Uniqueness': ':.0%',
+                        'Net Sentiment': ':+.1%'
+                    }
+                )
+                fig_bcg.update_traces(textposition='top center')
+                fig_bcg.update_layout(height=500, xaxis_title="Total Investment (€)", yaxis_title="Recognition")
+                fig_bcg.update_yaxes(tickformat='.0%')
 
             # Add quadrant lines
             fig_bcg.add_hline(y=median_recognition, line_dash="dash", line_color="gray", opacity=0.5)
@@ -2485,9 +2713,6 @@ A €1M campaign featuring 5 elements attributes €200K to each element. This e
             )
 
             fig_bcg = apply_standard_chart_styling(fig_bcg, "")
-            fig_bcg.update_traces(textposition='top center')
-            fig_bcg.update_layout(height=500, xaxis_title="Total Investment (€)", yaxis_title="Recognition")
-            fig_bcg.update_yaxes(tickformat='.0%')
             st.plotly_chart(fig_bcg, use_container_width=True, config=get_standard_chart_config())
 
         with col2:
@@ -2532,24 +2757,75 @@ A €1M campaign featuring 5 elements attributes €200K to each element. This e
         col1, col2 = st.columns([3, 1])
 
         with col1:
-            fig_equity = px.scatter(
-                matrix_df,
-                x='Uniqueness',
-                y='Recognition',
-                size='Total Investment',
-                color='Recognition Density',
-                hover_name='Element',
-                text='Element',
-                title='Recognition vs Uniqueness',
-                color_continuous_scale='RdYlGn',
-                size_max=30,
-                hover_data={
-                    'Recognition': ':.0%',
-                    'Uniqueness': ':.0%',
-                    'Total Investment': ':,.0f',
-                    'Recognition Density': ':.2f'
-                }
-            )
+            # COMPARISON MODE: Highlight selected elements
+            if st.session_state.comparison_mode and len(st.session_state.selected_elements) >= 2:
+                selected_df = matrix_df[matrix_df['Element'].isin(st.session_state.selected_elements)]
+                non_selected_df = matrix_df[~matrix_df['Element'].isin(st.session_state.selected_elements)]
+
+                fig_equity = go.Figure()
+
+                # Add non-selected elements (faded)
+                if len(non_selected_df) > 0:
+                    fig_equity.add_trace(go.Scatter(
+                        x=non_selected_df['Uniqueness'],
+                        y=non_selected_df['Recognition'],
+                        mode='markers+text',
+                        name='Other Elements',
+                        marker=dict(size=10, color='lightgray', opacity=0.3),
+                        text=non_selected_df['Element'],
+                        textposition='top center',
+                        textfont=dict(color='gray', size=9),
+                        hovertemplate='<b>%{text}</b><br>Uniqueness: %{x:.0%}<br>Recognition: %{y:.0%}<extra></extra>'
+                    ))
+
+                # Add selected elements (highlighted)
+                colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8']
+                for idx, (_, row) in enumerate(selected_df.iterrows()):
+                    fig_equity.add_trace(go.Scatter(
+                        x=[row['Uniqueness']],
+                        y=[row['Recognition']],
+                        mode='markers+text',
+                        name=row['Element'],
+                        marker=dict(size=20, color=colors[idx % len(colors)], line=dict(width=2, color='white')),
+                        text=[row['Element']],
+                        textposition='top center',
+                        textfont=dict(size=12, color='black'),
+                        hovertemplate=f'<b>{row["Element"]}</b><br>Uniqueness: {row["Uniqueness"]:.0%}<br>Recognition: {row["Recognition"]:.0%}<br>Investment: €{row["Total Investment"]:,.0f}<br>Density: {row["Recognition Density"]:.2f}<extra></extra>'
+                    ))
+
+                fig_equity.update_layout(
+                    title='Recognition vs Uniqueness (Comparison Mode)',
+                    xaxis_title="Uniqueness (Brand Attribution)",
+                    yaxis_title="Recognition (Fame)",
+                    height=500,
+                    showlegend=True
+                )
+                fig_equity.update_xaxes(tickformat='.0%')
+                fig_equity.update_yaxes(tickformat='.0%')
+            else:
+                # Regular view
+                fig_equity = px.scatter(
+                    matrix_df,
+                    x='Uniqueness',
+                    y='Recognition',
+                    size='Total Investment',
+                    color='Recognition Density',
+                    hover_name='Element',
+                    text='Element',
+                    title='Recognition vs Uniqueness',
+                    color_continuous_scale='RdYlGn',
+                    size_max=30,
+                    hover_data={
+                        'Recognition': ':.0%',
+                        'Uniqueness': ':.0%',
+                        'Total Investment': ':,.0f',
+                        'Recognition Density': ':.2f'
+                    }
+                )
+                fig_equity.update_traces(textposition='top center')
+                fig_equity.update_layout(height=500, xaxis_title="Uniqueness (Brand Attribution)", yaxis_title="Recognition (Fame)")
+                fig_equity.update_xaxes(tickformat='.0%')
+                fig_equity.update_yaxes(tickformat='.0%')
 
             # Add quadrant lines
             fig_equity.add_hline(y=median_recognition, line_dash="dash", line_color="gray", opacity=0.5)
@@ -2586,10 +2862,6 @@ A €1M campaign featuring 5 elements attributes €200K to each element. This e
             )
 
             fig_equity = apply_standard_chart_styling(fig_equity, "")
-            fig_equity.update_traces(textposition='top center')
-            fig_equity.update_layout(height=500, xaxis_title="Uniqueness (Brand Attribution)", yaxis_title="Recognition (Fame)")
-            fig_equity.update_xaxes(tickformat='.0%')
-            fig_equity.update_yaxes(tickformat='.0%')
             st.plotly_chart(fig_equity, use_container_width=True, config=get_standard_chart_config())
 
         with col2:
@@ -2630,24 +2902,73 @@ A €1M campaign featuring 5 elements attributes €200K to each element. This e
         col1, col2 = st.columns([3, 1])
 
         with col1:
-            fig_efficiency = px.scatter(
-                matrix_df,
-                x='Overall Usage',
-                y='Recognition Density',
-                size='Recognition',
-                color='Net Sentiment',
-                hover_name='Element',
-                text='Element',
-                title='Usage vs Recognition Density',
-                color_continuous_scale='RdYlGn',
-                size_max=30,
-                hover_data={
-                    'Overall Usage': ':.0%',
-                    'Recognition Density': ':.2f',
-                    'Recognition': ':.0%',
-                    'Net Sentiment': ':+.1%'
-                }
-            )
+            # COMPARISON MODE: Highlight selected elements
+            if st.session_state.comparison_mode and len(st.session_state.selected_elements) >= 2:
+                selected_df = matrix_df[matrix_df['Element'].isin(st.session_state.selected_elements)]
+                non_selected_df = matrix_df[~matrix_df['Element'].isin(st.session_state.selected_elements)]
+
+                fig_efficiency = go.Figure()
+
+                # Add non-selected elements (faded)
+                if len(non_selected_df) > 0:
+                    fig_efficiency.add_trace(go.Scatter(
+                        x=non_selected_df['Overall Usage'],
+                        y=non_selected_df['Recognition Density'],
+                        mode='markers+text',
+                        name='Other Elements',
+                        marker=dict(size=10, color='lightgray', opacity=0.3),
+                        text=non_selected_df['Element'],
+                        textposition='top center',
+                        textfont=dict(color='gray', size=9),
+                        hovertemplate='<b>%{text}</b><br>Usage: %{x:.0%}<br>Density: %{y:.2f}<extra></extra>'
+                    ))
+
+                # Add selected elements (highlighted)
+                colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8']
+                for idx, (_, row) in enumerate(selected_df.iterrows()):
+                    fig_efficiency.add_trace(go.Scatter(
+                        x=[row['Overall Usage']],
+                        y=[row['Recognition Density']],
+                        mode='markers+text',
+                        name=row['Element'],
+                        marker=dict(size=20, color=colors[idx % len(colors)], line=dict(width=2, color='white')),
+                        text=[row['Element']],
+                        textposition='top center',
+                        textfont=dict(size=12, color='black'),
+                        hovertemplate=f'<b>{row["Element"]}</b><br>Usage: {row["Overall Usage"]:.0%}<br>Density: {row["Recognition Density"]:.2f}<br>Recognition: {row["Recognition"]:.0%}<br>Net Sentiment: {row["Net Sentiment"]:+.1%}<extra></extra>'
+                    ))
+
+                fig_efficiency.update_layout(
+                    title='Usage vs Recognition Density (Comparison Mode)',
+                    xaxis_title="Campaign Usage",
+                    yaxis_title="Recognition Density (per €1M)",
+                    height=500,
+                    showlegend=True
+                )
+                fig_efficiency.update_xaxes(tickformat='.0%')
+            else:
+                # Regular view
+                fig_efficiency = px.scatter(
+                    matrix_df,
+                    x='Overall Usage',
+                    y='Recognition Density',
+                    size='Recognition',
+                    color='Net Sentiment',
+                    hover_name='Element',
+                    text='Element',
+                    title='Usage vs Recognition Density',
+                    color_continuous_scale='RdYlGn',
+                    size_max=30,
+                    hover_data={
+                        'Overall Usage': ':.0%',
+                        'Recognition Density': ':.2f',
+                        'Recognition': ':.0%',
+                        'Net Sentiment': ':+.1%'
+                    }
+                )
+                fig_efficiency.update_traces(textposition='top center')
+                fig_efficiency.update_layout(height=500, xaxis_title="Campaign Usage", yaxis_title="Recognition Density (per €1M)")
+                fig_efficiency.update_xaxes(tickformat='.0%')
 
             # Add quadrant lines
             fig_efficiency.add_hline(y=median_density, line_dash="dash", line_color="gray", opacity=0.5)
@@ -2684,9 +3005,6 @@ A €1M campaign featuring 5 elements attributes €200K to each element. This e
             )
 
             fig_efficiency = apply_standard_chart_styling(fig_efficiency, "")
-            fig_efficiency.update_traces(textposition='top center')
-            fig_efficiency.update_layout(height=500, xaxis_title="Campaign Usage", yaxis_title="Recognition Density (per €1M)")
-            fig_efficiency.update_xaxes(tickformat='.0%')
             st.plotly_chart(fig_efficiency, use_container_width=True, config=get_standard_chart_config())
 
         with col2:
@@ -4734,11 +5052,16 @@ with tab6:
         horizontal=True
     )
 
-    selected_elements = st.multiselect(
-        "Select elements to compare:",
-        brand_elements,
-        default=brand_elements[:3]
-    )
+    # COMPARISON MODE: Use global selected elements when comparison mode is enabled
+    if st.session_state.comparison_mode and len(st.session_state.selected_elements) >= 2:
+        selected_elements = st.session_state.selected_elements
+        st.info(f"🔄 **Comparison Mode Active:** Showing personality analysis for {len(selected_elements)} selected elements from control panel")
+    else:
+        selected_elements = st.multiselect(
+            "Select elements to compare:",
+            brand_elements,
+            default=brand_elements[:3]
+        )
 
     if selected_elements:
         if personality_view == "Radar Chart (7 Dimensions)":
