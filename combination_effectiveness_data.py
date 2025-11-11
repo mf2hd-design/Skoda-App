@@ -14,12 +14,25 @@ import pickle
 # Load the pre-calculated metrics
 def load_metrics():
     """Load all combination effectiveness metrics"""
-    try:
-        with open('/tmp/skoda_combination_metrics.pkl', 'rb') as f:
-            return pickle.load(f)
-    except FileNotFoundError:
-        print("Warning: Metrics file not found. Please run the data processing script.")
-        return None
+    import os
+
+    # Try project directory first, then /tmp/ as fallback
+    possible_paths = [
+        'combination_metrics.pkl',  # Project directory
+        '/tmp/skoda_combination_metrics.pkl',  # Fallback for temp processing
+        os.path.join(os.path.dirname(__file__), 'combination_metrics.pkl')  # Explicit path
+    ]
+
+    for path in possible_paths:
+        try:
+            with open(path, 'rb') as f:
+                return pickle.load(f)
+        except FileNotFoundError:
+            continue
+
+    print("Warning: Metrics file not found. Please run the data processing script.")
+    print(f"Tried paths: {possible_paths}")
+    return None
 
 # Element definitions
 ELEMENTS_GROUP_1 = {
