@@ -6820,6 +6820,18 @@ This section shows recognition patterns based on individual-level survey data, l
             # Recognition by psychographic segment
             st.markdown("#### 📊 Recognition Rates by Psychographic Segment")
 
+            st.info("""
+💡 **What This Chart Shows:**
+For each psychographic statement, we compare brand recognition between:
+- **People who selected this statement** (e.g., 940 people who said "Learning is important")
+- **People who did NOT select it** (e.g., 1,071 people who didn't say this)
+
+**Example:** Learning-Oriented shows 45.6% vs 38.7%
+- 45.6% of learning-oriented people recognized Škoda
+- Only 38.7% of non-learning-oriented people did
+- **Insight:** Learning-oriented consumers are +6.9% more brand-aware
+            """)
+
             # Create comparison dataframe
             segment_comparison = []
             for seg in segments:
@@ -6827,8 +6839,8 @@ This section shows recognition patterns based on individual-level survey data, l
                     'Segment': seg['segment'],
                     'Sample Size': seg['sample_size'],
                     'Sample %': seg['sample_pct'],
-                    'Recognition Rate': seg['recognition_rate'],
-                    'vs Non-Segment': seg['non_segment_recognition_rate'],
+                    'Selected This': seg['recognition_rate'],
+                    'Did NOT Select': seg['non_segment_recognition_rate'],
                     'Lift': seg['recognition_lift'],
                     'Avg Elements': seg['avg_elements_shown']
                 })
@@ -6841,23 +6853,23 @@ This section shows recognition patterns based on individual-level survey data, l
             # Add segment recognition bars
             fig_recog.add_trace(go.Bar(
                 x=comp_df['Segment'],
-                y=comp_df['Recognition Rate'],
-                name='Segment Recognition',
+                y=comp_df['Selected This'],
+                name='Selected This Statement',
                 marker_color='#4CAF50',
-                text=comp_df['Recognition Rate'].apply(lambda x: f'{x:.1%}'),
+                text=comp_df['Selected This'].apply(lambda x: f'{x:.1%}'),
                 textposition='outside',
-                hovertemplate='<b>%{x}</b><br>Recognition: %{y:.1%}<extra></extra>'
+                hovertemplate='<b>%{x}</b><br>People who selected this: %{y:.1%} recognized Škoda<extra></extra>'
             ))
 
             # Add non-segment comparison bars
             fig_recog.add_trace(go.Bar(
                 x=comp_df['Segment'],
-                y=comp_df['vs Non-Segment'],
-                name='Non-Segment Recognition',
+                y=comp_df['Did NOT Select'],
+                name='Did NOT Select This',
                 marker_color='#FFC107',
-                text=comp_df['vs Non-Segment'].apply(lambda x: f'{x:.1%}'),
+                text=comp_df['Did NOT Select'].apply(lambda x: f'{x:.1%}'),
                 textposition='outside',
-                hovertemplate='<b>%{x}</b><br>Recognition: %{y:.1%}<extra></extra>'
+                hovertemplate='<b>%{x}</b><br>People who did NOT select this: %{y:.1%} recognized Škoda<extra></extra>'
             ))
 
             # Add overall average line
@@ -6870,11 +6882,11 @@ This section shows recognition patterns based on individual-level survey data, l
             )
 
             fig_recog.update_layout(
-                title='Recognition Rates: Segment vs Non-Segment',
+                title='Do Different Personality Types Recognize Škoda Differently?',
                 yaxis_tickformat='.0%',
-                yaxis_title='Recognition Rate',
-                xaxis_title='Psychographic Segment',
-                height=450,
+                yaxis_title='% Who Recognized Škoda',
+                xaxis_title='',
+                height=500,
                 barmode='group',
                 xaxis_tickangle=-15
             )
@@ -6882,18 +6894,24 @@ This section shows recognition patterns based on individual-level survey data, l
             st.plotly_chart(fig_recog, use_container_width=True, config=get_standard_chart_config())
 
             # Insights table
-            st.markdown("#### 💡 Key Findings")
+            st.markdown("#### 💡 Detailed Comparison Table")
 
             # Format and display table
             display_df = comp_df.copy()
+            display_df = display_df.rename(columns={
+                'Selected This': 'Selected: Recognition',
+                'Did NOT Select': 'Didn\'t Select: Recognition'
+            })
             display_df['Sample Size'] = display_df['Sample Size'].apply(lambda x: f"{x:,}")
             display_df['Sample %'] = display_df['Sample %'].apply(lambda x: f"{x:.1%}")
-            display_df['Recognition Rate'] = display_df['Recognition Rate'].apply(lambda x: f"{x:.1%}")
-            display_df['vs Non-Segment'] = display_df['vs Non-Segment'].apply(lambda x: f"{x:.1%}")
+            display_df['Selected: Recognition'] = display_df['Selected: Recognition'].apply(lambda x: f"{x:.1%}")
+            display_df['Didn\'t Select: Recognition'] = display_df['Didn\'t Select: Recognition'].apply(lambda x: f"{x:.1%}")
             display_df['Lift'] = display_df['Lift'].apply(lambda x: f"{x:+.1%}")
             display_df['Avg Elements'] = display_df['Avg Elements'].apply(lambda x: f"{x:.2f}")
 
             st.dataframe(display_df, use_container_width=True, hide_index=True)
+
+            st.caption("**Reading the table:** 'Lift' shows how much better (or worse) people who selected this statement perform vs those who didn't. Positive = segment is more brand-aware.")
 
             # Strategic insights
             st.markdown("---")
