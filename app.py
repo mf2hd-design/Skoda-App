@@ -171,6 +171,17 @@ except Exception as e:
     st.error(f"Error loading Q27 data: {e}")
     q27_familiarity = []
 
+# Load QD04 Psychographics
+try:
+    if os.path.exists('qd04_psychographics.json'):
+        with open('qd04_psychographics.json', 'r', encoding='utf-8') as f:
+            qd04_psychographics = json.load(f)
+    else:
+        qd04_psychographics = []
+except Exception as e:
+    st.error(f"Error loading QD04 psychographics data: {e}")
+    qd04_psychographics = []
+
 from comms_data import comms_audit_data
 
 # --- Brand Elements ---
@@ -1021,14 +1032,15 @@ if st.session_state.show_raw_data:
 # TAB NAVIGATION
 # =====================================================================
 
-tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs([
     "📊 Overview",
     "💚 Brand Perception",
     "📈 Portfolio Strategy",
     "💰 Spend Analysis",
     "🔮 Growth Opportunities",
     "🔍 Market Analysis",
-    "🧭 Consumer Journey"
+    "🧭 Consumer Journey",
+    "🧠 Audience Insights"
 ])
 
 # =====================================================================
@@ -6543,6 +6555,276 @@ with tab7:
 - Average gap across all markets: **{df_gap['Awareness Gap'].mean():.0%}**
 - Indicates opportunity to convert brand awareness into brand knowledge through communications
                     """)
+
+# ==================== TAB 8: AUDIENCE INSIGHTS ====================
+with tab8:
+    st.header("🧠 Audience Insights")
+    st.caption("Psychographic profile of Škoda's brand audience")
+
+    # Check if data is available
+    if not qd04_psychographics or len(qd04_psychographics) == 0:
+        st.warning("⚠️ Psychographic data not available.")
+    else:
+        # TL;DR Box
+        render_tldr_box(
+            "Key Insights at a Glance",
+            [
+                f"<b>47% Learning-Oriented:</b> Nearly half of the audience values lifelong learning - opportunity for innovation messaging",
+                f"<b>40% Adventure-Seeking:</b> Strong appetite for challenges and novelty across markets",
+                f"<b>Market Differences:</b> Spain highest on adventure (45%), Poland highest on tradition (46%), Germany most pragmatic"
+            ]
+        )
+
+        st.markdown("---")
+
+        # SECTION 1: PSYCHOGRAPHIC OVERVIEW
+        st.markdown("### 📊 Psychographic Overview")
+        st.caption("How Škoda's audience describes themselves (n=2,011 respondents)")
+
+        st.info("""
+💡 **About This Data:**
+Respondents were asked "Which of the following statements apply to you?" and could select multiple statements that resonate with their values and mindset.
+
+**Strategic Value:** Understanding audience psychographics enables message personalization, market-specific strategies, and brand positioning alignment.
+        """)
+
+        # Create dataframe from psychographics data
+        psycho_df = pd.DataFrame(qd04_psychographics)
+
+        # Overall agreement chart
+        col1, col2 = st.columns([2, 1])
+
+        with col1:
+            # Color mapping by category
+            color_map = {
+                'Learning-Oriented': '#4CAF50',
+                'Adventure-Seeking': '#FF9800',
+                'Traditional-Values': '#2196F3'
+            }
+
+            fig_overall = go.Figure()
+
+            # Add bars with category-specific colors
+            for idx, row in psycho_df.iterrows():
+                fig_overall.add_trace(go.Bar(
+                    x=[row['Total_percent']],
+                    y=[row['statement']],
+                    orientation='h',
+                    name=row['category'],
+                    marker=dict(color=color_map.get(row['category'], '#666')),
+                    text=f"{row['Total_percent']:.0%}",
+                    textposition='outside',
+                    showlegend=(idx == 0 or row['category'] != psycho_df.iloc[idx-1]['category']),
+                    hovertemplate=f"<b>{row['statement']}</b><br>{row['category']}<br>{row['Total_percent']:.0%} agree ({row['Total_count']:,} respondents)<extra></extra>"
+                ))
+
+            fig_overall.update_layout(
+                title='Audience Psychographic Profile',
+                xaxis_title='% Agreement',
+                yaxis_title='',
+                xaxis=dict(tickformat='.0%', range=[0, 0.6]),
+                height=400,
+                showlegend=True,
+                barmode='overlay'
+            )
+
+            st.plotly_chart(fig_overall, use_container_width=True, config=get_standard_chart_config())
+
+        with col2:
+            st.markdown("#### 🎯 Key Segments")
+
+            # Calculate category averages
+            learning_avg = psycho_df[psycho_df['category'] == 'Learning-Oriented']['Total_percent'].mean()
+            adventure_avg = psycho_df[psycho_df['category'] == 'Adventure-Seeking']['Total_percent'].mean()
+            traditional_avg = psycho_df[psycho_df['category'] == 'Traditional-Values']['Total_percent'].mean()
+
+            st.metric("Learning-Oriented", f"{learning_avg:.0%}", help="Value continuous learning and growth")
+            st.metric("Adventure-Seeking", f"{adventure_avg:.0%}", help="Embrace challenges, novelty, and change")
+            st.metric("Traditional Values", f"{traditional_avg:.0%}", help="Value customs and established beliefs")
+
+            st.markdown("---")
+
+            st.markdown("**Messaging Alignment:**")
+            st.write("• **Learners** → Innovation & Technology")
+            st.write("• **Adventurers** → Exploration & Discovery")
+            st.write("• **Traditionalists** → Heritage & Reliability")
+
+        st.markdown("---")
+
+        # Market comparison chart
+        st.markdown("### 🌍 Market Comparison")
+        st.caption("Psychographic variations across UK, Spain, Germany, and Poland")
+
+        # Reshape data for grouped bar chart
+        market_data = []
+        for _, row in psycho_df.iterrows():
+            for market in ['UK', 'Spain', 'Germany', 'Poland']:
+                market_data.append({
+                    'Statement': row['statement'],
+                    'Category': row['category'],
+                    'Market': market,
+                    'Agreement': row[f'{market}_percent']
+                })
+
+        market_df = pd.DataFrame(market_data)
+
+        fig_markets = px.bar(
+            market_df,
+            x='Statement',
+            y='Agreement',
+            color='Market',
+            barmode='group',
+            title='Psychographic Profiles by Market',
+            color_discrete_map={
+                'UK': '#E91E63',
+                'Spain': '#FF9800',
+                'Germany': '#2196F3',
+                'Poland': '#9C27B0'
+            },
+            hover_data={'Agreement': ':.0%'}
+        )
+
+        fig_markets.update_layout(
+            yaxis_tickformat='.0%',
+            yaxis_title='% Agreement',
+            xaxis_title='',
+            height=450,
+            xaxis_tickangle=-45
+        )
+
+        st.plotly_chart(fig_markets, use_container_width=True, config=get_standard_chart_config())
+
+        # Market insights
+        st.markdown("#### 💡 Market-Specific Insights")
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.success("**🇪🇸 Spain: Adventure Leaders**")
+            st.write("• Highest on 'challenges, novelty, change' (45%)")
+            st.write("• Strong sense of adventure (38%)")
+            st.write("• **Strategy:** Emphasize exploration, energy, innovation")
+            st.write("• **Element Alignment:** Sonic (energetic), Emerald Green (vibrant)")
+
+            st.info("**🇬🇧 UK: Balanced Profile**")
+            st.write("• Strongest sense of adventure (43%)")
+            st.write("• Balanced across all mindsets")
+            st.write("• **Strategy:** Multi-faceted messaging")
+            st.write("• **Element Alignment:** Full portfolio utilization")
+
+        with col2:
+            st.info("**🇵🇱 Poland: Tradition & Learning**")
+            st.write("• Highest on traditional values (46%)")
+            st.write("• Strong learning orientation (47%)")
+            st.write("• **Strategy:** Heritage + progress narrative")
+            st.write("• **Element Alignment:** Symbol (heritage), Wordmark (clarity)")
+
+            st.warning("**🇩🇪 Germany: Pragmatic**")
+            st.write("• Lowest on tradition (34%)")
+            st.write("• Moderate across all mindsets")
+            st.write("• **Strategy:** Rational benefits, practical value")
+            st.write("• **Element Alignment:** Tagline (functional), Type (utilitarian)")
+
+        st.markdown("---")
+
+        # SECTION 2: MARKET PERSONALITY PROFILES (Radar Charts)
+        st.markdown("### 🎯 Market Personality Profiles")
+        st.caption("Radar charts comparing psychographic fingerprints across markets")
+
+        # Create radar charts for each market
+        markets = ['UK', 'Spain', 'Germany', 'Poland']
+        statements = [row['statement'] for _, row in psycho_df.iterrows()]
+
+        fig_radar = go.Figure()
+
+        colors = {
+            'UK': '#E91E63',
+            'Spain': '#FF9800',
+            'Germany': '#2196F3',
+            'Poland': '#9C27B0'
+        }
+
+        for market in markets:
+            values = [row[f'{market}_percent'] for _, row in psycho_df.iterrows()]
+            # Close the radar
+            values_closed = values + [values[0]]
+            statements_closed = statements + [statements[0]]
+
+            fig_radar.add_trace(go.Scatterpolar(
+                r=values_closed,
+                theta=statements_closed,
+                fill='toself',
+                name=market,
+                line=dict(color=colors[market], width=2),
+                marker=dict(size=8)
+            ))
+
+        fig_radar.update_layout(
+            polar=dict(
+                radialaxis=dict(
+                    visible=True,
+                    range=[0, 0.5],
+                    tickformat='.0%'
+                )
+            ),
+            showlegend=True,
+            title="Market Personality Comparison",
+            height=600
+        )
+
+        st.plotly_chart(fig_radar, use_container_width=True, config=get_standard_chart_config())
+
+        st.markdown("**📊 Reading the Radar Chart:**")
+        st.write("• **Larger shapes** = Higher agreement across multiple dimensions")
+        st.write("• **Spikes** = Distinctive strength in specific psychographic")
+        st.write("• **Shape differences** = Opportunity for market-specific messaging")
+
+        st.markdown("---")
+
+        # SECTION 3: PSYCHOGRAPHICS × RECOGNITION
+        st.markdown("### 🔗 Psychographics × Recognition Analysis")
+        st.caption("Do personality types recognize Škoda differently?")
+
+        st.info("""
+💡 **About This Analysis:**
+This section would ideally show:
+- Recognition rates by psychographic segment (e.g., "Do adventure-seekers recognize Sonic more?")
+- Brand familiarity by mindset
+- Element affinity by personality type
+
+**Data Limitation:** The current research file provides aggregate psychographic data but doesn't include cross-tabulations with element recognition at the individual respondent level. To unlock this analysis, we would need access to the raw survey data (individual responses) to correlate psychographic selections with recognition patterns.
+        """)
+
+        st.warning("""
+⚠️ **Implementation Note:**
+To build this section, we need:
+1. **Raw survey data** linking respondent IDs to both QD04 (psychographics) and Q09-Q25 (element recognition)
+2. **Cross-tabulation** to calculate:
+   - Recognition rate for Symbol among "adventure-seekers" vs "learning-oriented"
+   - Average elements recognized by psychographic profile
+   - Most effective element per mindset segment
+
+**Next Steps:** Extract individual-level data from `2025-10-06 P045556 - Saffron Brand Assets - Final - V2 - Private.xlsx` (Data1 sheet) to enable this analysis.
+        """)
+
+        # Placeholder visualization showing what this could look like
+        with st.expander("📊 Preview: What This Analysis Could Show"):
+            st.markdown("""
+**Example Insights (Illustrative Only):**
+
+| Psychographic Segment | Sample Size | Avg Recognition | Top Element | Recognition Pattern |
+|----------------------|-------------|-----------------|-------------|---------------------|
+| Learning-Oriented    | 940 (47%)   | 4.2 elements    | Symbol      | Early recognition   |
+| Adventure-Seeking    | 789 (39%)   | 3.8 elements    | Sonic       | Sensory-driven      |
+| Traditional Values   | 815 (41%)   | 3.5 elements    | Wordmark    | Text-focused        |
+
+**Strategic Application:**
+- **Target "Learners" with Symbol** → Heritage + innovation narrative
+- **Target "Adventurers" with Sonic** → Energetic, multi-sensory experiences
+- **Target "Traditionalists" with Wordmark + Symbol** → Clarity + established trust
+
+*Note: These are example data patterns for illustration purposes only.*
+            """)
 
 
 # =====================================================================
