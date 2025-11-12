@@ -1,0 +1,58 @@
+{
+  "overall": {
+    "total_respondents": 2011,
+    "recognized": 844,
+    "recognition_rate": 0.4196916956737941,
+    "avg_elements_shown": 4.773247140726007
+  },
+  "by_segment": [
+    {
+      "segment": "Learning-Oriented",
+      "qd_col": "QD04_1",
+      "sample_size": 940,
+      "sample_pct": 0.4674291397314769,
+      "recognition_rate": 0.4563829787234043,
+      "non_segment_recognition_rate": 0.38748832866479926,
+      "recognition_lift": 0.06889465005860501,
+      "avg_elements_shown": 4.70531914893617,
+      "non_segment_avg_elements": 4.832866479925303,
+      "elements_difference": -0.12754733098913285
+    },
+    {
+      "segment": "Adventure-Seeking (Challenges)",
+      "qd_col": "QD04_2",
+      "sample_size": 808,
+      "sample_pct": 0.4017901541521631,
+      "recognition_rate": 0.45792079207920794,
+      "non_segment_recognition_rate": 0.3940149625935162,
+      "recognition_lift": 0.06390582948569173,
+      "avg_elements_shown": 4.669554455445544,
+      "non_segment_avg_elements": 4.842892768079801,
+      "elements_difference": -0.17333831263425648
+    },
+    {
+      "segment": "Adventure-Seeking (Strong Sense)",
+      "qd_col": "QD04_3",
+      "sample_size": 770,
+      "sample_pct": 0.382894082545997,
+      "recognition_rate": 0.4090909090909091,
+      "non_segment_recognition_rate": 0.4262691377921031,
+      "recognition_lift": -0.01717822870119401,
+      "avg_elements_shown": 4.8194805194805195,
+      "non_segment_avg_elements": 4.744560838033844,
+      "elements_difference": 0.07491968144667549
+    },
+    {
+      "segment": "Traditional-Values",
+      "qd_col": "QD04_4",
+      "sample_size": 815,
+      "sample_pct": 0.4052710094480358,
+      "recognition_rate": 0.4588957055214724,
+      "non_segment_recognition_rate": 0.39297658862876256,
+      "recognition_lift": 0.06591911689270985,
+      "avg_elements_shown": 4.6723926380368095,
+      "non_segment_avg_elements": 4.841973244147157,
+      "elements_difference": -0.16958060611034753
+    }
+  ]
+}

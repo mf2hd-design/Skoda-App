@@ -182,6 +182,17 @@ except Exception as e:
     st.error(f"Error loading QD04 psychographics data: {e}")
     qd04_psychographics = []
 
+# Load Psychographics × Recognition Cross-tab
+try:
+    if os.path.exists('psychographics_recognition_crosstab.json'):
+        with open('psychographics_recognition_crosstab.json', 'r', encoding='utf-8') as f:
+            psycho_recognition_crosstab = json.load(f)
+    else:
+        psycho_recognition_crosstab = None
+except Exception as e:
+    st.error(f"Error loading psychographics recognition cross-tab: {e}")
+    psycho_recognition_crosstab = None
+
 from comms_data import comms_audit_data
 
 # --- Brand Elements ---
@@ -6785,45 +6796,156 @@ Respondents were asked "Which of the following statements apply to you?" and cou
         st.markdown("### 🔗 Psychographics × Recognition Analysis")
         st.caption("Do personality types recognize Škoda differently?")
 
-        st.info("""
-💡 **About This Analysis:**
-This section would ideally show:
-- Recognition rates by psychographic segment (e.g., "Do adventure-seekers recognize Sonic more?")
-- Brand familiarity by mindset
-- Element affinity by personality type
+        if psycho_recognition_crosstab:
+            st.success("""
+✅ **Real Data Analysis:**
+This section shows recognition patterns based on individual-level survey data, linking psychographic profiles to brand recognition performance.
+            """)
 
-**Data Limitation:** The current research file provides aggregate psychographic data but doesn't include cross-tabulations with element recognition at the individual respondent level. To unlock this analysis, we would need access to the raw survey data (individual responses) to correlate psychographic selections with recognition patterns.
-        """)
+            # Extract data
+            overall = psycho_recognition_crosstab['overall']
+            segments = psycho_recognition_crosstab['by_segment']
 
-        st.warning("""
-⚠️ **Implementation Note:**
-To build this section, we need:
-1. **Raw survey data** linking respondent IDs to both QD04 (psychographics) and Q09-Q25 (element recognition)
-2. **Cross-tabulation** to calculate:
-   - Recognition rate for Symbol among "adventure-seekers" vs "learning-oriented"
-   - Average elements recognized by psychographic profile
-   - Most effective element per mindset segment
+            # Overall context
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("Total Sample", f"{overall['total_respondents']:,}", help="Survey respondents")
+            with col2:
+                st.metric("Overall Recognition", f"{overall['recognition_rate']:.1%}", help="% who recognized Škoda")
+            with col3:
+                st.metric("Avg Elements Shown", f"{overall['avg_elements_shown']:.2f}", help="Elements shown before recognition")
 
-**Next Steps:** Extract individual-level data from `2025-10-06 P045556 - Saffron Brand Assets - Final - V2 - Private.xlsx` (Data1 sheet) to enable this analysis.
-        """)
+            st.markdown("---")
 
-        # Placeholder visualization showing what this could look like
-        with st.expander("📊 Preview: What This Analysis Could Show"):
-            st.markdown("""
-**Example Insights (Illustrative Only):**
+            # Recognition by psychographic segment
+            st.markdown("#### 📊 Recognition Rates by Psychographic Segment")
 
-| Psychographic Segment | Sample Size | Avg Recognition | Top Element | Recognition Pattern |
-|----------------------|-------------|-----------------|-------------|---------------------|
-| Learning-Oriented    | 940 (47%)   | 4.2 elements    | Symbol      | Early recognition   |
-| Adventure-Seeking    | 789 (39%)   | 3.8 elements    | Sonic       | Sensory-driven      |
-| Traditional Values   | 815 (41%)   | 3.5 elements    | Wordmark    | Text-focused        |
+            # Create comparison dataframe
+            segment_comparison = []
+            for seg in segments:
+                segment_comparison.append({
+                    'Segment': seg['segment'],
+                    'Sample Size': seg['sample_size'],
+                    'Sample %': seg['sample_pct'],
+                    'Recognition Rate': seg['recognition_rate'],
+                    'vs Non-Segment': seg['non_segment_recognition_rate'],
+                    'Lift': seg['recognition_lift'],
+                    'Avg Elements': seg['avg_elements_shown']
+                })
 
-**Strategic Application:**
-- **Target "Learners" with Symbol** → Heritage + innovation narrative
-- **Target "Adventurers" with Sonic** → Energetic, multi-sensory experiences
-- **Target "Traditionalists" with Wordmark + Symbol** → Clarity + established trust
+            comp_df = pd.DataFrame(segment_comparison)
 
-*Note: These are example data patterns for illustration purposes only.*
+            # Bar chart showing recognition rates
+            fig_recog = go.Figure()
+
+            # Add segment recognition bars
+            fig_recog.add_trace(go.Bar(
+                x=comp_df['Segment'],
+                y=comp_df['Recognition Rate'],
+                name='Segment Recognition',
+                marker_color='#4CAF50',
+                text=comp_df['Recognition Rate'].apply(lambda x: f'{x:.1%}'),
+                textposition='outside',
+                hovertemplate='<b>%{x}</b><br>Recognition: %{y:.1%}<extra></extra>'
+            ))
+
+            # Add non-segment comparison bars
+            fig_recog.add_trace(go.Bar(
+                x=comp_df['Segment'],
+                y=comp_df['vs Non-Segment'],
+                name='Non-Segment Recognition',
+                marker_color='#FFC107',
+                text=comp_df['vs Non-Segment'].apply(lambda x: f'{x:.1%}'),
+                textposition='outside',
+                hovertemplate='<b>%{x}</b><br>Recognition: %{y:.1%}<extra></extra>'
+            ))
+
+            # Add overall average line
+            fig_recog.add_hline(
+                y=overall['recognition_rate'],
+                line_dash="dash",
+                line_color="red",
+                annotation_text=f"Overall Average ({overall['recognition_rate']:.1%})",
+                annotation_position="top right"
+            )
+
+            fig_recog.update_layout(
+                title='Recognition Rates: Segment vs Non-Segment',
+                yaxis_tickformat='.0%',
+                yaxis_title='Recognition Rate',
+                xaxis_title='Psychographic Segment',
+                height=450,
+                barmode='group',
+                xaxis_tickangle=-15
+            )
+
+            st.plotly_chart(fig_recog, use_container_width=True, config=get_standard_chart_config())
+
+            # Insights table
+            st.markdown("#### 💡 Key Findings")
+
+            # Format and display table
+            display_df = comp_df.copy()
+            display_df['Sample Size'] = display_df['Sample Size'].apply(lambda x: f"{x:,}")
+            display_df['Sample %'] = display_df['Sample %'].apply(lambda x: f"{x:.1%}")
+            display_df['Recognition Rate'] = display_df['Recognition Rate'].apply(lambda x: f"{x:.1%}")
+            display_df['vs Non-Segment'] = display_df['vs Non-Segment'].apply(lambda x: f"{x:.1%}")
+            display_df['Lift'] = display_df['Lift'].apply(lambda x: f"{x:+.1%}")
+            display_df['Avg Elements'] = display_df['Avg Elements'].apply(lambda x: f"{x:.2f}")
+
+            st.dataframe(display_df, use_container_width=True, hide_index=True)
+
+            # Strategic insights
+            st.markdown("---")
+            st.markdown("#### 🎯 Strategic Implications")
+
+            col1, col2 = st.columns(2)
+
+            with col1:
+                st.success("**High-Recognition Segments (+6-7% lift):**")
+                st.write("• **Learning-Oriented** (45.6% vs 38.7%)")
+                st.write("  → +6.9% lift - Engage with innovation, technology, progress messaging")
+                st.write("  → Recognize faster (4.71 vs 4.83 elements)")
+                st.write("")
+                st.write("• **Traditional Values** (45.9% vs 39.3%)")
+                st.write("  → +6.6% lift - Appeal to heritage, reliability, established trust")
+                st.write("  → Recognize faster (4.67 vs 4.84 elements)")
+                st.write("")
+                st.write("• **Adventure-Seeking (Challenges)** (45.8% vs 39.4%)")
+                st.write("  → +6.4% lift - Emphasize novelty, excitement, bold choices")
+                st.write("  → Recognize faster (4.67 vs 4.84 elements)")
+
+            with col2:
+                st.info("**Recognition Pattern Insights:**")
+                st.write("**1. Learning-Oriented consumers are most brand-aware**")
+                st.write("   • 6.9% higher recognition than non-learners")
+                st.write("   • Require fewer elements (4.71 vs 4.83)")
+                st.write("   • Strategy: Lead with innovation & technology")
+                st.write("")
+                st.write("**2. Traditionalists recognize quickly**")
+                st.write("   • 6.6% lift despite valuing heritage")
+                st.write("   • 4.67 elements needed (lowest)")
+                st.write("   • Strategy: Symbol + heritage messaging")
+                st.write("")
+                st.write("**3. 'Strong Adventure' segment underperforms**")
+                st.write("   • -1.7% vs non-segment (only negative)")
+                st.write("   • Requires most elements (4.82)")
+                st.write("   • Strategy: May need sensory/experiential approach")
+
+            st.markdown("---")
+
+            st.info("""
+**🔍 Methodology Note:**
+- **Recognition**: Respondents correctly identified Škoda after seeing sequential brand elements
+- **Lift**: Percentage point difference between segment and non-segment recognition rates
+- **Avg Elements**: Number of elements shown before correct brand identification
+- **Sample**: 2,011 respondents from UK, Spain, Germany, Poland (P045556 study)
+            """)
+
+        else:
+            st.warning("""
+⚠️ **Data Not Available:**
+Psychographics × Recognition cross-tabulation data not found. Please ensure `psychographics_recognition_crosstab.json` exists in the app directory.
             """)
 
 
