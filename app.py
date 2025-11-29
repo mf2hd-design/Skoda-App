@@ -1074,7 +1074,7 @@ with tab1:
     render_tldr_box(
         "Key Insights at a Glance",
         [
-            f"<b>{most_recognized['Element']}</b> demonstrates the highest performance: {most_recognized['Recognition']:.0%} recognition and {most_recognized['Uniqueness']:.0%} uniqueness",
+            f"<b>{most_recognized['Element']}</b> demonstrates the highest performance: {most_recognized['Recognition']:.0%} recognition, {research_data[most_recognized['Element']]['attribution']:.0%} attribution, and {most_recognized['Uniqueness']:.0%} uniqueness",
             f"<b>€{total_investment:,.0f}</b> total attributed investment across 9 brand elements with recognition density ranging from {worst_density['Recognition Density']:.2f} to {best_density['Recognition Density']:.2f} per €1M (see maturity context)",
             f"<b>Recognition range:</b> {lowest_rec['Recognition']:.0%} ({lowest_rec['Element']}) to {most_recognized['Recognition']:.0%} ({most_recognized['Element']}) showing varied recognition levels"
         ]
@@ -1214,6 +1214,7 @@ with tab1:
             with cols[idx]:
                 st.markdown(f"### {row['Element']}")
                 st.metric("Recognition", f"{row['Recognition']:.0%}")
+                st.metric("Attribution", f"{row['Attribution']:.0%}")
                 st.metric("Uniqueness", f"{row['Uniqueness']:.0%}")
                 st.metric("Net Sentiment", f"{row['Net Sentiment']:+.1%}")
                 st.metric("Investment", f"€{row['Total Investment']:,.0f}")
@@ -1317,9 +1318,12 @@ with tab1:
     with st.expander("📊 **Complete Tier Overview** (Click to expand)", expanded=False):
         tier_summary = []
         for _, row in master_df.iterrows():
+            # Get attribution from research_data
+            element_data = research_data[row['Element']]
             tier_summary.append({
                 'Element': row['Element'],
                 'Recognition': row['Recognition'],
+                'Attribution': element_data['attribution'],
                 'Uniqueness': row['Uniqueness'],
                 'Net Sentiment': row['Net Sentiment'],
                 'Density': row['Recognition Density'],
@@ -1331,11 +1335,12 @@ with tab1:
         st.dataframe(
             tier_df.style.format({
                 'Recognition': '{:.0%}',
+                'Attribution': '{:.0%}',
                 'Uniqueness': '{:.0%}',
                 'Net Sentiment': '{:+.1%}',
                 'Density': '{:.2f}',
                 'Investment': '€{:,.0f}'
-            }).background_gradient(subset=['Recognition', 'Uniqueness'], cmap='RdYlGn'),
+            }).background_gradient(subset=['Recognition', 'Attribution', 'Uniqueness'], cmap='RdYlGn'),
             use_container_width=True,
             hide_index=True
         )
@@ -1353,7 +1358,8 @@ with tab1:
 **Top Performers:**
 """
     for i, row in top_3.iterrows():
-        takeaways_text += f"- **{row['Element']}:** {row['Recognition']:.0%} recognition, {row['Uniqueness']:.0%} uniqueness, {row['Recognition Density']:.2f} recognition density\n"
+        element_data = research_data[row['Element']]
+        takeaways_text += f"- **{row['Element']}:** {row['Recognition']:.0%} recognition, {element_data['attribution']:.0%} attribution, {row['Uniqueness']:.0%} uniqueness\n"
 
     takeaways_text += f"""
 **Portfolio Characteristics:**
@@ -1375,20 +1381,23 @@ with tab1:
 
         display_df = master_df.copy()
 
+        # Add Attribution from research_data
+        display_df['Attribution'] = display_df['Element'].apply(lambda x: research_data[x]['attribution'])
+
         # Add calculated columns
         display_df['Brand Equity Score'] = display_df['Recognition'] * display_df['Uniqueness']
 
         st.dataframe(
-            display_df[['Element', 'Recognition', 'Uniqueness', 'Overall Usage',
+            display_df[['Element', 'Recognition', 'Attribution', 'Uniqueness', 'Overall Usage',
                        'Number of Ads', 'Total Investment', 'Average per Ad', 'Recognition Density', 'Net Sentiment', 'Brand Equity Score']]
             .set_index('Element')
             .T.style
-            .format("{:.1%}", subset=(pd.IndexSlice[['Recognition', 'Uniqueness', 'Overall Usage', 'Net Sentiment']], slice(None)))
+            .format("{:.1%}", subset=(pd.IndexSlice[['Recognition', 'Attribution', 'Uniqueness', 'Overall Usage', 'Net Sentiment']], slice(None)))
             .format("{:.0f}", subset=(pd.IndexSlice[['Number of Ads']], slice(None)))
             .format("€{:,.0f}", subset=(pd.IndexSlice[['Total Investment', 'Average per Ad']], slice(None)))
             .format("{:.2f}", subset=(pd.IndexSlice[['Recognition Density']], slice(None)))
             .format("{:.3f}", subset=(pd.IndexSlice[['Brand Equity Score']], slice(None)))
-            .background_gradient(cmap='RdYlGn', axis=1, subset=(pd.IndexSlice[['Recognition', 'Uniqueness', 'Net Sentiment']], slice(None))),
+            .background_gradient(cmap='RdYlGn', axis=1, subset=(pd.IndexSlice[['Recognition', 'Attribution', 'Uniqueness', 'Net Sentiment']], slice(None))),
             use_container_width=True
         )
 
@@ -1516,9 +1525,10 @@ Can be used to supplement or potentially replace the brand name in advertising. 
 **Why:** Strong distinctive assets that consumers both recognize AND attribute to Škoda—but require ongoing investment to maintain.
             """)
             for idx, row in top_right.iterrows():
+                element_data = research_data[row['Element']]
                 st.success(f"""
 **{row['Element']}:**
-- {row['Recognition']:.0%} recognition | {row['Uniqueness']:.0%} uniqueness
+- {row['Recognition']:.0%} recognition | {element_data['attribution']:.0%} attribution | {row['Uniqueness']:.0%} uniqueness
 - €{row['Total Investment']:,.0f} invested ({(row['Total Investment'] / equity_matrix_df['Total Investment'].sum()) * 100:.0f}% of portfolio) | {row['Recognition Density']:.2f} recognition density
 - **Usage:** {row['Overall Usage']:.0%} of campaigns | **Sentiment:** {row['Net Sentiment']:+.1%}
 - **Maintenance Required:** Continue consistent usage to prevent decay
@@ -1540,9 +1550,11 @@ Not known at all in the market. Needs considerable work to develop any value.
 **Decision Point:** Evaluate whether investment to build these assets is worthwhile, or if resources should be redirected to strengthen existing distinctive assets.
             """)
             for idx, row in bottom_left.iterrows():
+                element_data = research_data[row['Element']]
                 st.info(f"""
 **{row['Element']}:**
 - {row['Recognition']:.0%} recognition (below median)
+- {element_data['attribution']:.0%} attribution
 - {row['Uniqueness']:.0%} uniqueness (below median)
 - €{row['Total Investment']:,.0f} invested ({(row['Total Investment'] / equity_matrix_df['Total Investment'].sum()) * 100:.0f}% of portfolio) | {row['Recognition Density']:.2f} recognition density
 - **Usage:** {row['Overall Usage']:.0%} of campaigns
@@ -1562,10 +1574,12 @@ Has potential but needs wider, more consistent use and linkage to the brand name
 **Why:** Strong uniqueness but low recognition—when people see it they uniquely associate it with Škoda (not competitors), it just needs more exposure.
             """)
             for idx, row in bottom_right.iterrows():
+                element_data = research_data[row['Element']]
                 st.warning(f"""
 **{row['Element']}:**
 - {row['Uniqueness']:.0%} uniqueness (above median) ✅
 - {row['Recognition']:.0%} recognition (below median)
+- {element_data['attribution']:.0%} attribution
 - €{row['Total Investment']:,.0f} investment | {row['Recognition Density']:.2f} recognition density
 - **Usage:** {row['Overall Usage']:.0%} of campaigns
 - **Opportunity:** Scale up usage to convert distinctive potential into recognition
@@ -2573,7 +2587,7 @@ with tab3:
         "Key Insights at a Glance",
         [
             f"<b>Recognition Density Leaders:</b> {best_density_elem['Element']} shows highest recognition density at {best_density_elem['Recognition Density']:.2f} per €1M (directional indicator - see maturity context)",
-            f"<b>Brand Equity Champion:</b> {best_equity_elem['Element']} delivers strongest combined recognition ({best_equity_elem['Recognition']:.0%}) and uniqueness ({best_equity_elem['Uniqueness']:.0%})",
+            f"<b>Brand Equity Champion:</b> {best_equity_elem['Element']} delivers strongest combined recognition ({best_equity_elem['Recognition']:.0%}), attribution ({research_data[best_equity_elem['Element']]['attribution']:.0%}), and uniqueness ({best_equity_elem['Uniqueness']:.0%})",
             f"<b>Portfolio Distribution:</b> 9 elements analyzed across investment, efficiency indicators, and brand equity dimensions"
         ]
     )
@@ -2909,22 +2923,22 @@ A €1M campaign featuring 5 elements attributes €200K to each element. This e
             if len(icons) > 0:
                 st.success(f"**High/High ({len(icons)})**")
                 for _, row in icons.iterrows():
-                    st.write(f"• {row['Element']}: {row['Recognition']:.0%} | {row['Uniqueness']:.0%}")
+                    st.write(f"• {row['Element']}: {row['Recognition']:.0%} | {research_data[row['Element']]['attribution']:.0%} | {row['Uniqueness']:.0%}")
 
             if len(generics) > 0:
                 st.warning(f"**High/Lower ({len(generics)})**")
                 for _, row in generics.iterrows():
-                    st.write(f"• {row['Element']}: {row['Recognition']:.0%} | {row['Uniqueness']:.0%}")
+                    st.write(f"• {row['Element']}: {row['Recognition']:.0%} | {research_data[row['Element']]['attribution']:.0%} | {row['Uniqueness']:.0%}")
 
             if len(hidden) > 0:
                 st.info(f"**Lower/High ({len(hidden)})**")
                 for _, row in hidden.iterrows():
-                    st.write(f"• {row['Element']}: {row['Recognition']:.0%} | {row['Uniqueness']:.0%}")
+                    st.write(f"• {row['Element']}: {row['Recognition']:.0%} | {research_data[row['Element']]['attribution']:.0%} | {row['Uniqueness']:.0%}")
 
             if len(weak) > 0:
                 st.error(f"**Lower/Lower ({len(weak)})**")
                 for _, row in weak.iterrows():
-                    st.write(f"• {row['Element']}: {row['Recognition']:.0%} | {row['Uniqueness']:.0%}")
+                    st.write(f"• {row['Element']}: {row['Recognition']:.0%} | {research_data[row['Element']]['attribution']:.0%} | {row['Uniqueness']:.0%}")
 
         st.markdown("---")
 
@@ -3292,28 +3306,28 @@ A €1M campaign featuring 5 elements attributes €200K to each element. This e
             st.success(f"**High/High ⭐** ({len(high_high)})")
             for idx, row in high_high.iterrows():
                 st.write(f"• **{row['Element']}**")
-                st.caption(f"{row['Recognition']:.0%} rec | {row['Uniqueness']:.0%} uniq")
+                st.caption(f"{row['Recognition']:.0%} rec | {research_data[row['Element']]['attribution']:.0%} attr | {row['Uniqueness']:.0%} uniq")
 
         with col2:
             high_lower = master_df_quad[master_df_quad['Category'] == 'High/Lower 🔵']
             st.info(f"**High/Lower 🔵** ({len(high_lower)})")
             for idx, row in high_lower.iterrows():
                 st.write(f"• **{row['Element']}**")
-                st.caption(f"{row['Recognition']:.0%} rec | {row['Uniqueness']:.0%} uniq")
+                st.caption(f"{row['Recognition']:.0%} rec | {research_data[row['Element']]['attribution']:.0%} attr | {row['Uniqueness']:.0%} uniq")
 
         with col3:
             lower_high = master_df_quad[master_df_quad['Category'] == 'Lower/High 💎']
             st.warning(f"**Lower/High 💎** ({len(lower_high)})")
             for idx, row in lower_high.iterrows():
                 st.write(f"• **{row['Element']}**")
-                st.caption(f"{row['Recognition']:.0%} rec | {row['Uniqueness']:.0%} uniq")
+                st.caption(f"{row['Recognition']:.0%} rec | {research_data[row['Element']]['attribution']:.0%} attr | {row['Uniqueness']:.0%} uniq")
 
         with col4:
             lower_lower = master_df_quad[master_df_quad['Category'] == 'Lower/Lower ⚪']
             st.error(f"**Lower/Lower ⚪** ({len(lower_lower)})")
             for idx, row in lower_lower.iterrows():
                 st.write(f"• **{row['Element']}**")
-                st.caption(f"{row['Recognition']:.0%} rec | {row['Uniqueness']:.0%} uniq")
+                st.caption(f"{row['Recognition']:.0%} rec | {research_data[row['Element']]['attribution']:.0%} attr | {row['Uniqueness']:.0%} uniq")
 
     # ========== SUB-TAB 3: COMBINATION EFFECTIVENESS ==========
     with subtab3:
@@ -4618,6 +4632,7 @@ lifetime recognition built over years, not just recent spend.
                     col_a, col_b, col_c = st.columns(3)
                     with col_a:
                         st.metric("Recognition", f"{row['Recognition']:.0%}")
+                        st.metric("Attribution", f"{research_data[row['Element']]['attribution']:.0%}")
                         st.metric("Uniqueness", f"{row['Uniqueness']:.0%}")
                     with col_b:
                         st.metric("Brand Equity", f"{row['Brand Equity Score']:.3f}")
@@ -4649,6 +4664,7 @@ lifetime recognition built over years, not just recent spend.
                     st.markdown("**Performance Strengths:**")
                     if row['Recognition'] > 0.35:
                         st.write(f"• ✅ Recognition at {row['Recognition']:.0%} (above 35%)")
+                    st.write(f"• Attribution at {research_data[row['Element']]['attribution']:.0%}")
                     if row['Uniqueness'] > 0.25:
                         st.write(f"• ✅ Uniqueness at {row['Uniqueness']:.0%} (above 25%)")
                     st.write(f"• Brand Equity Score: {row['Brand Equity Score']:.3f}")
@@ -4805,6 +4821,7 @@ with tab5:
                     st.metric("Uniqueness Score", f"{row['Uniqueness']:.0%}")
                     st.metric("Current Usage", f"{row['Overall Usage']:.0%}")
                     st.metric("Recognition", f"{row['Recognition']:.0%}")
+                    st.metric("Attribution", f"{research_data[row['Element']]['attribution']:.0%}")
 
                 with col2:
                     st.metric("Brand Equity", f"{(row['Recognition'] * row['Uniqueness']):.3f}")
