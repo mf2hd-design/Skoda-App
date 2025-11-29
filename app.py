@@ -223,63 +223,63 @@ SURVEY_BASE = 2011  # Total respondents across UK, Spain, Germany, Poland
 # --- VERIFIED Research Data from P045556 Study ---
 research_data = {
     'Electric Green': {
-        'recognition': 0.376, 'uniqueness': 0.174,
+        'recognition': 0.376, 'attribution': 0.1741, 'uniqueness': 0.4442,
         'bold': 0.490, 'stylish': 0.463, 'modern': 0.499, 'simple': 0.502,
         'human': 0.452, 'exciting': 0.450, 'playful': 0.443,
         'positive_sentiment': 0.471, 'negative_sentiment': 0.186,
         'net_sentiment': 0.285
     },
     'Emerald Green': {
-        'recognition': 0.393, 'uniqueness': 0.195,
+        'recognition': 0.393, 'attribution': 0.1948, 'uniqueness': 0.4612,
         'bold': 0.493, 'stylish': 0.473, 'modern': 0.503, 'simple': 0.513,
         'human': 0.453, 'exciting': 0.460, 'playful': 0.453,
         'positive_sentiment': 0.492, 'negative_sentiment': 0.184,
         'net_sentiment': 0.308
     },
     'Type': {
-        'recognition': 0.365, 'uniqueness': 0.169,
+        'recognition': 0.365, 'attribution': 0.1692, 'uniqueness': 0.4187,
         'bold': 0.514, 'stylish': 0.476, 'modern': 0.516, 'simple': 0.533,
         'human': 0.469, 'exciting': 0.482, 'playful': 0.475,
         'positive_sentiment': 0.462, 'negative_sentiment': 0.227,
         'net_sentiment': 0.235
     },
     'Tagline': {
-        'recognition': 0.383, 'uniqueness': 0.175,
+        'recognition': 0.383, 'attribution': 0.1750, 'uniqueness': 0.4131,
         'bold': 0.498, 'stylish': 0.478, 'modern': 0.507, 'simple': 0.527,
         'human': 0.494, 'exciting': 0.478, 'playful': 0.483,
         'positive_sentiment': 0.485, 'negative_sentiment': 0.152,
         'net_sentiment': 0.333
     },
     'Symbol': {
-        'recognition': 0.643, 'uniqueness': 0.385,
+        'recognition': 0.643, 'attribution': 0.3849, 'uniqueness': 0.7043,
         'bold': 0.488, 'stylish': 0.492, 'modern': 0.507, 'simple': 0.558,
         'human': 0.481, 'exciting': 0.476, 'playful': 0.489,
         'positive_sentiment': 0.501, 'negative_sentiment': 0.205,
         'net_sentiment': 0.296
     },
     'Hacek': {
-        'recognition': 0.362, 'uniqueness': 0.186,
+        'recognition': 0.362, 'attribution': 0.1859, 'uniqueness': 0.4640,
         'bold': 0.499, 'stylish': 0.476, 'modern': 0.506, 'simple': 0.525,
         'human': 0.480, 'exciting': 0.480, 'playful': 0.483,
         'positive_sentiment': 0.466, 'negative_sentiment': 0.225,
         'net_sentiment': 0.241
     },
     'Wordmark': {
-        'recognition': 0.456, 'uniqueness': 0.279,
+        'recognition': 0.456, 'attribution': 0.2795, 'uniqueness': 0.5347,
         'bold': 0.507, 'stylish': 0.472, 'modern': 0.504, 'simple': 0.547,
         'human': 0.475, 'exciting': 0.472, 'playful': 0.478,
         'positive_sentiment': 0.489, 'negative_sentiment': 0.223,
         'net_sentiment': 0.266
     },
     'Facets': {
-        'recognition': 0.414, 'uniqueness': 0.158,
+        'recognition': 0.414, 'attribution': 0.1582, 'uniqueness': 0.4130,
         'bold': 0.507, 'stylish': 0.493, 'modern': 0.516, 'simple': 0.526,
         'human': 0.471, 'exciting': 0.488, 'playful': 0.483,
         'positive_sentiment': 0.479, 'negative_sentiment': 0.168,
         'net_sentiment': 0.311
     },
     'Sonic': {
-        'recognition': 0.513, 'uniqueness': 0.227,
+        'recognition': 0.513, 'attribution': 0.1661, 'uniqueness': 0.4139,
         'bold': 0.490, 'stylish': 0.472, 'modern': 0.497, 'simple': 0.533,
         'human': 0.490, 'exciting': 0.477, 'playful': 0.480,
         'positive_sentiment': 0.505, 'negative_sentiment': 0.211,
@@ -494,9 +494,11 @@ MOBILE_STYLE = """
 
 # Glossary of Terms
 GLOSSARY = {
-    "Recognition": "How many people recognize this element - shows brand visibility and awareness",
-    "Uniqueness": "How many people know this belongs to Škoda (not competitors) - measures brand ownership strength",
-    "Brand Equity": "Recognition × Uniqueness - shows if an element is both famous AND identified as Škoda's",
+    "Recognition": "Q02: % who said 'Yes, I've seen this before' - measures exposure/familiarity (e.g., 37.6% for Electric Green)",
+    "Attribution": "Q05: % of ALL respondents who said 'Škoda' - measures brand identification (e.g., 17.4% for Electric Green = 20.2% saw it but didn't know it's Škoda's)",
+    "Uniqueness": "Q05: Škoda ÷ (Škoda + Other brands), excluding 'Don't Know' - measures distinctive ownership vs competitors (e.g., 44.4% for Electric Green = among those who gave an answer, 44.4% said Škoda not competitors)",
+    "Attribution Gap": "Recognition - Attribution - shows % who have seen the element but don't identify it as Škoda's",
+    "Brand Equity": "Recognition × Uniqueness - shows if an element is both seen AND uniquely owned by Škoda",
     "Brand Linkage": "How strongly people connect this element to Škoda - shows perceived brand ownership",
     "Top-of-Mind": "Words people think of first when they hear 'Škoda' - reveals unprompted brand associations",
     "Recognition Density": "Recognition percentage per €1M attributed spend - DIRECTIONAL INDICATOR only, NOT causal ROI. Compares current recognition to cumulative attributed investment. Heritage assets show inflated scores (see methodology notes)",
@@ -1074,7 +1076,7 @@ with tab1:
         [
             f"<b>{most_recognized['Element']}</b> demonstrates the highest performance: {most_recognized['Recognition']:.0%} recognition and {most_recognized['Uniqueness']:.0%} uniqueness",
             f"<b>€{total_investment:,.0f}</b> total attributed investment across 9 brand elements with recognition density ranging from {worst_density['Recognition Density']:.2f} to {best_density['Recognition Density']:.2f} per €1M (see maturity context)",
-            f"<b>Recognition range:</b> {lowest_rec['Recognition']:.0%} ({lowest_rec['Element']}) to {most_recognized['Recognition']:.0%} ({most_recognized['Element']}) showing varied brand awareness levels"
+            f"<b>Recognition range:</b> {lowest_rec['Recognition']:.0%} ({lowest_rec['Element']}) to {most_recognized['Recognition']:.0%} ({most_recognized['Element']}) showing varied recognition levels"
         ]
     )
 
@@ -1223,18 +1225,22 @@ with tab1:
         # Comparative analysis table
         st.markdown("#### 📊 Detailed Comparison")
 
-        comparison_table = comparison_df[['Element', 'Recognition', 'Uniqueness', 'Net Sentiment', 'Total Investment', 'Overall Usage', 'Recognition Density']].copy()
+        # Add Attribution column from research_data
+        comparison_df['Attribution'] = comparison_df['Element'].apply(lambda x: research_data[x]['attribution'])
+
+        comparison_table = comparison_df[['Element', 'Recognition', 'Attribution', 'Uniqueness', 'Net Sentiment', 'Total Investment', 'Overall Usage', 'Recognition Density']].copy()
         comparison_table = comparison_table.sort_values('Recognition', ascending=False)
 
         st.dataframe(
             comparison_table.style.format({
                 'Recognition': '{:.0%}',
+                'Attribution': '{:.0%}',
                 'Uniqueness': '{:.0%}',
                 'Net Sentiment': '{:+.1%}',
                 'Total Investment': '€{:,.0f}',
                 'Overall Usage': '{:.0%}',
                 'Recognition Density': '{:.2f}'
-            }).background_gradient(subset=['Recognition', 'Uniqueness', 'Recognition Density'], cmap='Greens'),
+            }).background_gradient(subset=['Recognition', 'Attribution', 'Uniqueness', 'Recognition Density'], cmap='Greens'),
             use_container_width=True,
             hide_index=True
         )
@@ -1400,7 +1406,7 @@ with tab1:
 
     # Distinctive Asset Grid
     render_section_header(
-        "Distinctive Asset Grid: Fame vs Uniqueness",
+        "Distinctive Asset Grid: Recognition vs Uniqueness",
         "Research-validated framework | Bubble size = First Recognition Trigger strength",
         color="#2196F3"
     )
@@ -1439,15 +1445,15 @@ with tab1:
             'First_Trigger_Strength': ':.1%'
         },
         color_continuous_scale='RdYlGn',
-        title="Fame vs. Uniqueness (Bubble Size = First Recognition Trigger)"
+        title="Recognition vs. Uniqueness (Bubble Size = First Recognition Trigger)"
     )
 
     # Apply standard styling
     fig_matrix = apply_standard_chart_styling(fig_matrix, "")
     fig_matrix.update_traces(textposition='top center', textfont_size=10)
     fig_matrix.update_layout(height=600)
-    fig_matrix.update_xaxes(title="Uniqueness (Brand Attribution)", tickformat='.0%')
-    fig_matrix.update_yaxes(title="Recognition (Fame)", tickformat='.0%')
+    fig_matrix.update_xaxes(title="Uniqueness (Škoda vs Competitors)", tickformat='.0%')
+    fig_matrix.update_yaxes(title="Recognition", tickformat='.0%')
 
     # Add quadrant lines
     median_rec = equity_matrix_df['Recognition'].median()
@@ -1472,24 +1478,28 @@ with tab1:
 
     with col_left:
         st.markdown("#### 🔴 Top-Left: AVOID")
-        st.caption("High Fame + Low Uniqueness")
+        st.caption("High Recognition + Low Uniqueness")
         if len(top_left) > 0:
             st.error("""
 **⚠️ Strategic Guidance:**
 Highly likely to evoke competitors, so best avoided. If it must be used, it needs a very strong direct brand accompaniment (Symbol, Wordmark).
 
-**Why:** High fame but low uniqueness means consumers recognize the element but don't strongly connect it to Škoda—making it a competitive risk.
+**Why:** High recognition (seen it) but low uniqueness means this element is NOT distinctive—consumers confuse it with competitors, making it a competitive risk.
             """)
             for idx, row in top_left.iterrows():
-                # Calculate attribution gap
-                attr_gap = row['Recognition'] - row['Uniqueness']
+                # Calculate attribution gap (Recognition - Attribution)
+                # Note: row['Uniqueness'] is now TRUE uniqueness, we need to get Attribution from the data
+                element_data = research_data[row['Element']]
+                attribution = element_data['attribution']
+                attr_gap = row['Recognition'] - attribution
 
                 st.warning(f"""
 **{row['Element']}:**
-- {row['Recognition']:.0%} fame (above median)
-- {row['Uniqueness']:.0%} uniqueness (below median)
+- {row['Recognition']:.0%} recognition (seen it before)
+- {attribution:.0%} attribution (said "Škoda")
+- {row['Uniqueness']:.0%} uniqueness (Škoda vs competitors)
 - **Attribution Gap:** {attr_gap:.1%} have seen it but don't know it's Škoda's
-- **Risk:** {((row['Recognition'] / row['Uniqueness']) if row['Uniqueness'] > 0 else 0):.1f}x fame-to-uniqueness ratio indicates competitor ambush potential
+- **Risk:** {((row['Recognition'] / row['Uniqueness']) if row['Uniqueness'] > 0 else 0):.1f}x recognition-to-uniqueness ratio indicates competitor confusion risk
 - €{row['Total Investment']:,.0f} invested | {row['Recognition Density']:.2f} recognition density
                 """)
         else:
@@ -1497,7 +1507,7 @@ Highly likely to evoke competitors, so best avoided. If it must be used, it need
 
     with col_right:
         st.markdown("#### 🟢 Top-Right: USE OR LOSE")
-        st.caption("High Fame + High Uniqueness")
+        st.caption("High Recognition + High Uniqueness")
         if len(top_right) > 0:
             st.success("""
 **✅ Strategic Guidance:**
@@ -1508,7 +1518,7 @@ Can be used to supplement or potentially replace the brand name in advertising. 
             for idx, row in top_right.iterrows():
                 st.success(f"""
 **{row['Element']}:**
-- {row['Recognition']:.0%} fame | {row['Uniqueness']:.0%} uniqueness
+- {row['Recognition']:.0%} recognition | {row['Uniqueness']:.0%} uniqueness
 - €{row['Total Investment']:,.0f} invested ({(row['Total Investment'] / equity_matrix_df['Total Investment'].sum()) * 100:.0f}% of portfolio) | {row['Recognition Density']:.2f} recognition density
 - **Usage:** {row['Overall Usage']:.0%} of campaigns | **Sentiment:** {row['Net Sentiment']:+.1%}
 - **Maintenance Required:** Continue consistent usage to prevent decay
@@ -1521,7 +1531,7 @@ Can be used to supplement or potentially replace the brand name in advertising. 
 
     with col_left:
         st.markdown("#### 🔵 Bottom-Left: IGNORE OR TEST")
-        st.caption("Low Fame + Low Uniqueness")
+        st.caption("Low Recognition + Low Uniqueness")
         if len(bottom_left) > 0:
             st.info("""
 **🔍 Strategic Guidance:**
@@ -1532,34 +1542,34 @@ Not known at all in the market. Needs considerable work to develop any value.
             for idx, row in bottom_left.iterrows():
                 st.info(f"""
 **{row['Element']}:**
-- {row['Recognition']:.0%} fame (below median)
+- {row['Recognition']:.0%} recognition (below median)
 - {row['Uniqueness']:.0%} uniqueness (below median)
 - €{row['Total Investment']:,.0f} invested ({(row['Total Investment'] / equity_matrix_df['Total Investment'].sum()) * 100:.0f}% of portfolio) | {row['Recognition Density']:.2f} recognition density
 - **Usage:** {row['Overall Usage']:.0%} of campaigns
-- **Assessment:** Requires significant investment to build awareness and attribution
+- **Assessment:** Requires significant investment to build recognition and attribution
                 """)
         else:
             st.info("No elements in this quadrant")
 
     with col_right:
         st.markdown("#### 🟡 Bottom-Right: INVEST POTENTIAL")
-        st.caption("Low Fame + High Uniqueness")
+        st.caption("Low Recognition + High Uniqueness")
         if len(bottom_right) > 0:
             st.warning("""
 **💡 Strategic Guidance:**
 Has potential but needs wider, more consistent use and linkage to the brand name. Monitor for competitor ambushing.
 
-**Why:** Strong distinctiveness but low awareness—these assets uniquely belong to Škoda in consumers' minds, they just need more exposure.
+**Why:** Strong uniqueness but low recognition—when people see it they uniquely associate it with Škoda (not competitors), it just needs more exposure.
             """)
             for idx, row in bottom_right.iterrows():
                 st.warning(f"""
 **{row['Element']}:**
 - {row['Uniqueness']:.0%} uniqueness (above median) ✅
-- {row['Recognition']:.0%} fame (below median)
+- {row['Recognition']:.0%} recognition (below median)
 - €{row['Total Investment']:,.0f} investment | {row['Recognition Density']:.2f} recognition density
 - **Usage:** {row['Overall Usage']:.0%} of campaigns
-- **Opportunity:** Scale up usage to convert distinctive potential into fame
-- **Risk:** Monitor for competitor use while awareness is building
+- **Opportunity:** Scale up usage to convert distinctive potential into recognition
+- **Risk:** Monitor for competitor use while recognition is building
                 """)
         else:
             st.info("No elements in this quadrant")
@@ -2775,7 +2785,7 @@ A €1M campaign featuring 5 elements attributes €200K to each element. This e
 
         # Matrix 2: Recognition vs Uniqueness
         st.markdown("#### 2️⃣ Recognition vs Uniqueness Matrix")
-        st.caption("Brand equity positioning across recognition (fame) and uniqueness (attribution)")
+        st.caption("Brand equity positioning across recognition (Q02: seen before) and uniqueness (Q05: Škoda vs competitors)")
 
         col1, col2 = st.columns([3, 1])
 
@@ -2819,7 +2829,7 @@ A €1M campaign featuring 5 elements attributes €200K to each element. This e
                 fig_equity.update_layout(
                     title='Recognition vs Uniqueness (Comparison Mode)',
                     xaxis_title="Uniqueness (Brand Attribution)",
-                    yaxis_title="Recognition (Fame)",
+                    yaxis_title="Recognition",
                     height=500,
                     showlegend=True
                 )
@@ -2846,7 +2856,7 @@ A €1M campaign featuring 5 elements attributes €200K to each element. This e
                     }
                 )
                 fig_equity.update_traces(textposition='top center')
-                fig_equity.update_layout(height=500, xaxis_title="Uniqueness (Brand Attribution)", yaxis_title="Recognition (Fame)")
+                fig_equity.update_layout(height=500, xaxis_title="Uniqueness (Brand Attribution)", yaxis_title="Recognition")
                 fig_equity.update_xaxes(tickformat='.0%')
                 fig_equity.update_yaxes(tickformat='.0%')
 
@@ -3324,11 +3334,27 @@ A €1M campaign featuring 5 elements attributes €200K to each element. This e
 This uses Savanta's **additive testing methodology** (P045556). Respondents saw brand elements **sequentially**
 (one at a time) and were asked at each step: *"Which brand do you think these elements belong to?"*
 
-**What "Recognition" Means:** Correct brand attribution (spontaneous identification as Škoda), not just exposure or familiarity.
+**Three Distinct Metrics (from Q02 and Q05):**
+
+1. **Recognition (Q02)**: "Have you seen this element before?"
+   - % who answered "Yes" (definitely or think so)
+   - Measures: Exposure and familiarity
+
+2. **Attribution (Q05)**: "Which brand does this belong to?"
+   - % of ALL respondents who said "Škoda"
+   - Includes those who said Don't Know in denominator
+   - Measures: Brand identification
+
+3. **Uniqueness (Q05)**: Same question, different calculation
+   - Škoda ÷ (Škoda + Other brands), **excluding "Don't Know"**
+   - Measures: Distinctive ownership vs competitors
+   - Shows: Among those who gave an answer, % who said Škoda
+
+**Key Relationship:** Recognition ≥ Attribution (can see it without knowing it's Škoda's)
 
 **Sample:** 2,011 respondents across UK, Spain, Germany, Poland
 **Method:** 2 groups of 6 elements each, shown in randomized sequences
-**Insight:** Reveals which element combinations drive spontaneous brand attribution across different audiences
+**Insight:** Reveals which element combinations drive recognition and attribution across different audiences
                 """)
 
                 # Executive Summary Dashboard
@@ -3706,19 +3732,45 @@ This analysis is based on Savanta's research (Study P045556) using an **additive
 3. **Randomized sequences**: 12 different element orders to control for sequence effects
 4. **Two element groups**: Group 1 (elements 1-6) and Group 2 (elements 7-9 + 4-6)
 
-### What "Recognition" Measures
+### What the Metrics Measure
 
-**Recognition = Correct brand attribution**, not just exposure:
-- Respondents typed "Škoda" (or variants: Skoda, škoda, Scoda) in response to brand attribution questions
-- This is **spontaneous identification** (no hints given until final question)
-- NOT asking "Have you seen this before?" (that was a separate question: Q02)
-- Measures: "At what point did people correctly identify this as Škoda?"
+**Recognition (Q02)** = % who said "Yes, I've seen this before":
+- Respondents were asked: *"Have you seen/heard this element before?"*
+- Response options: "Yes, definitely" / "Yes, I think so" / "No" / "Don't know"
+- Recognition % = "Yes, definitely" + "Yes, I think so"
+- Measures: "How many people have seen this element before?"
+
+**Attribution (Q05)** = % of ALL respondents who said "Škoda":
+- Respondents were asked: *"Which brand do you think this belongs to?"*
+- Response options: Škoda (correct) / Other brands (wrong) / Don't know
+- **Attribution** = Škoda responses ÷ Total respondents (including Don't Know)
+- Measures: "How many people said Škoda?"
+
+**Uniqueness (Q05)** = TRUE uniqueness calculation:
+- **Uniqueness** = Škoda ÷ (Škoda + Other brands), **excluding "Don't Know"**
+- Measures: "Among those who gave an answer, how many said Škoda vs competitors?"
+- This shows distinctive ownership strength
+
+**Complete Example - Electric Green Background:**
+
+Survey asked 1,005 respondents:
+- **Q02**: "Have you seen this element before?"
+  - 378 said "Yes" → **Recognition = 37.6%**
+
+- **Q05**: "Which brand does this belong to?"
+  - 175 said "Škoda" → **Attribution = 17.4%** (175÷1,005)
+  - 219 said other brands
+  - 611 said "Don't know"
+  - **Uniqueness = 44.4%** (175÷[175+219], excluding Don't Know)
+
+**Insight:** 37.6% have SEEN it, but only 17.4% know it's Škoda's (20.2% attribution gap). Among those who gave an answer (not Don't Know), 44.4% correctly said Škoda vs competitors.
 
 ### Key Variables
 
-- **QHiddenAwareness**: Tracks at which step (1-6 elements) respondent **correctly identified** Škoda
-- **Q09, Q13, Q17, Q21, Q25**: Open text brand attribution questions: "Which brand do you think these elements belong to?"
-- **Q26**: Final reveal with hint: "These are for a car brand. Which one?" (not used in main recognition metric)
+- **Q02**: "Have you seen/heard this element before?" (Recognition/Familiarity)
+- **Q05**: "Which brand do you think this belongs to?" (Attribution/Uniqueness)
+- **Q03**: "How would you describe this element?" (Associations/Sentiment)
+- **Q26**: Final reveal with hint: "These are for a car brand. Which one?"
 - **Demographics**: Age, country, car ownership, Škoda familiarity
 
 ### Sample Composition
@@ -3730,19 +3782,21 @@ This analysis is based on Savanta's research (Study P045556) using an **additive
 - **Countries**: UK (501), Spain (502), Germany (505), Poland (503)
 - **Age groups**: 18-30 (734), 31-42 (657), 43-55 (620)
 
-### Recognition Summary
+### Attribution Journey (Additive Testing)
 
-- **Recognized at 1 element**: 194 (9.6%)
-- **Recognized at 2-3 elements**: 268 (13.3%)
-- **Recognized at 4 elements**: 313 (15.6%)
-- **Recognized at 5-6 elements**: 69 (3.4%)
-- **Never recognized**: 1,167 (58.0%)
+The additive testing tracked when respondents correctly attributed elements to Škoda as more elements were shown:
+
+- **Attributed to Škoda after 1 element**: 194 (9.6%)
+- **Attributed to Škoda after 2-3 elements**: 268 (13.3%)
+- **Attributed to Škoda after 4 elements**: 313 (15.6%)
+- **Attributed to Škoda after 5-6 elements**: 69 (3.4%)
+- **Never attributed to Škoda**: 1,167 (58.0%)
 
 ### Limitations
 
 - Text-based attribution responses required Škoda detection (regex matching)
 - Small sample sizes for some demographic segments (e.g., Škoda owners n=120)
-- Recognition != purchase intent (measures awareness only)
+- Recognition != purchase intent (measures recognition only)
 - Controlled test environment may not reflect real-world ad exposure
                     """)
 
@@ -5806,7 +5860,7 @@ with tab7:
         [
             f"<b>56.3% never recognized</b> these elements as Škoda even after seeing 6 different brand elements",
             f"<b>Only 10.3% recognize</b> Škoda from a single element; recognition builds to 40.1% after all 6 elements",
-            f"<b>33% familiar with Škoda</b> while 46% have heard the name but lack knowledge — revealing brand education opportunity"
+            f"<b>33% familiar with Škoda</b> while 46% have heard the name but lack knowledge — revealing opportunity for brand education"
         ]
     )
 
@@ -5824,9 +5878,9 @@ with tab7:
 
     st.markdown("---")
 
-    # ============ SECTION 1: RECOGNITION JOURNEY ============
-    st.markdown("### 📈 The Recognition Build: When Do People Identify Škoda?")
-    st.caption("Tracking how recognition accumulates as respondents see more brand elements")
+    # ============ SECTION 1: ATTRIBUTION JOURNEY ============
+    st.markdown("### 📈 The Attribution Build: When Do People Identify Škoda?")
+    st.caption("Tracking how brand attribution accumulates as respondents see more brand elements (additive testing)")
 
     col1, col2 = st.columns([2, 1])
 
@@ -6136,7 +6190,7 @@ with tab7:
         familiarity_data = pd.DataFrame([
             {'Level': 'Very familiar', 'Percentage': skoda_familiarity['very_familiar'], 'Description': 'Strong brand advocates'},
             {'Level': 'Quite familiar', 'Percentage': skoda_familiarity['quite_familiar'], 'Description': 'Active considerers'},
-            {'Level': 'Heard of, don\'t know much', 'Percentage': skoda_familiarity['heard_of_not_much'], 'Description': 'Awareness without knowledge'},
+            {'Level': 'Heard of, don\'t know much', 'Percentage': skoda_familiarity['heard_of_not_much'], 'Description': 'Heard name without knowledge'},
             {'Level': 'Never heard of Škoda', 'Percentage': skoda_familiarity['never_heard'], 'Description': 'Outside consideration set'},
             {'Level': 'Not sure', 'Percentage': skoda_familiarity['not_sure'], 'Description': 'Uncertain'},
         ])
@@ -6290,16 +6344,16 @@ with tab7:
     st.info("""
     ### 🔍 Key Observations Based on This Data
 
-    **Pattern 1: Symbol as Primary Carrier** - At 48% recognition vs 20% average, the logo shows the strongest brand linkage. Prominent placement across all communications appears critical.
+    **Pattern 1: Symbol as Primary Carrier** - At 48% recognition vs 20% average, the Symbol shows the strongest brand linkage. Prominent placement across all communications appears critical.
 
-    **Pattern 2: Combination Effect** - Since single elements drive only 10% recognition, multiple elements appearing together show stronger effect. Minimum 3 elements per touchpoint observed in data.
+    **Pattern 2: Combination Effect** - Since single elements drive only 10% attribution, multiple elements appearing together show stronger effect. Minimum 3 elements per touchpoint observed in data.
 
-    **Pattern 3: The 56% Recognition Gap** - More than half never connect elements to Škoda. This pattern suggests:
+    **Pattern 3: The 56% Attribution Gap** - More than half never connect elements to Škoda. This pattern suggests:
        - Bolder, more distinctive asset design potential
        - More consistent usage across markets needed
        - Stronger connection between elements and brand name
 
-    **Pattern 4: Familiarity vs Recognition** - 46% have heard of Škoda but know little. Brand elements serve as educational tools, not just identity markers.
+    **Pattern 4: Familiarity vs Attribution** - 46% have heard of Škoda but know little. Brand elements serve as educational tools, not just identity markers.
 
     **Pattern 5: Moderate Emotional Connection** - 42% neutral response suggests opportunity to move beyond functional attributes to emotional benefits in messaging.
     """)
@@ -6358,7 +6412,7 @@ with tab7:
 
 - **{net_awareness['Total_percent']:.0%}** have heard of Škoda (total awareness)
 - **{knowledge_depth:.0%}** have actual knowledge about the brand ({high_knowledge['Total_percent']:.0%} high + {medium_knowledge['Total_percent']:.0%} medium)
-- **{heard_only['Total_percent']:.0%}** heard the name but know nothing - the "awareness without knowledge" gap
+- **{heard_only['Total_percent']:.0%}** heard the name but know nothing - the "heard but unfamiliar" gap
 - **{high_knowledge['Poland_percent'] / high_knowledge['Germany_percent']:.1f}x** difference in deep knowledge between Poland ({high_knowledge['Poland_percent']:.0%}%) and Germany ({high_knowledge['Germany_percent']:.0%}%)
                 """)
 
@@ -6954,9 +7008,10 @@ For each psychographic statement, we compare brand recognition between:
 
             st.info("""
 **🔍 Methodology Note:**
-- **Recognition**: Respondents correctly identified Škoda after seeing sequential brand elements
-- **Lift**: Percentage point difference between segment and non-segment recognition rates
-- **Avg Elements**: Number of elements shown before correct brand identification
+- **Recognition (Q02)**: "Have you seen/heard this before?" - measures familiarity
+- **Uniqueness (Q05)**: % of ALL respondents who said "Škoda" (technically Attribution, not true Uniqueness)
+- **Lift**: Percentage point difference between segment and non-segment rates
+- **Avg Elements**: Number of elements shown during the additive testing sequence
 - **Sample**: 2,011 respondents from UK, Spain, Germany, Poland (P045556 study)
             """)
 

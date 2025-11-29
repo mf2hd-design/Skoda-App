@@ -1,56 +1,65 @@
 {
   "Electric Green": {
-    "UK": 0.09,
-    "Spain": 0.18,
-    "Germany": 0.11,
-    "Poland": 0.35
+    "Total": 0.4442,
+    "UK": 0.2407,
+    "Spain": 0.4494,
+    "Germany": 0.3974,
+    "Poland": 0.6555
   },
   "Facets": {
-    "UK": 0.11,
-    "Spain": 0.2,
-    "Germany": 0.14,
-    "Poland": 0.2
+    "Total": 0.413,
+    "UK": 0.2844,
+    "Spain": 0.5114,
+    "Germany": 0.4301,
+    "Poland": 0.4526
   },
   "Type": {
-    "UK": 0.1,
-    "Spain": 0.19,
-    "Germany": 0.13,
-    "Poland": 0.29
+    "Total": 0.4187,
+    "UK": 0.2269,
+    "Spain": 0.4468,
+    "Germany": 0.4471,
+    "Poland": 0.5833
   },
   "Symbol": {
-    "UK": 0.23,
-    "Spain": 0.44,
-    "Germany": 0.31,
-    "Poland": 0.55
+    "Total": 0.7043,
+    "UK": 0.4957,
+    "Spain": 0.7483,
+    "Germany": 0.693,
+    "Poland": 0.8171
   },
   "Sonic": {
-    "UK": 0.11,
-    "Spain": 0.2,
-    "Germany": 0.16,
-    "Poland": 0.2
+    "Total": 0.4139,
+    "UK": 0.2512,
+    "Spain": 0.4829,
+    "Germany": 0.4489,
+    "Poland": 0.4834
   },
   "Wordmark": {
-    "UK": 0.17,
-    "Spain": 0.34,
-    "Germany": 0.22,
-    "Poland": 0.39
+    "Total": 0.5347,
+    "UK": 0.3282,
+    "Spain": 0.5808,
+    "Germany": 0.5567,
+    "Poland": 0.6544
   },
-  "Dark Green": {
-    "UK": 0.1,
-    "Spain": 0.24,
-    "Germany": 0.13,
-    "Poland": 0.27
+  "Emerald Green": {
+    "Total": 0.4612,
+    "UK": 0.2444,
+    "Spain": 0.575,
+    "Germany": 0.3816,
+    "Poland": 0.5468
   },
   "Hacek": {
-    "UK": 0.11,
-    "Spain": 0.22,
-    "Germany": 0.11,
-    "Poland": 0.27
+    "Total": 0.464,
+    "UK": 0.2637,
+    "Spain": 0.5526,
+    "Germany": 0.3676,
+    "Poland": 0.5769
   },
   "Tagline": {
-    "UK": 0.08,
-    "Spain": 0.23,
-    "Germany": 0.1,
-    "Poland": 0.25
+    "Total": 0.4131,
+    "UK": 0.1889,
+    "Spain": 0.5156,
+    "Germany": 0.3333,
+    "Poland": 0.5036
   }
 }

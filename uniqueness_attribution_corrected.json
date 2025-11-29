@@ -1,0 +1,146 @@
+{
+  "Electric Green": {
+    "attribution": {
+      "Total": 0.1741,
+      "UK": 0.0919,
+      "Spain": 0.1818,
+      "Germany": 0.1099,
+      "Poland": 0.3545
+    },
+    "uniqueness": {
+      "Total": 0.4442,
+      "UK": 0.2407,
+      "Spain": 0.4494,
+      "Germany": 0.3974,
+      "Poland": 0.6555
+    }
+  },
+  "Facets": {
+    "attribution": {
+      "Total": 0.1582,
+      "UK": 0.1095,
+      "Spain": 0.2045,
+      "Germany": 0.1418,
+      "Poland": 0.1955
+    },
+    "uniqueness": {
+      "Total": 0.413,
+      "UK": 0.2844,
+      "Spain": 0.5114,
+      "Germany": 0.4301,
+      "Poland": 0.4526
+    }
+  },
+  "Type": {
+    "attribution": {
+      "Total": 0.1692,
+      "UK": 0.0954,
+      "Spain": 0.1909,
+      "Germany": 0.1348,
+      "Poland": 0.2864
+    },
+    "uniqueness": {
+      "Total": 0.4187,
+      "UK": 0.2269,
+      "Spain": 0.4468,
+      "Germany": 0.4471,
+      "Poland": 0.5833
+    }
+  },
+  "Symbol": {
+    "attribution": {
+      "Total": 0.3849,
+      "UK": 0.2315,
+      "Spain": 0.4442,
+      "Germany": 0.3129,
+      "Poland": 0.5507
+    },
+    "uniqueness": {
+      "Total": 0.7043,
+      "UK": 0.4957,
+      "Spain": 0.7483,
+      "Germany": 0.693,
+      "Poland": 0.8171
+    }
+  },
+  "Sonic": {
+    "attribution": {
+      "Total": 0.1661,
+      "UK": 0.1078,
+      "Spain": 0.1972,
+      "Germany": 0.1564,
+      "Poland": 0.2028
+    },
+    "uniqueness": {
+      "Total": 0.4139,
+      "UK": 0.2512,
+      "Spain": 0.4829,
+      "Germany": 0.4489,
+      "Poland": 0.4834
+    }
+  },
+  "Wordmark": {
+    "attribution": {
+      "Total": 0.2795,
+      "UK": 0.1697,
+      "Spain": 0.3367,
+      "Germany": 0.2238,
+      "Poland": 0.3877
+    },
+    "uniqueness": {
+      "Total": 0.5347,
+      "UK": 0.3282,
+      "Spain": 0.5808,
+      "Germany": 0.5567,
+      "Poland": 0.6544
+    }
+  },
+  "Emerald Green": {
+    "attribution": {
+      "Total": 0.1948,
+      "UK": 0.1009,
+      "Spain": 0.2447,
+      "Germany": 0.13,
+      "Poland": 0.2686
+    },
+    "uniqueness": {
+      "Total": 0.4612,
+      "UK": 0.2444,
+      "Spain": 0.575,
+      "Germany": 0.3816,
+      "Poland": 0.5468
+    }
+  },
+  "Hacek": {
+    "attribution": {
+      "Total": 0.1859,
+      "UK": 0.1101,
+      "Spain": 0.2234,
+      "Germany": 0.1121,
+      "Poland": 0.265
+    },
+    "uniqueness": {
+      "Total": 0.464,
+      "UK": 0.2637,
+      "Spain": 0.5526,
+      "Germany": 0.3676,
+      "Poland": 0.5769
+    }
+  },
+  "Tagline": {
+    "attribution": {
+      "Total": 0.175,
+      "UK": 0.078,
+      "Spain": 0.234,
+      "Germany": 0.1031,
+      "Poland": 0.2473
+    },
+    "uniqueness": {
+      "Total": 0.4131,
+      "UK": 0.1889,
+      "Spain": 0.5156,
+      "Germany": 0.3333,
+      "Poland": 0.5036
+    }
+  }
+}
